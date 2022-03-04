@@ -1,0 +1,65 @@
+$primary: #3a4750 !default;
+$secondary: #303841 !default;
+$light: #00adb5 !default;
+$text: #eeeeee !default;
+
+@import "bootstrap";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: $primary;
+  color: $text;
+}
+
+.theme-element {
+  background-color: $secondary;
+  color: $text;
+
+  &:focus {
+    background-color: $secondary;
+    color: $text;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: $text;
+  border-width: 0px 0px 2px 0px;
+  border-style: solid;
+  border-color: gray;
+  &:hover,
+  &:active {
+    color: invert($text);
+    padding: 5px;
+    border-width: 0;
+    border-radius: 5px;
+    background-color: $text;
+  }
+  transition: 0.2s;
+}
+
+$btn-light-hover-color: $secondary;
+$btn-light-padding-value: 30px;
+
+button.btn-light[type="submit"] {
+  font-weight: bold;
+  &:hover {
+    color: $text;
+    background-color: $btn-light-hover-color;
+    border-color: $btn-light-hover-color;
+    padding-left: $btn-light-padding-value;
+    padding-right: $btn-light-padding-value;
+  }
+  transition: 500ms;
+}
+
+.form-control,
+.form-select {
+  border-color: lighten($dark, 25%);
+  &:focus {
+    border-color: $dark;
+    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $dark;
+  }
+}
