@@ -10,8 +10,8 @@ type ApplicationHeadProps = {
 export default function AppHead({ title, description, children }: ApplicationHeadProps) : JSX.Element {
     return (
         <Head>
-            <title>{title || config.application_name}</title>
-            <meta name="description" content={description || config.application_description} />
+            <title>{title || config.application.name}</title>
+            <meta name="description" content={description || config.application.description} />
             <link rel="icon" href="/favicon.ico" />
             {children}
         </Head>

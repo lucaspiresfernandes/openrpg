@@ -1,8 +1,4 @@
-$primary: #3a4750 !default;
-$secondary: #303841 !default;
-$light: #00adb5 !default;
-$text: #eeeeee !default;
-
+@import "./variables";
 @import "bootstrap";
 
 html,
@@ -13,6 +9,13 @@ body {
   color: $text;
 }
 
+.data-container {
+  border-style: solid;
+  border-width: 1px;
+  border-color: gray;
+  border-radius: 20px;
+}
+
 .theme-element {
   background-color: $secondary;
   color: $text;
@@ -21,38 +24,6 @@ body {
     background-color: $secondary;
     color: $text;
   }
-}
-
-a {
-  text-decoration: none;
-  color: $text;
-  border-width: 0px 0px 2px 0px;
-  border-style: solid;
-  border-color: gray;
-  &:hover,
-  &:active {
-    color: invert($text);
-    padding: 5px;
-    border-width: 0;
-    border-radius: 5px;
-    background-color: $text;
-  }
-  transition: 0.2s;
-}
-
-$btn-light-hover-color: $secondary;
-$btn-light-padding-value: 30px;
-
-button.btn-light[type="submit"] {
-  font-weight: bold;
-  &:hover {
-    color: $text;
-    background-color: $btn-light-hover-color;
-    border-color: $btn-light-hover-color;
-    padding-left: $btn-light-padding-value;
-    padding-right: $btn-light-padding-value;
-  }
-  transition: 500ms;
 }
 
 .form-control,

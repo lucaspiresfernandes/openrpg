@@ -6,6 +6,35 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Player {
+  id         Int          @id @default(autoincrement())
+  username   String
+  password   String
+  role       Role
+  PlayerInfo PlayerInfo[]
+}
+
+model PlayerInfo {
+  player    Player @relation(fields: [player_id], references: [id])
+  player_id Int
+  info      Info   @relation(fields: [info_id], references: [id])
+  info_id   Int
+  value     String
+
+  @@id([player_id, info_id])
+}
+
+model Info {
+  id         Int          @id @default(autoincrement())
+  name       String
+  PlayerInfo PlayerInfo[]
+}
+
+enum Role {
+  PLAYER
+  ADMIN
 }

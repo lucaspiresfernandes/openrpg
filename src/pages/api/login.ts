@@ -1,25 +1,42 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sessionAPI } from '../../utils/session/options';
+import { sessionAPI } from '../../utils/session';
+import database from '../../utils/database';
+import { compare } from '../../utils/encryption';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') return handlePost(req, res);
-  if (req.method === 'DELETE') return handleDelete(req, res);
   res.status(404).end();
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  //TODO: validate user from database.
+  const username = req.body.username;
+  const plainPassword = req.body.password;
 
-  req.session.user = {
-    id: 0,
-    admin: true
+  if (!username || !plainPassword) {
+    res.status(401).send({ message: 'Username or password is blank.' });
+    return;
+  }
+
+  const user = await database.player.findFirst({ where: { username } });
+
+  if (!user) {
+    res.status(401).send({ message: 'Username or password is incorrect.' });
+    return;
+  }
+
+  const isValidPassword = compare(plainPassword, user.password);
+
+  if (!isValidPassword) {
+    res.status(401).send({ message: 'Username or password is incorrect.' });
+    return;
+  }
+
+  req.session.player = {
+    id: user.id,
+    admin: user.role === 'ADMIN'
   };
   await req.session.save();
-  res.end();
-}
 
-function handleDelete(req: NextApiRequest, res: NextApiResponse) {
-  req.session.destroy();
   res.end();
 }
 

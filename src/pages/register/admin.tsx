@@ -2,17 +2,31 @@ import ApplicationHead from '../../components/ApplicationHead';
 import { Button, Col, Container, FormControl, Row } from 'react-bootstrap';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { api } from '../../utils';
+import api from '../../utils/api';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
+import { useRouter } from 'next/router';
+import homeStyles from '../../styles/Home.module.scss';
+import useAuthentication from '../../hooks/useAuthentication';
 
 export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [adminKey, setAdminKey] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toasts, addToast] = useToast();
+  const router = useRouter();
+
+  useAuthentication(player => {
+    if (player) {
+      if (player.admin) {
+        return router.replace('/sheet/admin/1');
+      }
+      return router.replace('/sheet/1');
+    }
+    setLoading(false);
+  });
 
   async function onFormSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -27,7 +41,8 @@ export default function Register() {
     }
     else {
       try {
-        const response = await api.post('/register', { username, password, adminKey });
+        await api.post('/register', { username, password, adminKey });
+        router.replace('/sheet/admin/1');
       }
       catch (err) {
         console.error(err);
@@ -97,12 +112,12 @@ export default function Register() {
           <Col>
             <Row className='my-3'>
               <Col>
-                Já possui cadastro? <Link href='/'><a className="h5">Entrar</a></Link>
+                Já possui cadastro? <Link href='/'><a className={homeStyles.link}>Entrar</a></Link>
               </Col>
             </Row>
             <Row className='my-3'>
               <Col>
-                É um jogador? <Link href='/register'><a className="h5">Cadastrar-se como jogador</a></Link>
+                É um jogador? <Link href='/register'><a className={homeStyles.link}>Cadastrar-se como jogador</a></Link>
               </Col>
             </Row>
           </Col>
