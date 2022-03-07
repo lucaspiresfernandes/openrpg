@@ -1,0 +1,17 @@
+$roll-duration: 1s;
+
+.roll {
+    animation: fadein $roll-duration;
+}
+
+.description {
+    opacity: 0;
+    animation: fadein $roll-duration;
+    animation-delay: $roll-duration - 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

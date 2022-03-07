@@ -11,27 +11,205 @@ datasource db {
 }
 
 model Player {
-  id         Int          @id @default(autoincrement())
-  username   String
-  password   String
-  role       Role
-  PlayerInfo PlayerInfo[]
-}
-
-model PlayerInfo {
-  player    Player @relation(fields: [player_id], references: [id])
-  player_id Int
-  info      Info   @relation(fields: [info_id], references: [id])
-  info_id   Int
-  value     String
-
-  @@id([player_id, info_id])
+  id                    Int                     @id @default(autoincrement())
+  username              String
+  password              String
+  role                  Role
+  PlayerInfo            PlayerInfo[]
+  PlayerAttributes      PlayerAttribute[]
+  PlayerAttributeStatus PlayerAttributeStatus[]
+  PlayerSpec            PlayerSpec[]
+  PlayerCharacteristic  PlayerCharacteristic[]
+  PlayerSkill           PlayerSkill[]
+  PlayerEquipment       PlayerEquipment[]
+  PlayerItem            PlayerItem[]
+  PlayerExtraInfo       PlayerExtraInfo[]
+  PlayerNote            PlayerNote[]
 }
 
 model Info {
   id         Int          @id @default(autoincrement())
   name       String
   PlayerInfo PlayerInfo[]
+}
+
+model Attribute {
+  id              Int               @id @default(autoincrement())
+  name            String
+  rollable        Boolean
+  PlayerAttribute PlayerAttribute[]
+  AttributeStatus AttributeStatus[]
+}
+
+model AttributeStatus {
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  Attribute             Attribute               @relation(fields: [attribute_id], references: [id])
+  attribute_id          Int
+  PlayerAttributeStatus PlayerAttributeStatus[]
+}
+
+model Spec {
+  id         Int          @id @default(autoincrement())
+  name       String
+  PlayerSpec PlayerSpec[]
+}
+
+model Characteristic {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  rollable             Boolean
+  PlayerCharacteristic PlayerCharacteristic[]
+}
+
+model Specialization {
+  id    Int     @id @default(autoincrement())
+  name  String
+  Skill Skill[]
+}
+
+model Skill {
+  id                Int             @id @default(autoincrement())
+  name              String
+  Specialization    Specialization? @relation(fields: [specialization_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  specialization_id Int?
+  mandatory         Boolean         @default(false)
+  Equipment         Equipment[]
+  PlayerSkill       PlayerSkill[]
+}
+
+model Equipment {
+  id              Int               @id @default(autoincrement())
+  name            String
+  type            String
+  Skill           Skill             @relation(fields: [skill_id], references: [id])
+  skill_id        Int
+  damage          String
+  range           String
+  attacks         String
+  ammo            Int
+  visible         Boolean
+  PlayerEquipment PlayerEquipment[]
+}
+
+model Item {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  visible     Boolean
+  PlayerItem  PlayerItem[]
+}
+
+model ExtraInfo {
+  id              Int               @id @default(autoincrement())
+  name            String
+  PlayerExtraInfo PlayerExtraInfo[]
+}
+
+model PlayerInfo {
+  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id Int
+  Info      Info   @relation(fields: [info_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  info_id   Int
+  value     String
+
+  @@id([player_id, info_id])
+}
+
+model PlayerAttribute {
+  Player       Player    @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id    Int
+  Attribute    Attribute @relation(fields: [attribute_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  attribute_id Int
+  value        Int
+  maxValue     Int
+
+  @@id([player_id, attribute_id])
+}
+
+model PlayerAttributeStatus {
+  Player              Player          @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id           Int
+  AttributeStatus     AttributeStatus @relation(fields: [attribute_status_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  attribute_status_id Int
+  value               Boolean
+
+  @@id([player_id, attribute_status_id])
+}
+
+model PlayerSpec {
+  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id Int
+  Spec      Spec   @relation(fields: [spec_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  spec_id   Int
+  value     String
+
+  @@id([player_id, spec_id])
+}
+
+model PlayerCharacteristic {
+  Player            Player         @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id         Int
+  Characteristic    Characteristic @relation(fields: [characteristic_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  characteristic_id Int
+  value             Int
+
+  @@id([player_id, characteristic_id])
+}
+
+model PlayerSkill {
+  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id Int
+  Skill     Skill  @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  skill_id  Int
+  value     String
+
+  @@id([player_id, skill_id])
+}
+
+model PlayerEquipment {
+  Player       Player    @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id    Int
+  Equipment    Equipment @relation(fields: [equipment_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  equipment_id Int
+  currentAmmo  Int
+  using        Boolean
+
+  @@id([player_id, equipment_id])
+}
+
+model PlayerItem {
+  Player             Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id          Int
+  Item               Item   @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item_id            Int
+  currentDescription String
+  quantity           Int
+
+  @@id([player_id, item_id])
+}
+
+model PlayerExtraInfo {
+  Player        Player    @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id     Int
+  ExtraInfo     ExtraInfo @relation(fields: [extra_info_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  extra_info_id Int
+  value         String
+
+  @@id([player_id, extra_info_id])
+}
+
+model PlayerNote {
+  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id Int
+  value     String
+
+  @@id([player_id])
+}
+
+model Config {
+  key   String @id
+  value String
 }
 
 enum Role {

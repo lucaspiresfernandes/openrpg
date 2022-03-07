@@ -7,7 +7,7 @@ type ErrorToastContainerProps = {
 
 export default function ErrorToastContainer({ toasts }: ErrorToastContainerProps) {
     return (
-        <ToastContainer position='bottom-end' className='p-3'>
+        <ToastContainer position='bottom-end' className='p-3 position-fixed'>
             {toasts.map(toast =>
                 <ErrorToast key={toast.id} id={toast.id} err={toast.err} onClose={toast.onClose} />
             )}

@@ -1,12 +1,22 @@
 {
     "player": {
-        "role": "Investigador"
+        "admin_key": "123456",
+        "role": "Investigador",
+        "base_dice": 20,
+        "attribute_bar": {
+            "dice": 100,
+            "branched": false
+        }
     },
-
     "application": {
         "name": "Open RPG",
         "description": "An open-source RPG"
     },
-    
-    "admin_key": "123456"
+    "success_types": {
+        "use_success_types": true,
+        "failure": "Fracasso",
+        "success": "Sucesso",
+        "hard": "Bom",
+        "extreme": "Extremo"
+    }
 }

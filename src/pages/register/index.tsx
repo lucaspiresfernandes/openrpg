@@ -80,7 +80,7 @@ export default function Register(): JSX.Element {
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <Button type='submit' variant='dark'>
+            <Button type='submit' variant='secondary'>
               Cadastrar-se
             </Button>
           </Col>

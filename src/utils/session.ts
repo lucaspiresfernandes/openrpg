@@ -2,6 +2,8 @@ import { IronSessionOptions } from 'iron-session';
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next';
 import { NextApiHandler, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
+export const cookieName = 'openrpgcookiesession';
+
 declare module 'iron-session' {
   interface IronSessionData {
     player: {
@@ -12,8 +14,7 @@ declare module 'iron-session' {
 }
 
 const sessionOptions: IronSessionOptions = {
-
-  cookieName: 'openrpgcookiesession',
+  cookieName,
   password: process.env.SESSION_SECRET as string,
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',

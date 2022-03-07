@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { ErrorToastProps } from '../components/ErrorToast';
 
-export type AddToastFunction = {
-    (err: any): void
-};
-
-export default function useToast(): [ErrorToastProps[], AddToastFunction] {
+export default function useToast(): [ErrorToastProps[], (err: any) => void] {
     const [toasts, setToasts] = useState<ErrorToastProps[]>([]);
 
     function addToast(err: any) {

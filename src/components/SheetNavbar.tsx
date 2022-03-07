@@ -11,7 +11,7 @@ export default function SheetNavbar() {
     }
 
     return (
-        <Navbar bg='light'>
+        <Navbar bg='info' sticky='top'>
             <Container fluid>
                 <Navbar.Brand>Open RPG</Navbar.Brand>
                 <Navbar.Collapse>

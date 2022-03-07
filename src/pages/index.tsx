@@ -76,7 +76,7 @@ export default function Home(): JSX.Element {
           </Row>
           <Row className='my-3 justify-content-center'>
             <Col md={6}>
-              <Button type='submit' variant='dark'>
+              <Button type='submit' variant='secondary'>
                 Entrar
               </Button>
             </Col>

@@ -5,8 +5,8 @@ html,
 body {
   padding: 0;
   margin: 0;
-  background-color: $primary;
-  color: $text;
+  background-color: $openrpg-primary;
+  color: $openrpg-text;
 }
 
 .data-container {
@@ -17,20 +17,84 @@ body {
 }
 
 .theme-element {
-  background-color: $secondary;
-  color: $text;
+  background-color: $openrpg-secondary;
+  color: $openrpg-text;
 
   &:focus {
-    background-color: $secondary;
-    color: $text;
+    background-color: $openrpg-secondary;
+    color: $openrpg-text;
+  }
+}
+
+.bottom-text {
+  background-color: $openrpg-primary;
+  outline: 0;
+  border-width: 0 0 1px;
+  color: $openrpg-text;
+  &:focus {
+    background-color: $openrpg-primary;
   }
 }
 
 .form-control,
 .form-select {
-  border-color: lighten($dark, 25%);
+  border-color: lighten($openrpg-dark, 25%);
   &:focus {
-    border-color: $dark;
-    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $dark;
+    border-color: $openrpg-dark;
+    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $openrpg-dark;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.modal-content {
+  background-color: $openrpg-primary;
+}
+
+.modal-header {
+  background-color: $openrpg-primary;
+  border-color: $openrpg-secondary;
+}
+
+.modal-body {
+  background-color: $openrpg-primary;
+  border-color: $openrpg-secondary;
+}
+
+.modal-footer {
+  background-color: $openrpg-primary;
+  border-color: $openrpg-secondary;
+}
+
+.progress {
+  height: $proggress-bar-height;
+  &.Vida {
+    background-color: #5a1e1e;
+    .progress-bar {
+      background-color: #b62323;
+    }
+  }
+
+  &.Armadura {
+    background-color: #5a1e1e;
+    .progress-bar {
+      background-color: #b62323;
+    }
+  }
+
+  &.Sanidade {
+    background-color: #5a1e1e;
+    .progress-bar {
+      background-color: #b62323;
+    }
+  }
+  
+  &.Magia {
+    background-color: #5a1e1e;
+    .progress-bar {
+      background-color: #b62323;
+    }
   }
 }

@@ -29,7 +29,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
   let isAdmin = false;
   if (adminKey) {
-    if (adminKey === config.admin_key) {
+    if (adminKey === config.player.admin_key) {
       isAdmin = true;
     }
     else {
@@ -63,18 +63,57 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 async function registerPlayerData(player: Player) {
   const results = await Promise.all([
     database.info.findMany(),
+    database.attribute.findMany(),
+    database.attributeStatus.findMany(),
+    database.spec.findMany(),
+    database.characteristic.findMany(),
+
   ]);
 
-  const infos = results[0];
-
   await Promise.all([
-    //Player Info
     database.playerInfo.createMany({
-      data: infos.map(info => {
+      data: results[0].map(info => {
         return {
           info_id: info.id,
           player_id: player.id,
           value: ''
+        };
+      })
+    }),
+    database.playerAttribute.createMany({
+      data: results[1].map(attr => {
+        return {
+          player_id: player.id,
+          attribute_id: attr.id,
+          value: 0,
+          maxValue: 0
+        };
+      })
+    }),
+    database.playerAttributeStatus.createMany({
+      data: results[2].map(attrStatus => {
+        return {
+          player_id: player.id,
+          attribute_status_id: attrStatus.id,
+          value: false
+        };
+      })
+    }),
+    database.playerSpec.createMany({
+      data: results[3].map(spec => {
+        return {
+          player_id: player.id,
+          spec_id: spec.id,
+          value: ''
+        };
+      })
+    }),
+    database.playerCharacteristic.createMany({
+      data: results[4].map(char => {
+        return {
+          player_id: player.id,
+          characteristic_id: char.id,
+          value: 0
         };
       })
     }),

@@ -1,10 +1,13 @@
-$primary: #222831 !default;
-$secondary: #393e46 !default;
-$light: #00adb5 !default;
-$dark: darken(#00adb5, 20%) !default;
-$text: #eeeeee !default;
+$openrpg-primary: #222831 !default;
+$openrpg-secondary: #393e46 !default;
+$openrpg-light: #00adb5 !default;
+$openrpg-dark: darken(#00adb5, 20%) !default;
+$openrpg-text: #eeeeee !default;
+$info: #11bec6 !default;
+
+//Proggress Bar
+$proggress-bar-height: 40px;
 
 // $success:       $green !default;
-// $info:          $cyan !default;
 // $warning:       $yellow !default;
 // $danger:        $red !default;

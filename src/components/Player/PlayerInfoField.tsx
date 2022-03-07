@@ -1,4 +1,4 @@
-import { Info } from '@prisma/client';
+import Prisma from '@prisma/client';
 import { useContext, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
@@ -6,29 +6,33 @@ import { toastsContext } from '../../pages/sheet/1';
 import api from '../../utils/api';
 
 type PlayerInfoFieldProps = {
-    info: Info,
+    info: Prisma.Info,
     value: string
 }
 
 export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
+    const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
 
     const addToast = useContext(toastsContext);
     const infoID = playerInfo.info.id;
 
-    async function onValueBlur(ev: React.FormEvent<HTMLInputElement>) {
-        const newValue = ev.currentTarget.value;
+    async function onValueBlur() {
+        if (value.length > 0) setDefined(true);
+        if (lastValue === value) return;
+        setValue(value);
+        api.post('/sheet/player/info', { infoID, value }).catch(addToast);
+    }
 
-        if (lastValue === newValue) return;
-
-        setValue(newValue);
-        
-        try {
-            api.post('/sheet/player/info', { infoID, value: newValue });
+    function renderField() {
+        if (isDefined) {
+            return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
         }
-        catch (err) {
-            addToast(err);
-        }
+        return (
+            <input autoFocus className='theme-element bottom-text w-100' type='text'
+                id={`info${infoID}`} autoComplete='off' value={value}
+                onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
+        );
     }
 
     return (
@@ -41,10 +45,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
                 </Row>
                 <Row>
                     <Col>
-                        <input className='theme-element bottom-text w-100' type='text'
-                            id={`info${infoID}`} autoComplete='off' value={value}
-                            onChange={ev => setValue(ev.currentTarget.value)}
-                            onBlur={onValueBlur} />
+                        {renderField()}
                     </Col>
                 </Row>
             </Col>
