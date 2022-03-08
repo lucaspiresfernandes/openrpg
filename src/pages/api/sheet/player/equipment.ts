@@ -30,7 +30,29 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
+    const playerID = req.session.player.id;
+    const equipID = req.body.id;
 
+    if (!playerID || !equipID) {
+        res.status(401).send({ message: 'Player ID or Equipment ID is undefined.' });
+        return;
+    }
+
+    const equipment = await prisma.playerEquipment.create({
+        data: {
+            using: false,
+            currentAmmo: 0,
+            player_id: playerID,
+            equipment_id: equipID
+        },
+        select: {
+            using: true, currentAmmo: true, Equipment: {
+                include: { Skill: true }
+            }
+        }
+    });
+
+    res.send({ equipment });
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
@@ -45,7 +67,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     await prisma.playerEquipment.delete({
         where: { player_id_equipment_id: { player_id: playerID, equipment_id: equipID } }
     });
-    
+
     res.end();
 }
 

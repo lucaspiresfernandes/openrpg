@@ -1,23 +1,32 @@
 import { Equipment, Skill } from '@prisma/client';
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Form, Image } from 'react-bootstrap';
-import useExtendedState from '../../../hooks/useExtendedState';
-import { diceRollResultContext, toastsContext } from '../../../pages/sheet/1';
-import api from '../../../utils/api';
-import styles from '../../../styles/Equipment.module.scss';
+import useExtendedState from '../../hooks/useExtendedState';
+import { diceRollResultContext, toastsContext } from '../../pages/sheet/1';
+import api from '../../utils/api';
+import styles from '../../styles/Equipment.module.scss';
 
 type PlayerEquipmentFieldProps = {
-    currentAmmo: number;
+    currentAmmo: number | null;
     using: boolean;
-    equipment: Equipment & {
-        Skill: Skill;
+    equipment: {
+        id: number;
+        ammo: number | null;
+        attacks: string;
+        damage: string;
+        name: string;
+        range: string;
+        type: string;
+        Skill: {
+            name: string;
+        };
     };
-    onDelete(id: number): void;
+    onDelete(id: number): void
 };
 
 export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     const [using, setUsing] = useState(props.using);
-    const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
+    const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo || 0);
     const [disabled, setDisabled] = useState(false);
 
     const addToast = useContext(toastsContext);
@@ -54,7 +63,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 
     function diceRoll() {
         if (!using) return alert('Você não está usando esse equipamento.');
-        if (props.equipment.ammo && props.currentAmmo < props.equipment.ammo)
+        if (props.equipment.ammo && currentAmmo === 0)
             return alert('Você não tem munição suficiente.');
         setCurrentAmmo(currentAmmo - 1);
         showDiceRollResult(props.equipment.damage);
@@ -64,12 +73,12 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
         if (!confirm('Você realmente deseja excluir esse equipamento?')) return;
         setDisabled(true);
         props.onDelete(equipmentID);
-        // api.delete('/sheet/player/equipment', {
-        //     data: { equipmentID }
-        // }).then(() => props.onDelete(equipmentID)).catch(err => {
-        //     addToast(err);
-        //     setDisabled(false);
-        // });
+        api.delete('/sheet/player/equipment', {
+            data: { equipmentID }
+        }).then(() => props.onDelete(equipmentID)).catch(err => {
+            addToast(err);
+            setDisabled(false);
+        });
     }
 
     return (

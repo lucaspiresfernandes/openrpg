@@ -4,10 +4,14 @@ import { Button, Modal, ModalProps } from 'react-bootstrap';
 interface SheetModalProps extends ModalProps {
     title: string;
     children?: JSX.Element;
-    applyButton?: { name: string, onApply(ev: MouseEvent<HTMLButtonElement> | undefined): MouseEventHandler<HTMLButtonElement> | void};
+    applyButton?: { name: string, onApply(ev: MouseEvent | undefined): MouseEventHandler | void };
 }
 
 export default function SheetModal(props: SheetModalProps) {
+    function apply(ev: MouseEvent) {
+        if (props.onHide) props.onHide();
+        props.applyButton?.onApply(ev);
+    }
     return (
         <Modal animation={props.animation} autoFocus={props.autoFocus} backdrop={props.backdrop} centered={props.centered}
             fullscreen={props.fullscreen} keyboard={props.keyboard} onEnter={props.onEnter} onEntered={props.onEntered}
@@ -22,7 +26,7 @@ export default function SheetModal(props: SheetModalProps) {
             </Modal.Body>
             <Modal.Footer>
                 {props.applyButton &&
-                    <Button variant='primary' onClick={props.applyButton.onApply}>{props.applyButton.name}</Button>}
+                    <Button variant='primary' onClick={apply}>{props.applyButton.name}</Button>}
                 <Button variant='secondary' onClick={props.onHide}>Fechar</Button>
             </Modal.Footer>
         </Modal>
