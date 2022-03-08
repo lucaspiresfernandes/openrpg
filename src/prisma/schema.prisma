@@ -81,13 +81,13 @@ model Skill {
 model Equipment {
   id              Int               @id @default(autoincrement())
   name            String
-  type            String
   Skill           Skill             @relation(fields: [skill_id], references: [id])
   skill_id        Int
+  type            String
   damage          String
   range           String
   attacks         String
-  ammo            Int
+  ammo            Int?
   visible         Boolean
   PlayerEquipment PlayerEquipment[]
 }
@@ -162,7 +162,7 @@ model PlayerSkill {
   player_id Int
   Skill     Skill  @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   skill_id  Int
-  value     String
+  value     Int
 
   @@id([player_id, skill_id])
 }
@@ -172,7 +172,7 @@ model PlayerEquipment {
   player_id    Int
   Equipment    Equipment @relation(fields: [equipment_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   equipment_id Int
-  currentAmmo  Int
+  currentAmmo  Int?
   using        Boolean
 
   @@id([player_id, equipment_id])

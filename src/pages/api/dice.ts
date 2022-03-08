@@ -68,7 +68,6 @@ async function handler(req: NextApiRequest, res: SocketIOApiResponse) {
             return nextInt(numDices, numDices * diceRoll, 1).then(result => {
                 const roll = result.data.reduce((a, b) => a + b, 0);
                 results[index] = { roll };
-                console.log(resolverKey);
                 
                 if (!config.success_types.use_success_types || !resolverKey || reference === undefined) return;
 

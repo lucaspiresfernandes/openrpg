@@ -27,12 +27,6 @@ async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
     });
 
     res.end();
-
-    const io = res.socket?.server?.io;
-    if (io) {
-        io.to('admin').emit('info changed', { playerID, infoID, value });
-        io.to(`portrait${playerID}`).emit('info changed', { infoID, value });
-    }
 }
 
 export default sessionAPI(handler);

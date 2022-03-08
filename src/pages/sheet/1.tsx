@@ -15,6 +15,7 @@ import DataContainer from '../../components/DataContainer';
 import PlayerInfoField from '../../components/Player/PlayerInfoField';
 import PlayerAttributeContainer from '../../components/Player/Attribute/PlayerAttributeContainer';
 import PlayerCharacteristicField from '../../components/Player/PlayerCharacteristicField';
+import PlayerEquipmentContainer from '../../components/Player/Equipment/PlayerEquipmentContainer';
 
 export const toastsContext = React.createContext<(err: any) => void>(() => { });
 export const diceRollResultContext = React.createContext<(dices: string | ResolvedDice[], resolverKey?: string) => void>(() => { });
@@ -75,9 +76,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             <DataContainer title='Combate' onAdd={() => console.log('add')}>
                                 <Row className='mb-3 text-center'>
                                     <Col>
-                                        <Table responsive variant='dark' className='align-middle'>
-
-                                        </Table>
+                                        <PlayerEquipmentContainer playerEquipments={props.playerEquipments} />
                                     </Col>
                                 </Row>
                             </DataContainer>
@@ -109,6 +108,9 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 playerAttributeStatus: [],
                 playerSpecs: [],
                 playerCharacteristics: [],
+                playerEquipments: [],
+                playerSkills: [],
+                playerItem: []
             }
         };
     }
@@ -123,22 +125,12 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 
         database.playerAttribute.findMany({
             where: { player_id: playerID },
-            select: {
-                value: true, maxValue: true, Attribute: {
-                    select: {
-                        id: true, name: true, rollable: true
-                    }
-                }
-            }
+            select: { Attribute: true, value: true, maxValue: true }
         }),
 
         database.playerAttributeStatus.findMany({
             where: { player_id: playerID },
-            select: {
-                value: true, AttributeStatus: {
-                    select: { id: true, name: true, attribute_id: true }
-                }
-            }
+            select: { AttributeStatus: true, value: true }
         }),
 
         database.playerSpec.findMany({
@@ -150,6 +142,25 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             where: { player_id: playerID },
             select: { Characteristic: true, value: true }
         }),
+
+        database.playerEquipment.findMany({
+            where: { player_id: playerID },
+            select: {
+                Equipment: {
+                    include: { Skill: true }
+                }, currentAmmo: true, using: true
+            }
+        }),
+
+        database.playerSkill.findMany({
+            where: { player_id: playerID },
+            select: { Skill: true, value: true }
+        }),
+
+        database.playerItem.findMany({
+            where: { player_id: playerID },
+            select: { Item: true, currentDescription: true, quantity: true }
+        }),
     ]);
 
     return {
@@ -160,6 +171,9 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             playerAttributeStatus: results[2],
             playerSpecs: results[3],
             playerCharacteristics: results[4],
+            playerEquipments: results[5],
+            playerSkills: results[6],
+            playerItem: results[7]
         }
     };
 }

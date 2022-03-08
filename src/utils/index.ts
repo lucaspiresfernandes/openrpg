@@ -24,6 +24,7 @@ type ResolveDiceOptions = {
 }
 
 export function resolveDices(dices: string, diceOptions?: ResolveDiceOptions): ResolvedDice[] | undefined {
+    const bonusDamage = diceOptions?.bonusDamage || '0';
     const formattedDices = dices.trim().toLowerCase();
     const options = formattedDices.split('/');
     if (options.length > 1) {
@@ -43,7 +44,7 @@ export function resolveDices(dices: string, diceOptions?: ResolveDiceOptions): R
     const resolvedDices: ResolvedDice[] = [];
 
     for (let i = 0; i < diceArray.length; i++)
-        resolvedDices.push(resolveDice(diceArray[i], diceOptions?.bonusDamage));
+        resolvedDices.push(resolveDice(diceArray[i], bonusDamage));
 
     return resolvedDices;
 }

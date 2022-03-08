@@ -67,7 +67,8 @@ async function registerPlayerData(player: Player) {
     database.attributeStatus.findMany(),
     database.spec.findMany(),
     database.characteristic.findMany(),
-
+    database.skill.findMany(),
+    database.extraInfo.findMany()
   ]);
 
   await Promise.all([
@@ -104,7 +105,7 @@ async function registerPlayerData(player: Player) {
         return {
           player_id: player.id,
           spec_id: spec.id,
-          value: ''
+          value: '0'
         };
       })
     }),
@@ -117,11 +118,40 @@ async function registerPlayerData(player: Player) {
         };
       })
     }),
+    database.playerSkill.createMany({
+      data: results[5].map(skill => {
+        return {
+          player_id: player.id,
+          skill_id: skill.id,
+          value: 0
+        };
+      })
+    }),
+    database.playerExtraInfo.createMany({
+      data: results[6].map(extraInfo => {
+        return {
+          player_id: player.id,
+          extra_info_id: extraInfo.id,
+          value: ''
+        };
+      })
+    }),
+    database.playerNote.create({
+      data: {
+        player_id: player.id,
+        value: ''
+      }
+    })
   ]);
 }
 
-async function registerAdminData(admin: Player) {
-
+function registerAdminData(admin: Player): Promise<any> {
+  return database.playerNote.create({
+    data: {
+      player_id: admin.id,
+      value: ''
+    }
+  });
 }
 
 export default sessionAPI(handler);

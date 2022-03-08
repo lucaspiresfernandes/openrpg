@@ -20,11 +20,12 @@ export default function DiceRollResult(props: DiceRollResultProps) {
     useEffect(() => {
         if (props.dices.length === 0) return;
         let resolved = props.dices;
-        if (props.dices instanceof String) {
-            const aux = resolveDices(props.dices as string, {bonusDamage: props.bonusDamage});
+        if (typeof props.dices === 'string') {
+            const aux = resolveDices(props.dices as string, { bonusDamage: props.bonusDamage });
             if (!aux) return;
             resolved = aux;
         }
+
         api.post('/dice', { dices: resolved, resolverKey: props.resolverKey }).then(res => {
             setResultDices(res.data.results);
         }).catch(addToast);

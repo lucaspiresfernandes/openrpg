@@ -18,5 +18,23 @@
         "success": "Sucesso",
         "hard": "Bom",
         "extreme": "Extremo"
+    },
+    "equipment": {
+        "types": [
+            "Comum",
+            "Ácido",
+            "Concussão",
+            "Cortante",
+            "Elétrico",
+            "Energia",
+            "Fogo",
+            "Frio",
+            "Necrótico",
+            "Perfurante",
+            "Psíquico",
+            "Radiante",
+            "Trovejante",
+            "Veneno"
+        ]
     }
 }

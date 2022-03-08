@@ -1,3 +1,4 @@
+import { Attribute, AttributeStatus } from '@prisma/client';
 import { useState } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
 import PlayerAttributeField from './PlayerAttributeField';
@@ -7,19 +8,11 @@ type PlayerAttributeContainerProps = {
     playerAttributes: {
         value: number;
         maxValue: number;
-        Attribute: {
-            id: number;
-            name: string;
-            rollable: boolean;
-        };
+        Attribute: Attribute
     }[];
     playerStatus: {
         value: boolean;
-        AttributeStatus: {
-            id: number;
-            name: string;
-            attribute_id: number;
-        };
+        AttributeStatus: AttributeStatus
     }[];
     generalDiceShow?(): void;
 }
@@ -34,7 +27,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 
     function statusChange(id: number) {
         const firstID = status.find(stat => stat.value)?.id || status.length;
-        
+
         let rerender = false;
         const newStatus = status.map(stat => {
             if (stat.id === id) {
