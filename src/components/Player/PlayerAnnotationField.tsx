@@ -4,8 +4,8 @@ import useExtendedState from '../../hooks/useExtendedState';
 import { errorLogger } from '../../pages/sheet/2';
 import api from '../../utils/api';
 
-export default function PlayerAnnotationsField(props: { value: string }) {
-    const [lastValue, value, setValue] = useExtendedState(props.value);
+export default function PlayerAnnotationsField(props: { value?: string }) {
+    const [lastValue, value, setValue] = useExtendedState(props.value || '');
     
     const logError = useContext(errorLogger);
 

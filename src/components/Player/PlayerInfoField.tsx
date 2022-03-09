@@ -4,6 +4,7 @@ import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerInfoFieldProps = {
     info: Prisma.Info,
@@ -29,8 +30,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
             return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
         }
         return (
-            <input autoFocus className='theme-element bottom-text w-100' type='text'
-                id={`info${infoID}`} autoComplete='off' value={value}
+            <BottomTextInput autoFocus className='w-100' id={`info${infoID}`} autoComplete='off' value={value}
                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
         );
     }

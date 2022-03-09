@@ -7,6 +7,7 @@ import api from '../../../utils/api';
 import config from '../../../../openrpg.config.json';
 import styles from '../../../styles/Attribute.module.scss';
 import PlayerAttributeStatusField from './PlayerAttributeStatusField';
+import BottomTextInput from '../../BottomTextInput';
 
 type PlayerAttributeFieldProps = {
     playerAttribute: {
@@ -118,16 +119,16 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
                 </Row>
                 <Row>
                     <Col xs={{ span: 4, offset: 4 }} lg={{ span: 2, offset: 5 }} className='h5' >
-                        <input type='text' maxLength={3} autoComplete='off' value={maxValue}
+                        <BottomTextInput maxLength={3} autoComplete='off' value={maxValue}
                             onChange={updateMaxValue} id={`attribute${attributeID}`}
-                            className='text-center bottom-text w-100' onBlur={maxValueBlur} />
+                            className='text-center w-100' onBlur={maxValueBlur} />
                     </Col>
                 </Row>
                 <Row>
                     <Col>
                         {playerStatus.map(stat =>
-                            <PlayerAttributeStatusField key={stat.AttributeStatus.id} 
-                            playerAttributeStatus={stat} onStatusChanged={onStatusChanged} />
+                            <PlayerAttributeStatusField key={stat.AttributeStatus.id}
+                                playerAttributeStatus={stat} onStatusChanged={onStatusChanged} />
                         )}
                     </Col>
                 </Row>

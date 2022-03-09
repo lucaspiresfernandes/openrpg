@@ -90,7 +90,7 @@ body {
       background-color: #b62323;
     }
   }
-  
+
   &.Magia {
     background-color: #5a1e1e;
     .progress-bar {
@@ -104,4 +104,46 @@ body {
   tr {
     border-color: gray;
   }
+}
+
+.wrapper {
+  @extend .data-container;
+  overflow-y: auto;
+  max-height: 260px;
+
+  .list-group {
+    background-color: $openrpg-list-group-color;
+    border-radius: 0;
+    min-height: 260px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    .list-group-item {
+      padding: 0.5rem 1rem;
+    }
+
+    input.bottom-text {
+      background-color: $openrpg-list-group-color;
+    }
+  }
+}
+
+.wrapper::-webkit-scrollbar,
+.wrapper::-webkit-scrollbar {
+  width: 0;
+}
+
+.list-group-item {
+  @extend .theme-element;
+  background-color: $openrpg-list-group-color;
+}
+
+.dice-list > li:nth-child(odd) {
+  background-color: lighten($openrpg-list-group-color, 50%);
+}
+
+.player-container {
+  @extend .data-container;
+  background-color: $dark;
 }

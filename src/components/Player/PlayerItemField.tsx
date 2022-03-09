@@ -4,6 +4,7 @@ import useExtendedState from '../../hooks/useExtendedState';
 import { errorLogger } from '../../pages/sheet/1';
 import styles from '../../styles/Item.module.scss';
 import api from '../../utils/api';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerItemFieldProps = {
     quantity: number;
@@ -70,11 +71,12 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
                 </Button>
             </td>
             <td className={styles.name}>{props.item.name}</td>
-            <td><input type='text' className={`${styles.description} bottom-text w-100`}
-                value={currentDescription} onChange={ev => setCurrentDescription(ev.currentTarget.value)}
-                onBlur={descriptionBlur} /></td>
             <td>
-                <input type='text' className={`${styles.quantity} bottom-text text-center`} maxLength={3}
+                <BottomTextInput className={`${styles.description} w-100`} value={currentDescription}
+                    onChange={ev => setCurrentDescription(ev.currentTarget.value)} onBlur={descriptionBlur} />
+            </td>
+            <td>
+                <BottomTextInput className={`${styles.quantity} text-center`} maxLength={3}
                     value={currentQuantity} onChange={quantityChange}
                     onBlur={quantityBlur} />
             </td>

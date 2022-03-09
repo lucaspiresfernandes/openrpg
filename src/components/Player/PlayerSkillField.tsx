@@ -5,6 +5,7 @@ import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Skill.module.scss';
 import config from '../../../openrpg.config.json';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerSkillFieldProps = {
     value: number;
@@ -53,7 +54,7 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
         <Col xs={6} md={3} xl={2} className={`${styles.container} my-3 clickable d-flex flex-column`}>
             <Row>
                 <Col>
-                    <input type='text' className={`${styles.text} theme-element bottom-text text-center w-75`}
+                    <BottomTextInput className={`${styles.text} text-center w-75`}
                         value={value} onChange={valueChange} onBlur={valueBlur} />
                 </Col>
             </Row>

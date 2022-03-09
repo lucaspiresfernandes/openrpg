@@ -1,27 +1,25 @@
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { createContext, useRef } from 'react';
-import { Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Image, ListGroup, Row } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, DropdownButton, Form, Image, ListGroup, Row } from 'react-bootstrap';
 import AdminGlobalConfigurations from '../../../components/Admin/AdminGlobalConfigurations';
+import CombatContainer from '../../../components/Admin/CombatContainer';
+import DiceContainer from '../../../components/Admin/DiceContainer';
+import DiceList from '../../../components/Admin/DiceList';
+import NPCContainer from '../../../components/Admin/NPCContainer';
 import PlayerContainer from '../../../components/Admin/PlayerContainer';
 import AdminNavbar from '../../../components/AdminNavbar';
+import BottomTextInput from '../../../components/BottomTextInput';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
-import WrapperContainer from '../../../components/WrapperContainer';
 import useToast from '../../../hooks/useToast';
+import prisma from '../../../utils/database';
 import { sessionSSR } from '../../../utils/session';
 
 export const errorLogger = createContext<(err: any) => void>(() => { });
 
-export default function Admin1() {
+export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmin1Props>) {
     const [toasts, addToast] = useToast();
-
-    const environment = useRef('combat');
-
-    function onEnvironmentChanged() {
-        environment.current = environment.current === 'combat' ? 'idle' : 'combat';
-        console.log(environment.current);
-    }
 
     return (
         <>
@@ -35,12 +33,12 @@ export default function Admin1() {
                     </Row>
                     <Row className='my-4'>
                         <Col className='text-center h5'>
-                            <AdminGlobalConfigurations environment='combat' />
+                            <AdminGlobalConfigurations environment={props.environment} />
                         </Col>
                     </Row>
                     <Row className='justify-content-center'>
                         <Col xs={12} md={6} xl={4} className='text-center'>
-                            <Row className='mx-md-1 data-container h-100'>
+                            <Row className='mx-md-1 player-container h-100'>
                                 <Col>
                                     <PlayerContainer />
                                 </Col>
@@ -48,98 +46,15 @@ export default function Admin1() {
                         </Col>
                     </Row>
                     <Row className='my-3 text-center'>
-                        <Col xs={12} lg className='my-2'>
-                            <Row className='mx-2 text-center'>
-                                <Col className='h2'>Rolagem</Col>
-                                <hr />
-                            </Row>
-                            <Row className='mb-3 justify-content-center'>
-                                <Col xs={3}>
-                                    <Row>
-                                        <Col className='h5'>Geral</Col>
-                                    </Row>
-                                    <Row>
-                                        <Image fluid src='/dice20.png' alt='Dado' className='clickable' />
-                                    </Row>
-                                </Col>
-                                <Col xs={3}>
-                                    <Row>
-                                        <Col className='h5'>Rápido</Col>
-                                    </Row>
-                                    <Row>
-                                        <Image fluid src='/dice20.png' alt='Dado' className='clickable' />
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col xs={12} lg className='my-2'>
-                            <Row className='mx-2'>
-                                <Col xs={{ offset: 3 }} className='h2 text-center'>Combate</Col>
-                                <Col xs={3} className='align-self-center'>
-                                    <DropdownButton title='+' >
-                                        {/*All players names here*/}
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item>Novo...</Dropdown.Item>
-                                    </DropdownButton>
-                                </Col>
-                                <hr />
-                            </Row>
-                            <Row className='my-2'>
-                                <Col>
-                                    <label className='h5' htmlFor='combatRound'>Rodada:</label>
-                                    <input type='number' id='combatRound' className='h4 theme-element bottom-text' value={1} />
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <WrapperContainer className='w-100'>
-                                        <ListGroup variant='flush'>
-                                        </ListGroup>
-                                    </WrapperContainer>
-                                </Col>
-                            </Row>
-                            <Row className='mt-2 justify-content-center'>
-                                <Col><Button size='sm' variant='secondary'>Anterior</Button></Col>
-                                <Col><Button size='sm' variant='secondary'>Limpar</Button></Col>
-                                <Col><Button size='sm' variant='secondary'>Próximo</Button></Col>
-                            </Row>
-                        </Col>
+                        <DiceContainer />
+                        <CombatContainer />
                     </Row>
                     <Row className='my-3'>
-                        <Col xs={12} lg className='my-2'>
-                            <Row className='mx-2 text-center'>
-                                <Col className='h2 '>Histórico</Col>
-                                <hr />
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <WrapperContainer className='w-100'>
-                                        <ListGroup variant='flush'>
-                                        </ListGroup>
-                                    </WrapperContainer>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col xs={12} lg className='my-2'>
-                            <Row className='mx-2'>
-                                <Col xs={{ offset: 3 }} className='h2 text-center'>NPCs</Col>
-                                <Col xs={3} className='align-self-center'>
-                                    <Button variant='dark'>+</Button>
-                                </Col>
-                                <hr />
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <WrapperContainer className='w-100'>
-                                        <ListGroup variant='flush'>
-                                        </ListGroup>
-                                    </WrapperContainer>
-                                </Col>
-                            </Row>
-                        </Col>
+                        <DiceList />
+                        <NPCContainer />
                     </Row>
                     <Row className='my-3'>
-                        <DataContainer title='Anotações' htmlFor='playerAnnotations'>
+                        <DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
                             <PlayerAnnotationsField value={''} />
                         </DataContainer>
                     </Row>
@@ -150,17 +65,31 @@ export default function Admin1() {
     );
 }
 
-export const getServerSideProps = sessionSSR(
-    async function getServerSideProps(ctx: GetServerSidePropsContext) {
-        const user = ctx.req.session.player;
-        if (!user) {
-            return {
-                redirect: {
-                    destination: '/',
-                    permanent: false
-                }
-            };
-        }
-        return { props: {} };
+async function getAdmin1Props(ctx: GetServerSidePropsContext) {
+    const user = ctx.req.session.player;
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false
+            },
+            props: {
+                environment: null,
+            }
+        };
     }
-);
+
+    const results = await Promise.all([
+        prisma.config.findUnique({
+            where: { key: 'environment' }
+        }),
+    ]);
+
+    return {
+        props: {
+            environment: results[0],
+        }
+    };
+}
+
+export const getServerSideProps = sessionSSR(getAdmin1Props);

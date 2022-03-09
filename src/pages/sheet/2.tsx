@@ -28,7 +28,7 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                     </Row>
                     <Row>
                         <DataContainer title='Anotações' htmlFor='playerAnnotations'>
-                            <PlayerAnnotationsField value={props.playerNotes as string} />
+                            <PlayerAnnotationsField value={props.playerNotes} />
                         </DataContainer>
                     </Row>
                     <Row>
@@ -55,7 +55,7 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
             },
             props: {
                 playerExtraInfo: [],
-                playerNotes: []
+                playerNotes: undefined
             }
         };
     }

@@ -1,11 +1,12 @@
 import Prisma from '@prisma/client';
-import { FormEvent, useContext } from 'react';
+import { ChangeEvent, useContext } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Characteristic.module.scss';
 import config from '../../../openrpg.config.json';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerCharacteristicFieldProps = {
     value: number;
@@ -19,7 +20,7 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
 
     const charID = characteristic.id;
 
-    function onChange(ev: FormEvent<HTMLInputElement>) {
+    function onChange(ev: ChangeEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;
         let newValue = parseInt(aux);
 
@@ -60,9 +61,8 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
             </Row>
             <Row>
                 <Col>
-                    <input type='text' className='bottom-text text-center h5 w-75'
-                        maxLength={3} id={`char${characteristic.id}`} value={value} onChange={onChange}
-                        onBlur={onBlur} />
+                    <BottomTextInput className='h5 w-75 text-center' id={`char${characteristic.id}`}
+                        value={value} onChange={onChange} onBlur={onBlur} maxLength={3} />
                 </Col>
             </Row>
         </Col>

@@ -5,6 +5,7 @@ import useExtendedState from '../../hooks/useExtendedState';
 import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Equipment.module.scss';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerEquipmentFieldProps = {
     currentAmmo: number | null;
@@ -99,8 +100,8 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
             <td>{props.equipment.range}</td>
             <td>{props.equipment.attacks}</td>
             <td>{props.equipment.ammo ?
-                <input type='text' className='bottom-text text-center'
-                    value={currentAmmo} onChange={onAmmoChange} onBlur={onAmmoBlur} /> :
+                <BottomTextInput className='text-center' value={currentAmmo}
+                    onChange={onAmmoChange} onBlur={onAmmoBlur} /> :
                 '-'}</td>
             <td>{props.equipment.ammo || '-'}</td>
         </tr>

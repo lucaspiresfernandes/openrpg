@@ -4,6 +4,7 @@ import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerSpecFieldProps = {
     value: string;
@@ -28,9 +29,9 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
         <Col xs={12} sm={6} lg={4} className='text-center my-3'>
             <Row>
                 <Col>
-                    <input className='theme-element bottom-text w-100 text-center h5' type='text'
+                    <BottomTextInput className='w-100 text-center h5' onBlur={onValueBlur}
                         id={`spec${specID}`} autoComplete='off' value={value}
-                        onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
+                        onChange={ev => setValue(ev.currentTarget.value)} />
                 </Col>
             </Row>
             <Row>

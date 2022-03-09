@@ -3,9 +3,9 @@ import { Button, Col, Image, Row, Table } from 'react-bootstrap';
 export default function PlayerContainer() {
     return (
         <>
-            <Row>
+            <Row className='my-2'>
                 <Col>
-                    <Button variant='dark'>Apagar</Button>
+                    <Button size='sm' variant='secondary'>Apagar</Button>
                 </Col>
             </Row>
             <Row>
@@ -79,14 +79,13 @@ export default function PlayerContainer() {
                     Inventário
                 </Col>
             </Row>
-            <Row>
+            <Row className='mb-2'>
                 <Col>
                     <Table responsive>
                         {/* Item Data */}
                     </Table>
                 </Col>
             </Row>
-            <hr />
         </>
     );
 }

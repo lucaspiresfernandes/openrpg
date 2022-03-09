@@ -188,7 +188,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Col>
                         </Row>
                         <Row>
-                            <DataContainer title='Detalhes Pessoais'>
+                            <DataContainer outline title='Detalhes Pessoais'>
                                 {props.playerInfo.map(pinfo =>
                                     <PlayerInfoField key={pinfo.Info.id} info={pinfo.Info} value={pinfo.value} />
                                 )}
@@ -207,7 +207,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Col>
                         </Row>
                         <Row>
-                            <DataContainer title='Atributos'>
+                            <DataContainer outline title='Atributos'>
                                 <Row className='mb-3 text-center align-items-end justify-content-center'>
                                     {props.playerCharacteristics.map(char =>
                                         <PlayerCharacteristicField key={char.Characteristic.id}
@@ -217,7 +217,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </DataContainer>
                         </Row>
                         <Row>
-                            <DataContainer title='Combate' onAdd={() => setAddEquipmentShow(true)}>
+                            <DataContainer outline title='Combate' addButton={{ onAdd: () => setAddEquipmentShow(true) }}>
                                 <Row className='mb-3 text-center'>
                                     <Col>
                                         <Table responsive className='align-middle'>
@@ -248,7 +248,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </DataContainer>
                         </Row>
                         <Row>
-                            <DataContainer title='Perícias' onAdd={() => setAddSkillShow(true)}>
+                            <DataContainer outline title='Perícias' addButton={{ onAdd: () => setAddSkillShow(true) }}>
                                 <Row>
 
                                 </Row>
@@ -261,7 +261,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </DataContainer>
                         </Row>
                         <Row>
-                            <DataContainer title='Itens' onAdd={() => setAddItemShow(true)}>
+                            <DataContainer outline title='Itens' addButton={{ onAdd: () => setAddItemShow(true) }}>
                                 <Table responsive className='align-middle'>
                                     <thead>
                                         <tr>
