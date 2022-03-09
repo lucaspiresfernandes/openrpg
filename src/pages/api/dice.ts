@@ -1,10 +1,9 @@
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
 import { sessionAPI } from '../../utils/session';
-import SocketIOApiResponse from '../../utils/SocketResponse';
 const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
 import config from '../../../openrpg.config.json';
-import { DiceResult, ResolvedDice } from '../../utils';
+import { DiceResult, NextApiResponseServerIO, ResolvedDice } from '../../utils';
 
 type ResolverKey = '20' | '20b' | '100' | '100b';
 
@@ -23,7 +22,7 @@ async function nextInt(min: number, max: number, n: number) {
     return { data };
 }
 
-async function handler(req: NextApiRequest, res: SocketIOApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method !== 'POST') {
         res.status(404).end();
         return;
@@ -31,15 +30,20 @@ async function handler(req: NextApiRequest, res: SocketIOApiResponse) {
 
     const player = req.session.player;
 
-    const dices: ResolvedDice[] = req.body.dices;
-    const resolverKey: ResolverKey | undefined = req.body.resolverKey || undefined;
-
-    const io = res.socket?.server?.io;
-
-    if (!player || !dices) {
+    if (!player) {
         res.status(401).end();
         return;
     }
+
+    const dices: ResolvedDice[] = req.body.dices;
+    const resolverKey: ResolverKey | undefined = req.body.resolverKey || undefined;
+
+    if (!dices) {
+        res.status(400).end();
+        return;
+    }
+
+    const io = res.socket.server.io;
 
     if (dices.length === 1 && dices[0].num === 1)
         io?.to(`portrait${player.id}`).emit('dice roll');
@@ -68,20 +72,19 @@ async function handler(req: NextApiRequest, res: SocketIOApiResponse) {
             return nextInt(numDices, numDices * diceRoll, 1).then(result => {
                 const roll = result.data.reduce((a, b) => a + b, 0);
                 results[index] = { roll };
-                
+
                 if (!config.success_types.use_success_types || !resolverKey || reference === undefined) return;
 
                 results[index].description = resolveSuccessType(resolverKey, reference, roll);
             });
         }));
-
         res.send({ results });
-        if (!player.admin) io?.to('admin').emit('dice result', { playerID: player.id, dices, results });
-        if (dices.length === 1 && dices[0].num === 1) io?.to(`portrait${player.id}`).emit('dice result', { results });
+        if (!player.admin) io.to('admin').emit('dice result', { playerID: player.id, dices, results });
+        if (dices.length === 1 && dices[0].num === 1) io.to(`portrait${player.id}`).emit('dice result', { results });
     }
     catch (err) {
         console.error(err);
-        res.status(401).end();
+        res.status(400).end();
     }
 }
 

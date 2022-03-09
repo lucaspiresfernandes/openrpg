@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
+import useSocket from '../../hooks/useSocket';
 import DataContainer from '../DataContainer';
 
 export default function DiceContainer() {

@@ -1,27 +1,32 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
-import SocketIOApiResponse from '../../../../utils/SocketResponse';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') return handlePost(req, res);
     res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
-    const playerID = req.session.player.id;
-    const extraInfoID = req.body.id;
+async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+    const player = req.session.player;
 
-    if (!playerID || !extraInfoID) {
-        res.status(401).send({ message: 'Player ID or Extra Info ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
         return;
     }
 
+    const extraInfoID = req.body.id;
     const value = req.body.value;
+
+    if (!value || !extraInfoID) {
+        res.status(400).send({ message: 'Extra Info ID or value is undefined.' });
+        return;
+    }
+
 
     await database.playerExtraInfo.update({
         data: { value },
-        where: { player_id_extra_info_id: { player_id: playerID, extra_info_id: extraInfoID } }
+        where: { player_id_extra_info_id: { player_id: player.id, extra_info_id: extraInfoID } }
     });
 
     res.end();

@@ -1,11 +1,15 @@
+import { FormEvent, useState } from 'react';
 import { Button, Col, Dropdown, ListGroup, Row } from 'react-bootstrap';
+import { clamp } from '../../utils';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 
 export default function CombatContainer() {
+    const [round, setRound] = useState(1);
+    const [entities, setEntities] = useState<string[]>([]);
 
     function addPlayer() {
-
+        
     }
 
     function addNPC() {
@@ -19,12 +23,21 @@ export default function CombatContainer() {
         </>
     );
 
+    function roundUpdate(ev: FormEvent<HTMLInputElement>) {
+        const aux = ev.currentTarget.value;
+        let newRound = parseInt(aux);
+        if (aux.length === 0) newRound = 1;
+        else if (isNaN(newRound)) return;
+        setRound(clamp(newRound, 1, 100));
+    }
+
     return (
         <DataContainer xs={12} lg title='Combate' addButton={{ type: 'dropdown', children: dropdown }} >
             <Row className='my-2'>
                 <Col>
                     <label className='h5' htmlFor='combatRound'>Rodada:</label>
-                    <BottomTextInput type='number' id='combatRound' className='h4' value={1} />
+                    <BottomTextInput type='number' id='combatRound' className='h4' value={round}
+                        onChange={roundUpdate} />
                 </Col>
             </Row>
             <Row>

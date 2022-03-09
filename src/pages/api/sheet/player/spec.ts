@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
-import SocketIOApiResponse from '../../../../utils/SocketResponse';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -10,29 +9,28 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
-    const playerID = req.session.player.id;
-    const specID = req.body.specID;
+async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+    const player = req.session.player;
 
-    if (!playerID || !specID) {
-        res.status(401).send({ message: 'Player ID or Spec ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
         return;
     }
 
+    const specID = req.body.id;
     const value = req.body.value;
+
+    if (!specID || !value) {
+        res.status(400).send({ message: 'Spec ID or value is undefined.' });
+        return;
+    }
 
     await database.playerSpec.update({
         data: { value },
-        where: { player_id_spec_id: { player_id: playerID, spec_id: specID } }
+        where: { player_id_spec_id: { player_id: player.id, spec_id: specID } }
     });
 
     res.end();
-
-    // const io = res.socket?.server?.io;
-    // if (io) {
-    //     io.to('admin').emit('info changed', { playerID, infoID: specID, value });
-    //     io.to(`portrait${playerID}`).emit('info changed', { infoID: specID, value });
-    // }
 }
 
 export default sessionAPI(handler);

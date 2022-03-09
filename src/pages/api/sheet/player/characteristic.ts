@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
-import SocketIOApiResponse from '../../../../utils/SocketResponse';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -10,12 +9,18 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
-    const playerID = req.session.player.id;
-    const charID = parseInt(req.body.charID);
+async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+    const player = req.session.player;
 
-    if (!playerID || !charID) {
-        res.status(401).send({ message: 'Player ID or Characteristic ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
+    const charID = parseInt(req.body.id);
+
+    if (!charID) {
+        res.status(401).send({ message: 'Characteristic ID is undefined.' });
         return;
     }
 
@@ -23,7 +28,7 @@ async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
 
     await database.playerCharacteristic.update({
         data: { value },
-        where: { player_id_characteristic_id: { player_id: playerID, characteristic_id: charID } }
+        where: { player_id_characteristic_id: { player_id: player.id, characteristic_id: charID } }
     });
 
     res.end();

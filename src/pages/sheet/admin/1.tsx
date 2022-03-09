@@ -1,17 +1,17 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { createContext, useRef } from 'react';
-import { Button, Col, Container, Dropdown, DropdownButton, Form, Image, ListGroup, Row } from 'react-bootstrap';
+import { createContext } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 import AdminGlobalConfigurations from '../../../components/Admin/AdminGlobalConfigurations';
 import CombatContainer from '../../../components/Admin/CombatContainer';
 import DiceContainer from '../../../components/Admin/DiceContainer';
-import DiceList from '../../../components/Admin/DiceList';
+import DiceList, { DiceListPlayer } from '../../../components/Admin/DiceList';
 import NPCContainer from '../../../components/Admin/NPCContainer';
 import PlayerContainer from '../../../components/Admin/PlayerContainer';
 import AdminNavbar from '../../../components/AdminNavbar';
-import BottomTextInput from '../../../components/BottomTextInput';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
+import useSocket from '../../../hooks/useSocket';
 import useToast from '../../../hooks/useToast';
 import prisma from '../../../utils/database';
 import { sessionSSR } from '../../../utils/session';
@@ -20,6 +20,19 @@ export const errorLogger = createContext<(err: any) => void>(() => { });
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmin1Props>) {
     const [toasts, addToast] = useToast();
+
+    const diceListPlayers: DiceListPlayer[] = [];
+
+    const players = props.players.map(player => {
+        const name = player.PlayerInfo[0].value || 'Desconhecido';
+
+        diceListPlayers.push({ id: player.id, name });
+
+        return {
+            id: player.id,
+            name
+        };
+    });
 
     return (
         <>
@@ -40,7 +53,9 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmi
                         <Col xs={12} md={6} xl={4} className='text-center'>
                             <Row className='mx-md-1 player-container h-100'>
                                 <Col>
-                                    <PlayerContainer />
+                                    {players.map(player =>
+                                        <PlayerContainer key={player.id} />
+                                    )}
                                 </Col>
                             </Row>
                         </Col>
@@ -50,7 +65,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmi
                         <CombatContainer />
                     </Row>
                     <Row className='my-3'>
-                        <DiceList />
+                        <DiceList players={diceListPlayers} />
                         <NPCContainer />
                     </Row>
                     <Row className='my-3'>
@@ -75,6 +90,7 @@ async function getAdmin1Props(ctx: GetServerSidePropsContext) {
             },
             props: {
                 environment: null,
+                players: []
             }
         };
     }
@@ -83,11 +99,21 @@ async function getAdmin1Props(ctx: GetServerSidePropsContext) {
         prisma.config.findUnique({
             where: { key: 'environment' }
         }),
+        prisma.player.findMany({
+            where: { role: 'PLAYER' },
+            select: {
+                id: true, PlayerInfo: {
+                    where: { Info: { name: 'Nome' } },
+                    select: { Info: true, value: true },
+                }
+            }
+        })
     ]);
 
     return {
         props: {
             environment: results[0],
+            players: results[1]
         }
     };
 }

@@ -8,20 +8,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const playerID = req.session.player.id;
-    const attributeID = parseInt(req.body.attributeID);
-    const value = req.body.value;
-    const maxValue = req.body.maxValue;
+    const player = req.session.player;
 
-    if (!playerID || !attributeID) {
+    if (!player) {
         res.status(401).end();
         return;
     }
 
+    const attributeID = parseInt(req.body.id);
+
+    if (!attributeID) {
+        res.status(400).end();
+        return;
+    }
+
+    const value = req.body.value;
+    const maxValue = req.body.maxValue;
+
     await prisma.playerAttribute.update({
         where: {
             player_id_attribute_id: {
-                player_id: playerID,
+                player_id: player.id,
                 attribute_id: attributeID
             }
         },

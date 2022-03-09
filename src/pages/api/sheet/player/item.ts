@@ -10,11 +10,16 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
+    const player = req.session.player;
     const itemID = req.body.id;
 
-    if (!playerID || !itemID) {
-        res.status(401).send({ message: 'Player ID or Item ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
+    if (!itemID) {
+        res.status(400).send({ message: 'Item ID is undefined.' });
         return;
     }
 
@@ -22,7 +27,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const currentDescription = req.body.currentDescription as string;
 
     await prisma.playerItem.update({
-        where: { player_id_item_id: { player_id: playerID, item_id: itemID } },
+        where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
         data: { quantity, currentDescription }
     });
 
@@ -30,11 +35,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
+    const player = req.session.player;
+
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
     const itemID = req.body.id;
 
-    if (!playerID || !itemID) {
-        res.status(401).send({ message: 'Player ID or Item ID is undefined.' });
+    if (!itemID) {
+        res.status(400).send({ message: 'Item ID is undefined.' });
         return;
     }
 
@@ -42,7 +53,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         data: {
             currentDescription: '',
             quantity: 1,
-            player_id: playerID,
+            player_id: player.id,
             item_id: itemID
         },
         select: {
@@ -53,7 +64,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     });
 
     await prisma.playerItem.update({
-        where: { player_id_item_id: { player_id: playerID, item_id: itemID } },
+        where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
         data: {
             currentDescription: item.Item.description
         }
@@ -65,16 +76,22 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
+    const player = req.session.player;
+
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
     const itemID = req.body.id;
 
-    if (!playerID || !itemID) {
-        res.status(401).send({ message: 'Player ID or Item ID is undefined.' });
+    if (!itemID) {
+        res.status(400).send({ message: 'Item ID is undefined.' });
         return;
     }
 
     await prisma.playerItem.delete({
-        where: { player_id_item_id: { player_id: playerID, item_id: itemID } }
+        where: { player_id_item_id: { player_id: player.id, item_id: itemID } }
     });
 
     res.end();

@@ -33,7 +33,7 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
     function onBlur() {
         if (value === lastValue) return;
         setValue(value);
-        api.post('/sheet/player/characteristic', { value, charID }).catch(err => {
+        api.post('/sheet/player/characteristic', { value, id: charID }).catch(err => {
             logError(err);
             setValue(lastValue);
         });

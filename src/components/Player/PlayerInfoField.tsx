@@ -22,7 +22,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         if (value.length > 0) setDefined(true);
         if (lastValue === value) return;
         setValue(value);
-        api.post('/sheet/player/info', { infoID, value }).catch(logError);
+        api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
     }
 
     function renderField() {

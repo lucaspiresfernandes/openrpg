@@ -1,12 +1,13 @@
 import { IronSessionOptions } from 'iron-session';
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next';
-import { NextApiHandler, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { NextApiHandler, GetServerSidePropsContext, GetServerSidePropsResult, NextApiRequest } from 'next';
+import { NextApiResponseServerIO } from './index';
 
 export const cookieName = 'openrpgcookiesession';
 
 declare module 'iron-session' {
   interface IronSessionData {
-    player: {
+    player?: {
       id: number;
       admin: boolean;
     };
@@ -21,8 +22,10 @@ const sessionOptions: IronSessionOptions = {
   },
 };
 
-export function sessionAPI(handler: NextApiHandler) {
-  return withIronSessionApiRoute(handler, sessionOptions);
+type NextApiServerIOHandler<T = any> = (req: NextApiRequest, res: NextApiResponseServerIO<T>) => void | Promise<void>;
+
+export function sessionAPI(handler: NextApiHandler | NextApiServerIOHandler) {
+  return withIronSessionApiRoute(handler as NextApiHandler, sessionOptions);
 }
 
 export function sessionSSR(handler: (context: GetServerSidePropsContext) => Promise<any>) {

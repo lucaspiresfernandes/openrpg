@@ -16,7 +16,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const adminKey = req.body.adminKey as string;
 
   if (!username || !plainPassword) {
-    res.status(401).send({ message: 'Username or password is blank.' });
+    res.status(400).send({ message: 'Username or password is blank.' });
     return;
   }
 

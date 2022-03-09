@@ -37,7 +37,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     function usingChange() {
         const _using = !using;
         setUsing(_using);
-        api.post('/sheet/player/equipment', { equipmentID, using: _using }).catch(err => {
+        api.post('/sheet/player/equipment', { id: equipmentID, using: _using }).catch(err => {
             logError(err);
             setUsing(using);
         });
@@ -56,7 +56,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     function onAmmoBlur() {
         if (currentAmmo === lastAmmo) return;
         setCurrentAmmo(currentAmmo);
-        api.post('/sheet/player/equipment', { equipmentID, currentAmmo }).catch(err => {
+        api.post('/sheet/player/equipment', { id: equipmentID, currentAmmo }).catch(err => {
             logError(err);
             setCurrentAmmo(lastAmmo);
         });
@@ -75,7 +75,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
         setDisabled(true);
         props.onDelete(equipmentID);
         api.delete('/sheet/player/equipment', {
-            data: { equipmentID }
+            data: { id: equipmentID }
         }).then(() => props.onDelete(equipmentID)).catch(err => {
             logError(err);
             setDisabled(false);

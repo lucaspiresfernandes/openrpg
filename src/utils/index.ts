@@ -1,3 +1,7 @@
+import { NextApiResponse } from 'next';
+import { Server as SocketIOServer } from 'socket.io';
+import { Socket as NetSocket, Server as NetServer } from 'net';
+
 export function clamp(num: number, min: number, max: number) {
     if (num < min) return min;
     if (num > max) return max;
@@ -68,3 +72,11 @@ function resolveDice(dice: string, bonusDamage: string = '0'): ResolvedDice {
     if (split.length === 1) return { num: 0, roll: parseInt(dice) };
     return { num: parseInt(split[0]), roll: parseInt(split[1]) };
 }
+
+export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
+    socket: NetSocket & {
+        server: NetServer & {
+            io: SocketIOServer;
+        };
+    };
+};

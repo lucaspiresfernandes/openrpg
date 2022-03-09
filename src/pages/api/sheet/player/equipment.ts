@@ -10,11 +10,17 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
-    const equipID = req.body.equipmentID;
+    const player = req.session.player;
 
-    if (!playerID || !equipID) {
-        res.status(401).send({ message: 'Player ID or Equipment ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
+    const equipID = req.body.id;
+
+    if (!equipID) {
+        res.status(400).send({ message: 'Equipment ID is undefined.' });
         return;
     }
 
@@ -22,7 +28,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const using: boolean = req.body.using;
 
     await prisma.playerEquipment.update({
-        where: { player_id_equipment_id: { player_id: playerID, equipment_id: equipID } },
+        where: { player_id_equipment_id: { player_id: player.id, equipment_id: equipID } },
         data: { currentAmmo, using }
     });
 
@@ -30,11 +36,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
+    const player = req.session.player;
+
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
     const equipID = req.body.id;
 
-    if (!playerID || !equipID) {
-        res.status(401).send({ message: 'Player ID or Equipment ID is undefined.' });
+    if (!equipID) {
+        res.status(400).send({ message: 'Equipment ID is undefined.' });
         return;
     }
 
@@ -42,7 +54,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         data: {
             using: false,
             currentAmmo: 0,
-            player_id: playerID,
+            player_id: player.id,
             equipment_id: equipID
         },
         select: {
@@ -56,16 +68,21 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
-    const equipID = req.body.equipmentID;
+    const player = req.session.player;
+    const equipID = req.body.id;
 
-    if (!playerID || !equipID) {
-        res.status(401).send({ message: 'Player ID or Equipment ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
+    if (!equipID) {
+        res.status(400).send({ message: 'Equipment ID is undefined.' });
         return;
     }
 
     await prisma.playerEquipment.delete({
-        where: { player_id_equipment_id: { player_id: playerID, equipment_id: equipID } }
+        where: { player_id_equipment_id: { player_id: player.id, equipment_id: equipID } }
     });
 
     res.end();

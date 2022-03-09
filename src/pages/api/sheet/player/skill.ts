@@ -9,18 +9,24 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
-    const skillID = req.body.id;
+    const player = req.session.player;
 
-    if (!playerID || !skillID) {
-        res.status(401).send({ message: 'Player ID or Skill ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
         return;
     }
 
-    const value = req.body.value as number;
+    const skillID = req.body.id;
+    const value: number = req.body.value;
+
+    if (!skillID || !value) {
+        res.status(400).send({ message: 'Skill ID or value is undefined.' });
+        return;
+    }
+
 
     await prisma.playerSkill.update({
-        where: { player_id_skill_id: { player_id: playerID, skill_id: skillID } },
+        where: { player_id_skill_id: { player_id: player.id, skill_id: skillID } },
         data: { value }
     });
 
@@ -28,17 +34,23 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
-    const playerID = req.session.player.id;
+    const player = req.session.player;
+
+    if (!player) {
+        res.status(401).end();
+        return;
+    }
+
     const skillID = req.body.id;
 
-    if (!playerID || !skillID) {
-        res.status(401).send({ message: 'Player ID or Skill ID is undefined.' });
+    if (!skillID) {
+        res.status(400).send({ message: 'Skill ID is undefined.' });
         return;
     }
 
     const skill = await prisma.playerSkill.create({
         data: {
-            player_id: playerID,
+            player_id: player.id,
             skill_id: skillID,
             value: 0
         },

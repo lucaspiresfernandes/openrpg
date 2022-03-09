@@ -8,19 +8,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const playerID = req.session.player.id;
-    const statusID = parseInt(req.body.attrStatusID);
-    const value = req.body.value;
+    const player = req.session.player;
 
-    if (!playerID || !statusID) {
+    if (!player) {
         res.status(401).end();
         return;
     }
 
+    const statusID = parseInt(req.body.attrStatusID);
+
+    if (!statusID) {
+        res.status(400).end();
+        return;
+    }
+
+    const value = req.body.value;
+
     await prisma.playerAttributeStatus.update({
         where: {
             player_id_attribute_status_id: {
-                player_id: playerID,
+                player_id: player.id,
                 attribute_status_id: statusID
             }
         },

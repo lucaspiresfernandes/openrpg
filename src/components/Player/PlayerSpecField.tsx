@@ -22,7 +22,7 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
         if (lastValue === value) return;
         if (playerSpec.onSpecChanged) playerSpec.onSpecChanged(playerSpec.Spec.name, value);
         setValue(value);
-        api.post('/sheet/player/spec', { specID, value }).catch(logError);
+        api.post('/sheet/player/spec', { id: specID, value }).catch(logError);
     }
 
     return (

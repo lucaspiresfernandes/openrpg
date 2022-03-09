@@ -1,32 +1,42 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../utils';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
-import SocketIOApiResponse from '../../../../utils/SocketResponse';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method === 'POST') {
         return handlePost(req, res);
     }
     res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
-    const playerID = req.session.player.id;
-    const infoID = req.body.infoID;
+async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
+    const player = req.session.player;
 
-    if (!playerID || !infoID) {
-        res.status(401).send({ message: 'Player ID or Info ID is undefined.' });
+    if (!player) {
+        res.status(401).end();
         return;
     }
 
+    const infoID = req.body.id;
     const value = req.body.value;
+
+    if (!infoID || !value) {
+        res.status(401).send({ message: 'Info ID or value is undefined.' });
+        return;
+    }
 
     await database.playerInfo.update({
         data: { value },
-        where: { player_id_info_id: { player_id: playerID, info_id: infoID } }
+        where: { player_id_info_id: { player_id: player.id, info_id: infoID } }
     });
 
     res.end();
+
+    const io = res.socket.server.io;
+    if (io) {
+        io.to('admin').emit('info changed', { playerID: player.id, infoID, value });
+    }
 }
 
 export default sessionAPI(handler);
