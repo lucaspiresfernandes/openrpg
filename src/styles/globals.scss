@@ -98,3 +98,10 @@ body {
     }
   }
 }
+
+.table {
+  color: $openrpg-text;
+  tr {
+    border-color: gray;
+  }
+}

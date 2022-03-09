@@ -1,7 +1,7 @@
 import { FormEvent, useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { diceRollResultContext, toastsContext } from '../../pages/sheet/1';
+import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Skill.module.scss';
 import config from '../../../openrpg.config.json';
@@ -19,8 +19,8 @@ type PlayerSkillFieldProps = {
 
 export default function PlayerSkillField(props: PlayerSkillFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(props.value);
-    const addToast = useContext(toastsContext);
-    const showDiceRollResult = useContext(diceRollResultContext);
+    const logError = useContext(errorLogger);
+    const showDiceRollResult = useContext(showDiceResult);
 
     function valueChange(ev: FormEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;
@@ -36,7 +36,7 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
         if (value === lastValue) return;
         setValue(value);
         api.post('/sheet/player/skill', { id: props.skill.id, value }).catch(err => {
-            addToast(err);
+            logError(err);
             setValue(lastValue);
         });
     }

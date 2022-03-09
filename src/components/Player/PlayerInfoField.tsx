@@ -2,7 +2,7 @@ import Prisma from '@prisma/client';
 import { useContext, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { toastsContext } from '../../pages/sheet/1';
+import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 
 type PlayerInfoFieldProps = {
@@ -14,14 +14,14 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
     const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
 
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     const infoID = playerInfo.info.id;
 
     async function onValueBlur() {
         if (value.length > 0) setDefined(true);
         if (lastValue === value) return;
         setValue(value);
-        api.post('/sheet/player/info', { infoID, value }).catch(addToast);
+        api.post('/sheet/player/info', { infoID, value }).catch(logError);
     }
 
     function renderField() {

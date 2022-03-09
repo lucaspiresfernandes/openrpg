@@ -17,13 +17,13 @@ import PlayerAttributeContainer from '../../components/Player/Attribute/PlayerAt
 import PlayerCharacteristicField from '../../components/Player/PlayerCharacteristicField';
 import PlayerEquipmentField from '../../components/Player/PlayerEquipmentField';
 import api from '../../utils/api';
-import AddDataModal from '../../components/Modals/AddDataModal';
+import AddDataModal from '../../components/Modals/EditDataModal';
 import PlayerItemField from '../../components/Player/PlayerItemField';
 import PlayerSkillField from '../../components/Player/PlayerSkillField';
 import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 
-export const toastsContext = React.createContext<(err: any) => void>(() => { });
-export const diceRollResultContext = React.createContext<(dices: string | ResolvedDice[], resolverKey?: string) => void>(() => { });
+export const errorLogger = React.createContext<(err: any) => void>(() => { });
+export const showDiceResult = React.createContext<(dices: string | ResolvedDice[], resolverKey?: string) => void>(() => { });
 
 const bonusDamageName = 'Dano Bônus';
 
@@ -168,14 +168,20 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         setItems([...items, modalItem]);
     }
 
-    const attributeStatus = props.playerAttributeStatus.map(stat => stat.AttributeStatus);
+    const [playerStatus, setPlayerStatus] = useState(props.playerAttributeStatus);
+
+    function onAvatarUpdate() {
+        setPlayerStatus([...playerStatus]);
+    }
+
+    const attributeStatus = playerStatus.map(stat => stat.AttributeStatus);
 
     return (
         <>
             <SheetNavbar />
-            <toastsContext.Provider value={addToast}>
-                <diceRollResultContext.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>
-                    <Container className='mt-2'>
+            <errorLogger.Provider value={addToast}>
+                <showDiceResult.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>
+                    <Container>
                         <Row className='display-5 text-center'>
                             <Col>
                                 Perfil de {config.player.role}
@@ -189,9 +195,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </DataContainer>
                             <Col>
                                 <PlayerAttributeContainer playerAttributes={props.playerAttributes}
-                                    playerStatus={props.playerAttributeStatus}
-                                    generalDiceShow={() => setGeneralDiceRollShow(true)}
-                                    avatarEditShow={() => setAvatarModalShow(true)} />
+                                    playerStatus={playerStatus}
+                                    onDiceClick={() => setGeneralDiceRollShow(true)}
+                                    onAvatarClick={() => setAvatarModalShow(true)} />
                                 <Row className='justify-content-center'>
                                     {props.playerSpecs.map(spec =>
                                         <PlayerSpecField key={spec.Spec.id} value={spec.value} Spec={spec.Spec}
@@ -214,7 +220,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             <DataContainer title='Combate' onAdd={() => setAddEquipmentShow(true)}>
                                 <Row className='mb-3 text-center'>
                                     <Col>
-                                        <Table responsive variant='dark' className='align-middle'>
+                                        <Table responsive className='align-middle'>
                                             <thead>
                                                 <tr>
                                                     <th></th>
@@ -256,7 +262,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         </Row>
                         <Row>
                             <DataContainer title='Itens' onAdd={() => setAddItemShow(true)}>
-                                <Table responsive variant='dark' className='align-middle'>
+                                <Table responsive className='align-middle'>
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -276,18 +282,19 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         </Row>
                     </Container>
                     <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)} />
-                </diceRollResultContext.Provider>
+                </showDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage} />
-                <EditAvatarModal attributeStatus={attributeStatus} show={avatarModalShow} onHide={() => setAvatarModalShow(false)} />
+                <EditAvatarModal attributeStatus={attributeStatus} show={avatarModalShow}
+                    onHide={() => setAvatarModalShow(false)} onUpdate={onAvatarUpdate} />
 
-                <AddDataModal dataName='Equipamento' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
-                    data={equipments} onAddData={onAddEquipment} />
-                <AddDataModal dataName='Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
-                    data={skills} onAddData={onAddSkill} />
-                <AddDataModal dataName='Item' show={addItemShow} onHide={() => setAddItemShow(false)}
-                    data={items} onAddData={onAddItem} />
-            </toastsContext.Provider>
+                <AddDataModal title='Adicionar Equipamento' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
+                    data={equipments} onEditData={onAddEquipment} />
+                <AddDataModal title='Adicionar Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
+                    data={skills} onEditData={onAddSkill} />
+                <AddDataModal title='Adicionar Item' show={addItemShow} onHide={() => setAddItemShow(false)}
+                    data={items} onEditData={onAddItem} />
+            </errorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
     );

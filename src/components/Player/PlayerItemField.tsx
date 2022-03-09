@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Image } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { toastsContext } from '../../pages/sheet/1';
+import { errorLogger } from '../../pages/sheet/1';
 import styles from '../../styles/Item.module.scss';
 import api from '../../utils/api';
 
@@ -19,7 +19,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     const [lastQuantity, currentQuantity, setCurrentQuantity] = useExtendedState(props.quantity);
     const [lastDescription, currentDescription, setCurrentDescription] = useExtendedState(props.description);
     const [disabled, setDisabled] = useState(false);
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     const itemID = props.item.id;
 
     function deleteItem() {
@@ -29,7 +29,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
         api.delete('/sheet/player/item', {
             data: { id: itemID }
         }).then(() => props.onDelete(itemID)).catch(err => {
-            addToast(err);
+            logError(err);
             setDisabled(false);
         });
     }
@@ -48,7 +48,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
         if (currentQuantity === lastQuantity) return;
         setCurrentQuantity(currentQuantity);
         api.post('/sheet/player/item', { id: itemID, quantity: currentQuantity }).catch(err => {
-            addToast(err);
+            logError(err);
             setCurrentQuantity(lastQuantity);
         });
     }
@@ -57,7 +57,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
         if (currentDescription === lastDescription) return;
         setCurrentDescription(currentDescription);
         api.post('/sheet/player/item', { id: itemID, currentDescription }).catch(err => {
-            addToast(err);
+            logError(err);
             setCurrentDescription(lastDescription);
         });
     }

@@ -2,7 +2,7 @@ import Prisma from '@prisma/client';
 import { FormEvent, useContext } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { diceRollResultContext, toastsContext } from '../../pages/sheet/1';
+import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Characteristic.module.scss';
 import config from '../../../openrpg.config.json';
@@ -14,8 +14,8 @@ type PlayerCharacteristicFieldProps = {
 
 export default function PlayerCharacteristicField({ value: initialValue, characteristic }: PlayerCharacteristicFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(initialValue);
-    const addToast = useContext(toastsContext);
-    const showDiceRollResult = useContext(diceRollResultContext);
+    const logError = useContext(errorLogger);
+    const showDiceRollResult = useContext(showDiceResult);
 
     const charID = characteristic.id;
 
@@ -33,7 +33,7 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
         if (value === lastValue) return;
         setValue(value);
         api.post('/sheet/player/characteristic', { value, charID }).catch(err => {
-            addToast(err);
+            logError(err);
             setValue(lastValue);
         });
     }

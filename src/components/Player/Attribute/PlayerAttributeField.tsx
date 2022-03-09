@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Col, Image, ProgressBar, Row } from 'react-bootstrap';
 import useExtendedState from '../../../hooks/useExtendedState';
-import { diceRollResultContext, toastsContext } from '../../../pages/sheet/1';
+import { showDiceResult, errorLogger } from '../../../pages/sheet/1';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';
 import config from '../../../../openrpg.config.json';
@@ -36,9 +36,9 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     const [value, setValue] = useState(playerAttribute.value);
     const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
 
-    const showDiceRollResult = useContext(diceRollResultContext);
+    const showDiceRollResult = useContext(showDiceResult);
 
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     function updateValue(ev: React.MouseEvent, coeff: number) {
         if (ev.shiftKey) coeff *= 10;
 
@@ -50,7 +50,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
 
         clearTimeout(valueTimeout);
         valueTimeout = setTimeout(() => {
-            api.post('/sheet/player/attribute', { attributeID, value: newVal }).catch(addToast);
+            api.post('/sheet/player/attribute', { attributeID, value: newVal }).catch(logError);
         }, 1500);
     }
 
@@ -76,7 +76,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
 
         api.post('/sheet/player/attribute', { attributeID, maxValue, value: valueUpdated ? maxValue : undefined })
             .catch(err => {
-                addToast(err);
+                logError(err);
                 setMaxValue(lastMaxValue);
             });
     }

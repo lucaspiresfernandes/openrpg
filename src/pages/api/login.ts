@@ -31,13 +31,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
+  const isAdmin = user.role === 'ADMIN';
+
   req.session.player = {
     id: user.id,
-    admin: user.role === 'ADMIN'
+    admin: isAdmin
   };
   await req.session.save();
 
-  res.end();
+  res.send({admin: isAdmin});
 }
 
 export default sessionAPI(handler);

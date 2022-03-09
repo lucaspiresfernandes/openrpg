@@ -11,14 +11,15 @@ import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 
-export const toastsContext = createContext<(err: any) => void>(() => { });
+export const errorLogger = createContext<(err: any) => void>(() => { });
+
 export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>): JSX.Element {
     const [toasts, addToast] = useToast();
-    
+
     return (
         <>
             <SheetNavbar />
-            <toastsContext.Provider value={addToast}>
+            <errorLogger.Provider value={addToast}>
                 <Container>
                     <Row className='display-5 text-center'>
                         <Col>
@@ -38,7 +39,7 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                         </DataContainer>
                     </Row>
                 </Container>
-            </toastsContext.Provider>
+            </errorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
     );

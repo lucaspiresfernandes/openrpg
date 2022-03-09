@@ -2,7 +2,7 @@ import Prisma from '@prisma/client';
 import { useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { toastsContext } from '../../pages/sheet/1';
+import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 
 type PlayerSpecFieldProps = {
@@ -14,14 +14,14 @@ type PlayerSpecFieldProps = {
 export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerSpec.value);
 
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     const specID = playerSpec.Spec.id;
 
     async function onValueBlur() {
         if (lastValue === value) return;
         if (playerSpec.onSpecChanged) playerSpec.onSpecChanged(playerSpec.Spec.name, value);
         setValue(value);
-        api.post('/sheet/player/spec', { specID, value }).catch(addToast);
+        api.post('/sheet/player/spec', { specID, value }).catch(logError);
     }
 
     return (

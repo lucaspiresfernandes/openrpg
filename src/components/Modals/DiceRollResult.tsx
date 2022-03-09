@@ -2,8 +2,7 @@ import { Modal, Row, Col, Button, Container, Image } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 import { useContext, useEffect, useState } from 'react';
 import { DiceResult, ResolvedDice, resolveDices } from '../../utils';
-import LoadingImage from '../LoadingImage';
-import { toastsContext } from '../../pages/sheet/1';
+import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/DiceRoll.module.scss';
 
@@ -16,7 +15,7 @@ type DiceRollResultProps = {
 
 export default function DiceRollResult(props: DiceRollResultProps) {
     const [resultDices, setResultDices] = useState<DiceResult[]>([]);
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     useEffect(() => {
         if (props.dices.length === 0) return;
         let resolved = props.dices;
@@ -28,7 +27,7 @@ export default function DiceRollResult(props: DiceRollResultProps) {
 
         api.post('/dice', { dices: resolved, resolverKey: props.resolverKey }).then(res => {
             setResultDices(res.data.results);
-        }).catch(addToast);
+        }).catch(logError);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.dices]);
 
@@ -36,7 +35,7 @@ export default function DiceRollResult(props: DiceRollResultProps) {
         if (resultDices.length === 0) return (
             <Row className='h-100'>
                 <Col>
-                    <LoadingImage />
+                    <Image src='/loading.svg' alt='Loading...' fluid />
                 </Col>
             </Row>
         );

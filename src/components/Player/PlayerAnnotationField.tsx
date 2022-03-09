@@ -1,18 +1,18 @@
 import { useContext } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { toastsContext } from '../../pages/sheet/2';
+import { errorLogger } from '../../pages/sheet/2';
 import api from '../../utils/api';
 
 export default function PlayerAnnotationsField(props: { value: string }) {
     const [lastValue, value, setValue] = useExtendedState(props.value);
     
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
 
     async function onValueBlur() {
         if (lastValue === value) return;
         setValue(value);
-        api.post('/sheet/player/annotation', { value }).catch(addToast);
+        api.post('/sheet/player/annotation', { value }).catch(logError);
     }
 
     return (

@@ -1,7 +1,7 @@
 import { AttributeStatus } from '@prisma/client';
-import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import { Container, Form } from 'react-bootstrap';
-import { toastsContext } from '../../pages/sheet/2';
+import { errorLogger } from '../../pages/sheet/2';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
 
@@ -9,11 +9,12 @@ type EditAvatarModalProps = {
     attributeStatus: AttributeStatus[];
     show?: boolean;
     onHide?(): void;
+    onUpdate(): void;
 }
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {
     const [files, setFiles] = useState<{ id: number, file: File }[]>(new Array(props.attributeStatus.length + 1));
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
 
     function onHide() {
         setFiles(new Array(props.attributeStatus.length + 1));
@@ -23,21 +24,20 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
     function onUpdateAvatar() {
         const form = new FormData();
         let anyEntry = false;
+        const ids: number[] = [];
         for (const file of files) {
             if (!file) continue;
             anyEntry = true;
             form.append('file', file.file);
             form.append('attrID', file.id.toString());
+            ids.push(file.id);
         }
 
         if (!anyEntry) return;
 
         api.post('/sheet/player/avatar', form, {
             headers: { 'Content-Type': 'multipart/form-data' }
-        }).then(res => {
-            
-            console.log(res.status);
-        }).catch(addToast);
+        }).then(props.onUpdate).catch(logError);
     }
 
     function onFileChange(index: number, id: number, ev: ChangeEvent<HTMLInputElement>) {

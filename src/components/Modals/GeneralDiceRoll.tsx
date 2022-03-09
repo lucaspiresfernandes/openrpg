@@ -3,7 +3,7 @@ import { Button, Col, Container, Modal, Row, Image } from 'react-bootstrap';
 import { clamp, ResolvedDice } from '../../utils';
 import SheetModal from './SheetModal';
 import styles from '../../styles/GeneralDice.module.scss';
-import { diceRollResultContext } from '../../pages/sheet/1';
+import { showDiceResult } from '../../pages/sheet/1';
 
 type Dice = {
     name: string,
@@ -48,7 +48,7 @@ export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
         roll: 20
     }
     ]);
-    const showDiceRollResult = useContext(diceRollResultContext);
+    const showDiceRollResult = useContext(showDiceResult);
 
     function onRoll() {
         const rollDices: ResolvedDice[] = [];

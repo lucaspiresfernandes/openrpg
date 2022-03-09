@@ -19,13 +19,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     try {
         const url = getImageURL(playerID, statusID);
-        console.log(url);
         const response = await api.get(url, { responseType: 'arraybuffer', timeout: 1000 });
         res.setHeader('content-type', response.headers['content-type']);
         res.end(response.data, 'binary');
     }
     catch (err) {
-        res.status(500).end();
+        res.status(404).end();
     }
 }
 

@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import { toastsContext } from '../../../pages/sheet/1';
+import { errorLogger } from '../../../pages/sheet/1';
 import api from '../../../utils/api';
 
 type PlayerAttributeStatusFieldProps = {
@@ -19,7 +19,7 @@ export default function PlayerAttributeStatusField({ playerAttributeStatus, onSt
     const id = playerAttributeStatus.AttributeStatus.id;
     const attrID = playerAttributeStatus.AttributeStatus.attribute_id;
     const name = playerAttributeStatus.AttributeStatus.name;
-    const addToast = useContext(toastsContext);
+    const logError = useContext(errorLogger);
     const [checked, setChecked] = useState(playerAttributeStatus.value);
 
     function changeValue() {
@@ -28,7 +28,7 @@ export default function PlayerAttributeStatusField({ playerAttributeStatus, onSt
         api.post('/sheet/player/attribute/status', { attrStatusID: id, value }).then(() => {
             if (onStatusChanged) onStatusChanged(id);
         }).catch(err => {
-            addToast(err);
+            logError(err);
             setChecked(!value);
         });
     }

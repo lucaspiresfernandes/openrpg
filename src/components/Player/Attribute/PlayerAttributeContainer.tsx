@@ -10,13 +10,15 @@ type PlayerAttributeContainerProps = {
         maxValue: number;
         Attribute: Attribute
     }[];
-    playerStatus: {
-        value: boolean;
-        AttributeStatus: AttributeStatus
-    }[];
-    generalDiceShow?(): void;
-    avatarEditShow?(): void;
+    playerStatus: PlayerStatus[];
+    onDiceClick?(): void;
+    onAvatarClick?(): void;
 }
+
+export type PlayerStatus = {
+    value: boolean;
+    AttributeStatus: AttributeStatus;
+};
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
     const [status, setStatus] = useState<{ id: number, value: boolean }[]>(props.playerStatus.map(stat => {
@@ -47,10 +49,11 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
         <>
             <Row>
                 <Row className='mb-2 justify-content-center'>
-                    <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.avatarEditShow} />
+                    <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.onAvatarClick}
+                        playerStatus={props.playerStatus} />
                     <Col xs={4} md={3} xl={2} className='align-self-center'>
                         <Image fluid src='/dice20.png' alt='Dado Geral'
-                            className='clickable' onClick={props.generalDiceShow} />
+                            className='clickable' onClick={props.onDiceClick} />
                     </Col>
                 </Row>
             </Row>

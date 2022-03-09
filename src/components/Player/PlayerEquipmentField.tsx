@@ -2,7 +2,7 @@ import { Equipment, Skill } from '@prisma/client';
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Form, Image } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { diceRollResultContext, toastsContext } from '../../pages/sheet/1';
+import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Equipment.module.scss';
 
@@ -29,15 +29,15 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo || 0);
     const [disabled, setDisabled] = useState(false);
 
-    const addToast = useContext(toastsContext);
-    const showDiceRollResult = useContext(diceRollResultContext);
+    const logError = useContext(errorLogger);
+    const showDiceRollResult = useContext(showDiceResult);
     const equipmentID = props.equipment.id;
 
     function usingChange() {
         const _using = !using;
         setUsing(_using);
         api.post('/sheet/player/equipment', { equipmentID, using: _using }).catch(err => {
-            addToast(err);
+            logError(err);
             setUsing(using);
         });
     }
@@ -56,7 +56,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
         if (currentAmmo === lastAmmo) return;
         setCurrentAmmo(currentAmmo);
         api.post('/sheet/player/equipment', { equipmentID, currentAmmo }).catch(err => {
-            addToast(err);
+            logError(err);
             setCurrentAmmo(lastAmmo);
         });
     }
@@ -76,7 +76,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
         api.delete('/sheet/player/equipment', {
             data: { equipmentID }
         }).then(() => props.onDelete(equipmentID)).catch(err => {
-            addToast(err);
+            logError(err);
             setDisabled(false);
         });
     }

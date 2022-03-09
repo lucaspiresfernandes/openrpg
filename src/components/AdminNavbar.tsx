@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Container, Navbar, Nav } from 'react-bootstrap';
 import api from '../utils/api';
 
-export default function SheetNavbar() {
+export default function AdminNavbar() {
     const router = useRouter();
 
     function logout() {
@@ -17,8 +17,8 @@ export default function SheetNavbar() {
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                     <Nav className='me-auto' navbarScroll>
-                        <Link href='/sheet/1' passHref><Nav.Link>Página 1</Nav.Link></Link>
-                        <Link href='/sheet/2' passHref><Nav.Link>Página 2</Nav.Link></Link>
+                        <Link href='/sheet/admin/1' passHref><Nav.Link>Painel Geral</Nav.Link></Link>
+                        <Link href='/sheet/admin/2' passHref><Nav.Link>Editor</Nav.Link></Link>
                     </Nav>
                     <Nav>
                         <Nav.Link href='#' onClick={logout}>Sair</Nav.Link>

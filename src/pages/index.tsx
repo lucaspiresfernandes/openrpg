@@ -36,8 +36,11 @@ export default function Home(): JSX.Element {
     }
     else {
       try {
-        await api.post('/login', { username, password });
-        router.replace('/sheet/1');
+        await api.post('/login', { username, password }).then(res => {
+          if (res.data.admin)
+            return router.replace('/sheet/admin/1');
+          router.replace('/sheet/1');
+        });
       }
       catch (err) {
         console.error(err);

@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { Container, Form } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 
-type AddDataModalProps = {
+type EditDataModalProps = {
     show: boolean;
     onHide(): void;
-    onAddData(id: number): void;
+    onEditData(id: number): void;
     data: { id: number, name: string }[];
-    dataName: string;
+    title: string;
 }
 
-export default function AddDataModal(props: AddDataModalProps) {
+export default function EditDataModal(props: EditDataModalProps) {
     const [value, setValue] = useState(0);
 
     useEffect(() => {
@@ -19,8 +19,8 @@ export default function AddDataModal(props: AddDataModalProps) {
     }, [props.data]);
 
     return (
-        <SheetModal title={`Adicionar ${props.dataName}`} show={props.show} onHide={props.onHide}
-            applyButton={{ name: 'Adicionar', onApply: () => props.onAddData(value) }}>
+        <SheetModal title={props.title} show={props.show} onHide={props.onHide}
+            applyButton={{ name: 'Adicionar', onApply: () => props.onEditData(value) }}>
             <Container fluid>
                 <Form.Select className='theme-element' value={value} onChange={ev => setValue(parseInt(ev.currentTarget.value))}>
                     {props.data.map(eq =>
