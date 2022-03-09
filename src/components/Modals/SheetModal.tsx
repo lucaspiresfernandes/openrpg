@@ -3,7 +3,7 @@ import { Button, Modal, ModalProps } from 'react-bootstrap';
 
 interface SheetModalProps extends ModalProps {
     title: string;
-    children?: JSX.Element;
+    children?: React.ReactElement;
     applyButton?: { name: string, onApply(ev: MouseEvent | undefined): MouseEventHandler | void };
 }
 

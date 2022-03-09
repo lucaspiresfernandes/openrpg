@@ -9,13 +9,12 @@ import config from '../../../openrpg.config.json';
 import prisma from '../../utils/database';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
-import GeneralDiceRoll from '../../components/Modals/GeneralDiceRoll';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 
 export const toastsContext = createContext<(err: any) => void>(() => { });
 export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>): JSX.Element {
     const [toasts, addToast] = useToast();
-
+    
     return (
         <>
             <SheetNavbar />
@@ -28,7 +27,7 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                     </Row>
                     <Row>
                         <DataContainer title='Anotações' htmlFor='playerAnnotations'>
-                            <PlayerAnnotationsField value={props.playerNotes?.toString() || ''} />
+                            <PlayerAnnotationsField value={props.playerNotes as string} />
                         </DataContainer>
                     </Row>
                     <Row>
@@ -74,7 +73,7 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
     return {
         props: {
             playerExtraInfo: results[0],
-            playerNotes: results[1]
+            playerNotes: results[1]?.value
         }
     };
 }

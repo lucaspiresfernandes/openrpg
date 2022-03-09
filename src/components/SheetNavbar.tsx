@@ -9,13 +9,15 @@ export default function SheetNavbar() {
     function logout() {
         api.delete('/player').then(() => router.replace('/'));
     }
+    console.log();
 
     return (
-        <Navbar bg='info' sticky='top'>
+        <Navbar bg='info' sticky='top' expand='sm'>
             <Container fluid>
                 <Navbar.Brand>Open RPG</Navbar.Brand>
+                <Navbar.Toggle />
                 <Navbar.Collapse>
-                    <Nav className='me-auto'>
+                    <Nav className='me-auto' navbarScroll>
                         <Link href='/sheet/1' passHref><Nav.Link>Página 1</Nav.Link></Link>
                         <Link href='/sheet/2' passHref><Nav.Link>Página 2</Nav.Link></Link>
                     </Nav>

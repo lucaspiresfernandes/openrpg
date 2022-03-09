@@ -6,7 +6,7 @@ import api from '../../utils/api';
 
 export default function PlayerAnnotationsField(props: { value: string }) {
     const [lastValue, value, setValue] = useExtendedState(props.value);
-
+    
     const addToast = useContext(toastsContext);
 
     async function onValueBlur() {

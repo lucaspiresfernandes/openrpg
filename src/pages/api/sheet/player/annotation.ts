@@ -11,6 +11,7 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 async function handlePost(req: NextApiRequest, res: SocketIOApiResponse) {
     const playerID = req.session.player.id;
     const value = req.body.value;
+    
 
     if (!playerID || !value) {
         res.status(401).send({ message: 'Player ID or Value is undefined.' });

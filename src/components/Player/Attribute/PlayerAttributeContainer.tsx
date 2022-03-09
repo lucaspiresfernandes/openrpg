@@ -15,6 +15,7 @@ type PlayerAttributeContainerProps = {
         AttributeStatus: AttributeStatus
     }[];
     generalDiceShow?(): void;
+    avatarEditShow?(): void;
 }
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
@@ -46,7 +47,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
         <>
             <Row>
                 <Row className='mb-2 justify-content-center'>
-                    <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} />
+                    <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.avatarEditShow} />
                     <Col xs={4} md={3} xl={2} className='align-self-center'>
                         <Image fluid src='/dice20.png' alt='Dado Geral'
                             className='clickable' onClick={props.generalDiceShow} />

@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import React, { useState } from 'react';
-import { Col, Container, Row, Table } from 'react-bootstrap';
+import { Col, Container, Form, Row, Table } from 'react-bootstrap';
 import SheetNavbar from '../../components/SheetNavbar';
 import database from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
@@ -20,6 +20,7 @@ import api from '../../utils/api';
 import AddDataModal from '../../components/Modals/AddDataModal';
 import PlayerItemField from '../../components/Player/PlayerItemField';
 import PlayerSkillField from '../../components/Player/PlayerSkillField';
+import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 
 export const toastsContext = React.createContext<(err: any) => void>(() => { });
 export const diceRollResultContext = React.createContext<(dices: string | ResolvedDice[], resolverKey?: string) => void>(() => { });
@@ -70,6 +71,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
     //Dices
     const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
     const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
+
+    //Avatar
+    const [avatarModalShow, setAvatarModalShow] = useState(false);
 
     //Data
     const [bonusDamage, setBonusDamage] = useState(props.playerSpecs.find(spec => spec.Spec.name === bonusDamageName)?.value);
@@ -164,6 +168,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         setItems([...items, modalItem]);
     }
 
+    const attributeStatus = props.playerAttributeStatus.map(stat => stat.AttributeStatus);
+
     return (
         <>
             <SheetNavbar />
@@ -184,7 +190,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             <Col>
                                 <PlayerAttributeContainer playerAttributes={props.playerAttributes}
                                     playerStatus={props.playerAttributeStatus}
-                                    generalDiceShow={() => setGeneralDiceRollShow(true)} />
+                                    generalDiceShow={() => setGeneralDiceRollShow(true)}
+                                    avatarEditShow={() => setAvatarModalShow(true)} />
                                 <Row className='justify-content-center'>
                                     {props.playerSpecs.map(spec =>
                                         <PlayerSpecField key={spec.Spec.id} value={spec.value} Spec={spec.Spec}
@@ -272,6 +279,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                 </diceRollResultContext.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage} />
+                <EditAvatarModal attributeStatus={attributeStatus} show={avatarModalShow} onHide={() => setAvatarModalShow(false)} />
+
                 <AddDataModal dataName='Equipamento' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
                     data={equipments} onAddData={onAddEquipment} />
                 <AddDataModal dataName='Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
