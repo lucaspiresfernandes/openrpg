@@ -5,10 +5,10 @@ import { DiceResult, ResolvedDice } from '../../utils';
 import DataContainer from '../DataContainer';
 
 type DiceListProps = {
-    players: DiceListPlayer[]
+    players: PlayerName[]
 }
 
-export type DiceListPlayer = {
+export type PlayerName = {
     id: number;
     name: string;
 }

@@ -134,11 +134,6 @@ body {
   width: 0;
 }
 
-.list-group-item {
-  @extend .theme-element;
-  background-color: $openrpg-list-group-color;
-}
-
 .dice-list > li:nth-child(odd) {
   background-color: lighten($openrpg-list-group-color, 50%);
 }
@@ -146,4 +141,16 @@ body {
 .player-container {
   @extend .data-container;
   background-color: $dark;
+}
+
+.list-group-item {
+  @extend .theme-element;
+  background-color: $openrpg-list-group-color;
+
+  &.selected {
+    background-color: $dark;
+    input {
+      background-color: $dark !important;
+    }
+  }
 }

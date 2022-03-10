@@ -37,7 +37,6 @@ export default function useSocket(onSocketLoaded: (socket: Socket) => void, room
 
         return () => {
             socket.current?.removeAllListeners();
-            socket.current = null;
         };
     });
 }
