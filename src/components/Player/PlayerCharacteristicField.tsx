@@ -2,11 +2,11 @@ import Prisma from '@prisma/client';
 import { ChangeEvent, useContext } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Characteristic.module.scss';
 import config from '../../../openrpg.config.json';
 import BottomTextInput from '../BottomTextInput';
+import { ErrorLogger, ShowDiceResult } from '../../contexts';
 
 type PlayerCharacteristicFieldProps = {
     value: number;
@@ -15,8 +15,8 @@ type PlayerCharacteristicFieldProps = {
 
 export default function PlayerCharacteristicField({ value: initialValue, characteristic }: PlayerCharacteristicFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(initialValue);
-    const logError = useContext(errorLogger);
-    const showDiceRollResult = useContext(showDiceResult);
+    const logError = useContext(ErrorLogger);
+    const showDiceRollResult = useContext(ShowDiceResult);
 
     const charID = characteristic.id;
 
@@ -45,7 +45,7 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
     }
 
     return (
-        <Col xs md={4} xl={3} className='my-2'>
+        <Col xs={6} md={4} xl={3} className='my-2'>
             {characteristic.rollable &&
                 <Row>
                     <Col className='mb-2'>

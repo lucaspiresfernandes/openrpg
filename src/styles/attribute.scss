@@ -1,0 +1,67 @@
+.Vida {
+    $background: #5a1e1e;
+    $foreground: #b62323;
+
+    &.progress {
+        height: $proggress-bar-height;
+        background-color: $background;
+        .progress-bar {
+            background-color: $foreground;
+        }
+    }
+
+    &.attribute-color {
+        color: $foreground;
+    }
+}
+
+.Armadura {
+    $background: #916b03;
+    $foreground: #ffbb00;
+
+    &.progress {
+        height: $proggress-bar-height;
+        background-color: $background;
+        .progress-bar {
+            background-color: $foreground;
+        }
+    }
+
+    &.attribute-color {
+        color: $foreground;
+    }
+}
+
+.Sanidade {
+    $background: #2c4470;
+    $foreground: #1f3ce0;
+
+    &.progress {
+        height: $proggress-bar-height;
+        background-color: $background;
+        .progress-bar {
+            background-color: $foreground;
+        }
+    }
+
+    &.attribute-color {
+        color: $foreground;
+    }
+}
+
+.Magia {
+    $background: #682f5b;
+    $foreground: #ae00ff;
+
+    &.progress {
+        height: $proggress-bar-height;
+        background-color: $background;
+        .progress-bar {
+            background-color: $foreground;
+        }
+    }
+
+    &.attribute-color {
+        color: $foreground;
+    }
+}

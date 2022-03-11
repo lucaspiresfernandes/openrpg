@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../../utils';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method !== 'POST') {
         res.status(401).end();
         return;
@@ -36,6 +37,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.to('admin').emit('attributeChange', player.id, attributeID, value, maxValue);
 }
 
 export default sessionAPI(handler);

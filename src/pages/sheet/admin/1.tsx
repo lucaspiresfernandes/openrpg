@@ -1,24 +1,34 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { createContext } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { useState } from 'react';
+import { Col, Container, Image, Row } from 'react-bootstrap';
 import AdminGlobalConfigurations from '../../../components/Admin/AdminGlobalConfigurations';
 import CombatContainer from '../../../components/Admin/CombatContainer';
-import DiceContainer from '../../../components/Admin/DiceContainer';
 import DiceList, { PlayerName } from '../../../components/Admin/DiceList';
 import NPCContainer from '../../../components/Admin/NPCContainer';
-import PlayerContainer from '../../../components/Admin/PlayerContainer';
 import AdminNavbar from '../../../components/AdminNavbar';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
+import GeneralDiceRoll from '../../../components/Modals/GeneralDiceRoll';
 import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
 import useToast from '../../../hooks/useToast';
 import prisma from '../../../utils/database';
+import DiceRollResultModal from '../../../components/Modals/DiceRollResult';
 import { sessionSSR } from '../../../utils/session';
+import { ResolvedDice } from '../../../utils';
+import PlayerManager from '../../../components/Admin/PlayerManager';
+import useSocket, { SocketIO } from '../../../hooks/useSocket';
+import { ErrorLogger, RetrieveSocket } from '../../../contexts';
 
-export const errorLogger = createContext<(err: any) => void>(() => { });
-
-export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmin1Props>) {
+export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
+    const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
+    const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
+    const [socket, setSocket] = useState<SocketIO | null>(null);
+
+    useSocket(socket => {
+        socket.emit('roomJoin', 'admin');
+        setSocket(socket);
+    });
 
     const players: PlayerName[] = props.players.map(player => {
         return {
@@ -29,49 +39,60 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getAdmi
     return (
         <>
             <AdminNavbar />
-            <errorLogger.Provider value={addToast}>
-                <Container>
-                    <Row className='display-5 text-center'>
-                        <Col>
-                            Painel do Administrador
-                        </Col>
-                    </Row>
-                    <Row className='my-4'>
-                        <Col className='text-center h5'>
-                            <AdminGlobalConfigurations environment={props.environment} />
-                        </Col>
-                    </Row>
-                    <Row className='justify-content-center'>
-                        {props.players.map(player =>
-                            <PlayerContainer key={player.id} id={player.id}
-                                info={player.PlayerInfo} attributes={player.PlayerAttributes}
-                                specs={player.PlayerSpec} characteristics={player.PlayerCharacteristic}
-                                equipments={player.PlayerEquipment} items={player.PlayerItem} />
-                        )}
-                    </Row>
-                    <Row className='my-3 text-center'>
-                        <DiceContainer />
-                        <CombatContainer players={players} />
-                    </Row>
-                    <Row className='my-3'>
-                        <DiceList players={players} />
-                        <NPCContainer />
-                    </Row>
-                    <Row className='my-3'>
-                        <DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
-                            <PlayerAnnotationsField value={props.notes?.value} />
-                        </DataContainer>
-                    </Row>
-                </Container>
-            </errorLogger.Provider>
+            <ErrorLogger.Provider value={addToast}>
+                <RetrieveSocket.Provider value={socket}>
+                    <Container>
+                        <Row className='display-5 text-center'>
+                            <Col>Painel do Administrador</Col>
+                        </Row>
+                        <Row className='my-4'>
+                            <Col className='text-center h5'>
+                                <AdminGlobalConfigurations environment={props.environment} />
+                            </Col>
+                        </Row>
+                        <Row className='justify-content-center'>
+                            <PlayerManager players={props.players} />
+                        </Row>
+                        <Row className='my-3 text-center'>
+                            <DataContainer xs={12} lg title='Rolagem'>
+                                <Row className='mb-3 justify-content-center'>
+                                    <Col xs={3}>
+                                        <Row>
+                                            <Col className='h5'>Geral</Col>
+                                        </Row>
+                                        <Row>
+                                            <Image fluid src='/dice20.png' alt='Dado'
+                                                className='clickable' onClick={() => setGeneralDiceRollShow(true)} />
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                            <CombatContainer players={players} />
+                        </Row>
+                        <Row className='my-3'>
+                            <DiceList players={players} />
+                            <NPCContainer />
+                        </Row>
+                        <Row className='my-3'>
+                            <DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
+                                <PlayerAnnotationsField value={props.notes?.value} />
+                            </DataContainer>
+                        </Row>
+                    </Container>
+                </RetrieveSocket.Provider>
+                <GeneralDiceRoll show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
+                    showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
+                <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
+                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} />
+            </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
     );
 }
 
-async function getAdmin1Props(ctx: GetServerSidePropsContext) {
-    const user = ctx.req.session.player;
-    if (!user) {
+async function getSSP(ctx: GetServerSidePropsContext) {
+    const player = ctx.req.session.player;
+    if (!player || !player.admin) {
         return {
             redirect: {
                 destination: '/',
@@ -93,6 +114,7 @@ async function getAdmin1Props(ctx: GetServerSidePropsContext) {
             where: { role: 'PLAYER' },
             select: {
                 id: true,
+                PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
                 PlayerInfo: {
                     where: { Info: { name: { in: ['Nome'] } } },
                     select: { Info: true, value: true },
@@ -118,7 +140,7 @@ async function getAdmin1Props(ctx: GetServerSidePropsContext) {
             }
         }),
         prisma.playerNote.findUnique({
-            where: { player_id: user.id },
+            where: { player_id: player.id },
             select: { value: true }
         }),
     ]);
@@ -132,4 +154,4 @@ async function getAdmin1Props(ctx: GetServerSidePropsContext) {
     };
 }
 
-export const getServerSideProps = sessionSSR(getAdmin1Props);
+export const getServerSideProps = sessionSSR(getSSP);

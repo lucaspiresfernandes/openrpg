@@ -1,8 +1,8 @@
 import Prisma from '@prisma/client';
 import { useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
+import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
-import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
@@ -15,7 +15,7 @@ type PlayerSpecFieldProps = {
 export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerSpec.value);
 
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
     const specID = playerSpec.Spec.id;
 
     async function onValueBlur() {

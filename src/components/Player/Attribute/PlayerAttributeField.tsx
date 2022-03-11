@@ -1,13 +1,13 @@
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Col, Image, ProgressBar, Row } from 'react-bootstrap';
 import useExtendedState from '../../../hooks/useExtendedState';
-import { showDiceResult, errorLogger } from '../../../pages/sheet/1';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';
 import config from '../../../../openrpg.config.json';
 import styles from '../../../styles/Attribute.module.scss';
 import PlayerAttributeStatusField from './PlayerAttributeStatusField';
 import BottomTextInput from '../../BottomTextInput';
+import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 
 type PlayerAttributeFieldProps = {
     playerAttribute: {
@@ -37,9 +37,9 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     const [value, setValue] = useState(playerAttribute.value);
     const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
 
-    const showDiceRollResult = useContext(showDiceResult);
+    const showDiceRollResult = useContext(ShowDiceResult);
+    const logError = useContext(ErrorLogger);
 
-    const logError = useContext(errorLogger);
     function updateValue(ev: React.MouseEvent, coeff: number) {
         if (ev.shiftKey) coeff *= 10;
 
@@ -52,7 +52,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
         clearTimeout(valueTimeout);
         valueTimeout = setTimeout(() => {
             api.post('/sheet/player/attribute', { id: attributeID, value: newVal }).catch(logError);
-        }, 1500);
+        }, 1000);
     }
 
     function updateMaxValue(ev: FormEvent<HTMLInputElement>) {

@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Image } from 'react-bootstrap';
+import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
-import { errorLogger } from '../../pages/sheet/1';
 import styles from '../../styles/Item.module.scss';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
@@ -20,7 +20,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     const [lastQuantity, currentQuantity, setCurrentQuantity] = useExtendedState(props.quantity);
     const [lastDescription, currentDescription, setCurrentDescription] = useExtendedState(props.description);
     const [disabled, setDisabled] = useState(false);
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
     const itemID = props.item.id;
 
     function deleteItem() {
@@ -66,7 +66,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteItem} disabled={disabled} className={styles.trashContainer}>
+                <Button onClick={deleteItem} disabled={disabled} className={styles.trashContainer} size='sm' variant='danger'>
                     <Image alt='Lixo' src='/trash.svg' className={`${styles.trash} clickable`} />
                 </Button>
             </td>
@@ -76,7 +76,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
                     onChange={ev => setCurrentDescription(ev.currentTarget.value)} onBlur={descriptionBlur} />
             </td>
             <td>
-                <BottomTextInput className={`${styles.quantity} text-center`} maxLength={3}
+                <BottomTextInput type='number' className={`${styles.quantity}`} maxLength={3}
                     value={currentQuantity} onChange={quantityChange}
                     onBlur={quantityBlur} />
             </td>

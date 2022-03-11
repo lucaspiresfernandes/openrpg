@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     const io = res.socket.server.io;
 
     if (dices.length === 1 && dices[0].num === 1)
-        io?.to(`portrait${player.id}`).emit('dice roll');
+        io?.to(`portrait${player.id}`).emit('diceRoll');
 
     const results = new Array<DiceResult>(dices.length);
 
@@ -79,8 +79,9 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
             });
         }));
         res.send({ results });
-        if (!player.admin) io.to('admin').emit('dice result', { playerID: player.id, dices, results });
-        if (dices.length === 1 && dices[0].num === 1) io.to(`portrait${player.id}`).emit('dice result', { results });
+        
+        if (!player.admin) io?.to('admin').emit('diceResult', player.id, dices, results);
+        if (dices.length === 1 && dices[0].num === 1) io?.to(`portrait${player.id}`).emit('diceResult', player.id, dices, results);
     }
     catch (err) {
         console.error(err);

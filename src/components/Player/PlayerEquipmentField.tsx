@@ -2,10 +2,10 @@ import { Equipment, Skill } from '@prisma/client';
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Form, Image } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Equipment.module.scss';
 import BottomTextInput from '../BottomTextInput';
+import { ErrorLogger, ShowDiceResult } from '../../contexts';
 
 type PlayerEquipmentFieldProps = {
     currentAmmo: number | null;
@@ -30,8 +30,8 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo || 0);
     const [disabled, setDisabled] = useState(false);
 
-    const logError = useContext(errorLogger);
-    const showDiceRollResult = useContext(showDiceResult);
+    const logError = useContext(ErrorLogger);
+    const showDiceRollResult = useContext(ShowDiceResult);
     const equipmentID = props.equipment.id;
 
     function usingChange() {
@@ -85,7 +85,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteEquipment} disabled={disabled}>
+                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='danger'>
                     <Image alt='Lixo' src='/trash.svg' className={`${styles.trash} clickable`} />
                 </Button>
             </td>

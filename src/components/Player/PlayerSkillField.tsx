@@ -1,11 +1,11 @@
 import { FormEvent, useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
-import { showDiceResult, errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/Skill.module.scss';
 import config from '../../../openrpg.config.json';
 import BottomTextInput from '../BottomTextInput';
+import { ErrorLogger, ShowDiceResult } from '../../contexts';
 
 type PlayerSkillFieldProps = {
     value: number;
@@ -20,8 +20,8 @@ type PlayerSkillFieldProps = {
 
 export default function PlayerSkillField(props: PlayerSkillFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(props.value);
-    const logError = useContext(errorLogger);
-    const showDiceRollResult = useContext(showDiceResult);
+    const logError = useContext(ErrorLogger);
+    const showDiceRollResult = useContext(ShowDiceResult);
 
     function valueChange(ev: FormEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;

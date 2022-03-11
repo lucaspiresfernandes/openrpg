@@ -1,15 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../utils';
 import prisma from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method === 'POST') return handlePost(req, res);
     if (req.method === 'PUT') return handlePut(req, res);
     if (req.method === 'DELETE') return handleDelete(req, res);
     res.status(404).send({ message: 'Supported methods: POST | PUT | DELETE' });
 }
 
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
     const itemID = req.body.id;
 
@@ -23,8 +24,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const quantity = req.body.quantity as number;
-    const currentDescription = req.body.currentDescription as string;
+    const quantity = req.body.quantity;
+    const currentDescription = req.body.currentDescription;
 
     await prisma.playerItem.update({
         where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
@@ -32,9 +33,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.to('admin').emit('itemChange', player.id, itemID, currentDescription, quantity);
 }
 
-async function handlePut(req: NextApiRequest, res: NextApiResponse) {
+async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
 
     if (!player) {
@@ -73,9 +76,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     item.currentDescription = item.Item.description;
 
     res.send({ item });
+
+    res.socket.server.io?.to('admin').emit('itemAdd', player.id, item);
 }
 
-async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
+async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
 
     if (!player) {
@@ -95,6 +100,8 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.to('admin').emit('itemRemove', player.id, itemID);
 }
 
 export default sessionAPI(handler);

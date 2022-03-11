@@ -1,7 +1,7 @@
 import { AttributeStatus } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
 import { Container, Form } from 'react-bootstrap';
-import { errorLogger } from '../../pages/sheet/2';
+import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
 
@@ -14,7 +14,7 @@ type EditAvatarModalProps = {
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {
     const [files, setFiles] = useState<{ id: number, file: File }[]>(new Array(props.attributeStatus.length + 1));
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
 
     function onHide() {
         setFiles(new Array(props.attributeStatus.length + 1));

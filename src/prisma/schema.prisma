@@ -172,7 +172,7 @@ model PlayerEquipment {
   player_id    Int
   Equipment    Equipment @relation(fields: [equipment_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   equipment_id Int
-  currentAmmo  Int?
+  currentAmmo  Int
   using        Boolean
 
   @@id([player_id, equipment_id])

@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import { errorLogger } from '../../../pages/sheet/1';
+import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 
 type PlayerAttributeStatusFieldProps = {
@@ -19,7 +19,7 @@ export default function PlayerAttributeStatusField({ playerAttributeStatus, onSt
     const id = playerAttributeStatus.AttributeStatus.id;
     const attrID = playerAttributeStatus.AttributeStatus.attribute_id;
     const name = playerAttributeStatus.AttributeStatus.name;
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
     const [checked, setChecked] = useState(playerAttributeStatus.value);
 
     function changeValue() {

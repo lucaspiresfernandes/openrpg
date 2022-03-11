@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
+import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
-import { errorLogger } from '../../pages/sheet/2';
 import api from '../../utils/api';
 
 export default function PlayerAnnotationsField(props: { value?: string }) {
     const [lastValue, value, setValue] = useExtendedState(props.value || '');
     
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
 
     async function onValueBlur() {
         if (lastValue === value) return;

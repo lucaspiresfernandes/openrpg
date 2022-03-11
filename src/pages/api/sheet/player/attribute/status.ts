@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../../utils';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method !== 'POST') {
         res.status(401).end();
         return;
@@ -35,6 +36,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.emit('attributeStatusChange', player.id, statusID, value);
 }
 
 export default sessionAPI(handler);

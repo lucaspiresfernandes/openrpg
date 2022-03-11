@@ -1,8 +1,8 @@
 import Prisma from '@prisma/client';
 import { useContext, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
+import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
-import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
@@ -15,7 +15,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
     const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
 
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
     const infoID = playerInfo.info.id;
 
     async function onValueBlur() {

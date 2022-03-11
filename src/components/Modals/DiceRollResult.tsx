@@ -2,9 +2,9 @@ import { Modal, Row, Col, Button, Container, Image } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 import { useContext, useEffect, useState } from 'react';
 import { DiceResult, ResolvedDice, resolveDices } from '../../utils';
-import { errorLogger } from '../../pages/sheet/1';
 import api from '../../utils/api';
 import styles from '../../styles/DiceRoll.module.scss';
+import { ErrorLogger } from '../../contexts';
 
 type DiceRollResultProps = {
     onHide(): void;
@@ -15,7 +15,7 @@ type DiceRollResultProps = {
 
 export default function DiceRollResult(props: DiceRollResultProps) {
     const [resultDices, setResultDices] = useState<DiceResult[]>([]);
-    const logError = useContext(errorLogger);
+    const logError = useContext(ErrorLogger);
     useEffect(() => {
         if (props.dices.length === 0) return;
         let resolved = props.dices;

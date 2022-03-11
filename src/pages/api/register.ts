@@ -1,16 +1,17 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest } from 'next';
 import database from '../../utils/database';
 import { sessionAPI } from '../../utils/session';
 import { hash } from '../../utils/encryption';
 import config from '../../../openrpg.config.json';
 import { Player } from '@prisma/client';
+import { NextApiResponseServerIO } from '../../utils';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
   if (req.method === 'POST') return handlePost(req, res);
   res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
   const username = req.body.username as string;
   const plainPassword = req.body.password as string;
   const adminKey = req.body.adminKey as string;

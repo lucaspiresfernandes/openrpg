@@ -1,15 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../utils';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method === 'POST') {
         return handlePost(req, res);
     }
     res.status(404).end();
 }
 
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
 
     if (!player) {
@@ -32,6 +33,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.emit('characteristicChange', player.id, charID, value);
 }
 
 export default sessionAPI(handler);

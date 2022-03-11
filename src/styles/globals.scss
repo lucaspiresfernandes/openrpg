@@ -1,5 +1,6 @@
 @import "./variables";
 @import "bootstrap";
+@import './attribute';
 
 html,
 body {
@@ -66,37 +67,6 @@ body {
 .modal-footer {
   background-color: $openrpg-primary;
   border-color: $openrpg-secondary;
-}
-
-.progress {
-  height: $proggress-bar-height;
-  &.Vida {
-    background-color: #5a1e1e;
-    .progress-bar {
-      background-color: #b62323;
-    }
-  }
-
-  &.Armadura {
-    background-color: #5a1e1e;
-    .progress-bar {
-      background-color: #b62323;
-    }
-  }
-
-  &.Sanidade {
-    background-color: #5a1e1e;
-    .progress-bar {
-      background-color: #b62323;
-    }
-  }
-
-  &.Magia {
-    background-color: #5a1e1e;
-    .progress-bar {
-      background-color: #b62323;
-    }
-  }
 }
 
 .table {

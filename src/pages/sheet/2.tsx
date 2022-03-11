@@ -1,5 +1,4 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { createContext } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import DataContainer from '../../components/DataContainer';
 import SheetNavbar from '../../components/SheetNavbar';
@@ -10,16 +9,33 @@ import prisma from '../../utils/database';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
-
-export const errorLogger = createContext<(err: any) => void>(() => { });
+import { ErrorLogger } from '../../contexts';
+import { useEffect, useState } from 'react';
+import useSocket, { SocketIO } from '../../hooks/useSocket';
+import api from '../../utils/api';
+import Router from 'next/router';
 
 export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>): JSX.Element {
     const [toasts, addToast] = useToast();
+    const [socket, setSocket] = useState<SocketIO | null>(null);
+
+    useSocket(socket => {
+        socket.emit('roomJoin', `player${props.playerID}`);
+        setSocket(socket);
+    });
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.on('playerDelete', () => api.delete('/player').then(() => Router.replace('/')));
+        return () => {
+            socket.off('playerDelete');
+        };
+    }, [socket]);
 
     return (
         <>
             <SheetNavbar />
-            <errorLogger.Provider value={addToast}>
+            <ErrorLogger.Provider value={addToast}>
                 <Container>
                     <Row className='display-5 text-center'>
                         <Col>
@@ -39,21 +55,23 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                         </DataContainer>
                     </Row>
                 </Container>
-            </errorLogger.Provider>
+            </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
     );
 }
 
 async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
-    const playerID = ctx.req.session.player.id;
-    if (!playerID) {
+    const player = ctx.req.session.player;
+
+    if (!player) {
         return {
             redirect: {
                 destination: '/',
                 permanent: false
             },
             props: {
+                playerID: 0,
                 playerExtraInfo: [],
                 playerNotes: undefined
             }
@@ -62,17 +80,18 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
 
     const results = await Promise.all([
         prisma.playerExtraInfo.findMany({
-            where: { player_id: playerID },
+            where: { player_id: player.id },
             select: { value: true, ExtraInfo: true }
         }),
         prisma.playerNote.findUnique({
-            where: { player_id: playerID },
+            where: { player_id: player.id },
             select: { value: true }
         })
     ]);
 
     return {
         props: {
+            playerID: player.id,
             playerExtraInfo: results[0],
             playerNotes: results[1]?.value
         }

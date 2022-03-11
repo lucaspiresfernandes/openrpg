@@ -1,42 +1,18 @@
-import { useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import io from 'socket.io-client';
 import api from '../utils/api';
+import { ClientToServerEvents, ServerToClientEvents } from '../utils';
+import { useEffect } from 'react';
 
-let socketDeliverPromise: Promise<Socket> | null = null;
+export type SocketIO = Socket<ServerToClientEvents, ClientToServerEvents>;
 
-export default function useSocket(onSocketLoaded: (socket: Socket) => void, room?: string) {
-    const socket = useRef<Socket | null>(null);
-
+export default function useSocket(socketCallback: (socket: SocketIO) => void) {
     useEffect(() => {
-        if (socket.current) {
-            return onSocketLoaded(socket.current);
-        }
-        else {
-            if (socketDeliverPromise) {
-                socketDeliverPromise.then(socket => {
-                    onSocketLoaded(socket);
-                    socketDeliverPromise = null;
-                });
-            }
-            else {
-                socketDeliverPromise = new Promise(res => {
-                    api.get('/socket').then(() => {
-                        const current = io();
-                        socket.current = current;
-                        current.on('connect', () => {
-                            onSocketLoaded(current);
-                            if (room) current.emit('room:join', room);
-                            res(current);
-                        });
-                    });
-                });
-            }
-
-        }
-
-        return () => {
-            socket.current?.removeAllListeners();
-        };
-    });
+        api.get('/socket').then(() => {
+            const socket: SocketIO = io();
+            socket.on('connect', () => socketCallback(socket));
+            socket.on('connect_error', err => console.error('Socket.IO error:', err));
+            socket.on('disconnect', reason => console.warn('Socket.IO disconnect. Reason:', reason));
+        });
+    }, []);
 }

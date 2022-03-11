@@ -35,7 +35,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const io = res.socket.server.io;
     if (io) {
-        io.to('admin').emit('info changed', { playerID: player.id, infoID, value });
+        io.to('admin').emit('infoChange', player.id, infoID, value);
     }
 }
 

@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Col, ListGroup, Row } from 'react-bootstrap';
-import useSocket from '../../hooks/useSocket';
-import { DiceResult, ResolvedDice } from '../../utils';
+import { RetrieveSocket } from '../../contexts';
 import DataContainer from '../DataContainer';
 
 type DiceListProps = {
@@ -16,16 +15,17 @@ export type PlayerName = {
 export default function DiceList(props: DiceListProps) {
     const [values, setValues] = useState<{ name: string, dices: string, results: string }[]>([]);
     const wrapper = useRef<HTMLDivElement | null>(null);
+    const socket = useContext(RetrieveSocket);
 
     useEffect(() => {
-        if (wrapper.current) wrapper.current.scrollTo({ top: wrapper.current.scrollHeight, behavior: 'auto' });
+        if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });
     }, [values]);
 
-    useSocket(socket => {
-        socket.on('dice result', content => {
-            const playerID: number = content.playerID;
-            const _dices: ResolvedDice[] = content.dices;
-            const _results: DiceResult[] = content.results;
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('diceResult', (playerID, _dices, _results) => {
+            console.log(playerID, _dices, _results);
             const playerName = props.players.find(p => p.id === playerID)?.name || 'Desconhecido';
 
             const dices = _dices.map(dice => {
@@ -56,7 +56,12 @@ export default function DiceList(props: DiceListProps) {
 
             setValues([...values, message]);
         });
-    }, 'admin');
+
+        return () => {
+            socket.off('diceResult');
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket]);
 
     return (
         <DataContainer xs={12} lg title='Histórico'>
@@ -66,11 +71,11 @@ export default function DiceList(props: DiceListProps) {
                         <ListGroup variant='flush' className='text-center'>
                             {values.map((val, index) =>
                                 <ListGroup.Item key={index}>
-                                    <span style={{ color: 'lightgreen' }}>{val.name}</span>
+                                    <span style={{ color: 'lightgreen' }}>{val.name} </span>
                                     rolou
-                                    <span style={{ color: 'lightgreen' }}>{val.dices}</span>
+                                    <span style={{ color: 'lightgreen' }}> {val.dices} </span>
                                     e tirou
-                                    <span style={{ color: 'lightgreen' }}>{val.results}</span>.
+                                    <span style={{ color: 'lightgreen' }}> {val.results}</span>.
                                 </ListGroup.Item>
                             )}
                         </ListGroup>

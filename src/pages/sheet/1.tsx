@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Container, Form, Row, Table } from 'react-bootstrap';
 import SheetNavbar from '../../components/SheetNavbar';
 import database from '../../utils/database';
@@ -21,9 +21,9 @@ import AddDataModal from '../../components/Modals/EditDataModal';
 import PlayerItemField from '../../components/Player/PlayerItemField';
 import PlayerSkillField from '../../components/Player/PlayerSkillField';
 import EditAvatarModal from '../../components/Modals/EditAvatarModal';
-
-export const errorLogger = React.createContext<(err: any) => void>(() => { });
-export const showDiceResult = React.createContext<(dices: string | ResolvedDice[], resolverKey?: string) => void>(() => { });
+import { ErrorLogger, ShowDiceResult } from '../../contexts';
+import useSocket, { SocketIO } from '../../hooks/useSocket';
+import Router from 'next/router';
 
 const bonusDamageName = 'Dano Bônus';
 
@@ -67,6 +67,9 @@ type PlayerItem = {
 export default function Sheet1(props: InferGetServerSidePropsType<typeof getServerSidePropsPage1>): JSX.Element {
     //Toast
     const [toasts, addToast] = useToast();
+
+    //Socket
+    const [socket, setSocket] = useState<SocketIO | null>(null);
 
     //Dices
     const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
@@ -176,11 +179,24 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     const attributeStatus = playerStatus.map(stat => stat.AttributeStatus);
 
+    useSocket(socket => {
+        socket.emit('roomJoin', `player${props.playerID}`);
+        setSocket(socket);
+    });
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.on('playerDelete', () => api.delete('/player').then(() => Router.replace('/')));
+        return () => {
+            socket.off('playerDelete');
+        };
+    }, [socket]);
+
     return (
         <>
             <SheetNavbar />
-            <errorLogger.Provider value={addToast}>
-                <showDiceResult.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>
+            <ErrorLogger.Provider value={addToast}>
+                <ShowDiceResult.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>
                     <Container>
                         <Row className='display-5 text-center'>
                             <Col>
@@ -207,7 +223,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Col>
                         </Row>
                         <Row>
-                            <DataContainer outline title='Atributos'>
+                            <DataContainer outline title='Características'>
                                 <Row className='mb-3 text-center align-items-end justify-content-center'>
                                     {props.playerCharacteristics.map(char =>
                                         <PlayerCharacteristicField key={char.Characteristic.id}
@@ -281,8 +297,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </DataContainer>
                         </Row>
                     </Container>
-                    <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)} />
-                </showDiceResult.Provider>
+                    <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
+                        showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
+                </ShowDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage} />
                 <EditAvatarModal attributeStatus={attributeStatus} show={avatarModalShow}
@@ -294,7 +311,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                     data={skills} onEditData={onAddSkill} />
                 <AddDataModal title='Adicionar Item' show={addItemShow} onHide={() => setAddItemShow(false)}
                     data={items} onEditData={onAddItem} />
-            </errorLogger.Provider>
+            </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
     );

@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponseServerIO } from '../../../../utils';
 import prisma from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method === 'POST') return handlePost(req, res);
     if (req.method === 'PUT') return handlePut(req, res);
     if (req.method === 'DELETE') return handleDelete(req, res);
@@ -35,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     res.end();
 }
 
-async function handlePut(req: NextApiRequest, res: NextApiResponse) {
+async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
 
     if (!player) {
@@ -65,9 +66,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.send({ equipment });
+
+    res.socket.server.io?.to('admin').emit('equipmentAdd', player.id, equipment);
 }
 
-async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
+async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
     const player = req.session.player;
     const equipID = req.body.id;
 
@@ -86,6 +89,8 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     });
 
     res.end();
+
+    res.socket.server.io?.to('admin').emit('equipmentRemove', player.id, equipID);
 }
 
 export default sessionAPI(handler);

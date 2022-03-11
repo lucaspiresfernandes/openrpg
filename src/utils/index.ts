@@ -1,6 +1,8 @@
 import { NextApiResponse } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
 import { Socket as NetSocket, Server as NetServer } from 'net';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { Equipment, Player, Skill } from '@prisma/client';
 
 export function clamp(num: number, min: number, max: number) {
     if (num < min) return min;
@@ -76,7 +78,50 @@ function resolveDice(dice: string, bonusDamage: string = '0'): ResolvedDice {
 export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
     socket: NetSocket & {
         server: NetServer & {
-            io: SocketIOServer;
+            io?: SocketIOServer<ServerToClientEvents>;
         };
     };
 };
+
+type SocketEquipment = {
+    Equipment: Equipment & {
+        Skill: Skill;
+    };
+    currentAmmo: number | null;
+    using: boolean;
+}
+
+type SocketItem = {
+    Item: {
+        id: number;
+        name: string;
+        description: string;
+    };
+    currentDescription: string;
+    quantity: number;
+}
+
+export interface ServerToClientEvents {
+    //Admin Events
+    attributeStatusChange: (playerID: number, attStatusID: number, value: boolean) => void;
+    infoChange: (playerID: number, infoID: number, value: string) => void;
+    attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
+    specChange: (playerID: number, specID: number, value: string) => void;
+    characteristicChange: (playerID: number, characteristicID: number, value: number) => void;
+    equipmentAdd: (playerID: number, equipment: SocketEquipment) => void;
+    equipmentRemove: (playerID: number, id: number) => void;
+    itemAdd: (playerID: number, item: SocketItem) => void;
+    itemRemove: (playerID: number, id: number) => void;
+    itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
+
+    //Player Events
+    playerDelete: () => void;
+
+    //Dice Events
+    diceResult: (playerID: number, dices: ResolvedDice[], results: DiceResult[]) => void;
+    diceRoll: () => void;
+}
+
+export interface ClientToServerEvents {
+    roomJoin: (room: string) => void;
+}
