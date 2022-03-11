@@ -1,9 +1,8 @@
-import { useContext, useState } from 'react';
-import { Button, Col, Container, Modal, Row, Image } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Col, Container, Row, Image } from 'react-bootstrap';
 import { clamp, ResolvedDice } from '../../utils';
 import SheetModal from './SheetModal';
 import styles from '../../styles/GeneralDice.module.scss';
-import { ShowDiceResult } from '../../pages/sheet/1';
 
 type Dice = {
     name: string,
@@ -76,7 +75,8 @@ export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
     }
 
     return (
-        <SheetModal {...props} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onRoll }}>
+        <SheetModal {...props} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onRoll }}
+            centered>
             <Container fluid>
                 <Row className='text-center'>
                     {dices.map((dice, index) =>

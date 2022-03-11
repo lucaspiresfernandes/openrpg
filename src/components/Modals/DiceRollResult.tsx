@@ -1,4 +1,4 @@
-import { Modal, Row, Col, Button, Container, Image } from 'react-bootstrap';
+import { Row, Col, Container, Image } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 import { useContext, useEffect, useState } from 'react';
 import { DiceResult, ResolvedDice, resolveDices } from '../../utils';
@@ -71,7 +71,7 @@ export default function DiceRollResult(props: DiceRollResultProps) {
 
     return (
         <SheetModal show={props.dices.length != 0} onExited={() => setResultDices([])}
-            title='Resultado da Rolagem' onHide={props.onHide}>
+            title='Resultado da Rolagem' onHide={props.onHide} centered>
             <Container fluid className='text-center'>
                 {showResult()}
             </Container>
