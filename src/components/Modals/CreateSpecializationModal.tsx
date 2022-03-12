@@ -11,14 +11,21 @@ type CreateSpecializationModalProps = {
 export default function CreateSpecializationModal(props: CreateSpecializationModalProps) {
     const [name, setName] = useState('');
 
+    function reset() {
+        setName('');
+    }
+
     return (
-        <SheetModal title='Nova Especialização'
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
-            show={props.show} onHide={props.onHide} >
+        <SheetModal title='Nova Especialização' onExited={reset} show={props.show} onHide={props.onHide}
+            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}>
             <Container>
                 <Row>
                     <Col>
-                        <Form.Control value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                        <Form.Group controlId='createSpecializationName'>
+                            <Form.Label>Nome</Form.Label>
+                            <Form.Control className='theme-element' value={name}
+                                onChange={ev => setName(ev.currentTarget.value)} />
+                        </Form.Group>
                     </Col>
                 </Row>
             </Container>

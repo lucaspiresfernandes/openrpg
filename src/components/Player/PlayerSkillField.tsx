@@ -2,7 +2,6 @@ import { FormEvent, useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import styles from '../../styles/Skill.module.scss';
 import config from '../../../openrpg.config.json';
 import BottomTextInput from '../BottomTextInput';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
@@ -51,14 +50,14 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
     if (props.skill.Specialization) name = `${props.skill.Specialization.name} (${name})`;
 
     return (
-        <Col xs={6} md={3} xl={2} className={`${styles.container} my-3 clickable d-flex flex-column`}>
+        <Col xs={6} md={3} xl={2} className='skill-container my-3 clickable d-flex flex-column'>
             <Row>
                 <Col>
-                    <BottomTextInput className={`${styles.text} text-center w-75`}
+                    <BottomTextInput className='text text-center w-75'
                         value={value} onChange={valueChange} onBlur={valueBlur} />
                 </Col>
             </Row>
-            <Row className={`${styles.label} h-100`} onClick={diceRoll}>
+            <Row className='label h-100' onClick={diceRoll}>
                 <Col>{name}</Col>
             </Row>
         </Col>

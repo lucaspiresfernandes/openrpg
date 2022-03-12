@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Col, Image } from 'react-bootstrap';
-import styles from '../../../styles/PlayerAvatar.module.scss';
 import { PlayerStatus } from './PlayerAttributeContainer';
 
 export default function PlayerAvatarContainer(props: { statusID?: number, onClick?(): void, playerStatus: PlayerStatus[] }) {
     const statusID = props.statusID || 0;
-    
+
     const [src, setSrc] = useState(`/api/sheet/player/avatar/${statusID}`);
     const previousStatusID = useRef(statusID);
 
@@ -18,7 +17,8 @@ export default function PlayerAvatarContainer(props: { statusID?: number, onClic
 
     return (
         <Col xl={{ offset: 2 }} className='text-center'>
-            <Image fluid src={src} alt='Avatar' className={`${styles.avatar} clickable`}
+            <Image fluid src={src} alt='Avatar' className='clickable'
+                style={{ minWidth: 100, minHeight: 100, maxHeight: 400 }}
                 onError={() => setSrc('/avatar404.png')} onClick={props.onClick} />
         </Col>
     );

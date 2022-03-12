@@ -12,19 +12,28 @@ export default function CreateAttributeModal(props: CreateAttributeModalProps) {
     const [name, setName] = useState('');
     const [rollable, setRollable] = useState(false);
 
+    function reset() {
+        setName('');
+        setRollable(false);
+    }
+
     return (
-        <SheetModal title='Nova Informação Pessoal'
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}
-            show={props.show} onHide={props.onHide} >
+        <SheetModal title='Novo Atributo' onExited={reset} show={props.show} onHide={props.onHide}
+            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}>
             <Container>
                 <Row>
                     <Col>
-                        <Form.Control value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        <Form.Group>
-                            <Form.Check id='createAttributeRollable' inline
-                                checked={rollable} onChange={() => setRollable(r => !r)} />
-                            <Form.Label htmlFor='createAttributeRollable'></Form.Label>
-                        </Form.Group>
+                        <Form>
+                            <Form.Group className='mb-3' controlId='createAttributeName'>
+                                <Form.Label>Nome</Form.Label>
+                                <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                            </Form.Group>
+                            <Form.Group controlId='createAttributeRollable'>
+                                <Form.Check inline
+                                    checked={rollable} onChange={() => setRollable(r => !r)} />
+                                <Form.Label>Testável?</Form.Label>
+                            </Form.Group>
+                        </Form>
                     </Col>
                 </Row>
             </Container>

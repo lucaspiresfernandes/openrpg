@@ -11,14 +11,21 @@ type CreateInfoModalProps = {
 export default function CreateInfoModal(props: CreateInfoModalProps) {
     const [name, setName] = useState('');
 
+    function reset() {
+        setName('');
+    }
+
     return (
-        <SheetModal title='Nova Informação Pessoal'
+        <SheetModal title='Nova Informação Pessoal (Geral)' onExited={reset}
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
             show={props.show} onHide={props.onHide} >
             <Container>
                 <Row>
                     <Col>
-                        <Form.Control value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                        <Form.Group controlId='createInfoName'>
+                            <Form.Label>Nome</Form.Label>
+                            <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                        </Form.Group>
                     </Col>
                 </Row>
             </Container>

@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Container, Form, Row, Table } from 'react-bootstrap';
 import SheetNavbar from '../../components/SheetNavbar';
 import database from '../../utils/database';
@@ -95,6 +95,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         };
     }));
     const [playerEquipments, setPlayerEquipments] = useState<PlayerEquipment[]>(props.playerEquipments);
+    const playerEquipmentsRef = useRef(playerEquipments);
+    playerEquipmentsRef.current = playerEquipments;
 
     function onAddEquipment(id: number) {
         api.put('/sheet/player/equipment', { id }).then(res => {
@@ -148,6 +150,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         };
     }));
     const [playerItems, setPlayerItems] = useState<PlayerItem[]>(props.playerItems);
+    const playerItemsRef = useRef(playerItems);
+    playerItemsRef.current = playerItems;
 
     function onAddItem(id: number) {
         api.put('/sheet/player/item', { id }).then(res => {
@@ -186,10 +190,121 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     useEffect(() => {
         if (!socket) return;
+
         socket.on('playerDelete', () => api.delete('/player').then(() => Router.replace('/')));
+
+        socket.on('playerEquipmentAdd', (id, name) => {
+            setEquipments(equipments => {
+                if (equipments.findIndex(eq => eq.id === id) > -1 ||
+                    playerEquipmentsRef.current.findIndex(eq => eq.Equipment.id === id) > -1)
+                    return equipments;
+                return [...equipments, { id, name }];
+            });
+        });
+
+        socket.on('playerEquipmentRemove', (id) => {
+            setEquipments(equipments => {
+                const index = equipments.findIndex(eq => eq.id === id);
+                if (index === -1) return equipments;
+
+                const newEquipments = [...equipments];
+                newEquipments.splice(index, 1);
+                return newEquipments;
+            });
+        });
+
+        socket.on('playerEquipmentChange', (id, equip) => {
+            setPlayerEquipments(equipments => {
+                const index = equipments.findIndex(eq => eq.Equipment.id === id);
+                if (index === -1) return equipments;
+
+                const newEquipments = [...equipments];
+                newEquipments[index].Equipment = equip;
+                return newEquipments;
+            });
+
+            setEquipments(equipments => {
+                const index = equipments.findIndex(eq => eq.id === id);
+                if (index === -1) return equipments;
+
+                const newEquipments = [...equipments];
+                newEquipments[index].name = equip.name;
+                return newEquipments;
+            });
+        });
+
+        socket.on('playerItemAdd', (id, name) => {
+            setItems(items => {
+                console.log(playerItemsRef.current);
+                if (items.findIndex(item => item.id === id) > -1 ||
+                    playerItemsRef.current.findIndex(eq => eq.Item.id === id) > -1)
+                    return items;
+                return [...items, { id, name }];
+            });
+        });
+
+        socket.on('playerItemRemove', (id) => {
+            setItems(items => {
+                const index = items.findIndex(item => item.id === id);
+                if (index === -1) return items;
+
+                const newItems = [...items];
+                newItems.splice(index, 1);
+                return newItems;
+            });
+        });
+
+        socket.on('playerItemChange', (id, name) => {
+            setPlayerItems(items => {
+                const index = items.findIndex(eq => eq.Item.id === id);
+                if (index === -1) return items;
+
+                const newItems = [...items];
+                newItems[index].Item.name = name;
+                return newItems;
+            });
+
+            setItems(items => {
+                const index = items.findIndex(eq => eq.id === id);
+                if (index === -1) return items;
+
+                const newItems = [...items];
+                newItems[index].name = name;
+                return newItems;
+            });
+        });
+
+        socket.on('playerSkillChange', (id, name, Specialization) => {
+            setPlayerSkills(skills => {
+                const index = skills.findIndex(skill => skill.Skill.id === id);
+                if (index === -1) return skills;
+
+                const newSkills = [...skills];
+                newSkills[index].Skill = { id, name, Specialization };
+                return newSkills;
+            });
+
+            setSkills(skills => {
+                const index = skills.findIndex(skill => skill.id === id);
+                if (index === -1) return skills;
+
+                const newSkills = [...skills];
+                newSkills[index].name = name;
+                return newSkills;
+            });
+        });
+
         return () => {
             socket.off('playerDelete');
+            socket.off('playerEquipmentAdd');
+            socket.off('playerEquipmentRemove');
+            socket.off('playerEquipmentChange');
+            socket.off('playerItemAdd');
+            socket.off('playerItemRemove');
+            socket.off('playerItemChange');
+            socket.off('playerSkillChange');
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket]);
 
     return (

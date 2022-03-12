@@ -66,7 +66,8 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteInfo(id: number) {
-        api.delete('/sheet/info', { data: { id } }).then(res => {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+        api.delete('/sheet/info', { data: { id } }).then(() => {
             const newInfo = [...info];
             const index = newInfo.findIndex(info => info.id === id);
             if (index > -1) {
@@ -79,11 +80,12 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     function createExtraInfo(name: string) {
         api.put('/sheet/extrainfo', { name }).then(res => {
             const id = res.data.id;
-            setExtraInfo([...info, { id, name }]);
+            setExtraInfo([...extraInfo, { id, name }]);
         }).catch(addToast);
     }
 
     function deleteExtraInfo(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/extrainfo', { data: { id } }).then(res => {
             const newExtraInfo = [...extraInfo];
             const index = newExtraInfo.findIndex(extraInfo => extraInfo.id === id);
@@ -102,6 +104,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteAttribute(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/attribute', { data: { id } }).then(res => {
             const newAttribute = [...attribute];
             const index = newAttribute.findIndex(attr => attr.id === id);
@@ -120,6 +123,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteAttributeStatus(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/attribute/status', { data: { id } }).then(res => {
             const newStatus = [...status];
             const index = newStatus.findIndex(status => status.id === id);
@@ -138,6 +142,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteSpec(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/spec', { data: { id } }).then(res => {
             const newSpec = [...spec];
             const index = newSpec.findIndex(spec => spec.id === id);
@@ -156,6 +161,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteCharacteristic(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/characteristic', { data: { id } }).then(res => {
             const newCharacteristic = [...characteristic];
             const index = newCharacteristic.findIndex(char => char.id === id);
@@ -174,6 +180,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteSpecialization(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/specialization', { data: { id } }).then(res => {
             const newSpecialization = [...specialization];
             const index = newSpecialization.findIndex(spec => spec.id === id);
@@ -192,6 +199,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteSkill(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/skill', { data: { id } }).then(res => {
             const newSkill = [...skill];
             const index = newSkill.findIndex(skill => skill.id === id);
@@ -211,6 +219,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function deleteEquipment(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/equipment', { data: { id } }).then(res => {
             const newEquipment = [...equipment];
             const index = newEquipment.findIndex(eq => eq.id === id);
@@ -222,14 +231,15 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     }
 
     function createItem(name: string, description: string) {
-        api.put('/sheet/equipment', { name, description }).then(res => {
+        api.put('/sheet/item', { name, description }).then(res => {
             const id = res.data.id;
             setItem([...item, { id, name, description, visible: true }]);
         }).catch(addToast);
     }
 
     function deleteItem(id: number) {
-        api.delete('/sheet/equipment', { data: { id } }).then(res => {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+        api.delete('/sheet/item', { data: { id } }).then(res => {
             const newItem = [...item];
             const index = newItem.findIndex(item => item.id === id);
             if (index > -1) {
@@ -253,63 +263,63 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                             <Row>
                                 <DataContainer outline title='Informações Pessoais (Geral)'
                                     addButton={{ onAdd: () => setShowInfoModal(true) }}>
-                                    <InfoEditor info={info} />
+                                    <InfoEditor info={info} onDelete={deleteInfo} />
                                 </DataContainer>
                             </Row>
                             <Row>
                                 <DataContainer outline title='Informações Pessoais (Extra)'
                                     addButton={{ onAdd: () => setShowExtraInfoModal(true) }}>
-                                    <ExtraInfoEditor extraInfo={extraInfo} />
+                                    <ExtraInfoEditor extraInfo={extraInfo} onDelete={deleteExtraInfo} />
                                 </DataContainer>
                             </Row>
                             <Row>
                                 <DataContainer outline title='Atributos'
                                     addButton={{ onAdd: () => setShowAttributeModal(true) }}>
-                                    <AttributeEditor attribute={attribute} />
+                                    <AttributeEditor attribute={attribute} onDelete={deleteAttribute} />
                                 </DataContainer>
                             </Row>
                             <Row>
                                 <DataContainer outline title='Status de Atributos'
                                     addButton={{ onAdd: () => setShowStatusModal(true) }}>
-                                    <StatusEditor attributeStatus={status} />
+                                    <StatusEditor attributes={attribute} attributeStatus={status} onDelete={deleteAttributeStatus} />
                                 </DataContainer>
                             </Row>
                             <Row>
                                 <DataContainer outline title='Especificações de Jogador'
                                     addButton={{ onAdd: () => setShowSpecModal(true) }}>
-                                    <SpecEditor spec={spec} />
+                                    <SpecEditor spec={spec} onDelete={deleteSpec} />
                                 </DataContainer>
                             </Row>
                             <Row>
                                 <DataContainer outline title='Características'
                                     addButton={{ onAdd: () => setShowCharacteristicModal(true) }}>
-                                    <CharacteristicEditor characteristic={characteristic} />
+                                    <CharacteristicEditor characteristic={characteristic} onDelete={deleteCharacteristic} />
+                                </DataContainer>
+                            </Row>
+                            <Row>
+                                <DataContainer outline title='Especializações'
+                                    addButton={{ onAdd: () => setShowSpecializationModal(true) }}>
+                                    <SpecializationEditor specialization={specialization} onDelete={deleteSpecialization} />
                                 </DataContainer>
                             </Row>
                         </>
                     }
                     <Row>
-                        <DataContainer outline title='Especializações'
-                            addButton={{ onAdd: () => setShowSpecializationModal(true) }}>
-                            <SpecializationEditor specialization={specialization} />
-                        </DataContainer>
-                    </Row>
-                    <Row>
                         <DataContainer outline title='Perícias'
                             addButton={{ onAdd: () => setShowSkillModal(true) }}>
-                            <SkillEditor skill={skill} />
+                            <SkillEditor skill={skill} onDelete={deleteSkill} specializations={specialization} />
                         </DataContainer>
                     </Row>
                     <Row>
                         <DataContainer outline title='Equipamentos'
                             addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
-                            <EquipmentEditor equipment={equipment} />
+                            <EquipmentEditor equipment={equipment} onDelete={deleteEquipment} skills={skill} />
                         </DataContainer>
                     </Row>
                     <Row>
                         <DataContainer outline title='Itens'
                             addButton={{ onAdd: () => setShowItemModal(true) }}>
-                            <ItemEditor item={item} />
+                            <ItemEditor item={item} onDelete={deleteItem} />
                         </DataContainer>
                     </Row>
                 </Container>

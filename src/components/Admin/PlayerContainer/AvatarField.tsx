@@ -1,7 +1,5 @@
-import { AttributeStatus } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
-import styles from '../../../styles/PlayerContainer.module.scss';
 
 type AvatarFieldProps = {
     status: { id: number; value: boolean; }[];
@@ -27,7 +25,7 @@ export default function AvatarField(props: AvatarFieldProps) {
     return (
         <Row>
             <Col>
-                <Image fluid src={src} alt='Avatar' className={styles.avatar}
+                <Image fluid src={src} alt='Avatar' style={{ maxHeight: 250 }}
                     onError={() => setSrc('/avatar404.png')} />
             </Col>
         </Row>

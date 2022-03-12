@@ -4,7 +4,6 @@ import useExtendedState from '../../../hooks/useExtendedState';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';
 import config from '../../../../openrpg.config.json';
-import styles from '../../../styles/Attribute.module.scss';
 import PlayerAttributeStatusField from './PlayerAttributeStatusField';
 import BottomTextInput from '../../BottomTextInput';
 import { ErrorLogger, ShowDiceResult } from '../../../contexts';
@@ -102,7 +101,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
                     </Col>
                     {playerAttribute.Attribute.rollable &&
                         <Col xs='auto' className='align-self-center'>
-                            <Image src='/dice20.png' alt='Dado' className={`${styles.dice} clickable`} onClick={diceClick} />
+                            <Image src='/dice20.png' alt='Dado' className='attribute-dice clickable' onClick={diceClick} />
                         </Col>
                     }
                 </Row>

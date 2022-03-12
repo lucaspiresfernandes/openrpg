@@ -1,11 +1,10 @@
-import { Equipment, Skill } from '@prisma/client';
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Form, Image } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import styles from '../../styles/Equipment.module.scss';
 import BottomTextInput from '../BottomTextInput';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
+import { BsTrash } from 'react-icons/bs';
 
 type PlayerEquipmentFieldProps = {
     currentAmmo: number | null;
@@ -85,8 +84,8 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='danger'>
-                    <Image alt='Lixo' src='/trash.svg' className={`${styles.trash} clickable`} />
+                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='dark'>
+                    <BsTrash color='white' size={24} />
                 </Button>
             </td>
             <td>
@@ -96,7 +95,10 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
             <td>{props.equipment.Skill.name}</td>
             <td>{props.equipment.type}</td>
             <td>{props.equipment.damage}</td>
-            <td><Image alt='Dado' src='/dice20.png' className={`${styles.dice} clickable`} onClick={diceRoll} /></td>
+            <td>
+                <Image alt='Dado' src='/dice20.png' className='clickable' onClick={diceRoll}
+                    style={{ maxHeight: '2rem' }} />
+            </td>
             <td>{props.equipment.range}</td>
             <td>{props.equipment.attacks}</td>
             <td>{props.equipment.ammo ?

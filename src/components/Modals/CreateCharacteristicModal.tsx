@@ -12,18 +12,26 @@ export default function CreateCharacteristicModal(props: CreateCharacteristicMod
     const [name, setName] = useState('');
     const [rollable, setRollable] = useState(false);
 
+    function reset() {
+        setName('');
+        setRollable(false);
+    }
+
     return (
         <SheetModal title='Nova Característica'
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}
-            show={props.show} onHide={props.onHide} >
+            show={props.show} onHide={props.onHide} onExited={reset} >
             <Container>
                 <Row>
                     <Col>
-                        <Form.Control value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        <Form.Group>
-                            <Form.Check id='createCharacteristicRollable' inline
+                        <Form.Group className='mb-3' controlId='createCharacteristicName'>
+                            <Form.Label>Nome</Form.Label>
+                            <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                        </Form.Group>
+                        <Form.Group controlId='createCharacteristicRollable'>
+                            <Form.Check inline
                                 checked={rollable} onChange={() => setRollable(r => !r)} />
-                            <Form.Label htmlFor='createCharacteristicRollable'></Form.Label>
+                                <Form.Label>Testável?</Form.Label>
                         </Form.Group>
                     </Col>
                 </Row>

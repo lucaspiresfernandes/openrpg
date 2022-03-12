@@ -83,7 +83,7 @@ export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
     };
 };
 
-type SocketEquipment = {
+type SocketPlayerEquipment = {
     Equipment: Equipment & {
         Skill: Skill;
     };
@@ -91,7 +91,7 @@ type SocketEquipment = {
     using: boolean;
 }
 
-type SocketItem = {
+type SocketPlayerItem = {
     Item: {
         id: number;
         name: string;
@@ -101,6 +101,19 @@ type SocketItem = {
     quantity: number;
 }
 
+type SocketEquipment = {
+    name: string;
+    Skill: {
+        name: string;
+    };
+    type: string;
+    damage: string;
+    range: string;
+    attacks: string;
+    ammo: number | null;
+    id: number;
+};
+
 export interface ServerToClientEvents {
     //Admin Events
     attributeStatusChange: (playerID: number, attStatusID: number, value: boolean) => void;
@@ -108,18 +121,28 @@ export interface ServerToClientEvents {
     attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
     specChange: (playerID: number, specID: number, value: string) => void;
     characteristicChange: (playerID: number, characteristicID: number, value: number) => void;
-    equipmentAdd: (playerID: number, equipment: SocketEquipment) => void;
+    equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
     equipmentRemove: (playerID: number, id: number) => void;
-    itemAdd: (playerID: number, item: SocketItem) => void;
+    itemAdd: (playerID: number, item: SocketPlayerItem) => void;
     itemRemove: (playerID: number, id: number) => void;
     itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
 
     //Player Events
     playerDelete: () => void;
+    playerSkillChange: (id: number, name: string, specialization: { name: string } | null) => void;
+    playerEquipmentAdd: (id: number, name: string) => void;
+    playerEquipmentRemove: (id: number) => void;
+    playerEquipmentChange: (id: number, equipment: SocketEquipment) => void;
+    playerItemAdd: (id: number, name: string) => void;
+    playerItemRemove: (id: number) => void;
+    playerItemChange: (id: number, name: string) => void;
 
     //Dice Events
     diceResult: (playerID: number, dices: ResolvedDice[], results: DiceResult[]) => void;
     diceRoll: () => void;
+
+    //Portrait Events
+    configChange: (key: string, newValue: string) => void;
 }
 
 export interface ClientToServerEvents {

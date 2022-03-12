@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest } from 'next';
 import { NextApiResponseServerIO } from '../../../../utils';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';

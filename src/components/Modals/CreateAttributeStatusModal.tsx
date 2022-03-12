@@ -14,20 +14,30 @@ export default function CreateAttributeStatusModal(props: CreateAttributeStatusM
     const [name, setName] = useState('');
     const [attributeID, setAttributeID] = useState(props.attributes[0].id);
 
+    function reset() {
+        setName('');
+        setAttributeID(props.attributes[0].id);
+    }
+
     return (
-        <SheetModal title='Nova Informação Pessoal'
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, attributeID) }}
-            show={props.show} onHide={props.onHide} >
+        <SheetModal title='Novo Status de Atributo' show={props.show} onHide={props.onHide} onExited={reset}
+            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, attributeID) }}>
             <Container>
                 <Row>
                     <Col>
-                        <Form.Control value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        <Form.Select value={attributeID}
-                            onChange={ev => setAttributeID(parseInt(ev.currentTarget.value))} >
-                            {props.attributes.map(attr =>
-                                <option key={attr.id} value={attr.id}>{attr.name}</option>
-                            )}
-                        </Form.Select>
+                        <Form.Group controlId='createStatusName' className='mb-3'>
+                            <Form.Label>Nome</Form.Label>
+                            <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                        </Form.Group>
+                        <Form.Group controlId='createStatusAttribute' className='mb-3'>
+                            <Form.Label>Atributo</Form.Label>
+                            <Form.Select value={attributeID} className='theme-element'
+                                onChange={ev => setAttributeID(parseInt(ev.currentTarget.value))} >
+                                {props.attributes.map(attr =>
+                                    <option key={attr.id} value={attr.id}>{attr.name}</option>
+                                )}
+                            </Form.Select>
+                        </Form.Group>
                     </Col>
                 </Row>
             </Container>

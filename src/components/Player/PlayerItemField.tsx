@@ -1,8 +1,8 @@
 import { FormEvent, useContext, useState } from 'react';
 import { Button, Image } from 'react-bootstrap';
+import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
-import styles from '../../styles/Item.module.scss';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
@@ -66,17 +66,17 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteItem} disabled={disabled} className={styles.trashContainer} size='sm' variant='danger'>
-                    <Image alt='Lixo' src='/trash.svg' className={`${styles.trash} clickable`} />
+                <Button onClick={deleteItem} disabled={disabled} size='sm' variant='dark'>
+                    <BsTrash color='white' size={24} />
                 </Button>
             </td>
-            <td className={styles.name}>{props.item.name}</td>
+            <td style={{ maxWidth: '7.5rem' }}>{props.item.name}</td>
             <td>
-                <BottomTextInput className={`${styles.description} w-100`} value={currentDescription}
+                <BottomTextInput className='w-100' value={currentDescription}
                     onChange={ev => setCurrentDescription(ev.currentTarget.value)} onBlur={descriptionBlur} />
             </td>
             <td>
-                <BottomTextInput type='number' className={`${styles.quantity}`} maxLength={3}
+                <BottomTextInput type='number' style={{ maxWidth: '3rem' }} maxLength={3}
                     value={currentQuantity} onChange={quantityChange}
                     onBlur={quantityBlur} />
             </td>

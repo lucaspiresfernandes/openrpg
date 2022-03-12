@@ -1,4 +1,4 @@
-import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Item, Spec } from '@prisma/client';
+import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Spec } from '@prisma/client';
 import React, { useContext } from 'react';
 import { Button, Col, Row, } from 'react-bootstrap';
 import { ErrorLogger } from '../../../contexts';
@@ -67,7 +67,7 @@ export default function PlayerContainer(props: PlayerContainerProps) {
                 <Col>
                     <Row className='my-2'>
                         <Col>
-                            <Button size='sm' variant='secondary' onClick={deletePlayer}>Apagar</Button>
+                            <Button size='sm' variant='dark' onClick={deletePlayer}>Apagar</Button>
                         </Col>
                     </Row>
                     <AvatarField status={props.status.map(stat => { return { id: stat.AttributeStatus.id, value: stat.value }; })} />

@@ -3,7 +3,6 @@ import { ChangeEvent, useContext } from 'react';
 import { Col, Image, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import styles from '../../styles/Characteristic.module.scss';
 import config from '../../../openrpg.config.json';
 import BottomTextInput from '../BottomTextInput';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
@@ -49,8 +48,8 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
             {characteristic.rollable &&
                 <Row>
                     <Col className='mb-2'>
-                        <Image fluid alt='Dado' className={`${styles.dice} clickable`} src='/dice20.png'
-                            onClick={rollDice} />
+                        <Image fluid alt='Dado' className='clickable' src='/dice20.png'
+                            onClick={rollDice} style={{ maxHeight: 50 }} />
                     </Col>
                 </Row>
             }
