@@ -1,6 +1,6 @@
 import { AttributeStatus } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
-import { Container, Form } from 'react-bootstrap';
+import { Col, Container, Form, Row } from 'react-bootstrap';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
@@ -53,6 +53,12 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
         <SheetModal title='Editar Avatar' applyButton={{ name: 'Atualizar', onApply: onUpdateAvatar }} show={props.show}
             onHide={onHide}>
             <Container fluid>
+                <Row className='mb-3 h4 text-center'>
+                    <Col>
+                        Caso vá usar a extensão do OBS, é recomendado que as imagens estejam
+                        no tamanho de <b>420x600</b> e em formato <b>PNG</b>.
+                    </Col>
+                </Row>
                 <Form.Group className='mb-3'>
                     <Form.Label>Avatar</Form.Label>
                     <Form.Control type='file' accept='image/*'

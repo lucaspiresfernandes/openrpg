@@ -1,4 +1,9 @@
 {
+    "application": {
+        "name": "Open RPG",
+        "description": "An open-source RPG"
+    },
+
     "player": {
         "admin_key": "123456",
         "role": "Investigador",
@@ -8,10 +13,7 @@
             "branched": false
         }
     },
-    "application": {
-        "name": "Open RPG",
-        "description": "An open-source RPG"
-    },
+
     "success_types": {
         "use_success_types": true,
         "failure": "Fracasso",
@@ -19,6 +21,7 @@
         "hard": "Bom",
         "extreme": "Extremo"
     },
+
     "equipment": {
         "types": [
             "Comum",
@@ -36,5 +39,10 @@
             "Trovejante",
             "Veneno"
         ]
+    },
+
+    "portrait": {
+        "attributes": ["Vida", "Sanidade"],
+        "side_attribute": "Magia"
     }
 }

@@ -6,7 +6,7 @@ import api from '../../utils/api';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
 import { useRouter } from 'next/router';
-import homeStyles from '../../styles/Home.module.scss';
+import homeStyles from '../../styles/modules/Home.module.scss';
 import useAuthentication from '../../hooks/useAuthentication';
 
 export default function Register(): JSX.Element {

@@ -48,7 +48,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
     return (
         <>
             <Row>
-                <Row className='mb-2 justify-content-center'>
+                <Row className='mt-4 mb-2 justify-content-center'>
                     <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.onAvatarClick}
                         playerStatus={props.playerStatus} />
                     <Col xs={4} md={3} xl={2} className='align-self-center'>

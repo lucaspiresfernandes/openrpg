@@ -1,5 +1,5 @@
-@import "./variables";
 @import "bootstrap";
+@import "./palette";
 @import "./attribute";
 
 html,
@@ -82,6 +82,8 @@ body {
   }
 }
 
+$openrpg-list-group-color: #111;
+
 .wrapper {
   @extend .data-container;
   overflow-y: auto;
@@ -130,6 +132,10 @@ body {
     }
   }
 }
+
+$container-color: $openrpg-primary;
+$container-color-hover: $openrpg-light;
+$text-color-hover: black;
 
 .skill-container {
   background-color: $container-color;
