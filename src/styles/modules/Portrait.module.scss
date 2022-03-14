@@ -1,0 +1,107 @@
+.container {
+    position: relative;
+}
+
+.top {
+    z-index: 0;
+}
+
+.middle {
+    z-index: -500;
+}
+
+.bottom {
+    z-index: -1000;
+}
+
+.avatar {
+    @extend .middle;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+.frame {
+    @extend .top;
+}
+
+.sideContainer {
+    position: absolute;
+    top: 460px;
+    left: 10px;
+    background-image: url(/side_placeholder.png);
+    background-size: 100% 100%;
+    width: 150px;
+    height: 150px;
+}
+
+.side {
+    position: absolute;
+
+    top: 45%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+}
+
+.nameContainer {
+    position: absolute;
+    top: 300px;
+    left: 475px;
+
+    max-width: 5em;
+
+    color: white;
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
+
+    font-size: 82px;
+    font-style: italic;
+    text-transform: uppercase;
+
+    transform: translateY(-50%);
+}
+
+.combat {
+    position: absolute;
+    top: 300px;
+    left: 475px;
+    transform: translateY(-50%);
+    width: auto;
+}
+
+.attribute {
+    font-size: 84px;
+    font-style: italic;
+    max-width: 250px;
+    color: white;
+}
+
+.diceContainer {
+    position: absolute;
+    top: 10px;
+    left: 100px;
+}
+
+.result {
+    position: absolute;
+    top: 120px;
+    left: 120px;
+
+    font-size: 84px;
+    color: white;
+
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 10px #ddaf0f, 0 0 30px #ddaf0f, 0 0 50px #ddaf0f;
+}
+
+.description {
+    position: absolute;
+    top: 240px;
+    left: 120px;
+
+    font-size: 63px;
+    color: white;
+
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 10px #ddaf0f, 0 0 30px #ddaf0f, 0 0 50px #ddaf0f;
+}

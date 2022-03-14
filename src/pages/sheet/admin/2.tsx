@@ -191,7 +191,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
         }).catch(addToast);
     }
 
-    function createSkill(name: string, specializationID: number, mandatory: boolean) {
+    function createSkill(name: string, mandatory: boolean, specializationID: number | null) {
         api.put('/sheet/skill', { name, specializationID, mandatory }).then(res => {
             const id = res.data.id;
             setSkill([...skill, { id, name, specialization_id: specializationID, mandatory }]);

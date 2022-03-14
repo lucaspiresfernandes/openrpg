@@ -92,7 +92,7 @@ $openrpg-list-group-color: #111;
   .list-group {
     background-color: $openrpg-list-group-color;
     border-radius: 0;
-    min-height: 260px;
+    min-height: 200px;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -150,5 +150,23 @@ $text-color-hover: black;
     .label {
       color: $text-color-hover;
     }
+  }
+}
+
+.shadow {
+  transition: all 0.25s ease;
+  &.show {
+    filter: brightness(30%);
+    transition: all 0.5s ease-out;
+  }
+}
+
+.popout {
+  transform: scale(0);
+  transition: all 0.6s ease-in;
+
+  &.show {
+    transform: scale(1);
+    transition: all 0.5s ease-out;
   }
 }

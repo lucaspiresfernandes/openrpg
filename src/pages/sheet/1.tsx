@@ -454,6 +454,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableEquipments: [],
                 availableSkills: [],
                 availableItems: [],
+                players: [],
             }
         };
     }
@@ -527,6 +528,10 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
         database.item.findMany({
             where: { visible: true, PlayerItem: { none: { player_id: playerID } } },
         }),
+
+        database.player.findMany({
+            select: { id: true, role: true, username: true }
+        })
     ]);
 
     return {
@@ -543,6 +548,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             availableEquipments: results[8],
             availableSkills: results[9],
             availableItems: results[10],
+            players: results[11]
         }
     };
 }

@@ -51,7 +51,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
         clearTimeout(valueTimeout);
         valueTimeout = setTimeout(() => {
             api.post('/sheet/player/attribute', { id: attributeID, value: newVal }).catch(logError);
-        }, 1000);
+        }, 250);
     }
 
     function updateMaxValue(ev: FormEvent<HTMLInputElement>) {

@@ -15,6 +15,11 @@ $proggress-bar-height: 40px;
     &.attribute-color {
         color: $foreground;
     }
+
+    &.portrait-color {
+        color: white;
+        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
+    }
 }
 
 .Armadura {
@@ -31,6 +36,11 @@ $proggress-bar-height: 40px;
 
     &.attribute-color {
         color: $foreground;
+    }
+
+    &.portrait-color {
+        color: white;
+        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
     }
 }
 
@@ -49,6 +59,11 @@ $proggress-bar-height: 40px;
     &.attribute-color {
         color: $foreground;
     }
+
+    &.portrait-color {
+        color: white;
+        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
+    }
 }
 
 .Magia {
@@ -65,6 +80,11 @@ $proggress-bar-height: 40px;
 
     &.attribute-color {
         color: $foreground;
+    }
+
+    &.portrait-color {
+        color: white;
+        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
     }
 }
 

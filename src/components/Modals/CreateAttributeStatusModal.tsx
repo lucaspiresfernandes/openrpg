@@ -12,16 +12,20 @@ type CreateAttributeStatusModalProps = {
 
 export default function CreateAttributeStatusModal(props: CreateAttributeStatusModalProps) {
     const [name, setName] = useState('');
-    const [attributeID, setAttributeID] = useState(props.attributes[0].id);
+    const [attributeID, setAttributeID] = useState(props.attributes[0]?.id || 0);
 
     function reset() {
         setName('');
-        setAttributeID(props.attributes[0].id);
+        setAttributeID(props.attributes[0]?.id || 0);
     }
 
     return (
         <SheetModal title='Novo Status de Atributo' show={props.show} onHide={props.onHide} onExited={reset}
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, attributeID) }}>
+            applyButton={{
+                name: 'Criar',
+                onApply: () => props.onCreate(name, attributeID),
+                disabled: props.attributes.length === 0
+            }}>
             <Container>
                 <Row>
                     <Col>

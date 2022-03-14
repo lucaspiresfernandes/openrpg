@@ -13,7 +13,7 @@ type CreateEquipmentModalProps = {
 
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
     const [name, setName] = useState('');
-    const [skillID, setSkillID] = useState(props.skill[0].id);
+    const [skillID, setSkillID] = useState(props.skill[0]?.id || 0);
     const [type, setType] = useState('');
     const [damage, setDamage] = useState('');
     const [range, setRange] = useState('');
@@ -22,7 +22,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 
     function reset() {
         setName('');
-        setSkillID(props.skill[0].id);
+        setSkillID(props.skill[0]?.id || 0);
         setType('');
         setDamage('');
         setRange('');
@@ -44,7 +44,11 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 
     return (
         <SheetModal title='Novo Equipamento' show={props.show} onHide={props.onHide} onExited={reset}
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, skillID, type, damage, range, attacks, ammo) }}>
+            applyButton={{
+                name: 'Criar',
+                onApply: () => props.onCreate(name, skillID, type, damage, range, attacks, ammo),
+                disabled: props.skill.length === 0
+            }} scrollable>
             <Container fluid>
                 <Row>
                     <Col>
@@ -97,10 +101,12 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
                                 })} />
                             <Form.Label>Possui munição?</Form.Label>
                         </Form.Group>
-                        <Form.Group controlId='createEquipmentAmmo' className='mb-3'>
-                            <Form.Label>Munição</Form.Label>
-                            <Form.Control className='theme-element' value={ammo || ''} onChange={onAmmoChange} disabled={ammo === null} />
-                        </Form.Group>
+                        {ammo != null &&
+                            <Form.Group controlId='createEquipmentAmmo' className='mb-3'>
+                                <Form.Label>Munição</Form.Label>
+                                <Form.Control className='theme-element' value={ammo || ''} onChange={onAmmoChange} />
+                            </Form.Group>
+                        }
                     </Col>
                 </Row>
             </Container>

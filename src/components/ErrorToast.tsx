@@ -7,25 +7,21 @@ type ErrorToastProps = {
 }
 
 export default function ErrorToast({ err, onClose }: ErrorToastProps): JSX.Element {
-    function getErrorAsMessage(): String {
-        const responseData = err.response?.data;
-        if (responseData) {
-            const message = responseData.message;
-            if (message) {
-                return `Mensagem do servidor: ${message}`;
-            }
-        }
-        const message = err.message as string;
-        return message;
+    
+    let message = err.message;
+    const responseData = err.response?.data;
+    if (responseData) {
+        const responseMessage = responseData.message;
+        if (responseMessage) message = `Mensagem do servidor: ${responseMessage}`;
     }
 
     return (
-        <Toast show={true} bg='dark' delay={5000} autohide onClose={onClose}>
+        <Toast show={true} bg='dark' delay={10000} autohide onClose={onClose}>
             <Toast.Header>
                 <span><i className='bi bi-x-circle align-self-center'></i></span>
                 <strong className='me-auto ms-1'>Erro</strong>
             </Toast.Header>
-            <Toast.Body>{getErrorAsMessage()}</Toast.Body>
+            <Toast.Body>{message}</Toast.Body>
         </Toast>
     );
 }

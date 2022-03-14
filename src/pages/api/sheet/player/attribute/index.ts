@@ -38,7 +38,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     res.end();
 
-    res.socket.server.io?.to('admin').emit('attributeChange', player.id, attributeID, value, maxValue);
+    res.socket.server.io?.emit('attributeChange', player.id, attributeID, value, maxValue);
 }
 
 export default sessionAPI(handler);

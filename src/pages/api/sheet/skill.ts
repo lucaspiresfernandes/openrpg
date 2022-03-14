@@ -1,3 +1,4 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextApiResponseServerIO } from '../../../utils';
 import database from '../../../utils/database';
@@ -50,7 +51,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     const name = req.body.name;
     const mandatory = req.body.mandatory;
-    const specialization_id = req.body.specializationID;
+    let specialization_id = req.body.specializationID;
+    if (specialization_id === 0) specialization_id = null;
 
     if (name === undefined || mandatory === undefined || specialization_id === undefined) {
         res.status(401).send({ message: 'Name or description is undefined.' });
@@ -73,13 +75,22 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     const id = req.body.id;
 
     if (!id) {
-        res.status(401).send({ message: 'ID is undefined.' });
+        res.status(400).send({ message: 'ID is undefined.' });
         return;
     }
 
-    await database.skill.delete({ where: { id } });
+    database.skill.delete({ where: { id } }).then(() => res.end()).catch(err => {
+        switch (err.code) {
+            //Foreign key fails
+            case 'P2003':
+                res.status(400).send({ message: 'Não foi possível remover essa perícia pois ainda há alguma informação usando-a.' });
+                break;
 
-    res.end();
+            default:
+                res.status(500).end();
+                break;
+        }
+    });
 }
 
 export default sessionAPI(handler);

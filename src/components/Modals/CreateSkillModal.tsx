@@ -4,7 +4,7 @@ import { Col, Container, Form, Row } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 
 type CreateSkillModalProps = {
-    onCreate(name: string, specializationID: number, mandatory: boolean): void;
+    onCreate(name: string, mandatory: boolean, specializationID: number | null): void;
     show: boolean;
     onHide(): void;
     specialization: Specialization[];
@@ -12,18 +12,18 @@ type CreateSkillModalProps = {
 
 export default function CreateSkillModal(props: CreateSkillModalProps) {
     const [name, setName] = useState('');
-    const [specializationID, setSpecializationID] = useState(props.specialization[0].id);
+    const [specializationID, setSpecializationID] = useState(props.specialization[0]?.id || 0);
     const [mandatory, setMandatory] = useState(false);
 
     function reset() {
         setName('');
-        setSpecializationID(props.specialization[0].id);
+        setSpecializationID(props.specialization[0]?.id || 0);
         setMandatory(false);
     }
 
     return (
         <SheetModal title='Nova Perícia' show={props.show} onHide={props.onHide} onExited={reset}
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, specializationID, mandatory) }}>
+            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, mandatory, specializationID) }}>
             <Container>
                 <Row>
                     <Col>
@@ -34,8 +34,9 @@ export default function CreateSkillModal(props: CreateSkillModalProps) {
                         </Form.Group>
                         <Form.Group controlId='createSkillSpecialization' className='mb-3'>
                             <Form.Label>Especialização</Form.Label>
-                            <Form.Select value={specializationID} className='theme-element'
+                            <Form.Select value={specializationID || 0} className='theme-element'
                                 onChange={ev => setSpecializationID(parseInt(ev.currentTarget.value))} >
+                                <option value='0'>Nenhuma</option>
                                 {props.specialization.map(spec =>
                                     <option key={spec.id} value={spec.id}>{spec.name}</option>
                                 )}
