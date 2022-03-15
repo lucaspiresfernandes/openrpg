@@ -46,6 +46,7 @@ model AttributeStatus {
   name                  String
   Attribute             Attribute               @relation(fields: [attribute_id], references: [id])
   attribute_id          Int
+  priority              Int
   PlayerAttributeStatus PlayerAttributeStatus[]
 }
 

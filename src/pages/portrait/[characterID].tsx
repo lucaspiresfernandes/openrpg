@@ -9,6 +9,7 @@ import { DiceResult, ResolvedDice, sleep } from '../../utils';
 
 export default function CharacterPortrait(props: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
     const [attributes, setAttributes] = useState(props.attributes);
+    const [attributeStatus, setAttributeStatus] = useState(props.attributeStatus);
     const [sideAttribute, setSideAttribute] = useState(props.sideAttribute);
     const [playerName, setPlayerName] = useState(props.playerName.value);
     const [environment, setEnvironment] = useState(props.environment);
@@ -25,11 +26,10 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     const [diceDescription, setDiceDescription] = useState('');
     const [diceDescriptionShow, setDiceDescriptionShow] = useState(false);
 
-    const diceVideo = useRef<HTMLVideoElement>(null);
+    const [src, setSrc] = useState('#');
+    const previousStatusID = useRef(0);
 
-    const statusID = props.attributeStatus.find(stat => stat.value);
-    const [src, setSrc] = useState(`/api/sheet/player/avatar/${statusID}`);
-    const previousStatusID = useRef(statusID);
+    const diceVideo = useRef<HTMLVideoElement>(null);
 
     useSocket(socket => {
         socket.emit('roomJoin', `portrait${props.playerId}`);
@@ -60,6 +60,26 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                     value: value || attr.value,
                     Attribute: { ...attr.Attribute }
                 };
+            });
+        });
+
+        socket.on('attributeStatusChange', (playerId, attrStatusID, value) => {
+            if (playerId !== props.playerId) return;
+            setAttributeStatus(status => {
+                const newAttrStatus = [...status];
+                const index = newAttrStatus.findIndex(stat => stat.AttributeStatus.id === attrStatusID);
+                if (index === -1) return status;
+
+                newAttrStatus[index].value = value;
+
+                const newStatusID = newAttrStatus.find(stat => stat.value)?.AttributeStatus.id || 0;
+
+                if (newStatusID !== previousStatusID.current) {
+                    previousStatusID.current = newStatusID;
+                    setSrc(`/api/sheet/player/avatar/${newStatusID}?v=${Date.now()}`);
+                }
+
+                return newAttrStatus;
             });
         });
 
@@ -124,13 +144,12 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         socket.on('diceResult', onDiceResult);
     });
 
-    useEffect(() => { document.body.style.backgroundColor = 'transparent'; }, []);
-
     useEffect(() => {
-        if (statusID === previousStatusID.current) return;
-        previousStatusID.current = statusID;
-        setSrc(`/api/sheet/player/avatar/${statusID}?v=${Date.now()}`);
-    }, [statusID]);
+        document.body.style.backgroundColor = 'transparent';
+        const id = attributeStatus.find(stat => stat.value)?.value || 0;
+        setSrc(`/api/sheet/player/avatar/${id}?v=${Date.now()}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <>
