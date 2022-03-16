@@ -30,6 +30,7 @@ model Player {
 model Info {
   id         Int          @id @default(autoincrement())
   name       String
+  default    Boolean      @default(false)
   PlayerInfo PlayerInfo[]
 }
 
@@ -46,7 +47,7 @@ model AttributeStatus {
   name                  String
   Attribute             Attribute               @relation(fields: [attribute_id], references: [id])
   attribute_id          Int
-  priority              Int
+  order              Int
   PlayerAttributeStatus PlayerAttributeStatus[]
 }
 

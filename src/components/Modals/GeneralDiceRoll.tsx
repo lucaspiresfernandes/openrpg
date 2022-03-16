@@ -79,7 +79,7 @@ export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
             <Container fluid>
                 <Row className='text-center'>
                     {dices.map((dice, index) =>
-                        <Col key={index} sm={6} lg={4} className='my-2'>
+                        <Col xs={6} lg={4} key={index} className='my-2'>
                             <Row className='mb-1 justify-content-center'>
                                 <Col>
                                     <Image src={`/dice${dice.roll}.png`} alt={dice.name}

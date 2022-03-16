@@ -41,9 +41,9 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
         });
     }
 
-    function diceRoll() {
-        const baseDice = config.player.base_dice;
-        showDiceRollResult([{ num: 1, roll: baseDice, ref: value }], `${baseDice}b`);
+    function rollDice() {
+        const base = config.player.base;
+        showDiceRollResult([{ num: 1, roll: base.dice, ref: value }], `${base.dice}${base.branched ? 'b' : ''}`);
     }
 
     let name = props.skill.name;
@@ -57,7 +57,7 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
                         value={value} onChange={valueChange} onBlur={valueBlur} />
                 </Col>
             </Row>
-            <Row className='label h-100' onClick={diceRoll}>
+            <Row className='label h-100' onClick={rollDice}>
                 <Col>{name}</Col>
             </Row>
         </Col>

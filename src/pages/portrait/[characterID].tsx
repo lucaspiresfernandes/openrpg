@@ -1,4 +1,4 @@
-import { ClassAttributes, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Fade, Image } from 'react-bootstrap';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
@@ -13,6 +13,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     const [sideAttribute, setSideAttribute] = useState(props.sideAttribute);
     const [playerName, setPlayerName] = useState(props.playerName.value);
     const [environment, setEnvironment] = useState(props.environment);
+    const [socket, setSocket] = useState<SocketIO | null>(null);
 
     const diceQueue = useRef<DiceResult[]>([]);
     const diceData = useRef<DiceResult>();
@@ -32,7 +33,12 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     const diceVideo = useRef<HTMLVideoElement>(null);
 
     useSocket(socket => {
+        setSocket(socket);
         socket.emit('roomJoin', `portrait${props.playerId}`);
+    });
+
+    useEffect(() => {
+        if (!socket) return;
 
         socket.on('configChange', (key, value) => {
             if (key !== 'environment') return;
@@ -67,12 +73,12 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
             if (playerId !== props.playerId) return;
             setAttributeStatus(status => {
                 const newAttrStatus = [...status];
-                const index = newAttrStatus.findIndex(stat => stat.AttributeStatus.id === attrStatusID);
+                const index = newAttrStatus.findIndex(stat => stat.attribute_status_id === attrStatusID);
                 if (index === -1) return status;
 
                 newAttrStatus[index].value = value;
 
-                const newStatusID = newAttrStatus.find(stat => stat.value)?.AttributeStatus.id || 0;
+                const newStatusID = newAttrStatus.find(stat => stat.value)?.attribute_status_id || 0;
 
                 if (newStatusID !== previousStatusID.current) {
                     previousStatusID.current = newStatusID;
@@ -142,7 +148,17 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         }
 
         socket.on('diceResult', onDiceResult);
-    });
+
+        return () => {
+            socket.off('configChange');
+            socket.off('attributeChange');
+            socket.off('attributeStatusChange');
+            socket.off('infoChange');
+            socket.off('diceRoll');
+            socket.off('diceResult');
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket]);
 
     useEffect(() => {
         document.body.style.backgroundColor = 'transparent';
@@ -154,8 +170,8 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     return (
         <>
             <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
-                <Image src='/frame.png' alt='Frame' width={440} height={620} className={styles.frame} />
                 <Image src={src} onError={() => setSrc('/avatar404.png')} alt='Avatar' width={420} height={600} className={styles.avatar} />
+                <Image src='/frame.png' alt='Frame' width={440} height={620} />
             </div>
             <div className={styles.sideContainer}>
                 <div className={`${styles.side} portrait-color ${sideAttribute.Attribute.name}`}>
@@ -201,7 +217,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }),
         prisma.playerAttributeStatus.findMany({
             where: { player_id: id },
-            select: { value: true, AttributeStatus: { select: { id: true } } }
+            select: { value: true, attribute_status_id: true }
         }),
         prisma.playerInfo.findFirst({ where: { player_id: id, Info: { name: 'Nome' } }, select: { value: true, info_id: true } })
     ]);

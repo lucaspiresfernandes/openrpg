@@ -51,7 +51,7 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
 
     return (
         <SheetModal title='Editar Avatar' applyButton={{ name: 'Atualizar', onApply: onUpdateAvatar }} show={props.show}
-            onHide={onHide}>
+            onHide={onHide} scrollable>
             <Container fluid>
                 <Row className='mb-3 h4 text-center'>
                     <Col>

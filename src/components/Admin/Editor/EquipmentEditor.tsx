@@ -12,7 +12,7 @@ export default function EquipmentEditor(props: EquipmentEditorProps) {
     return (
         <Row>
             <Col>
-                <Table responsive className='align-middle'>
+                <Table responsive className='align-middle text-center'>
                     <thead>
                         <tr>
                             <th></th>

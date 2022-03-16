@@ -118,15 +118,15 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
             </td>
             <td style={{ width: '10rem' }}>
                 <BottomTextInput value={damage} onChange={ev => setDamage(ev.currentTarget.value)}
-                    onBlur={onDamageBlur} className='w-100' />
+                    onBlur={onDamageBlur} className='w-100 text-center' />
             </td>
             <td style={{ width: '7.5rem' }}>
                 <BottomTextInput value={range} onChange={ev => setRange(ev.currentTarget.value)}
-                    onBlur={onRangeBlur} className='w-100' />
+                    onBlur={onRangeBlur} className='w-100 text-center' />
             </td>
             <td style={{ width: '5rem' }}>
                 <BottomTextInput value={attacks} onChange={ev => setAttacks(ev.currentTarget.value)}
-                    onBlur={onAttacksBlur} className='w-100' />
+                    onBlur={onAttacksBlur} className='w-100 text-center' />
             </td>
             <td style={{ width: '3rem' }}>
                 {ammo === null ? <>-</> :

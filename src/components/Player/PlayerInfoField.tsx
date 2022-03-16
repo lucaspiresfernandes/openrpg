@@ -1,6 +1,6 @@
 import Prisma from '@prisma/client';
 import { useContext, useState } from 'react';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
@@ -25,10 +25,14 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
     }
 
-    function renderField() {
-        if (isDefined) {
-            return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
-        }
+    function Field() {
+        if (isDefined) return (
+            <>
+                <br />
+                <label onDoubleClick={() => setDefined(false)}>{value}</label>
+            </>
+        );
+
         return (
             <BottomTextInput autoFocus className='w-100' id={`info${infoID}`} autoComplete='off' value={value}
                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
@@ -39,14 +43,10 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         <Row className='mb-4'>
             <Col className='mx-2'>
                 <Row>
-                    <Col className='h5'>
-                        <label htmlFor={`info${infoID}`}>{playerInfo.info.name}</label>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {renderField()}
-                    </Col>
+                    <Form.Group controlId={`info${infoID}`}>
+                        <Form.Label className='h5'>{playerInfo.info.name}</Form.Label>
+                        <Field />
+                    </Form.Group>
                 </Row>
             </Col>
         </Row>

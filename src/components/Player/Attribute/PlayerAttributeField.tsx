@@ -88,50 +88,48 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     }
 
     return (
-        <Row>
-            <Col>
-                <Row>
-                    <Col><label htmlFor={`attribute${attributeID}`}>
-                        Pontos de {playerAttribute.Attribute.name}
-                    </label></Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <ProgressBar now={value} min={0} max={maxValue} className={playerAttribute.Attribute.name} />
+        <>
+            <Row>
+                <Col><label htmlFor={`attribute${attributeID}`}>
+                    Pontos de {playerAttribute.Attribute.name}
+                </label></Col>
+            </Row>
+            <Row>
+                <Col>
+                    <ProgressBar now={value} min={0} max={maxValue} className={playerAttribute.Attribute.name} />
+                </Col>
+                {playerAttribute.Attribute.rollable &&
+                    <Col xs='auto' className='align-self-center'>
+                        <Image src='/dice20.png' alt='Dado' className='attribute-dice clickable' onClick={diceClick} />
                     </Col>
-                    {playerAttribute.Attribute.rollable &&
-                        <Col xs='auto' className='align-self-center'>
-                            <Image src='/dice20.png' alt='Dado' className='attribute-dice clickable' onClick={diceClick} />
-                        </Col>
-                    }
-                </Row>
-                <Row className='justify-content-center mt-2'>
-                    <Col xs lg={3}>
-                        <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, -1)}>-</Button>
-                    </Col>
-                    <Col xs lg={2} className='text-center'>
-                        <label className='h5' htmlFor={`attribute${attributeID}`}>{`${value}/${maxValue}`}</label>
-                    </Col>
-                    <Col xs lg={3}>
-                        <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, 1)}>+</Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={{ span: 4, offset: 4 }} lg={{ span: 2, offset: 5 }} className='h5' >
-                        <BottomTextInput maxLength={3} autoComplete='off' value={maxValue}
-                            onChange={updateMaxValue} id={`attribute${attributeID}`}
-                            className='text-center w-100' onBlur={maxValueBlur} />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {playerStatus.map(stat =>
-                            <PlayerAttributeStatusField key={stat.AttributeStatus.id}
-                                playerAttributeStatus={stat} onStatusChanged={onStatusChanged} />
-                        )}
-                    </Col>
-                </Row>
-            </Col>
-        </Row>
+                }
+            </Row>
+            <Row className='justify-content-center mt-2'>
+                <Col xs lg={3}>
+                    <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, -1)}>-</Button>
+                </Col>
+                <Col xs lg={2} className='text-center'>
+                    <label className='h5' htmlFor={`attribute${attributeID}`}>{`${value}/${maxValue}`}</label>
+                </Col>
+                <Col xs lg={3}>
+                    <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, 1)}>+</Button>
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={{ span: 4, offset: 4 }} lg={{ span: 2, offset: 5 }} className='h5' >
+                    <BottomTextInput maxLength={3} autoComplete='off' value={maxValue}
+                        onChange={updateMaxValue} id={`attribute${attributeID}`}
+                        className='text-center w-100' onBlur={maxValueBlur} />
+                </Col>
+            </Row>
+            <Row className='mb-3'>
+                <Col>
+                    {playerStatus.map(stat =>
+                        <PlayerAttributeStatusField key={stat.AttributeStatus.id}
+                            playerAttributeStatus={stat} onStatusChanged={onStatusChanged} />
+                    )}
+                </Col>
+            </Row>
+        </>
     );
 }

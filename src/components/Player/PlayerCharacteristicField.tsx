@@ -1,6 +1,6 @@
 import Prisma from '@prisma/client';
 import { ChangeEvent, useContext } from 'react';
-import { Col, Image, Row } from 'react-bootstrap';
+import { Col, Form, Image, Row } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import config from '../../../openrpg.config.json';
@@ -39,8 +39,8 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
     }
 
     function rollDice() {
-        const baseDice = config.player.base_dice;
-        showDiceRollResult([{ num: 1, roll: baseDice, ref: value }], `${baseDice}b`);
+        const base = config.player.base;
+        showDiceRollResult([{ num: 1, roll: base.dice, ref: value }], `${base.dice}${base.branched ? 'b' : ''}`);
     }
 
     return (
@@ -55,13 +55,11 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
             }
             <Row>
                 <Col>
-                    <label htmlFor={`char${characteristic.id}`}>{characteristic.name}</label>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <BottomTextInput className='h5 w-75 text-center' id={`char${characteristic.id}`}
-                        value={value} onChange={onChange} onBlur={onBlur} maxLength={3} />
+                    <Form.Group controlId={`char${characteristic.id}`}>
+                        <Form.Label className='w-100'>{characteristic.name}</Form.Label>
+                        <BottomTextInput className='h5 w-75 text-center' id={`char${characteristic.id}`}
+                            value={value} onChange={onChange} onBlur={onBlur} maxLength={3} />
+                    </Form.Group>
                 </Col>
             </Row>
         </Col>

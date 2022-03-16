@@ -47,24 +47,20 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 
     return (
         <>
-            <Row>
-                <Row className='mt-4 mb-2 justify-content-center'>
-                    <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.onAvatarClick}
-                        playerStatus={props.playerStatus} />
-                    <Col xs={4} md={3} xl={2} className='align-self-center'>
-                        <Image fluid src='/dice20.png' alt='Dado Geral'
-                            className='clickable' onClick={props.onDiceClick} />
-                    </Col>
-                </Row>
+            <Row className='mt-4 mb-2 justify-content-center'>
+                <PlayerAvatarImage statusID={status.find(stat => stat.value)?.id} onClick={props.onAvatarClick}
+                    playerStatus={props.playerStatus} />
+                <Col xs={4} md={3} xl={2} className='align-self-center'>
+                    <Image fluid src='/dice20.png' alt='Dado Geral'
+                        className='clickable' onClick={props.onDiceClick} />
+                </Col>
             </Row>
-            {
-                props.playerAttributes.map(attr => {
-                    const status = props.playerStatus.filter(stat =>
-                        stat.AttributeStatus.attribute_id === attr.Attribute.id);
-                    return <PlayerAttributeField key={attr.Attribute.id}
-                        playerAttribute={attr} playerStatus={status} onStatusChanged={statusChange} />;
-                })
-            }
+            {props.playerAttributes.map(attr => {
+                const status = props.playerStatus.filter(stat =>
+                    stat.AttributeStatus.attribute_id === attr.Attribute.id);
+                return <PlayerAttributeField key={attr.Attribute.id}
+                    playerAttribute={attr} playerStatus={status} onStatusChanged={statusChange} />;
+            })}
         </>
     );
 }

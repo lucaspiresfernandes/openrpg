@@ -1,4 +1,5 @@
 import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Spec } from '@prisma/client';
+import Router from 'next/router';
 import React, { useContext } from 'react';
 import { Button, Col, Row, } from 'react-bootstrap';
 import { ErrorLogger } from '../../../contexts';
@@ -68,6 +69,14 @@ export default function PlayerContainer(props: PlayerContainerProps) {
                     <Row className='my-2'>
                         <Col>
                             <Button size='sm' variant='dark' onClick={deletePlayer}>Apagar</Button>
+                        </Col>
+                        <Col>
+                            <Button size='sm' variant='dark' onClick={() => {
+                                alert('Link copiado para sua área de transferência.');
+                                navigator.clipboard.writeText(`${window.location.host}/portrait/${props.id}`);
+                            }}>
+                                Retrato
+                            </Button>
                         </Col>
                     </Row>
                     <AvatarField status={props.status.map(stat => { return { id: stat.AttributeStatus.id, value: stat.value }; })} />

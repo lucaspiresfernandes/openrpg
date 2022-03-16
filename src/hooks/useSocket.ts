@@ -14,5 +14,6 @@ export default function useSocket(socketCallback: (socket: SocketIO) => void) {
             socket.on('connect_error', err => console.error('Socket.IO error:', err));
             socket.on('disconnect', reason => console.warn('Socket.IO disconnect. Reason:', reason));
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 }

@@ -2,27 +2,10 @@
     position: relative;
 }
 
-.top {
-    z-index: 0;
-}
-
-.middle {
-    z-index: -500;
-}
-
-.bottom {
-    z-index: -1000;
-}
-
 .avatar {
-    @extend .middle;
     position: absolute;
     left: 10px;
     top: 10px;
-}
-
-.frame {
-    @extend .top;
 }
 
 .sideContainer {
@@ -38,8 +21,8 @@
 .side {
     position: absolute;
 
-    top: 45%;
-    left: 45%;
+    top: 46%;
+    left: 46%;
     transform: translate(-50%, -50%);
     font-size: 48px;
 }

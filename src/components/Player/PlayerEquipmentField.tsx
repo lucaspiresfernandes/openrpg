@@ -7,7 +7,7 @@ import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import { BsTrash } from 'react-icons/bs';
 
 type PlayerEquipmentFieldProps = {
-    currentAmmo: number | null;
+    currentAmmo: number;
     using: boolean;
     equipment: {
         id: number;
@@ -26,7 +26,7 @@ type PlayerEquipmentFieldProps = {
 
 export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     const [using, setUsing] = useState(props.using);
-    const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo || 0);
+    const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
     const [disabled, setDisabled] = useState(false);
 
     const logError = useContext(ErrorLogger);

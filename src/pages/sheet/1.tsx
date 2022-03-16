@@ -25,10 +25,10 @@ import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import Router from 'next/router';
 
-const bonusDamageName = 'Dano Bônus';
+const bonusDamageName = config.player.bonus_damage_name;
 
 type PlayerEquipment = {
-    currentAmmo: number | null;
+    currentAmmo: number;
     using: boolean;
     Equipment: {
         id: number;
@@ -320,21 +320,23 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         </Row>
                         <Row>
                             <DataContainer outline title='Detalhes Pessoais'>
-                                {props.playerInfo.map(pinfo =>
-                                    <PlayerInfoField key={pinfo.Info.id} info={pinfo.Info} value={pinfo.value} />
-                                )}
+                                <>
+                                    {props.playerInfo.map(pinfo =>
+                                        <PlayerInfoField key={pinfo.Info.id} info={pinfo.Info} value={pinfo.value} />
+                                    )}
+                                    <Row className='justify-content-center'>
+                                        {props.playerSpecs.map(spec =>
+                                            <PlayerSpecField key={spec.Spec.id} value={spec.value} Spec={spec.Spec}
+                                                onSpecChanged={onBonusDamageChanged} />
+                                        )}
+                                    </Row>
+                                </>
                             </DataContainer>
                             <Col>
                                 <PlayerAttributeContainer playerAttributes={props.playerAttributes}
                                     playerStatus={playerStatus}
                                     onDiceClick={() => setGeneralDiceRollShow(true)}
                                     onAvatarClick={() => setAvatarModalShow(true)} />
-                                <Row className='justify-content-center'>
-                                    {props.playerSpecs.map(spec =>
-                                        <PlayerSpecField key={spec.Spec.id} value={spec.value} Spec={spec.Spec}
-                                            onSpecChanged={onBonusDamageChanged} />
-                                    )}
-                                </Row>
                             </Col>
                         </Row>
                         <Row>
