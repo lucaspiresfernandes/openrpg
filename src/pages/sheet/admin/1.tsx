@@ -51,12 +51,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                             </Col>
                         </Row>
                         <Row className='justify-content-center'>
-                            {props.players.length === 0 ?
-                                <Col className='h2 text-center' style={{ color: 'gray' }}>
-                                    Não há nenhum jogador cadastrado.
-                                </Col> :
-                                <PlayerManager players={props.players} />}
-
+                            <PlayerManager players={props.players} />
                         </Row>
                         <Row className='my-3 text-center'>
                             <DataContainer xs={12} lg title='Rolagem'>

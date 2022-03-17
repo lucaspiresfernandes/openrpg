@@ -11,7 +11,7 @@ export default function SheetNavbar() {
     }
 
     return (
-        <Navbar bg='info' sticky='top' expand='sm' className='mb-3'>
+        <Navbar sticky='top' expand='sm' className='mb-3'>
             <Container fluid>
                 <Navbar.Brand>Open RPG</Navbar.Brand>
                 <Navbar.Toggle />

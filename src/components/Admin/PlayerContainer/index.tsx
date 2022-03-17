@@ -62,12 +62,12 @@ export default function PlayerContainer(props: PlayerContainerProps) {
                 <Col>
                     <Row className='my-2'>
                         <Col>
-                            <Button size='sm' variant='dark' onClick={deletePlayer}>Apagar</Button>
+                            <Button size='sm' variant='secondary' onClick={deletePlayer}>Apagar</Button>
                         </Col>
                         <Col>
-                            <Button size='sm' variant='dark' onClick={() => {
-                                alert('Link copiado para sua área de transferência.');
+                            <Button size='sm' variant='secondary' onClick={() => {
                                 navigator.clipboard.writeText(`${window.location.host}/portrait/${props.id}`);
+                                alert('Link copiado para sua área de transferência.');
                             }}>
                                 Retrato
                             </Button>

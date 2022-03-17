@@ -2,17 +2,17 @@
 
 .link {
     text-decoration: none;
-    color: $openrpg-text;
+    color: $text-color;
     border-width: 0px 0px 2px 0px;
     border-style: solid;
     border-color: gray;
     &:hover,
     &:active {
-        color: invert($openrpg-text);
+        color: invert($text-color);
         padding: 5px;
         border-width: 0;
         border-radius: 5px;
-        background-color: $openrpg-text;
+        background-color: $text-color;
     }
     transition: all 250ms;
 }

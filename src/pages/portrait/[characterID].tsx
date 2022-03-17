@@ -225,7 +225,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return {
         props: {
             playerId: id,
-            environment: results[0]?.value || 'unknown',
+            environment: results[0]?.value || 'idle',
             attributes: results[1],
             sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '' } },
             attributeStatus: results[3],

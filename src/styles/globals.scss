@@ -5,8 +5,8 @@
 body {
   padding: 0;
   margin: 0;
-  background-color: $openrpg-primary;
-  color: $openrpg-text;
+  background-color: $background-color;
+  color: $text-color;
 }
 
 .data-container {
@@ -17,37 +17,41 @@ body {
 }
 
 .theme-element {
-  background-color: $openrpg-secondary;
-  color: $openrpg-text;
+  background-color: $primary-color;
+  color: $text-color;
 
   &:focus {
-    background-color: $openrpg-secondary;
-    color: $openrpg-text;
+    background-color: $primary-color;
+    color: $text-color;
   }
 
   &:disabled {
-    background-color: darken($openrpg-secondary, 5%);
-    border-color: $secondary;
-    color: $openrpg-text;
+    background-color: darken($primary-color, 10%);
+    border-color: $secondary-color;
+    color: $text-color;
+  }
+
+  &::-webkit-input-placeholder {
+    color: darken($text-color, 25%);
   }
 }
 
 .bottom-text {
-  background-color: $openrpg-primary;
+  background-color: $background-color;
   outline: 0;
   border-width: 0 0 1px;
-  color: $openrpg-text;
+  color: $text-color;
   &:focus {
-    background-color: $openrpg-primary;
+    background-color: $background-color;
   }
 }
 
 .form-control,
 .form-select {
-  border-color: lighten($openrpg-dark, 25%);
+  border-color: lighten($primary-color, 25%);
   &:focus {
-    border-color: $openrpg-dark;
-    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $openrpg-secondary;
+    border-color: $primary-color;
+    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $outline-color;
   }
 }
 
@@ -56,32 +60,46 @@ body {
 }
 
 .modal-content {
-  background-color: $openrpg-primary;
+  background-color: $terciary-color;
 }
 
 .modal-header {
-  background-color: $openrpg-primary;
-  border-color: $openrpg-secondary;
+  background-color: $terciary-color;
+  border-color: $secondary-color;
 }
 
 .modal-body {
-  background-color: $openrpg-primary;
-  border-color: $openrpg-secondary;
+  background-color: $terciary-color;
+  border-color: $secondary-color;
 }
 
 .modal-footer {
-  background-color: $openrpg-primary;
-  border-color: $openrpg-secondary;
+  background-color: $terciary-color;
+  border-color: $secondary-color;
+}
+
+.navbar {
+  background-color: $terciary-color;
+  .nav-link {
+    color: $navbar-text-color !important;
+    &:hover {
+      color: darken($navbar-text-color, 20%) !important;
+    }
+  }
+
+  .navbar-brand {
+    color: $navbar-text-color !important;
+  }
 }
 
 .table {
-  color: $openrpg-text;
+  color: $text-color;
   tr {
     border-color: gray;
   }
 }
 
-$openrpg-list-group-color: #111;
+$list-group-color: #222222;
 
 .wrapper {
   @extend .data-container;
@@ -89,7 +107,7 @@ $openrpg-list-group-color: #111;
   max-height: 260px;
 
   .list-group {
-    background-color: $openrpg-list-group-color;
+    background-color: $list-group-color;
     border-radius: 0;
     min-height: 200px;
     list-style-type: none;
@@ -101,7 +119,7 @@ $openrpg-list-group-color: #111;
     }
 
     input.bottom-text {
-      background-color: $openrpg-list-group-color;
+      background-color: $list-group-color;
     }
   }
 }
@@ -112,38 +130,36 @@ $openrpg-list-group-color: #111;
 }
 
 .dice-list > li:nth-child(odd) {
-  background-color: lighten($openrpg-list-group-color, 50%);
+  background-color: lighten($list-group-color, 50%);
 }
 
 .player-container {
   @extend .data-container;
-  background-color: rgb(70, 70, 70);
+  background-color: $secondary-color;
 }
 
 .list-group-item {
   @extend .theme-element;
-  background-color: $openrpg-list-group-color;
+  background-color: $list-group-color;
 
   &.selected {
-    background-color: $dark;
+    background-color: $secondary-color;
     input {
-      background-color: $dark !important;
+      background-color: $secondary-color !important;
     }
   }
 }
 
-$container-color: $openrpg-primary;
-$container-color-hover: $openrpg-light;
-$text-color-hover: black;
-
 .skill-container {
-  background-color: $container-color;
+  $text-color-hover: invert($text-color);
+
+  background-color: $background-color;
   border-radius: 20px;
 
   &:hover {
-    background-color: $container-color-hover;
+    background-color: $outline-color;
     .text {
-      background-color: $container-color-hover;
+      background-color: $outline-color;
       color: $text-color-hover;
     }
     .label {

@@ -18,7 +18,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     const extraInfoID = req.body.id;
     const value = req.body.value;
 
-    if (!value || !extraInfoID) {
+    if (!extraInfoID || value === undefined) {
         res.status(400).send({ message: 'Extra Info ID or value is undefined.' });
         return;
     }

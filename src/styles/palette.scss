@@ -1,14 +1,39 @@
-//Cor primária da paleta de cores.
-$openrpg-primary: #262e3b !default;
+/*********************************************************************************
+* A paleta é o conjunto de cores que forma a identidade visual de todo o site.   *
+* Para editá-la, é muito simples: apenas troque os valores hexadecimais das      *
+* variáveis abaixo para as cores de sua paleta desejada. (A cor deve preceder    *
+* de uma hashtag "#".)                                                           *
+*                                                                                *
+* Boa sorte, e bom jogo!                                                         *
+*                                                                                *
+* OBS 1: NÃO edite este texto ou qualquer texto que preceda duas barras ("//").  *
+* OBS 2: Alguns botões de algumas páginas são imutáveis, ou seja, suas cores não *
+* podem ser editadas. Esses botões muitas vezes são cinzas ou pretos para        *
+* não afetar a diversidade da paleta de cores.                                   *
+**********************************************************************************/
 
-//Cor secundária da paleta de cores.
-$openrpg-secondary: #2f3c52 !default;
+// Cor do plano de fundo.
+// Em geral, é recomendado que essa cor seja escura.
+$background-color: #000000;
 
-//
-$openrpg-light: #00adb5 !default;
+// Cor primária da paleta de cores.
+// Usado como cor de fundo de caixa de textos e bordas.
+$primary-color: #222222;
 
-//
-$openrpg-dark: darken($openrpg-light, 25%) !default;
+// Cor secundária da paleta de cores.
+// Usado como cor de elementos desativados e como cor de contêinieres.
+$secondary-color: #313131;
 
-//
-$openrpg-text: #eeeeee !default;
+// Cor terciária da paleta de cores.
+// Usado por componentes como a barra de navegação, popups e caixas de diálogo.
+$terciary-color: #1f1f1f;
+
+//Cor do texto da barra de navegação.
+$navbar-text-color: #ffffff;
+
+// Cor do texto global.
+$text-color: #ffffff;
+
+// Cor de destaque das caixas de texto.
+// É recomendável que essa cor seja mais clara que o resto da paleta.
+$outline-color: #ff0000;

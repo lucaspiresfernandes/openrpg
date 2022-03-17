@@ -1,6 +1,8 @@
 import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Spec } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
+import { Col } from 'react-bootstrap';
 import { RetrieveSocket } from '../../contexts';
+import player from '../../pages/api/player';
 import PlayerContainer from './PlayerContainer';
 
 type PlayerManagerProps = {
@@ -180,6 +182,12 @@ export default function PlayerManager(props: PlayerManagerProps) {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket]);
+
+    if (players.length === 0) return (
+        <Col className='h2 text-center' style={{ color: 'gray' }}>
+            Não há nenhum jogador cadastrado.
+        </Col>
+    );
 
     return (
         <>

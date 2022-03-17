@@ -17,7 +17,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
     const value = req.body.value;
 
-    if (!value) {
+    if (value === undefined) {
         res.status(400).send({ message: 'value is undefined.' });
         return;
     }
