@@ -8,7 +8,6 @@ import { BsTrash } from 'react-icons/bs';
 
 type PlayerEquipmentFieldProps = {
     currentAmmo: number;
-    using: boolean;
     equipment: {
         id: number;
         ammo: number | null;
@@ -25,22 +24,12 @@ type PlayerEquipmentFieldProps = {
 };
 
 export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
-    const [using, setUsing] = useState(props.using);
     const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
     const [disabled, setDisabled] = useState(false);
 
     const logError = useContext(ErrorLogger);
     const showDiceRollResult = useContext(ShowDiceResult);
     const equipmentID = props.equipment.id;
-
-    function usingChange() {
-        const _using = !using;
-        setUsing(_using);
-        api.post('/sheet/player/equipment', { id: equipmentID, using: _using }).catch(err => {
-            logError(err);
-            setUsing(using);
-        });
-    }
 
     function onAmmoChange(ev: FormEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;
@@ -62,7 +51,6 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     }
 
     function diceRoll() {
-        if (!using) return alert('Você não está usando esse equipamento.');
         if (props.equipment.ammo && currentAmmo === 0)
             return alert('Você não tem munição suficiente.');
         setCurrentAmmo(currentAmmo - 1);
@@ -88,9 +76,6 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
-            <td>
-                <Form.Check onChange={usingChange} checked={using} />
-            </td>
             <td>{props.equipment.name}</td>
             <td>{props.equipment.Skill.name}</td>
             <td>{props.equipment.type}</td>
@@ -103,7 +88,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
             <td>{props.equipment.attacks}</td>
             <td>{props.equipment.ammo ?
                 <BottomTextInput className='text-center' value={currentAmmo}
-                    onChange={onAmmoChange} onBlur={onAmmoBlur} /> :
+                    onChange={onAmmoChange} onBlur={onAmmoBlur} style={{ maxWidth: '3rem' }} /> :
                 '-'}</td>
             <td>{props.equipment.ammo || '-'}</td>
         </tr>

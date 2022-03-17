@@ -8,7 +8,6 @@ type EquipmentFieldProps = {
     equipments: {
         Equipment: Equipment;
         currentAmmo: number | null;
-        using: boolean;
     }[];
 }
 

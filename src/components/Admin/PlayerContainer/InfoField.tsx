@@ -41,7 +41,6 @@ export default function InfoField(props: InfoFieldProps) {
             {info.map(info =>
                 <Col key={info.Info.id}>
                     <Row><Col className='h5'>{info.value || 'Desconhecido'}</Col></Row>
-                    <Row><Col>{info.Info.name}</Col></Row>
                 </Col>
             )}
         </Row>

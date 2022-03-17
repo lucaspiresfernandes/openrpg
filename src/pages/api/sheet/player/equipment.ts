@@ -26,11 +26,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const currentAmmo = req.body.currentAmmo;
-    const using: boolean = req.body.using;
 
     await prisma.playerEquipment.update({
         where: { player_id_equipment_id: { player_id: player.id, equipment_id: equipID } },
-        data: { currentAmmo, using }
+        data: { currentAmmo }
     });
 
     res.end();
@@ -53,13 +52,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const equipment = await prisma.playerEquipment.create({
         data: {
-            using: false,
             currentAmmo: 0,
             player_id: player.id,
             equipment_id: equipID
         },
         select: {
-            using: true, currentAmmo: true, Equipment: {
+            currentAmmo: true, Equipment: {
                 include: { Skill: true }
             }
         }

@@ -1,10 +1,10 @@
 import { FormEvent, useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import useExtendedState from '../../hooks/useExtendedState';
-import api from '../../utils/api';
-import config from '../../../openrpg.config.json';
-import BottomTextInput from '../BottomTextInput';
-import { ErrorLogger, ShowDiceResult } from '../../contexts';
+import useExtendedState from '../../../hooks/useExtendedState';
+import api from '../../../utils/api';
+import config from '../../../../openrpg.config.json';
+import BottomTextInput from '../../BottomTextInput';
+import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 
 type PlayerSkillFieldProps = {
     value: number;

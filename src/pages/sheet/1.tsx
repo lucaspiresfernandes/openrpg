@@ -19,17 +19,17 @@ import PlayerEquipmentField from '../../components/Player/PlayerEquipmentField';
 import api from '../../utils/api';
 import AddDataModal from '../../components/Modals/EditDataModal';
 import PlayerItemField from '../../components/Player/PlayerItemField';
-import PlayerSkillField from '../../components/Player/PlayerSkillField';
+import PlayerSkillField from '../../components/Player/Skill/PlayerSkillField';
 import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import Router from 'next/router';
+import PlayerSkillContainer, { PlayerSkill } from '../../components/Player/Skill/PlayerSkillContainer';
 
 const bonusDamageName = config.player.bonus_damage_name;
 
 type PlayerEquipment = {
     currentAmmo: number;
-    using: boolean;
     Equipment: {
         id: number;
         ammo: number | null;
@@ -41,17 +41,6 @@ type PlayerEquipment = {
         Skill: {
             name: string;
         };
-    };
-};
-
-type PlayerSkill = {
-    value: number;
-    Skill: {
-        id: number;
-        name: string;
-        Specialization: {
-            name: string;
-        } | null;
     };
 };
 
@@ -357,7 +346,6 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Usando</th>
                                                     <th>Nome</th>
                                                     <th>Perícia</th>
                                                     <th>Tipo</th>
@@ -372,7 +360,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                             <tbody>
                                                 {playerEquipments.map(eq =>
                                                     <PlayerEquipmentField key={eq.Equipment.id} equipment={eq.Equipment}
-                                                        currentAmmo={eq.currentAmmo} using={eq.using} onDelete={onDeleteEquipment} />
+                                                        currentAmmo={eq.currentAmmo} onDelete={onDeleteEquipment} />
                                                 )}
                                             </tbody>
                                         </Table>
@@ -382,15 +370,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         </Row>
                         <Row>
                             <DataContainer outline title='Perícias' addButton={{ onAdd: () => setAddSkillShow(true) }}>
-                                <Row>
-
-                                </Row>
-                                <Row className='mb-3 mx-1 text-center justify-content-center'>
-                                    {playerSkills.map(skill =>
-                                        <PlayerSkillField key={skill.Skill.id} value={skill.value}
-                                            skill={skill.Skill} />
-                                    )}
-                                </Row>
+                                <PlayerSkillContainer skills={playerSkills} />
                             </DataContainer>
                         </Row>
                         <Row>
@@ -499,7 +479,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                         name: true, range: true, type: true
                     }
                 },
-                currentAmmo: true, using: true
+                currentAmmo: true
             }
         }),
 

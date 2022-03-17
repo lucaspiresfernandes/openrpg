@@ -5,23 +5,22 @@ import { useState } from 'react';
 import api from '../utils/api';
 import ErrorToastContainer from '../components/ErrorToastContainer';
 import useToast from '../hooks/useToast';
-import { useRouter } from 'next/router';
 import styles from '../styles/modules/Home.module.scss';
 import useAuthentication from '../hooks/useAuthentication';
+import Router from 'next/router';
 
 export default function Home(): JSX.Element {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const [toasts, addToast] = useToast();
-  const router = useRouter();
 
   useAuthentication(player => {
     if (player) {
       if (player.admin) {
-        return router.replace('/sheet/admin/1');
+        return Router.replace('/sheet/admin/1');
       }
-      return router.replace('/sheet/1');
+      return Router.replace('/sheet/1');
     }
     setLoading(false);
   });
@@ -38,8 +37,8 @@ export default function Home(): JSX.Element {
       try {
         await api.post('/login', { username, password }).then(res => {
           if (res.data.admin)
-            return router.replace('/sheet/admin/1');
-          router.replace('/sheet/1');
+            return Router.replace('/sheet/admin/1');
+          Router.replace('/sheet/1');
         });
       }
       catch (err) {
@@ -73,7 +72,7 @@ export default function Home(): JSX.Element {
           </Row>
           <Row className='my-3 justify-content-center'>
             <Col md={6}>
-              <FormControl className='text-center theme-element' placeholder='Senha' id='password' name='password'
+              <FormControl type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
                 value={password} onChange={e => setPassword(e.currentTarget.value)} />
             </Col>
           </Row>

@@ -47,7 +47,6 @@ model AttributeStatus {
   name                  String
   Attribute             Attribute               @relation(fields: [attribute_id], references: [id])
   attribute_id          Int
-  order              Int
   PlayerAttributeStatus PlayerAttributeStatus[]
 }
 
@@ -175,7 +174,6 @@ model PlayerEquipment {
   Equipment    Equipment @relation(fields: [equipment_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   equipment_id Int
   currentAmmo  Int
-  using        Boolean
 
   @@id([player_id, equipment_id])
 }

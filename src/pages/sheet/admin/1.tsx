@@ -124,24 +124,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                     where: { Info: { name: { in: ['Nome'] } } },
                     select: { Info: true, value: true },
                 },
-                PlayerAttributes: {
-                    where: { Attribute: { name: { in: ['Vida', 'Sanidade', 'Armadura'] } } },
-                    select: { Attribute: true, value: true, maxValue: true }
-                },
-                PlayerSpec: {
-                    where: { Spec: { name: { in: ['Exposição Paranormal'] } } },
-                    select: { Spec: true, value: true }
-                },
-                PlayerCharacteristic: {
-                    where: { Characteristic: { name: { in: ['Movimento'] } } },
-                    select: { Characteristic: true, value: true }
-                },
-                PlayerEquipment: {
-                    select: { Equipment: true, currentAmmo: true, using: true }
-                },
-                PlayerItem: {
-                    select: { Item: true, currentDescription: true, quantity: true }
-                }
+                PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
+                PlayerSpec: { select: { Spec: true, value: true } },
+                PlayerEquipment: { select: { Equipment: true, currentAmmo: true } },
+                PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } }
             }
         }),
         prisma.playerNote.findUnique({

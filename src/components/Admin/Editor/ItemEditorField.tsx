@@ -41,20 +41,20 @@ export default function ItemEditorField(props: ItemEditorFieldProps) {
 
     return (
         <tr>
-            <td style={{ width: 50 }}>
+            <td>
                 <Button onClick={() => props.onDelete(props.item.id)} size='sm' variant='dark'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
-            <td style={{ width: '20rem' }}>
+            <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                    onBlur={onNameBlur} className='w-100' />
+                    onBlur={onNameBlur} style={{ maxWidth: '15rem' }} />
             </td>
-            <td style={{ width: '30rem' }}>
+            <td>
                 <BottomTextInput value={description} onChange={ev => setDescription(ev.currentTarget.value)}
-                    onBlur={onDescriptionBlur} className='w-100' />
+                    onBlur={onDescriptionBlur} style={{ minWidth: '45rem' }} />
             </td>
-            <td style={{ width: 50 }}>
+            <td>
                 <Form.Check checked={visible} onChange={onVisibleChange} />
             </td>
         </tr>

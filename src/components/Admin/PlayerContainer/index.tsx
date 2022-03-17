@@ -6,7 +6,6 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import AttributeField from './AttributeField';
 import AvatarField from './AvatarField';
-import CharacteristicField from './CharacteristicField';
 import EquipmentField from './EquipmentField';
 import InfoField from './InfoField';
 import ItemField from './ItemField';
@@ -30,14 +29,9 @@ type PlayerContainerProps = {
         Spec: Spec;
         value: string;
     }[];
-    characteristics: {
-        Characteristic: Characteristic;
-        value: number;
-    }[];
     equipments: {
         Equipment: Equipment;
         currentAmmo: number | null;
-        using: boolean;
     }[];
     items: {
         Item: {
@@ -85,8 +79,6 @@ export default function PlayerContainer(props: PlayerContainerProps) {
                     <AttributeField attributes={props.attributes} playerID={props.id} />
                     <hr />
                     <SpecField specs={props.specs} playerID={props.id} />
-                    <hr />
-                    <CharacteristicField characteristics={props.characteristics} playerID={props.id} />
                     <hr />
                     <EquipmentField equipments={props.equipments} playerID={props.id} />
                     <hr />

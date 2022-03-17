@@ -88,7 +88,6 @@ type SocketPlayerEquipment = {
         Skill: Skill;
     };
     currentAmmo: number | null;
-    using: boolean;
 }
 
 type SocketPlayerItem = {

@@ -26,14 +26,9 @@ type Player = {
         Spec: Spec;
         value: string;
     }[];
-    PlayerCharacteristic: {
-        Characteristic: Characteristic;
-        value: number;
-    }[];
     PlayerEquipment: {
         Equipment: Equipment;
         currentAmmo: number | null;
-        using: boolean;
     }[];
     PlayerItem: {
         Item: {
@@ -113,20 +108,6 @@ export default function PlayerManager(props: PlayerManagerProps) {
             }
         });
 
-
-        socket.on('characteristicChange', (playerID, charID, value) => {
-            const newPlayers = [...players];
-            const player = newPlayers.find(p => p.id === playerID);
-            if (!player) return;
-
-            const newSpec = [...player.PlayerCharacteristic];
-            const index = newSpec.findIndex(spec => spec.Characteristic.id === charID);
-            if (index > -1) {
-                newSpec[index].value = value;
-                setPlayers(newPlayers);
-            }
-        });
-
         socket.on('equipmentAdd', (playerID, playerEquipment) => {
             const newPlayers = [...players];
             const player = newPlayers.find(p => p.id === playerID);
@@ -191,7 +172,6 @@ export default function PlayerManager(props: PlayerManagerProps) {
             socket.off('infoChange');
             socket.off('attributeChange');
             socket.off('specChange');
-            socket.off('characteristicChange');
             socket.off('equipmentAdd');
             socket.off('equipmentRemove');
             socket.off('itemAdd');
@@ -206,7 +186,7 @@ export default function PlayerManager(props: PlayerManagerProps) {
             {players.map((player, index) =>
                 <PlayerContainer key={player.id} id={player.id} status={player.PlayerAttributeStatus}
                     info={player.PlayerInfo} attributes={player.PlayerAttributes}
-                    specs={player.PlayerSpec} characteristics={player.PlayerCharacteristic}
+                    specs={player.PlayerSpec}
                     equipments={player.PlayerEquipment} items={player.PlayerItem}
                     onDelete={() => deletePlayer(index)} />
             )}

@@ -24,14 +24,14 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
 
     return (
         <tr>
-            <td style={{ width: 50 }}>
+            <td>
                 <Button onClick={() => props.onDelete(props.info.id)} size='sm' variant='dark'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                    onBlur={onBlur} className='w-100' />
+                    onBlur={onBlur} />
             </td>
         </tr>
     );

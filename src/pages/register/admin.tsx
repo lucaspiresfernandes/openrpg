@@ -71,19 +71,19 @@ export default function Register() {
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl className='text-center theme-element' placeholder='Senha' id='password' name='password'
+            <FormControl type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
               value={password} onChange={e => setPassword(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
+            <FormControl type='password' className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
               name='confirmPassword' value={confirmPassword} onChange={e => setConfirmPassword(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl className='text-center theme-element' placeholder='Chave do Administrador' id='adminKey'
+            <FormControl type='password' className='text-center theme-element' placeholder='Chave do Administrador' id='adminKey'
               name='adminKey' value={adminKey} onChange={e => setAdminKey(e.currentTarget.value)} />
           </Col>
         </Row>

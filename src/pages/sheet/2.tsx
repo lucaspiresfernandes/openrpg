@@ -43,12 +43,12 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                         </Col>
                     </Row>
                     <Row>
-                        <DataContainer title='Anotações' htmlFor='playerAnnotations'>
+                        <DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
                             <PlayerAnnotationsField value={props.playerNotes} />
                         </DataContainer>
                     </Row>
                     <Row>
-                        <DataContainer title='Detalhes Pessoais'>
+                        <DataContainer title='Detalhes Pessoais' outline>
                             {props.playerExtraInfo.map(info =>
                                 <PlayerExtraInfoField key={info.ExtraInfo.id} value={info.value} extraInfo={info.ExtraInfo} />
                             )}

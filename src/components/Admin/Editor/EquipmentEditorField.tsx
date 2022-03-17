@@ -74,7 +74,7 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 
         if (aux.length === 0) newAmmo = 0;
         else if (isNaN(newAmmo)) return;
-        if (newAmmo < 0) newAmmo = 0;
+
         setAmmo(newAmmo);
     }
 
@@ -95,45 +95,45 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 
     return (
         <tr>
-            <td style={{ width: 50 }}>
+            <td>
                 <Button onClick={() => props.onDelete(props.equipment.id)} size='sm' variant='dark'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                    onBlur={onNameBlur} className='w-100' />
+                    onBlur={onNameBlur} />
             </td>
             <td>
-                <select className='theme-element w-100' value={skillID}
+                <select className='theme-element' value={skillID}
                     onChange={skillChange}>
                     {props.skills.map(skill => <option key={skill.id} value={skill.id}>{skill.name}</option>)}
                 </select>
             </td>
             <td>
-                <select className='theme-element w-100' value={type}
+                <select className='theme-element' value={type}
                     onChange={typeChange}>
                     {config.equipment.types.map((name, i) => <option key={i} value={name}>{name}</option>)}
                 </select>
             </td>
-            <td style={{ width: '10rem' }}>
+            <td>
                 <BottomTextInput value={damage} onChange={ev => setDamage(ev.currentTarget.value)}
-                    onBlur={onDamageBlur} className='w-100 text-center' />
+                    onBlur={onDamageBlur} className='text-center' style={{ maxWidth: '7.5rem' }} />
             </td>
-            <td style={{ width: '7.5rem' }}>
+            <td>
                 <BottomTextInput value={range} onChange={ev => setRange(ev.currentTarget.value)}
-                    onBlur={onRangeBlur} className='w-100 text-center' />
+                    onBlur={onRangeBlur} className='text-center' style={{ maxWidth: '7.5rem' }} />
             </td>
-            <td style={{ width: '5rem' }}>
+            <td>
                 <BottomTextInput value={attacks} onChange={ev => setAttacks(ev.currentTarget.value)}
-                    onBlur={onAttacksBlur} className='w-100 text-center' />
+                    onBlur={onAttacksBlur} className='text-center' style={{ maxWidth: '5rem' }} />
             </td>
-            <td style={{ width: '3rem' }}>
-                {ammo === null ? <>-</> :
-                    <BottomTextInput type='number' value={ammo} onChange={onAmmoChange}
-                        onBlur={onAmmoBlur} className='w-100' />}
+            <td>
+                {ammo === null ? '-' :
+                    <BottomTextInput value={ammo} onChange={onAmmoChange}
+                        onBlur={onAmmoBlur} style={{ maxWidth: '3rem' }} className='text-center' />}
             </td>
-            <td style={{ width: 50 }}>
+            <td>
                 <Form.Check checked={visible} onChange={onVisibleChange} />
             </td>
         </tr>
