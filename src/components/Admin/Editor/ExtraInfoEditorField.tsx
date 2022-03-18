@@ -25,7 +25,7 @@ export default function ExtraInfoEditorField(props: ExtraInfoEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.extraInfo.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.extraInfo.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

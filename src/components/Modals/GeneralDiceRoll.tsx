@@ -88,7 +88,7 @@ export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
                             </Row>
                             <Row className='justify-content-center'>
                                 <Col xs='auto'>
-                                    <Button variant='dark' onClick={() => setDice(index, -1)}>
+                                    <Button variant='secondary' onClick={() => setDice(index, -1)}>
                                         -
                                     </Button>
                                 </Col>
@@ -96,7 +96,7 @@ export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
                                     {dice.num}
                                 </Col>
                                 <Col xs='auto'>
-                                    <Button variant='dark' onClick={() => setDice(index, 1)}>
+                                    <Button variant='secondary' onClick={() => setDice(index, 1)}>
                                         +
                                     </Button>
                                 </Col>

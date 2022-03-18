@@ -35,7 +35,7 @@ export default function CharacteristicEditorField(props: CharacteristicEditorFie
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.characteristic.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.characteristic.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

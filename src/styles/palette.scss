@@ -8,9 +8,13 @@
 *                                                                                *
 * OBS 1: NÃO edite este texto ou qualquer texto que preceda duas barras ("//").  *
 * OBS 2: Alguns botões de algumas páginas são imutáveis, ou seja, suas cores não *
-* podem ser editadas. Esses botões muitas vezes são cinzas ou pretos para        *
-* não afetar a diversidade da paleta de cores.                                   *
+* podem ser editadas. Esses botões possuem cor cinza para não afetar a           *
+* diversidade da paleta de cores.                                                *
 **********************************************************************************/
+
+/*****************
+*  CORES GERAIS  *
+******************/
 
 // Cor do plano de fundo.
 // Em geral, é recomendado que essa cor seja escura.
@@ -18,22 +22,34 @@ $background-color: #000000;
 
 // Cor primária da paleta de cores.
 // Usado como cor de fundo de caixa de textos e bordas.
-$primary-color: #222222;
-
-// Cor secundária da paleta de cores.
-// Usado como cor de elementos desativados e como cor de contêinieres.
-$secondary-color: #313131;
-
-// Cor terciária da paleta de cores.
-// Usado por componentes como a barra de navegação, popups e caixas de diálogo.
-$terciary-color: #1f1f1f;
-
-//Cor do texto da barra de navegação.
-$navbar-text-color: #ffffff;
+$primary-color: #000000;
 
 // Cor do texto global.
+// Normalmente, essas cores são preto (#000000) ou branco (#ffffff).
 $text-color: #ffffff;
 
 // Cor de destaque das caixas de texto.
 // É recomendável que essa cor seja mais clara que o resto da paleta.
-$outline-color: #ffffff;
+$outline-color: #ff0000;
+
+/**********************
+*  CORES ESPECÍFICAS  *
+***********************/
+
+// Cor de fundo dos contêineres de jogadores no painel de administrador.
+$player-container-color: #252525;
+
+// Cor do plano de fundo dos popups (telas de adicionar, criar, rolar dado, etc.).
+$modal-background-color: #000000;
+
+// Cor do texto dos popups.
+$modal-text-color: #ffffff;
+
+// Cor de fundo da barra de navegação.
+$navbar-background-color: #202020;
+
+// Cor do texto da barra de navegação.
+$navbar-text-color: #ffffff;
+
+// Cor de fundo do contêiner de perícia.
+$skill-container-outline-color: #ffffff;

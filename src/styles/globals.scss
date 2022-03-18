@@ -1,12 +1,14 @@
 @import "bootstrap";
 @import "./palette";
 @import "./attribute";
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap");
 
 body {
   padding: 0;
   margin: 0;
   background-color: $background-color;
   color: $text-color;
+  font-family: "Cinzel", serif;
 }
 
 .data-container {
@@ -27,7 +29,7 @@ body {
 
   &:disabled {
     background-color: darken($primary-color, 10%);
-    border-color: $secondary-color;
+    border-color: darken($text-color, 10%);
     color: $text-color;
   }
 
@@ -60,26 +62,30 @@ body {
 }
 
 .modal-content {
-  background-color: $terciary-color;
+  background-color: $modal-background-color;
+  color: $modal-text-color;
 }
 
 .modal-header {
-  background-color: $terciary-color;
-  border-color: $secondary-color;
+  background-color: $modal-background-color;
+  color: $modal-text-color;
+  border-color: lighten($modal-background-color, 20%);
 }
 
 .modal-body {
-  background-color: $terciary-color;
-  border-color: $secondary-color;
+  background-color: $modal-background-color;
+  color: $modal-text-color;
+  border-color: lighten($modal-background-color, 20%);
 }
 
 .modal-footer {
-  background-color: $terciary-color;
-  border-color: $secondary-color;
+  background-color: $modal-background-color;
+  color: $modal-text-color;
+  border-color: lighten($modal-background-color, 20%);
 }
 
 .navbar {
-  background-color: $terciary-color;
+  background-color: $navbar-background-color;
   .nav-link {
     color: $navbar-text-color !important;
     &:hover {
@@ -135,7 +141,7 @@ $list-group-color: #222222;
 
 .player-container {
   @extend .data-container;
-  background-color: $secondary-color;
+  background-color: $player-container-color;
 }
 
 .list-group-item {
@@ -143,9 +149,9 @@ $list-group-color: #222222;
   background-color: $list-group-color;
 
   &.selected {
-    background-color: $secondary-color;
+    background-color: lighten($list-group-color, 10%);
     input {
-      background-color: $secondary-color !important;
+      background-color: lighten($list-group-color, 10%) !important;
     }
   }
 }
@@ -157,9 +163,9 @@ $list-group-color: #222222;
   border-radius: 20px;
 
   &:hover {
-    background-color: $outline-color;
+    background-color: $skill-container-outline-color;
     .text {
-      background-color: $outline-color;
+      background-color: $skill-container-outline-color;
       color: $text-color-hover;
     }
     .label {

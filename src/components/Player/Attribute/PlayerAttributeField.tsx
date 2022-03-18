@@ -106,13 +106,13 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
             </Row>
             <Row className='justify-content-center mt-2'>
                 <Col xs lg={3}>
-                    <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, -1)}>-</Button>
+                    <Button variant='secondary' className='w-100' onClick={ev => updateValue(ev, -1)}>-</Button>
                 </Col>
                 <Col xs lg={2} className='text-center'>
                     <label className='h5' htmlFor={`attribute${attributeID}`}>{`${value}/${maxValue}`}</label>
                 </Col>
                 <Col xs lg={3}>
-                    <Button variant='dark' className='w-100' onClick={ev => updateValue(ev, 1)}>+</Button>
+                    <Button variant='secondary' className='w-100' onClick={ev => updateValue(ev, 1)}>+</Button>
                 </Col>
             </Row>
             <Row>

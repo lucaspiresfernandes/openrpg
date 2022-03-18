@@ -36,7 +36,7 @@ export default function StatusEditorField(props: StatusEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.attributeStatus.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.attributeStatus.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

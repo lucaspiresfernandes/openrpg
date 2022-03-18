@@ -25,7 +25,7 @@ export default function SpecEditorField(props: SpecEditorFieldProps) {
     return (
         <tr>
             <td >
-                <Button onClick={() => props.onDelete(props.spec.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.spec.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

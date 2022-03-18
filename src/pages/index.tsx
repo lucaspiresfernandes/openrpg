@@ -57,7 +57,7 @@ export default function Home(): JSX.Element {
   return (
     <>
       <ApplicationHead title='Entrar' />
-      <Container className='text-center'>
+      <Container className='text-center mt-2'>
         <Row>
           <Col>
             <h1><label htmlFor='username'>Login</label></h1>

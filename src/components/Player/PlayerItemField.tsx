@@ -66,7 +66,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteItem} disabled={disabled} size='sm' variant='dark'>
+                <Button onClick={deleteItem} disabled={disabled} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

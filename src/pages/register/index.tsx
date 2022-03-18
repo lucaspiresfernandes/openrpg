@@ -92,7 +92,7 @@ export default function Register(): JSX.Element {
   return (
     <>
       <ApplicationHead title='Cadastrar' />
-      <Container className='text-center'>
+      <Container className='text-center mt-2'>
         <Row>
           <Col>
             <h1><label htmlFor='username'>Cadastro de Jogador</label></h1>

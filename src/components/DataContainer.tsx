@@ -27,10 +27,10 @@ export default function DataContainer(props: DataContainerProps) {
             </Col>
             <Col xs={3} className='align-self-center'>
                 {props.addButton.type === 'dropdown' ?
-                    <DropdownButton title='+' variant='dark' menuVariant='dark'>
+                    <DropdownButton title='+' variant='secondary' menuVariant='secondary'>
                         {props.addButton.children}
                     </DropdownButton> :
-                    <Button variant='dark' onClick={props.addButton.onAdd}>+</Button>
+                    <Button variant='secondary' onClick={props.addButton.onAdd}>+</Button>
                 }
             </Col>
             <hr />

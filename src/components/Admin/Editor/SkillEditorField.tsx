@@ -46,7 +46,7 @@ export default function SkillEditorField(props: SkillEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.skill.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.skill.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

@@ -69,7 +69,7 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='dark'>
+                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

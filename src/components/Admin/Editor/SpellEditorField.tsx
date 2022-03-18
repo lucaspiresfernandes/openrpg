@@ -88,7 +88,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
     return (
         <tr>
             <td>
-                <Button onClick={() => onDelete(spell.id)} size='sm' variant='dark'>
+                <Button onClick={() => onDelete(spell.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

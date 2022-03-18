@@ -25,7 +25,7 @@ export default function SpecializationEditorField(props: SpecializationEditorFie
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.specialization.id)} size='sm' variant='dark'>
+                <Button onClick={() => props.onDelete(props.specialization.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
