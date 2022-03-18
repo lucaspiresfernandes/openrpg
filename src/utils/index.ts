@@ -125,6 +125,7 @@ export interface ServerToClientEvents {
     itemAdd: (playerID: number, item: SocketPlayerItem) => void;
     itemRemove: (playerID: number, id: number) => void;
     itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
+    currencyChange: (playerID: number, currencyID: number, value: string) => void;
 
     //Player Events
     playerDelete: () => void;

@@ -17,15 +17,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const infoID = req.body.id;
+    const currencyID = req.body.id;
     const name = req.body.name;
 
-    if (!infoID || !name) {
-        res.status(401).send({ message: 'Info ID or name is undefined.' });
+    if (!currencyID || !name) {
+        res.status(401).send({ message: 'Currency ID or name is undefined.' });
         return;
     }
 
-    await database.info.update({ data: { name }, where: { id: infoID } });
+    await database.currency.update({ data: { name }, where: { id: currencyID } });
 
     res.end();
 }
@@ -45,9 +45,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const info = await database.info.create({ data: { name: name } });
+    const currency = await database.currency.create({ data: { name: name } });
 
-    res.send({ id: info.id });
+    res.send({ id: currency.id });
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
@@ -61,11 +61,11 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     const id = req.body.id;
 
     if (!id) {
-        res.status(401).send({ message: 'Info ID  is undefined.' });
+        res.status(401).send({ message: 'Currency ID  is undefined.' });
         return;
     }
 
-    await database.info.delete({ where: { id } });
+    await database.currency.delete({ where: { id } });
 
     res.end();
 }

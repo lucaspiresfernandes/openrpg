@@ -26,6 +26,7 @@ model Player {
   PlayerExtraInfo       PlayerExtraInfo[]
   PlayerNote            PlayerNote[]
   PlayerSpell           PlayerSpell[]
+  PlayerCurrency        PlayerCurrency[]
 }
 
 model Info {
@@ -100,6 +101,12 @@ model Item {
   description String
   visible     Boolean
   PlayerItem  PlayerItem[]
+}
+
+model Currency {
+  id             Int              @id @default(autoincrement())
+  name           String
+  PlayerCurrency PlayerCurrency[]
 }
 
 model ExtraInfo {
@@ -202,6 +209,16 @@ model PlayerItem {
   quantity           Int
 
   @@id([player_id, item_id])
+}
+
+model PlayerCurrency {
+  Player      Player   @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id   Int
+  Currency    Currency @relation(fields: [currency_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  currency_id Int
+  value       String
+
+  @@id([player_id, currency_id])
 }
 
 model PlayerExtraInfo {

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Col, Container, Row, Table } from 'react-bootstrap';
 import AttributeEditorField from '../../../components/Admin/Editor/AttributeEditorField';
 import CharacteristicEditorField from '../../../components/Admin/Editor/CharacteristicEditorField';
+import CurrencyEditorField from '../../../components/Admin/Editor/CurrencyEditorField';
 import EquipmentEditorField from '../../../components/Admin/Editor/EquipmentEditorField';
 import ExtraInfoEditorField from '../../../components/Admin/Editor/ExtraInfoEditorField';
 import InfoEditorField from '../../../components/Admin/Editor/InfoEditorField';
@@ -19,6 +20,7 @@ import ErrorToastContainer from '../../../components/ErrorToastContainer';
 import CreateAttributeModal from '../../../components/Modals/CreateAttributeModal';
 import CreateAttributeStatusModal from '../../../components/Modals/CreateAttributeStatusModal';
 import CreateCharacteristicModal from '../../../components/Modals/CreateCharacteristicModal';
+import CreateCurrencyModal from '../../../components/Modals/CreateCurrencyModal';
 import CreateEquipmentModal from '../../../components/Modals/CreateEquipmentModal';
 import CreateExtraInfoModal from '../../../components/Modals/CreateExtraInfoModal';
 import CreateInfoModal from '../../../components/Modals/CreateInfoModal';
@@ -50,6 +52,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     const [showSkillModal, setShowSkillModal] = useState(false);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showSpellModal, setShowSpellModal] = useState(false);
+    const [showCurrencyModal, setShowCurrencyModal] = useState(false);
 
     const [info, setInfo] = useState(props.info);
     const [extraInfo, setExtraInfo] = useState(props.extraInfo);
@@ -62,6 +65,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     const [item, setItem] = useState(props.item);
     const [spells, setSpell] = useState(props.spell);
     const [specialization, setSpecialization] = useState(props.specialization);
+    const [currency, setCurrency] = useState(props.currency);
 
     function createInfo(name: string) {
         api.put('/sheet/info', { name }).then(res => {
@@ -274,6 +278,25 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
         }).catch(addToast);
     }
 
+    function createCurrency(name: string) {
+        api.put('/sheet/currency', { name }).then(res => {
+            const id = res.data.id;
+            setCurrency([...currency, { id, name }]);
+        }).catch(addToast);
+    }
+
+    function deleteCurrency(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+        api.delete('/sheet/currency', { data: { id } }).then(() => {
+            const newCurrency = [...currency];
+            const index = newCurrency.findIndex(currency => currency.id === id);
+            if (index > -1) {
+                newCurrency.splice(index, 1);
+                setCurrency(newCurrency);
+            }
+        }).catch(addToast);
+    }
+
     return (
         <ErrorLogger.Provider value={addToast}>
             <ApplicationHead title='Editor' />
@@ -449,6 +472,29 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                                 </Row>
                             </DataContainer>
                         </Row>
+                        <Row>
+                            <DataContainer outline title='Moedas'
+                                addButton={{ onAdd: () => setShowCurrencyModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {currency.map(curr =>
+                                                    <CurrencyEditorField key={curr.id}
+                                                        currency={curr} onDelete={deleteCurrency} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
                     </>
                 }
                 <Row>
@@ -571,6 +617,8 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                 onCreate={createSpec} />
             <CreateCharacteristicModal show={showCharacteristicModal} onHide={() => setShowCharacteristicModal(false)}
                 onCreate={createCharacteristic} />
+            <CreateCurrencyModal show={showCurrencyModal} onHide={() => setShowCurrencyModal(false)}
+                onCreate={createCurrency} />
             <CreateEquipmentModal show={showEquipmentModal} onHide={() => setShowEquipmentModal(false)}
                 onCreate={createEquipment} skill={skill} />
             <CreateSpecializationModal show={showSpecializationModal} onHide={() => setShowSpecializationModal(false)}
@@ -606,7 +654,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 skill: [],
                 item: [],
                 specialization: [],
-                spell: []
+                spell: [],
+                currency: []
             }
         };
     }
@@ -623,7 +672,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.skill.findMany(),
         prisma.item.findMany(),
         prisma.specialization.findMany(),
-        prisma.spell.findMany()
+        prisma.spell.findMany(),
+        prisma.currency.findMany(),
     ]);
 
     return {
@@ -639,7 +689,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             skill: results[8],
             item: results[9],
             specialization: results[10],
-            spell: results[11]
+            spell: results[11],
+            currency: results[12]
         }
     };
 }

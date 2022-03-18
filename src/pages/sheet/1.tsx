@@ -27,6 +27,7 @@ import PlayerSkillContainer, { PlayerSkill } from '../../components/Player/Skill
 import { Spell } from '@prisma/client';
 import PlayerSpellField from '../../components/Player/PlayerSpellField';
 import ApplicationHead from '../../components/ApplicationHead';
+import PlayerCurrencyField from '../../components/Player/PlayerCurrencyField';
 
 const bonusDamageName = config.player.bonus_damage_name;
 
@@ -410,22 +411,32 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         </Row>
                         <Row>
                             <DataContainer outline title='Itens' addButton={{ onAdd: () => setAddItemShow(true) }}>
-                                <Table responsive className='align-middle'>
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Nome</th>
-                                            <th>Descrição</th>
-                                            <th>Quant.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {playerItems.map(eq =>
-                                            <PlayerItemField key={eq.Item.id} description={eq.currentDescription}
-                                                item={eq.Item} quantity={eq.quantity} onDelete={onDeleteItem} />
-                                        )}
-                                    </tbody>
-                                </Table>
+                                <Row className='text-center justify-content-center'>
+                                    {props.playerCurrency.map(curr =>
+                                        <PlayerCurrencyField key={curr.currency_id} currency={curr} />
+                                    )}
+                                </Row>
+                                <hr />
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                    <th>Descrição</th>
+                                                    <th>Quant.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {playerItems.map(eq =>
+                                                    <PlayerItemField key={eq.Item.id} description={eq.currentDescription}
+                                                        item={eq.Item} quantity={eq.quantity} onDelete={onDeleteItem} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
                             </DataContainer>
                         </Row>
                         <Row>
@@ -485,6 +496,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableItems: [],
                 availableSpells: [],
                 players: [],
+                playerCurrency: [],
             }
         };
     }
@@ -571,6 +583,11 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
         database.player.findMany({
             select: { id: true, role: true, username: true }
         }),
+
+        database.playerCurrency.findMany({
+            where: { player_id: playerID },
+            include: { Currency: true }
+        })
     ]);
 
     return {
@@ -589,7 +606,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             availableSkills: results[10],
             availableItems: results[11],
             availableSpells: results[12],
-            players: results[13]
+            players: results[13],
+            playerCurrency: results[14]
         }
     };
 }

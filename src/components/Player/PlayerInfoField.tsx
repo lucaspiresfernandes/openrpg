@@ -18,7 +18,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
     const logError = useContext(ErrorLogger);
     const infoID = playerInfo.info.id;
 
-    async function onValueBlur() {
+    function onValueBlur() {
         if (value.length > 0) setDefined(true);
         if (lastValue === value) return;
         setValue(value);

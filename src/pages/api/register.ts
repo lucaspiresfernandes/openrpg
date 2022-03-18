@@ -69,7 +69,8 @@ async function registerPlayerData(player: Player) {
     database.spec.findMany(),
     database.characteristic.findMany(),
     database.skill.findMany(),
-    database.extraInfo.findMany()
+    database.extraInfo.findMany(),
+    database.currency.findMany()
   ]);
 
   await Promise.all([
@@ -133,6 +134,15 @@ async function registerPlayerData(player: Player) {
         return {
           player_id: player.id,
           extra_info_id: extraInfo.id,
+          value: ''
+        };
+      })
+    }),
+    database.playerCurrency.createMany({
+      data: results[7].map(curr => {
+        return {
+          player_id: player.id,
+          currency_id: curr.id,
           value: ''
         };
       })
