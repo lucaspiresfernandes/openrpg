@@ -10,13 +10,11 @@ import config from '../../../../openrpg.config.json';
 
 type EquipmentEditorFieldProps = {
     equipment: Equipment;
-    skills: Skill[];
     onDelete(id: number): void;
 }
 
 export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.equipment.name);
-    const [skillID, setSkillID] = useState(props.equipment.skill_id);
     const [type, setType] = useState(props.equipment.type);
     const [lastDamage, damage, setDamage] = useExtendedState(props.equipment.damage);
     const [lastRange, range, setRange] = useExtendedState(props.equipment.range);
@@ -30,15 +28,6 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
         if (name === lastName) return;
         setName(name);
         api.post('/sheet/equipment', { id: props.equipment.id, name }).catch(logError);
-    }
-
-    function skillChange(ev: ChangeEvent<HTMLSelectElement>) {
-        const newID = parseInt(ev.currentTarget.value);
-        setSkillID(newID);
-        api.post('/sheet/equipment', { id: props.equipment.id, skillID: newID }).catch(err => {
-            logError(err);
-            setSkillID(skillID);
-        });
     }
 
     function typeChange(ev: ChangeEvent<HTMLSelectElement>) {
@@ -103,12 +92,6 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
                     onBlur={onNameBlur} />
-            </td>
-            <td>
-                <select className='theme-element' value={skillID}
-                    onChange={skillChange}>
-                    {props.skills.map(skill => <option key={skill.id} value={skill.id}>{skill.name}</option>)}
-                </select>
             </td>
             <td>
                 <select className='theme-element' value={type}

@@ -5,7 +5,7 @@ import SheetModal from './SheetModal';
 import config from '../../../openrpg.config.json';
 
 type CreateEquipmentModalProps = {
-    onCreate(name: string, skillID: number, type: string, damage: string, range: string, attacks: string, ammo: number | null): void;
+    onCreate(name: string, type: string, damage: string, range: string, attacks: string, ammo: number | null): void;
     show: boolean;
     onHide(): void;
     skill: Skill[];
@@ -13,7 +13,6 @@ type CreateEquipmentModalProps = {
 
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
     const [name, setName] = useState('');
-    const [skillID, setSkillID] = useState(props.skill[0]?.id || 0);
     const [type, setType] = useState(config.equipment.types[0]);
     const [damage, setDamage] = useState('');
     const [range, setRange] = useState('');
@@ -22,7 +21,6 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 
     function reset() {
         setName('');
-        setSkillID(props.skill[0]?.id || 0);
         setType(config.equipment.types[0]);
         setDamage('');
         setRange('');
@@ -46,7 +44,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
         <SheetModal title='Novo Equipamento' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{
                 name: 'Criar',
-                onApply: () => props.onCreate(name, skillID, type, damage, range, attacks, ammo),
+                onApply: () => props.onCreate(name, type, damage, range, attacks, ammo),
                 disabled: props.skill.length === 0
             }} scrollable>
             <Container fluid>
@@ -55,16 +53,6 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
                         <Form.Group controlId='createEquipmentName' className='mb-3'>
                             <Form.Label>Nome</Form.Label>
                             <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        </Form.Group>
-
-                        <Form.Group controlId='createEquipmentSkill' className='mb-3'>
-                            <Form.Label>Perícia</Form.Label>
-                            <Form.Select value={skillID} className='theme-element'
-                                onChange={ev => setSkillID(parseInt(ev.currentTarget.value))} >
-                                {props.skill.map(spec =>
-                                    <option key={spec.id} value={spec.id}>{spec.name}</option>
-                                )}
-                            </Form.Select>
                         </Form.Group>
 
                         <Form.Group controlId='createEquipmentType' className='mb-3'>

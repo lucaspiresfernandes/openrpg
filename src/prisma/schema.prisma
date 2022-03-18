@@ -77,15 +77,12 @@ model Skill {
   Specialization    Specialization? @relation(fields: [specialization_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
   specialization_id Int?
   mandatory         Boolean         @default(false)
-  Equipment         Equipment[]
   PlayerSkill       PlayerSkill[]
 }
 
 model Equipment {
   id              Int               @id @default(autoincrement())
   name            String
-  Skill           Skill             @relation(fields: [skill_id], references: [id])
-  skill_id        Int
   type            String
   damage          String
   range           String

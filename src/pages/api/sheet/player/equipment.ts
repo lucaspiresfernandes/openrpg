@@ -56,11 +56,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
             player_id: player.id,
             equipment_id: equipID
         },
-        select: {
-            currentAmmo: true, Equipment: {
-                include: { Skill: true }
-            }
-        }
+        select: { currentAmmo: true, Equipment: true }
     });
 
     res.send({ equipment });

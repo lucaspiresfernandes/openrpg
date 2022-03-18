@@ -41,9 +41,6 @@ type PlayerEquipment = {
         name: string;
         range: string;
         type: string;
-        Skill: {
-            name: string;
-        };
     };
 };
 
@@ -425,7 +422,6 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                                 <tr>
                                                     <th></th>
                                                     <th>Nome</th>
-                                                    <th>Perícia</th>
                                                     <th>Tipo</th>
                                                     <th>Dano</th>
                                                     <th></th>
@@ -576,7 +572,6 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             select: {
                 Equipment: {
                     select: {
-                        Skill: { select: { name: true } },
                         id: true, ammo: true, attacks: true, damage: true,
                         name: true, range: true, type: true
                     }

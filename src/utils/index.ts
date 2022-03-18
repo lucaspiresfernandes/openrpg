@@ -1,7 +1,6 @@
 import { NextApiResponse } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
 import { Socket as NetSocket, Server as NetServer } from 'net';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Equipment, Player, Skill, Spell } from '@prisma/client';
 
 export function clamp(num: number, min: number, max: number) {
@@ -84,9 +83,7 @@ export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
 };
 
 type SocketPlayerEquipment = {
-    Equipment: Equipment & {
-        Skill: Skill;
-    };
+    Equipment: Equipment;
     currentAmmo: number | null;
 }
 
@@ -102,9 +99,6 @@ type SocketPlayerItem = {
 
 type SocketEquipment = {
     name: string;
-    Skill: {
-        name: string;
-    };
     type: string;
     damage: string;
     range: string;

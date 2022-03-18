@@ -219,11 +219,11 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
         }).catch(addToast);
     }
 
-    function createEquipment(name: string, skillID: number, type: string, damage: string, range: string,
+    function createEquipment(name: string, type: string, damage: string, range: string,
         attacks: string, ammo: number | null = null) {
-        api.put('/sheet/equipment', { name, skillID, type, damage, range, attacks, ammo }).then(res => {
+        api.put('/sheet/equipment', { name, type, damage, range, attacks, ammo }).then(res => {
             const id = res.data.id;
-            setEquipment([...equipment, { id, name, skill_id: skillID, type, damage, range, attacks, ammo, visible: true }]);
+            setEquipment([...equipment, { id, name, type, damage, range, attacks, ammo, visible: true }]);
         }).catch(addToast);
     }
 
@@ -544,7 +544,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                                     <tbody>
                                         {equipment.map(eq =>
                                             <EquipmentEditorField key={eq.id} equipment={eq}
-                                                onDelete={deleteEquipment} skills={skill} />
+                                                onDelete={deleteEquipment} />
                                         )}
                                     </tbody>
                                 </Table>

@@ -20,7 +20,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const id = req.body.id;
     const name = req.body.name;
-    const skill_id = req.body.skillID;
     const ammo = req.body.ammo;
     const attacks = req.body.attacks;
     const damage = req.body.damage;
@@ -34,9 +33,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     }
 
     const eq = await database.equipment.update({
-        where: { id }, data: { name, skill_id, ammo, attacks, damage, range, type, visible },
+        where: { id }, data: { name, ammo, attacks, damage, range, type, visible },
         select: {
-            Skill: { select: { name: true } },
             ammo: true, attacks: true, damage: true, id: true,
             range: true, type: true, name: true
         }
@@ -60,20 +58,19 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     }
 
     const name = req.body.name;
-    const skill_id = req.body.skillID;
     const ammo = req.body.ammo;
     const attacks = req.body.attacks;
     const damage = req.body.damage;
     const range = req.body.range;
     const type = req.body.type;
 
-    if (name === undefined || skill_id === undefined || ammo === undefined || attacks === undefined ||
+    if (name === undefined || ammo === undefined || attacks === undefined ||
         damage === undefined || range === undefined || type === undefined) {
         res.status(400).send({ message: 'Name or rollable is undefined.' });
         return;
     }
 
-    const eq = await database.equipment.create({ data: { name, skill_id, ammo, attacks, damage, range, type, visible: true } });
+    const eq = await database.equipment.create({ data: { name, ammo, attacks, damage, range, type, visible: true } });
 
     res.send({ id: eq.id });
 

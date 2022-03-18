@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useState } from 'react';
-import { Button, Form, Image } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
@@ -16,9 +16,6 @@ type PlayerEquipmentFieldProps = {
         name: string;
         range: string;
         type: string;
-        Skill: {
-            name: string;
-        };
     };
     onDelete(id: number): void
 };
@@ -77,7 +74,6 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
                 </Button>
             </td>
             <td>{props.equipment.name}</td>
-            <td>{props.equipment.Skill.name}</td>
             <td>{props.equipment.type}</td>
             <td>{props.equipment.damage}</td>
             <td>
