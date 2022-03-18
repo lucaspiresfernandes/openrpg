@@ -532,7 +532,6 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                                         <tr>
                                             <th></th>
                                             <th>Nome</th>
-                                            <th>Perícia</th>
                                             <th>Tipo</th>
                                             <th>Dano</th>
                                             <th>Alcance</th>
