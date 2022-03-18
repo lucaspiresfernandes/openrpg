@@ -32,6 +32,8 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
     const diceVideo = useRef<HTMLVideoElement>(null);
 
+    const [showAvatar, setShowAvatar] = useState(false);
+
     useSocket(socket => {
         setSocket(socket);
         socket.emit('roomJoin', `portrait${props.playerId}`);
@@ -82,7 +84,8 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
                 if (newStatusID !== previousStatusID.current) {
                     previousStatusID.current = newStatusID;
-                    setSrc(`/api/sheet/player/avatar/${newStatusID}?v=${Date.now()}`);
+                    setShowAvatar(false);
+                    setSrc(`/api/sheet/player/avatar/${newStatusID}?playerID=${props.playerId}&v=${Date.now()}`);
                 }
 
                 return newAttrStatus;
@@ -163,14 +166,27 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     useEffect(() => {
         document.body.style.backgroundColor = 'transparent';
         const id = attributeStatus.find(stat => stat.value)?.value || 0;
-        setSrc(`/api/sheet/player/avatar/${id}?v=${Date.now()}`);
+        setSrc(`/api/sheet/player/avatar/${id}?playerID=${props.playerId}&v=${Date.now()}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    function onAvatarLoadError() {
+        setSrc('/avatar404.png');
+    }
+
+    function onAvatarLoadSuccess() {
+        setShowAvatar(true);
+    }
 
     return (
         <>
             <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
-                <Image src={src} onError={() => setSrc('/avatar404.png')} alt='Avatar' width={420} height={600} className={styles.avatar} />
+                <Fade in={showAvatar}>
+                    <div>
+                        <Image src={src} onError={onAvatarLoadError} alt='Avatar' onLoad={onAvatarLoadSuccess}
+                            width={420} height={600} className={styles.avatar} />
+                    </div>
+                </Fade>
             </div>
             <div className={styles.sideContainer}>
                 <div className={`${styles.side} portrait-color ${sideAttribute.Attribute.name}`}>

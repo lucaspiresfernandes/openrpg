@@ -9,16 +9,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const player = req.session.player;
+    const playerID = req.session.player?.id || parseInt(req.query.playerID as string);
     const statusID: number = parseInt(req.query.attrStatusID as string) || 0;
-
-    if (!player) {
+    if (!playerID) {
         res.status(401).end();
         return;
     }
 
     try {
-        const url = getImageURL(player.id, statusID);
+        const url = getImageURL(playerID, statusID);
         const response = await api.get(url, { responseType: 'arraybuffer', timeout: 1000 });
         res.setHeader('content-type', response.headers['content-type']);
         res.end(response.data, 'binary');
