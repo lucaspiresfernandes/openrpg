@@ -1,4 +1,4 @@
-import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Spec } from '@prisma/client';
+import { Attribute, AttributeStatus, Characteristic, Currency, Equipment, Info, Spec } from '@prisma/client';
 import Router from 'next/router';
 import React, { useContext } from 'react';
 import { Button, Col, Row, } from 'react-bootstrap';
@@ -6,6 +6,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import AttributeField from './AttributeField';
 import AvatarField from './AvatarField';
+import CurrencyField from './CurrencyField';
 import EquipmentField from './EquipmentField';
 import InfoField from './InfoField';
 import ItemField from './ItemField';
@@ -41,6 +42,10 @@ type PlayerContainerProps = {
         };
         currentDescription: string;
         quantity: number;
+    }[];
+    currency: {
+        value: string;
+        Currency: Currency;
     }[];
     id: number;
     onDelete?(): void;
@@ -79,6 +84,8 @@ export default function PlayerContainer(props: PlayerContainerProps) {
                     <AttributeField attributes={props.attributes} playerID={props.id} />
                     <hr />
                     <SpecField specs={props.specs} playerID={props.id} />
+                    <hr />
+                    <CurrencyField currency={props.currency} playerID={props.id} />
                     <hr />
                     <EquipmentField equipments={props.equipments} playerID={props.id} />
                     <hr />

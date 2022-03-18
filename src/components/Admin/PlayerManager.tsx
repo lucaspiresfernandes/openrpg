@@ -1,4 +1,4 @@
-import { Attribute, AttributeStatus, Characteristic, Equipment, Info, Spec } from '@prisma/client';
+import { Attribute, AttributeStatus, Characteristic, Currency, Equipment, Info, Spec } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
 import { RetrieveSocket } from '../../contexts';
@@ -40,6 +40,10 @@ type Player = {
         };
         currentDescription: string;
         quantity: number;
+    }[];
+    PlayerCurrency: {
+        value: string;
+        Currency: Currency;
     }[];
 }
 
@@ -194,7 +198,7 @@ export default function PlayerManager(props: PlayerManagerProps) {
             {players.map((player, index) =>
                 <PlayerContainer key={player.id} id={player.id} status={player.PlayerAttributeStatus}
                     info={player.PlayerInfo} attributes={player.PlayerAttributes}
-                    specs={player.PlayerSpec}
+                    specs={player.PlayerSpec} currency={player.PlayerCurrency}
                     equipments={player.PlayerEquipment} items={player.PlayerItem}
                     onDelete={() => deletePlayer(index)} />
             )}

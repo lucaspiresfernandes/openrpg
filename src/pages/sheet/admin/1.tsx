@@ -121,7 +121,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
                 PlayerSpec: { select: { Spec: true, value: true } },
                 PlayerEquipment: { select: { Equipment: true, currentAmmo: true } },
-                PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } }
+                PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } },
+                PlayerCurrency: { select: { Currency: true, value: true } }
             }
         }),
         prisma.playerNote.findUnique({
