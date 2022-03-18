@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import api from '../../utils/api';
 import Router from 'next/router';
+import ApplicationHead from '../../components/ApplicationHead';
 
 export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>): JSX.Element {
     const [toasts, addToast] = useToast();
@@ -34,6 +35,7 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
 
     return (
         <>
+            <ApplicationHead title='Ficha do Personagem' />
             <SheetNavbar />
             <ErrorLogger.Provider value={addToast}>
                 <Container>

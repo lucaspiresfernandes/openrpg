@@ -13,6 +13,7 @@ import SpecializationEditorField from '../../../components/Admin/Editor/Speciali
 import SpellEditorField from '../../../components/Admin/Editor/SpellEditorField';
 import StatusEditorField from '../../../components/Admin/Editor/StatusEditorField';
 import AdminNavbar from '../../../components/AdminNavbar';
+import ApplicationHead from '../../../components/ApplicationHead';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
 import CreateAttributeModal from '../../../components/Modals/CreateAttributeModal';
@@ -275,6 +276,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     return (
         <ErrorLogger.Provider value={addToast}>
+            <ApplicationHead title='Editor' />
             <AdminNavbar />
             <Container>
                 <Row className='display-5 text-center'>

@@ -56,7 +56,7 @@ export default function Home(): JSX.Element {
 
   return (
     <>
-      <ApplicationHead />
+      <ApplicationHead title='Entrar' />
       <Container className='text-center'>
         <Row>
           <Col>

@@ -6,7 +6,7 @@ type ApplicationHeadProps = {
     children?: React.ReactElement
 };
 
-export default function AppHead({ title, children }: ApplicationHeadProps) {
+export default function ApplicationHead({ title, children }: ApplicationHeadProps) {
     return (
         <Head>
             <title>{`${title || ''} - ${config.application.name}`}</title>

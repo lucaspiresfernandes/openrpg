@@ -26,6 +26,7 @@ import Router from 'next/router';
 import PlayerSkillContainer, { PlayerSkill } from '../../components/Player/Skill/PlayerSkillContainer';
 import { Spell } from '@prisma/client';
 import PlayerSpellField from '../../components/Player/PlayerSpellField';
+import ApplicationHead from '../../components/ApplicationHead';
 
 const bonusDamageName = config.player.bonus_damage_name;
 
@@ -331,6 +332,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     return (
         <>
+            <ApplicationHead title='Ficha do Personagem' />
             <SheetNavbar />
             <ErrorLogger.Provider value={addToast}>
                 <ShowDiceResult.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>

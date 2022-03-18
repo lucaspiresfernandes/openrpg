@@ -18,6 +18,7 @@ import { ResolvedDice } from '../../../utils';
 import PlayerManager from '../../../components/Admin/PlayerManager';
 import useSocket, { SocketIO } from '../../../hooks/useSocket';
 import { ErrorLogger, RetrieveSocket } from '../../../contexts';
+import ApplicationHead from '../../../components/ApplicationHead';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -38,13 +39,11 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
 
     return (
         <>
+            <ApplicationHead title='Painel do Administrador' />
             <AdminNavbar />
             <ErrorLogger.Provider value={addToast}>
                 <RetrieveSocket.Provider value={socket}>
                     <Container>
-                        <Row className='display-5 text-center'>
-                            <Col>Painel do Administrador</Col>
-                        </Row>
                         <Row className='my-4'>
                             <Col className='text-center h5'>
                                 <AdminGlobalConfigurations environment={props.environment} />

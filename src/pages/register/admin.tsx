@@ -100,7 +100,7 @@ export default function Register() {
 
   return (
     <div>
-      <ApplicationHead />
+      <ApplicationHead title='Cadastrar' />
       <Container className='text-center'>
         <Row>
           <Col>
