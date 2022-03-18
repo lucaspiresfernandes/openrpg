@@ -31,7 +31,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
         setSocket(socket);
     });
 
-    const players: PlayerName[] = props.players.map(player => {
+    const playerNames: PlayerName[] = props.players.map(player => {
         return {
             id: player.id, name: player.PlayerInfo.find(info => info.Info.name === 'Nome')?.value || 'Desconhecido'
         };
@@ -66,10 +66,10 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                                     </Col>
                                 </Row>
                             </DataContainer>
-                            <CombatContainer players={players} />
+                            <CombatContainer players={playerNames} />
                         </Row>
                         <Row className='my-3'>
-                            <DiceList players={players} />
+                            <DiceList players={playerNames} />
                             <NPCContainer />
                         </Row>
                         <Row className='my-3'>

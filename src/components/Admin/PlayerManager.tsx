@@ -1,8 +1,7 @@
-import { Attribute, AttributeStatus, Characteristic, Currency, Equipment, Info, Spec } from '@prisma/client';
+import { Attribute, AttributeStatus, Currency, Equipment, Info, Spec } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
 import { RetrieveSocket } from '../../contexts';
-import player from '../../pages/api/player';
 import PlayerContainer from './PlayerContainer';
 
 type PlayerManagerProps = {

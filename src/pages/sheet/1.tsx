@@ -259,7 +259,6 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
         socket.on('playerItemAdd', (id, name) => {
             setItems(items => {
-                console.log(playerItemsRef.current);
                 if (items.findIndex(item => item.id === id) > -1 ||
                     playerItemsRef.current.findIndex(eq => eq.Item.id === id) > -1)
                     return items;
@@ -318,6 +317,46 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
             });
         });
 
+        socket.on('playerSpellAdd', (id, name) => {
+            setSpells(spells => {
+                if (spells.findIndex(spell => spell.id === id) > -1 ||
+                    playerSpellsRef.current.findIndex(spell => spell.id === id) > -1)
+                    return spells;
+                return [...spells, { id, name }];
+            });
+        });
+
+        socket.on('playerSpellRemove', (id) => {
+            setSpells(spells => {
+                const index = spells.findIndex(spell => spell.id === id);
+                if (index === -1) return spells;
+
+                const newSpells = [...spells];
+                newSpells.splice(index, 1);
+                return newSpells;
+            });
+        });
+
+        socket.on('playerSpellChange', (id, spell) => {
+            setPlayerSpells(spells => {
+                const index = spells.findIndex(spell => spell.id === id);
+                if (index === -1) return spells;
+
+                const newSpells = [...spells];
+                newSpells[index] = spell;
+                return newSpells;
+            });
+
+            setSpells(spells => {
+                const index = spells.findIndex(spell => spell.id === id);
+                if (index === -1) return spells;
+
+                const newSpells = [...spells];
+                newSpells[index].name = spell.name;
+                return newSpells;
+            });
+        });
+
         return () => {
             socket.off('playerDelete');
             socket.off('playerEquipmentAdd');
@@ -327,6 +366,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
             socket.off('playerItemRemove');
             socket.off('playerItemChange');
             socket.off('playerSkillChange');
+            socket.off('playerSpellAdd');
+            socket.off('playerSpellRemove');
+            socket.off('playerSpellChange');
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket]);
