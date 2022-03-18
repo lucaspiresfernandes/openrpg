@@ -1,16 +1,17 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import AttributeEditor from '../../../components/Admin/Editor/AttributeEditor';
-import CharacteristicEditor from '../../../components/Admin/Editor/CharacteristicEditor';
-import EquipmentEditor from '../../../components/Admin/Editor/EquipmentEditor';
-import ExtraInfoEditor from '../../../components/Admin/Editor/ExtraInfoEditor';
-import InfoEditor from '../../../components/Admin/Editor/InfoEditor';
-import ItemEditor from '../../../components/Admin/Editor/ItemEditor';
-import SkillEditor from '../../../components/Admin/Editor/SkillEditor';
-import SpecEditor from '../../../components/Admin/Editor/SpecEditor';
-import SpecializationEditor from '../../../components/Admin/Editor/SpecializationEditor';
-import StatusEditor from '../../../components/Admin/Editor/StatusEditor';
+import React, { useState } from 'react';
+import { Col, Container, Row, Table } from 'react-bootstrap';
+import AttributeEditorField from '../../../components/Admin/Editor/AttributeEditorField';
+import CharacteristicEditorField from '../../../components/Admin/Editor/CharacteristicEditorField';
+import EquipmentEditorField from '../../../components/Admin/Editor/EquipmentEditorField';
+import ExtraInfoEditorField from '../../../components/Admin/Editor/ExtraInfoEditorField';
+import InfoEditorField from '../../../components/Admin/Editor/InfoEditorField';
+import ItemEditorField from '../../../components/Admin/Editor/ItemEditorField';
+import SkillEditorField from '../../../components/Admin/Editor/SkillEditorField';
+import SpecEditorField from '../../../components/Admin/Editor/SpecEditorField';
+import SpecializationEditorField from '../../../components/Admin/Editor/SpecializationEditorField';
+import SpellEditorField from '../../../components/Admin/Editor/SpellEditorField';
+import StatusEditorField from '../../../components/Admin/Editor/StatusEditorField';
 import AdminNavbar from '../../../components/AdminNavbar';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
@@ -24,6 +25,7 @@ import CreateItemModal from '../../../components/Modals/CreateItemModal';
 import CreateSkillModal from '../../../components/Modals/CreateSkillModal';
 import CreateSpecializationModal from '../../../components/Modals/CreateSpecializationModal';
 import CreateSpecModal from '../../../components/Modals/CreateSpecModal';
+import CreateSpellModal from '../../../components/Modals/CreateSpellModal';
 import { ErrorLogger } from '../../../contexts';
 import useToast from '../../../hooks/useToast';
 import api from '../../../utils/api';
@@ -46,6 +48,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     const [showSpecializationModal, setShowSpecializationModal] = useState(false);
     const [showSkillModal, setShowSkillModal] = useState(false);
     const [showItemModal, setShowItemModal] = useState(false);
+    const [showSpellModal, setShowSpellModal] = useState(false);
 
     const [info, setInfo] = useState(props.info);
     const [extraInfo, setExtraInfo] = useState(props.extraInfo);
@@ -56,12 +59,13 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     const [equipment, setEquipment] = useState(props.equipment);
     const [skill, setSkill] = useState(props.skill);
     const [item, setItem] = useState(props.item);
+    const [spells, setSpell] = useState(props.spell);
     const [specialization, setSpecialization] = useState(props.specialization);
 
     function createInfo(name: string) {
         api.put('/sheet/info', { name }).then(res => {
             const id = res.data.id;
-            setInfo([...info, { id, name }]);
+            setInfo([...info, { id, name, default: false }]);
         }).catch(addToast);
     }
 
@@ -249,103 +253,334 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
         }).catch(addToast);
     }
 
+    function createSpell(name: string, description: string, cost: string, type: string,
+        damage: string, castingTime: string, range: string, duration: string) {
+        api.put('/sheet/spell', { name, description, cost, type, damage, castingTime, range, duration }).then(res => {
+            const id = res.data.id;
+            setSpell([...spells, { id, name, description, cost, type, damage, castingTime, range, duration, visible: true }]);
+        }).catch(addToast);
+    }
+
+    function deleteSpell(id: number) {
+        if (!confirm('Tem certeza de que deseja apagar esse spell?')) return;
+        api.delete('/sheet/spell', { data: { id } }).then(res => {
+            const newSpell = [...spells];
+            const index = newSpell.findIndex(spell => spell.id === id);
+            if (index > -1) {
+                newSpell.splice(index, 1);
+                setSpell(newSpell);
+            }
+        }).catch(addToast);
+    }
+
     return (
-        <>
+        <ErrorLogger.Provider value={addToast}>
             <AdminNavbar />
-            <ErrorLogger.Provider value={addToast}>
-                <Container>
-                    <Row className='display-5 text-center'>
-                        <Col>Painel do Administrador</Col>
-                    </Row>
-                    {
-                        props.players.length === 0 &&
-                        <>
-                            <Row>
-                                <DataContainer outline title='Informações Pessoais (Geral)'
-                                    addButton={{ onAdd: () => setShowInfoModal(true) }}>
-                                    <InfoEditor info={info} onDelete={deleteInfo} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Informações Pessoais (Extra)'
-                                    addButton={{ onAdd: () => setShowExtraInfoModal(true) }}>
-                                    <ExtraInfoEditor extraInfo={extraInfo} onDelete={deleteExtraInfo} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Atributos'
-                                    addButton={{ onAdd: () => setShowAttributeModal(true) }}>
-                                    <AttributeEditor attribute={attribute} onDelete={deleteAttribute} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Status de Atributos'
-                                    addButton={{ onAdd: () => setShowStatusModal(true) }}>
-                                    <StatusEditor attributes={attribute} attributeStatus={status} onDelete={deleteAttributeStatus} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Especificações de Jogador'
-                                    addButton={{ onAdd: () => setShowSpecModal(true) }}>
-                                    <SpecEditor spec={spec} onDelete={deleteSpec} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Características'
-                                    addButton={{ onAdd: () => setShowCharacteristicModal(true) }}>
-                                    <CharacteristicEditor characteristic={characteristic} onDelete={deleteCharacteristic} />
-                                </DataContainer>
-                            </Row>
-                            <Row>
-                                <DataContainer outline title='Especializações'
-                                    addButton={{ onAdd: () => setShowSpecializationModal(true) }}>
-                                    <SpecializationEditor specialization={specialization} onDelete={deleteSpecialization} />
-                                </DataContainer>
-                            </Row>
-                        </>
-                    }
-                    <Row>
-                        <DataContainer outline title='Perícias'
-                            addButton={{ onAdd: () => setShowSkillModal(true) }}>
-                            <SkillEditor skill={skill} onDelete={deleteSkill} specializations={specialization} />
-                        </DataContainer>
-                    </Row>
-                    <Row>
-                        <DataContainer outline title='Equipamentos'
-                            addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
-                            <EquipmentEditor equipment={equipment} onDelete={deleteEquipment} skills={skill} />
-                        </DataContainer>
-                    </Row>
-                    <Row>
-                        <DataContainer outline title='Itens'
-                            addButton={{ onAdd: () => setShowItemModal(true) }}>
-                            <ItemEditor item={item} onDelete={deleteItem} />
-                        </DataContainer>
-                    </Row>
-                </Container>
-                <CreateInfoModal show={showInfoModal} onHide={() => setShowInfoModal(false)}
-                    onCreate={createInfo} />
-                <CreateExtraInfoModal show={showExtraInfoModal} onHide={() => setShowExtraInfoModal(false)}
-                    onCreate={createExtraInfo} />
-                <CreateAttributeModal show={showAttributeModal} onHide={() => setShowAttributeModal(false)}
-                    onCreate={createAttribute} />
-                <CreateAttributeStatusModal show={showStatusModal} onHide={() => setShowStatusModal(false)}
-                    onCreate={createAttributeStatus} attributes={attribute} />
-                <CreateSpecModal show={showSpecModal} onHide={() => setShowSpecModal(false)}
-                    onCreate={createSpec} />
-                <CreateCharacteristicModal show={showCharacteristicModal} onHide={() => setShowCharacteristicModal(false)}
-                    onCreate={createCharacteristic} />
-                <CreateEquipmentModal show={showEquipmentModal} onHide={() => setShowEquipmentModal(false)}
-                    onCreate={createEquipment} skill={skill} />
-                <CreateSpecializationModal show={showSpecializationModal} onHide={() => setShowSpecializationModal(false)}
-                    onCreate={createSpecialization} />
-                <CreateSkillModal show={showSkillModal} onHide={() => setShowSkillModal(false)}
-                    onCreate={createSkill} specialization={specialization} />
-                <CreateItemModal show={showItemModal} onHide={() => setShowItemModal(false)}
-                    onCreate={createItem} />
-            </ErrorLogger.Provider>
+            <Container>
+                <Row className='display-5 text-center'>
+                    <Col>Painel do Administrador</Col>
+                </Row>
+                {
+                    props.players.length === 0 &&
+                    <>
+                        <Row>
+                            <DataContainer outline title='Informações Pessoais (Geral)'
+                                addButton={{ onAdd: () => setShowInfoModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {info.map(info =>
+                                                    <InfoEditorField key={info.id}
+                                                        info={info} onDelete={deleteInfo} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Informações Pessoais (Extra)'
+                                addButton={{ onAdd: () => setShowExtraInfoModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {extraInfo.map(info =>
+                                                    <ExtraInfoEditorField key={info.id}
+                                                        extraInfo={info} onDelete={deleteExtraInfo} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Atributos'
+                                addButton={{ onAdd: () => setShowAttributeModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                    <th>Testável</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {attribute.map(attr =>
+                                                    <AttributeEditorField key={attr.id}
+                                                        attribute={attr} onDelete={deleteAttribute} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Status de Atributos'
+                                addButton={{ onAdd: () => setShowStatusModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                    <th>Atributo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {status.map(stat =>
+                                                    <StatusEditorField key={stat.id} attributeStatus={stat}
+                                                        attributes={attribute} onDelete={deleteAttributeStatus} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Especificações de Jogador'
+                                addButton={{ onAdd: () => setShowSpecModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {spec.map(spec =>
+                                                    <SpecEditorField key={spec.id}
+                                                        spec={spec} onDelete={deleteSpec} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Características'
+                                addButton={{ onAdd: () => setShowCharacteristicModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                    <th>Testável</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {characteristic.map(char =>
+                                                    <CharacteristicEditorField key={char.id}
+                                                        characteristic={char} onDelete={deleteCharacteristic} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                        <Row>
+                            <DataContainer outline title='Especializações'
+                                addButton={{ onAdd: () => setShowSpecializationModal(true) }}>
+                                <Row>
+                                    <Col>
+                                        <Table responsive className='align-middle'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Nome</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {specialization.map(specialization =>
+                                                    <SpecializationEditorField key={specialization.id}
+                                                        specialization={specialization} onDelete={deleteSpecialization} />
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </DataContainer>
+                        </Row>
+                    </>
+                }
+                <Row>
+                    <DataContainer outline title='Perícias'
+                        addButton={{ onAdd: () => setShowSkillModal(true) }}>
+                        <Row>
+                            <Col>
+                                <Table responsive className='align-middle'>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nome</th>
+                                            <th>Especialização</th>
+                                            <th>Obrigatório</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {skill.map(skill =>
+                                            <SkillEditorField key={skill.id} skill={skill}
+                                                onDelete={deleteSkill} specializations={specialization} />
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </DataContainer>
+                </Row>
+                <Row>
+                    <DataContainer outline title='Equipamentos'
+                        addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
+                        <Row>
+                            <Col>
+                                <Table responsive className='align-middle text-center'>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nome</th>
+                                            <th>Perícia</th>
+                                            <th>Tipo</th>
+                                            <th>Dano</th>
+                                            <th>Alcance</th>
+                                            <th>Ataques</th>
+                                            <th>Munição</th>
+                                            <th>Visível</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {equipment.map(eq =>
+                                            <EquipmentEditorField key={eq.id} equipment={eq}
+                                                onDelete={deleteEquipment} skills={skill} />
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </DataContainer>
+                </Row>
+                <Row>
+                    <DataContainer outline title='Itens'
+                        addButton={{ onAdd: () => setShowItemModal(true) }}>
+                        <Row>
+                            <Col>
+                                <Table responsive className='align-middle'>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nome</th>
+                                            <th>Descrição</th>
+                                            <th>Visível</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {item.map(item => <ItemEditorField key={item.id} item={item} onDelete={deleteItem} />)}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </DataContainer>
+                </Row>
+                <Row>
+                    <DataContainer outline title='Magias'
+                        addButton={{ onAdd: () => setShowSpellModal(true) }}>
+                        <Row>
+                            <Col>
+                                <Table responsive className='align-middle text-center'>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nome</th>
+                                            <th>Descrição</th>
+                                            <th>Custo</th>
+                                            <th>Tipo</th>
+                                            <th>Dano</th>
+                                            <th>Tempo de Conjuração</th>
+                                            <th>Alcance</th>
+                                            <th>Duração</th>
+                                            <th>Visível</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {spells.map(spell =>
+                                            <SpellEditorField key={spell.id} spell={spell} onDelete={deleteSpell} />
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </DataContainer>
+                </Row>
+            </Container>
+            <CreateInfoModal show={showInfoModal} onHide={() => setShowInfoModal(false)}
+                onCreate={createInfo} />
+            <CreateExtraInfoModal show={showExtraInfoModal} onHide={() => setShowExtraInfoModal(false)}
+                onCreate={createExtraInfo} />
+            <CreateAttributeModal show={showAttributeModal} onHide={() => setShowAttributeModal(false)}
+                onCreate={createAttribute} />
+            <CreateAttributeStatusModal show={showStatusModal} onHide={() => setShowStatusModal(false)}
+                onCreate={createAttributeStatus} attributes={attribute} />
+            <CreateSpecModal show={showSpecModal} onHide={() => setShowSpecModal(false)}
+                onCreate={createSpec} />
+            <CreateCharacteristicModal show={showCharacteristicModal} onHide={() => setShowCharacteristicModal(false)}
+                onCreate={createCharacteristic} />
+            <CreateEquipmentModal show={showEquipmentModal} onHide={() => setShowEquipmentModal(false)}
+                onCreate={createEquipment} skill={skill} />
+            <CreateSpecializationModal show={showSpecializationModal} onHide={() => setShowSpecializationModal(false)}
+                onCreate={createSpecialization} />
+            <CreateSkillModal show={showSkillModal} onHide={() => setShowSkillModal(false)}
+                onCreate={createSkill} specialization={specialization} />
+            <CreateItemModal show={showItemModal} onHide={() => setShowItemModal(false)}
+                onCreate={createItem} />
+            <CreateSpellModal show={showSpellModal} onHide={() => setShowSpellModal(false)}
+                onCreate={createSpell} />
             <ErrorToastContainer toasts={toasts} />
-        </>
+        </ErrorLogger.Provider>
     );
 }
 
@@ -368,7 +603,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 equipment: [],
                 skill: [],
                 item: [],
-                specialization: []
+                specialization: [],
+                spell: []
             }
         };
     }
@@ -384,7 +620,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.equipment.findMany(),
         prisma.skill.findMany(),
         prisma.item.findMany(),
-        prisma.specialization.findMany()
+        prisma.specialization.findMany(),
+        prisma.spell.findMany()
     ]);
 
     return {
@@ -399,7 +636,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             equipment: results[7],
             skill: results[8],
             item: results[9],
-            specialization: results[10]
+            specialization: results[10],
+            spell: results[11]
         }
     };
 }

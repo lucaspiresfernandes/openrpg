@@ -12,7 +12,7 @@
     "schema": "src/prisma/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "^3.10.0",
+    "@prisma/client": "^3.11.0",
     "array-move": "^4.0.0",
     "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
@@ -24,7 +24,6 @@
     "formidable": "^2.0.1",
     "iron-session": "^6.0.5",
     "next": "12.1.0",
-    "prisma": "^3.10.0",
     "random-org": "^2.2.0",
     "react": "17.0.2",
     "react-bootstrap": "^2.1.2",
@@ -39,6 +38,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/formidable": "^2.0.4",
     "eslint": "8.9.0",
-    "eslint-config-next": "12.1.0"
+    "eslint-config-next": "12.1.0",
+    "prisma": "^3.11.0"
   }
 }

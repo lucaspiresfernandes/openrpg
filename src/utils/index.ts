@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
 import { Socket as NetSocket, Server as NetServer } from 'net';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { Equipment, Player, Skill } from '@prisma/client';
+import { Equipment, Player, Skill, Spell } from '@prisma/client';
 
 export function clamp(num: number, min: number, max: number) {
     if (num < min) return min;
@@ -135,6 +135,9 @@ export interface ServerToClientEvents {
     playerItemAdd: (id: number, name: string) => void;
     playerItemRemove: (id: number) => void;
     playerItemChange: (id: number, name: string) => void;
+    playerSpellAdd: (id: number, name: string) => void;
+    playerSpellRemove: (id: number) => void;
+    playerSpellChange: (id: number, spell: Spell) => void;
 
     //Dice Events
     diceResult: (playerID: number, dices: ResolvedDice[], results: DiceResult[]) => void;

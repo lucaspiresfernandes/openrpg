@@ -19,12 +19,13 @@ import PlayerEquipmentField from '../../components/Player/PlayerEquipmentField';
 import api from '../../utils/api';
 import AddDataModal from '../../components/Modals/EditDataModal';
 import PlayerItemField from '../../components/Player/PlayerItemField';
-import PlayerSkillField from '../../components/Player/Skill/PlayerSkillField';
 import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import Router from 'next/router';
 import PlayerSkillContainer, { PlayerSkill } from '../../components/Player/Skill/PlayerSkillContainer';
+import { Spell } from '@prisma/client';
+import PlayerSpellField from '../../components/Player/PlayerSpellField';
 
 const bonusDamageName = config.player.bonus_damage_name;
 
@@ -164,6 +165,38 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         setItems([...items, modalItem]);
     }
 
+    //Spells
+    const [addSpellShow, setAddSpellShow] = useState(false);
+    const [spells, setSpells] = useState<{ id: number, name: string }[]>(props.availableSpells.map(sp => {
+        return { id: sp.id, name: sp.name };
+    }));
+    const [playerSpells, setPlayerSpells] = useState<Spell[]>(props.playerSpells.map(sp => sp.Spell));
+    const playerSpellsRef = useRef(playerSpells);
+    playerSpellsRef.current = playerSpells;
+
+    function onAddSpell(id: number) {
+        api.put('/sheet/player/spell', { id }).then(res => {
+            const spell = res.data.spell as Spell;
+            setPlayerSpells([...playerSpells, spell]);
+
+            const newSpells = [...spells];
+            newSpells.splice(newSpells.findIndex(spell => spell.id === id), 1);
+            setSpells(newSpells);
+        }).catch(addToast);
+    }
+
+    function onDeleteSpell(id: number) {
+        const newPlayerSpells = [...playerSpells];
+        const index = newPlayerSpells.findIndex(spell => spell.id === id);
+
+        newPlayerSpells.splice(index, 1);
+        setPlayerSpells(newPlayerSpells);
+
+        const modalSpell = { id, name: playerSpells[index].name };
+        setSpells([...spells, modalSpell]);
+    }
+
+    //Attribute Status
     const [playerStatus, setPlayerStatus] = useState(props.playerAttributeStatus);
 
     function onAvatarUpdate() {
@@ -393,6 +426,15 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </Table>
                             </DataContainer>
                         </Row>
+                        <Row>
+                            <DataContainer outline title='Magias' addButton={{ onAdd: () => setAddSpellShow(true) }}>
+                                <Row className='justify-content-center'>
+                                    {playerSpells.map(spell =>
+                                        <PlayerSpellField key={spell.id} spell={spell} onDelete={onDeleteSpell} />
+                                    )}
+                                </Row>
+                            </DataContainer>
+                        </Row>
                     </Container>
                     <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
                         showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
@@ -403,11 +445,13 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                     onHide={() => setAvatarModalShow(false)} onUpdate={onAvatarUpdate} />
 
                 <AddDataModal title='Adicionar Equipamento' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
-                    data={equipments} onEditData={onAddEquipment} />
+                    data={equipments} onAddData={onAddEquipment} />
                 <AddDataModal title='Adicionar Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
-                    data={skills} onEditData={onAddSkill} />
+                    data={skills} onAddData={onAddSkill} />
                 <AddDataModal title='Adicionar Item' show={addItemShow} onHide={() => setAddItemShow(false)}
-                    data={items} onEditData={onAddItem} />
+                    data={items} onAddData={onAddItem} />
+                <AddDataModal title='Adicionar Magia' show={addSpellShow} onHide={() => setAddSpellShow(false)}
+                    data={spells} onAddData={onAddSpell} />
             </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
@@ -433,9 +477,11 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 playerEquipments: [],
                 playerSkills: [],
                 playerItems: [],
+                playerSpells: [],
                 availableEquipments: [],
                 availableSkills: [],
                 availableItems: [],
+                availableSpells: [],
                 players: [],
             }
         };
@@ -499,6 +545,11 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             }
         }),
 
+        database.playerSpell.findMany({
+            where: { player_id: playerID },
+            include: { Spell: true }
+        }),
+
         database.equipment.findMany({
             where: { visible: true, PlayerEquipment: { none: { player_id: playerID } } },
         }),
@@ -511,9 +562,13 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             where: { visible: true, PlayerItem: { none: { player_id: playerID } } },
         }),
 
+        database.spell.findMany({
+            where: { visible: true, PlayerSpell: { none: { player_id: playerID } } },
+        }),
+
         database.player.findMany({
             select: { id: true, role: true, username: true }
-        })
+        }),
     ]);
 
     return {
@@ -527,10 +582,12 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             playerEquipments: results[5],
             playerSkills: results[6],
             playerItems: results[7],
-            availableEquipments: results[8],
-            availableSkills: results[9],
-            availableItems: results[10],
-            players: results[11]
+            playerSpells: results[8],
+            availableEquipments: results[9],
+            availableSkills: results[10],
+            availableItems: results[11],
+            availableSpells: results[12],
+            players: results[13]
         }
     };
 }

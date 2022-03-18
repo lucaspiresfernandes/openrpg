@@ -171,7 +171,6 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         <>
             <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
                 <Image src={src} onError={() => setSrc('/avatar404.png')} alt='Avatar' width={420} height={600} className={styles.avatar} />
-                <Image src='/frame.png' alt='Frame' width={440} height={620} />
             </div>
             <div className={styles.sideContainer}>
                 <div className={`${styles.side} portrait-color ${sideAttribute.Attribute.name}`}>

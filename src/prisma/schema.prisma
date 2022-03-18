@@ -25,6 +25,7 @@ model Player {
   PlayerItem            PlayerItem[]
   PlayerExtraInfo       PlayerExtraInfo[]
   PlayerNote            PlayerNote[]
+  PlayerSpell           PlayerSpell[]
 }
 
 model Info {
@@ -105,6 +106,20 @@ model ExtraInfo {
   id              Int               @id @default(autoincrement())
   name            String
   PlayerExtraInfo PlayerExtraInfo[]
+}
+
+model Spell {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  cost        String
+  type        String
+  damage      String
+  castingTime String
+  range       String
+  duration    String
+  visible     Boolean
+  PlayerSpell PlayerSpell[]
 }
 
 model PlayerInfo {
@@ -197,6 +212,15 @@ model PlayerExtraInfo {
   value         String
 
   @@id([player_id, extra_info_id])
+}
+
+model PlayerSpell {
+  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id Int
+  Spell     Spell  @relation(fields: [spell_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  spell_id  Int
+
+  @@id([player_id, spell_id])
 }
 
 model PlayerNote {

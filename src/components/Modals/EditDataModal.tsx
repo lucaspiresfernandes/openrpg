@@ -5,7 +5,7 @@ import SheetModal from './SheetModal';
 type EditDataModalProps = {
     show: boolean;
     onHide(): void;
-    onEditData(id: number): void;
+    onAddData(id: number): void;
     data: { id: number, name: string }[];
     title: string;
 }
@@ -20,9 +20,10 @@ export default function EditDataModal(props: EditDataModalProps) {
 
     return (
         <SheetModal title={props.title} show={props.show} onHide={props.onHide}
-            applyButton={{ name: 'Adicionar', onApply: () => props.onEditData(value) }}>
+            applyButton={{ name: 'Adicionar', onApply: () => props.onAddData(value), disabled: props.data.length === 0 }}>
             <Container fluid>
-                <Form.Select className='theme-element' value={value} onChange={ev => setValue(parseInt(ev.currentTarget.value))}>
+                <Form.Select className='theme-element' value={value} onChange={ev => setValue(parseInt(ev.currentTarget.value))}
+                    disabled={props.data.length === 0}>
                     {props.data.map(eq =>
                         <option key={eq.id} value={`${eq.id}`}>{eq.name}</option>
                     )}

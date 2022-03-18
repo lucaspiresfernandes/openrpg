@@ -3,7 +3,6 @@
         "name": "Open RPG",
         "description": "An open-source RPG"
     },
-
     "player": {
         "admin_key": "123456",
         "role": "Investigador",
@@ -17,7 +16,6 @@
             "branched": false
         }
     },
-
     "success_types": {
         "use_success_types": true,
         "failure": "Fracasso",
@@ -25,7 +23,6 @@
         "hard": "Bom",
         "extreme": "Extremo"
     },
-
     "equipment": {
         "types": [
             "Comum",
@@ -44,9 +41,24 @@
             "Veneno"
         ]
     },
-
+    "spell": {
+        "types": [
+            "Nenhum",
+            "Abjuração",
+            "Advinhação",
+            "Conjuração",
+            "Encantamento",
+            "Evocação",
+            "Ilusão",
+            "Necromancia",
+            "Transmutação"
+        ]
+    },
     "portrait": {
-        "attributes": ["Vida", "Sanidade"],
+        "attributes": [
+            "Vida",
+            "Sanidade"
+        ],
         "side_attribute": "Magia"
     }
 }

@@ -14,7 +14,7 @@ type CreateEquipmentModalProps = {
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
     const [name, setName] = useState('');
     const [skillID, setSkillID] = useState(props.skill[0]?.id || 0);
-    const [type, setType] = useState('');
+    const [type, setType] = useState(config.equipment.types[0]);
     const [damage, setDamage] = useState('');
     const [range, setRange] = useState('');
     const [attacks, setAttacks] = useState('');
@@ -23,7 +23,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
     function reset() {
         setName('');
         setSkillID(props.skill[0]?.id || 0);
-        setType('');
+        setType(config.equipment.types[0]);
         setDamage('');
         setRange('');
         setAttacks('');
