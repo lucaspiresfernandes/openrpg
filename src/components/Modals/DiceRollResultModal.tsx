@@ -5,14 +5,14 @@ import { DiceResult, ResolvedDice, resolveDices } from '../../utils';
 import api from '../../utils/api';
 import { ErrorLogger } from '../../contexts';
 
-type DiceRollResultProps = {
+type DiceRollResultModalProps = {
     onHide(): void;
     dices: string | ResolvedDice[];
     resolverKey?: string;
     bonusDamage?: string;
 }
 
-export default function DiceRollResult(props: DiceRollResultProps) {
+export default function DiceRollResultModal(props: DiceRollResultModalProps) {
     const [resultDices, setResultDices] = useState<DiceResult[]>([]);
     const [resultFade, setResultFade] = useState(false);
     const [descriptionFade, setDescriptionFade] = useState(false);

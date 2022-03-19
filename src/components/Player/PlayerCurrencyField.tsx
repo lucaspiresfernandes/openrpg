@@ -25,7 +25,7 @@ export default function PlayerCurrencyField({ currency }: PlayerCurrencyFieldPro
             <Form.Label htmlFor={`playerCurrency${currency.currency_id}`}>{currency.Currency.name}:</Form.Label>
             <BottomTextInput id={`playerCurrency${currency.currency_id}`} value={value}
                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onBlur} className='ms-2'
-                style={{maxWidth: '7rem'}} />
+                style={{ maxWidth: '7rem' }} autoComplete='off' />
         </Col>
     );
 }

@@ -1,5 +1,5 @@
 import { Item } from '@prisma/client';
-import { useContext, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
@@ -15,6 +15,7 @@ type ItemEditorFieldProps = {
 export default function ItemEditorField(props: ItemEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.item.name);
     const [lastDescription, description, setDescription] = useExtendedState(props.item.description);
+    const [lastWeight, weight, setWeight] = useExtendedState(props.item.weight.toString());
     const [visible, setVisible] = useState(props.item.visible);
     const logError = useContext(ErrorLogger);
 
@@ -28,6 +29,17 @@ export default function ItemEditorField(props: ItemEditorFieldProps) {
         if (description === lastDescription) return;
         setDescription(description);
         api.post('/sheet/item', { id: props.item.id, description }).catch(logError);
+    }
+
+    function onWeightBlur() {
+        if (weight === lastWeight) return;
+        let weightFloat = parseFloat(weight);
+        if (isNaN(weightFloat)) {
+            weightFloat = 0;
+            setWeight(weightFloat.toString());
+        }
+        else setWeight(weight);
+        api.post('/sheet/item', { id: props.item.id, weight: weightFloat }).catch(logError);
     }
 
     function onVisibleChange() {
@@ -53,6 +65,10 @@ export default function ItemEditorField(props: ItemEditorFieldProps) {
             <td>
                 <BottomTextInput value={description} onChange={ev => setDescription(ev.currentTarget.value)}
                     onBlur={onDescriptionBlur} style={{ minWidth: '45rem' }} />
+            </td>
+            <td>
+                <BottomTextInput value={weight} onChange={ev => setWeight(ev.currentTarget.value)}
+                    onBlur={onWeightBlur} style={{ maxWidth: '4rem' }} className='text-center' />
             </td>
             <td>
                 <Form.Check checked={visible} onChange={onVisibleChange} />

@@ -14,6 +14,7 @@ model Player {
   id                    Int                     @id @default(autoincrement())
   username              String
   password              String
+  maxLoad               Float                   @default(1)
   role                  Role
   PlayerInfo            PlayerInfo[]
   PlayerAttributes      PlayerAttribute[]
@@ -96,6 +97,7 @@ model Item {
   id          Int          @id @default(autoincrement())
   name        String
   description String
+  weight      Float        @default(0)
   visible     Boolean
   PlayerItem  PlayerItem[]
 }
@@ -204,6 +206,7 @@ model PlayerItem {
   item_id            Int
   currentDescription String
   quantity           Int
+  weight             Float  @default(0)
 
   @@id([player_id, item_id])
 }

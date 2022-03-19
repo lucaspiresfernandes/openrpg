@@ -242,7 +242,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
     function createItem(name: string, description: string) {
         api.put('/sheet/item', { name, description }).then(res => {
             const id = res.data.id;
-            setItem([...item, { id, name, description, visible: true }]);
+            setItem([...item, { id, name, description, weight: 0, visible: true }]);
         }).catch(addToast);
     }
 
@@ -562,6 +562,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                                             <th></th>
                                             <th>Nome</th>
                                             <th>Descrição</th>
+                                            <th>Peso</th>
                                             <th>Visível</th>
                                         </tr>
                                     </thead>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Form } from 'react-bootstrap';
 import SheetModal from './SheetModal';
 
-type EditDataModalProps = {
+type AddDataModalProps = {
     show: boolean;
     onHide(): void;
     onAddData(id: number): void;
@@ -10,7 +10,7 @@ type EditDataModalProps = {
     title: string;
 }
 
-export default function EditDataModal(props: EditDataModalProps) {
+export default function AddDataModal(props: AddDataModalProps) {
     const [value, setValue] = useState(0);
 
     useEffect(() => {

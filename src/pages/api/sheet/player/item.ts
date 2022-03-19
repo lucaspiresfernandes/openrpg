@@ -26,10 +26,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const quantity = req.body.quantity;
     const currentDescription = req.body.currentDescription;
+    const weight = req.body.currentWeight;
 
     await prisma.playerItem.update({
         where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
-        data: { quantity, currentDescription }
+        data: { quantity, currentDescription, weight }
     });
 
     res.end();
@@ -60,8 +61,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
             item_id: itemID
         },
         select: {
-            quantity: true, currentDescription: true, Item: {
-                select: { id: true, name: true, description: true }
+            quantity: true, currentDescription: true, weight: true, Item: {
+                select: { id: true, name: true, description: true, weight: true }
             }
         }
     });
@@ -69,7 +70,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     await prisma.playerItem.update({
         where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
         data: {
-            currentDescription: item.Item.description
+            currentDescription: item.Item.description,
+            weight: item.Item.weight
         }
     });
 

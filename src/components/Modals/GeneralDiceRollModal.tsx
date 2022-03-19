@@ -9,13 +9,13 @@ type Dice = {
     roll: number
 }
 
-type GeneralDiceRollProps = {
+type GeneralDiceRollModalProps = {
     show: boolean
     onHide(): void,
     showDiceResult(dices: string | ResolvedDice[], resolverKey?: string): void;
 }
 
-export default function GeneralDiceRoll(props: GeneralDiceRollProps) {
+export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
     const [dices, setDices] = useState<Dice[]>([{
         name: '1D4',
         num: 0,

@@ -7,8 +7,6 @@ import { sessionSSR } from '../../utils/session';
 import config from '../../../openrpg.config.json';
 import useToast from '../../hooks/useToast';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
-import GeneralDiceRollModal from '../../components/Modals/GeneralDiceRoll';
-import DiceRollResultModal from '../../components/Modals/DiceRollResult';
 import { ResolvedDice } from '../../utils';
 import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import DataContainer from '../../components/DataContainer';
@@ -17,8 +15,6 @@ import PlayerAttributeContainer from '../../components/Player/Attribute/PlayerAt
 import PlayerCharacteristicField from '../../components/Player/PlayerCharacteristicField';
 import PlayerEquipmentField from '../../components/Player/PlayerEquipmentField';
 import api from '../../utils/api';
-import AddDataModal from '../../components/Modals/EditDataModal';
-import PlayerItemField from '../../components/Player/PlayerItemField';
 import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
@@ -28,6 +24,10 @@ import { Spell } from '@prisma/client';
 import PlayerSpellField from '../../components/Player/PlayerSpellField';
 import ApplicationHead from '../../components/ApplicationHead';
 import PlayerCurrencyField from '../../components/Player/PlayerCurrencyField';
+import AddDataModal from '../../components/Modals/AddDataModal';
+import DiceRollResultModal from '../../components/Modals/DiceRollResultModal';
+import GeneralDiceRollModal from '../../components/Modals/GeneralDiceRollModal';
+import PlayerItemContainer, { PlayerItem } from '../../components/Player/Item/PlayerItemContainer';
 
 const bonusDamageName = config.player.bonus_damage_name;
 
@@ -42,15 +42,6 @@ type PlayerEquipment = {
         range: string;
         type: string;
     };
-};
-
-type PlayerItem = {
-    Item: {
-        id: number;
-        name: string;
-    };
-    currentDescription: string;
-    quantity: number;
 };
 
 export default function Sheet1(props: InferGetServerSidePropsType<typeof getServerSidePropsPage1>): JSX.Element {
@@ -68,11 +59,11 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
     const [avatarModalShow, setAvatarModalShow] = useState(false);
 
     //Data
-    const [bonusDamage, setBonusDamage] = useState(props.playerSpecs.find(spec => spec.Spec.name === bonusDamageName)?.value);
+    const bonusDamage = useRef(props.playerSpecs.find(spec => spec.Spec.name === bonusDamageName)?.value);
 
     function onBonusDamageChanged(name: string, value: string) {
         if (name !== bonusDamageName) return;
-        setBonusDamage(value);
+        bonusDamage.current = value;
     }
 
     //Equipments
@@ -205,7 +196,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
     const attributeStatus = playerStatus.map(stat => stat.AttributeStatus);
 
     useSocket(socket => {
-        socket.emit('roomJoin', `player${props.playerID}`);
+        socket.emit('roomJoin', `player${props.player.id}`);
         setSocket(socket);
     });
 
@@ -455,26 +446,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                     )}
                                 </Row>
                                 <hr />
-                                <Row>
-                                    <Col>
-                                        <Table responsive className='align-middle'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Nome</th>
-                                                    <th>Descrição</th>
-                                                    <th>Quant.</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {playerItems.map(eq =>
-                                                    <PlayerItemField key={eq.Item.id} description={eq.currentDescription}
-                                                        item={eq.Item} quantity={eq.quantity} onDelete={onDeleteItem} />
-                                                )}
-                                            </tbody>
-                                        </Table>
-                                    </Col>
-                                </Row>
+                                <PlayerItemContainer playerItems={playerItems} onDelete={onDeleteItem}
+                                    playerMaxLoad={props.player.maxLoad} />
                             </DataContainer>
                         </Row>
                         <Row>
@@ -491,7 +464,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 </ShowDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
-                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage} />
+                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage.current} />
                 <EditAvatarModal attributeStatus={attributeStatus} show={avatarModalShow}
                     onHide={() => setAvatarModalShow(false)} onUpdate={onAvatarUpdate} />
 
@@ -519,7 +492,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 permanent: false
             },
             props: {
-                playerID: 0,
+                player: { id: 0, maxLoad: 0 },
                 playerInfo: [],
                 playerAttributes: [],
                 playerAttributeStatus: [],
@@ -533,7 +506,6 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableSkills: [],
                 availableItems: [],
                 availableSpells: [],
-                players: [],
                 playerCurrency: [],
             }
         };
@@ -592,7 +564,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             where: { player_id: playerID },
             select: {
                 Item: { select: { name: true, id: true } },
-                currentDescription: true, quantity: true
+                currentDescription: true, quantity: true, weight: true
             }
         }),
 
@@ -617,19 +589,18 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             where: { visible: true, PlayerSpell: { none: { player_id: playerID } } },
         }),
 
-        database.player.findMany({
-            select: { id: true, role: true, username: true }
-        }),
-
         database.playerCurrency.findMany({
             where: { player_id: playerID },
             include: { Currency: true }
+        }),
+
+        database.player.findUnique({
+            where: { id: playerID }, select: { maxLoad: true }
         })
     ]);
 
     return {
         props: {
-            playerID,
             playerInfo: results[0],
             playerAttributes: results[1],
             playerAttributeStatus: results[2],
@@ -643,8 +614,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             availableSkills: results[10],
             availableItems: results[11],
             availableSpells: results[12],
-            players: results[13],
-            playerCurrency: results[14]
+            playerCurrency: results[13],
+            player: { id: playerID, maxLoad: results[14]?.maxLoad || 0 },
         }
     };
 }

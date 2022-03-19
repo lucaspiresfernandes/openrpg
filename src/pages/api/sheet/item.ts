@@ -21,6 +21,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     const id = req.body.id;
     const name = req.body.name;
     const description = req.body.description;
+    const weight = req.body.weight;
     const visible = req.body.visible;
 
     if (!id) {
@@ -28,7 +29,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
         return;
     }
 
-    const item = await database.item.update({ data: { name, description, visible }, where: { id } });
+    const item = await database.item.update({ data: { name, description, weight, visible }, where: { id } });
 
 
     if (visible !== undefined) {

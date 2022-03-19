@@ -8,17 +8,17 @@ import NPCContainer from '../../../components/Admin/NPCContainer';
 import AdminNavbar from '../../../components/AdminNavbar';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
-import GeneralDiceRoll from '../../../components/Modals/GeneralDiceRoll';
 import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
 import useToast from '../../../hooks/useToast';
 import prisma from '../../../utils/database';
-import DiceRollResultModal from '../../../components/Modals/DiceRollResult';
 import { sessionSSR } from '../../../utils/session';
 import { ResolvedDice } from '../../../utils';
 import PlayerManager from '../../../components/Admin/PlayerManager';
 import useSocket, { SocketIO } from '../../../hooks/useSocket';
 import { ErrorLogger, RetrieveSocket } from '../../../contexts';
 import ApplicationHead from '../../../components/ApplicationHead';
+import GeneralDiceRollModal from '../../../components/Modals/GeneralDiceRollModal';
+import DiceRollResultModal from '../../../components/Modals/DiceRollResultModal';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -79,7 +79,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                         </Row>
                     </Container>
                 </RetrieveSocket.Provider>
-                <GeneralDiceRoll show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
+                <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
                     showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} />
