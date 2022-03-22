@@ -86,6 +86,7 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
     function emptyList() {
         setEntities([]);
         setPointer(0);
+        setRound(1);
     }
 
     return (
