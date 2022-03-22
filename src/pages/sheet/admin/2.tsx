@@ -1,6 +1,9 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import React, { useState } from 'react';
-import { Col, Container, Row, Table } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Table from 'react-bootstrap/Table';
+import Container from 'react-bootstrap/Container';
 import AttributeEditorField from '../../../components/Admin/Editor/AttributeEditorField';
 import CharacteristicEditorField from '../../../components/Admin/Editor/CharacteristicEditorField';
 import CurrencyEditorField from '../../../components/Admin/Editor/CurrencyEditorField';
@@ -76,7 +79,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteInfo(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/info', { data: { id } }).then(() => {
+        api.delete('/sheet/info', { data: { id } }).then(()=> {
             const newInfo = [...info];
             const index = newInfo.findIndex(info => info.id === id);
             if (index > -1) {
@@ -95,7 +98,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteExtraInfo(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/extrainfo', { data: { id } }).then(res => {
+        api.delete('/sheet/extrainfo', { data: { id } }).then(()=> {
             const newExtraInfo = [...extraInfo];
             const index = newExtraInfo.findIndex(extraInfo => extraInfo.id === id);
             if (index > -1) {
@@ -114,7 +117,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteAttribute(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/attribute', { data: { id } }).then(res => {
+        api.delete('/sheet/attribute', { data: { id } }).then(()=> {
             const newAttribute = [...attribute];
             const index = newAttribute.findIndex(attr => attr.id === id);
             if (index > -1) {
@@ -133,7 +136,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteAttributeStatus(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/attribute/status', { data: { id } }).then(res => {
+        api.delete('/sheet/attribute/status', { data: { id } }).then(()=> {
             const newStatus = [...status];
             const index = newStatus.findIndex(status => status.id === id);
             if (index > -1) {
@@ -152,7 +155,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteSpec(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/spec', { data: { id } }).then(res => {
+        api.delete('/sheet/spec', { data: { id } }).then(()=> {
             const newSpec = [...spec];
             const index = newSpec.findIndex(spec => spec.id === id);
             if (index > -1) {
@@ -171,7 +174,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteCharacteristic(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/characteristic', { data: { id } }).then(res => {
+        api.delete('/sheet/characteristic', { data: { id } }).then(()=> {
             const newCharacteristic = [...characteristic];
             const index = newCharacteristic.findIndex(char => char.id === id);
             if (index > -1) {
@@ -190,7 +193,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteSpecialization(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/specialization', { data: { id } }).then(res => {
+        api.delete('/sheet/specialization', { data: { id } }).then(()=> {
             const newSpecialization = [...specialization];
             const index = newSpecialization.findIndex(spec => spec.id === id);
             if (index > -1) {
@@ -209,7 +212,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteSkill(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/skill', { data: { id } }).then(res => {
+        api.delete('/sheet/skill', { data: { id } }).then(()=> {
             const newSkill = [...skill];
             const index = newSkill.findIndex(skill => skill.id === id);
             if (index > -1) {
@@ -229,7 +232,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteEquipment(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/equipment', { data: { id } }).then(res => {
+        api.delete('/sheet/equipment', { data: { id } }).then(()=> {
             const newEquipment = [...equipment];
             const index = newEquipment.findIndex(eq => eq.id === id);
             if (index > -1) {
@@ -248,7 +251,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteItem(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/item', { data: { id } }).then(res => {
+        api.delete('/sheet/item', { data: { id } }).then(()=> {
             const newItem = [...item];
             const index = newItem.findIndex(item => item.id === id);
             if (index > -1) {
@@ -268,7 +271,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteSpell(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse spell?')) return;
-        api.delete('/sheet/spell', { data: { id } }).then(res => {
+        api.delete('/sheet/spell', { data: { id } }).then(()=> {
             const newSpell = [...spells];
             const index = newSpell.findIndex(spell => spell.id === id);
             if (index > -1) {
@@ -287,7 +290,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
 
     function deleteCurrency(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-        api.delete('/sheet/currency', { data: { id } }).then(() => {
+        api.delete('/sheet/currency', { data: { id } }).then(()=> {
             const newCurrency = [...currency];
             const index = newCurrency.findIndex(currency => currency.id === id);
             if (index > -1) {

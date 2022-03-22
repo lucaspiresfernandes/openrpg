@@ -1,5 +1,10 @@
 import { FormEvent, useState } from 'react';
-import { Button, Col, Dropdown, Form, ListGroup, Row } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Form from 'react-bootstrap/Form';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Row from 'react-bootstrap/Row';
 import { clamp } from '../../utils';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';

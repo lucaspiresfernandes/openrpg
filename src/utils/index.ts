@@ -1,8 +1,3 @@
-import { NextApiResponse } from 'next';
-import { Server as SocketIOServer } from 'socket.io';
-import { Socket as NetSocket, Server as NetServer } from 'net';
-import { Equipment, Player, Skill, Spell } from '@prisma/client';
-
 export function clamp(num: number, min: number, max: number) {
     if (num < min) return min;
     if (num > max) return max;
@@ -72,77 +67,4 @@ function resolveDice(dice: string, bonusDamage: string = '0'): ResolvedDice {
     const split = dice.split('d');
     if (split.length === 1) return { num: 0, roll: parseInt(dice) };
     return { num: parseInt(split[0]), roll: parseInt(split[1]) };
-}
-
-export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
-    socket: NetSocket & {
-        server: NetServer & {
-            io?: SocketIOServer<ServerToClientEvents>;
-        };
-    };
-};
-
-type SocketPlayerEquipment = {
-    Equipment: Equipment;
-    currentAmmo: number | null;
-}
-
-type SocketPlayerItem = {
-    Item: {
-        id: number;
-        name: string;
-        description: string;
-        weight: number;
-    };
-    currentDescription: string;
-    quantity: number;
-}
-
-type SocketEquipment = {
-    name: string;
-    type: string;
-    damage: string;
-    range: string;
-    attacks: string;
-    ammo: number | null;
-    id: number;
-};
-
-export interface ServerToClientEvents {
-    //Admin Events
-    attributeStatusChange: (playerID: number, attStatusID: number, value: boolean) => void;
-    infoChange: (playerID: number, infoID: number, value: string) => void;
-    attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
-    specChange: (playerID: number, specID: number, value: string) => void;
-    characteristicChange: (playerID: number, characteristicID: number, value: number) => void;
-    equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
-    equipmentRemove: (playerID: number, id: number) => void;
-    itemAdd: (playerID: number, item: SocketPlayerItem) => void;
-    itemRemove: (playerID: number, id: number) => void;
-    itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
-    currencyChange: (playerID: number, currencyID: number, value: string) => void;
-
-    //Player Events
-    playerDelete: () => void;
-    playerSkillChange: (id: number, name: string, specialization: { name: string } | null) => void;
-    playerEquipmentAdd: (id: number, name: string) => void;
-    playerEquipmentRemove: (id: number) => void;
-    playerEquipmentChange: (id: number, equipment: SocketEquipment) => void;
-    playerItemAdd: (id: number, name: string) => void;
-    playerItemRemove: (id: number) => void;
-    playerItemChange: (id: number, name: string) => void;
-    playerSpellAdd: (id: number, name: string) => void;
-    playerSpellRemove: (id: number) => void;
-    playerSpellChange: (id: number, spell: Spell) => void;
-
-    //Dice Events
-    diceResult: (playerID: number, dices: ResolvedDice[], results: DiceResult[]) => void;
-    diceRoll: () => void;
-
-    //Portrait Events
-    configChange: (key: string, newValue: string) => void;
-}
-
-export interface ClientToServerEvents {
-    roomJoin: (room: string) => void;
 }

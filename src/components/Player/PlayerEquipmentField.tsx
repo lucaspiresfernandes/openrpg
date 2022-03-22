@@ -1,5 +1,6 @@
-import { FormEvent, useContext, useState } from 'react';
-import { Button, Image } from 'react-bootstrap';
+import { FormEvent, useContext } from 'react';
+import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
@@ -22,7 +23,6 @@ type PlayerEquipmentFieldProps = {
 
 export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
     const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
-    const [disabled, setDisabled] = useState(false);
 
     const logError = useContext(ErrorLogger);
     const showDiceRollResult = useContext(ShowDiceResult);
@@ -56,20 +56,15 @@ export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 
     function deleteEquipment() {
         if (!confirm('Você realmente deseja excluir esse equipamento?')) return;
-        setDisabled(true);
-        props.onDelete(equipmentID);
         api.delete('/sheet/player/equipment', {
             data: { id: equipmentID }
-        }).then(() => props.onDelete(equipmentID)).catch(err => {
-            logError(err);
-            setDisabled(false);
-        });
+        }).then(() => props.onDelete(equipmentID)).catch(logError);
     }
 
     return (
         <tr>
             <td>
-                <Button onClick={deleteEquipment} disabled={disabled} size='sm' variant='secondary'>
+                <Button onClick={deleteEquipment} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

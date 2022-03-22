@@ -1,4 +1,4 @@
-import { ToastContainer } from 'react-bootstrap';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 import ErrorToast, { ErrorToastProps } from './ErrorToast';
 
 type ErrorToastContainerProps = {

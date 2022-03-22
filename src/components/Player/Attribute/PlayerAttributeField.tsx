@@ -1,5 +1,9 @@
 import { FormEvent, useContext, useState } from 'react';
-import { Button, Col, Image, ProgressBar, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import useExtendedState from '../../../hooks/useExtendedState';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';

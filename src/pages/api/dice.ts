@@ -1,10 +1,11 @@
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
 import { sessionAPI } from '../../utils/session';
-const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
 import config from '../../../openrpg.config.json';
-import { DiceResult, NextApiResponseServerIO, ResolvedDice } from '../../utils';
+import { DiceResult, ResolvedDice } from '../../utils';
+import { NextApiResponseServerIO } from '../../utils/socket';
 
+const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
 type ResolverKey = '20' | '20b' | '100' | '100b';
 
 async function nextInt(min: number, max: number, n: number) {

@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { Button, Col, Container, Row, Image } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Image from 'react-bootstrap/Image';
+import Button from 'react-bootstrap/Button';
 import { clamp, ResolvedDice } from '../../utils';
 import SheetModal from './SheetModal';
 
@@ -12,10 +16,10 @@ type Dice = {
 type GeneralDiceRollModalProps = {
     show: boolean
     onHide(): void,
-    showDiceResult(dices: string | ResolvedDice[], resolverKey?: string): void;
+    showDiceRollResult(dices: string | ResolvedDice[], resolverKey?: string): void;
 }
 
-export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
+export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult }: GeneralDiceRollModalProps) {
     const [dices, setDices] = useState<Dice[]>([{
         name: '1D4',
         num: 0,
@@ -48,14 +52,12 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
     }
     ]);
 
-    const showDiceRollResult = props.showDiceResult;
-
     function onRoll() {
         const rollDices: ResolvedDice[] = [];
         dices.map(dice => {
             if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
         });
-        if (props.onHide) props.onHide();
+        onHide();
         showDiceRollResult(rollDices);
     }
 
@@ -74,8 +76,8 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
     }
 
     return (
-        <SheetModal {...props} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onRoll }}
-            centered>
+        <SheetModal show={show} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onRoll }}
+            onHide={onHide} centered>
             <Container fluid>
                 <Row className='text-center'>
                     {dices.map((dice, index) =>

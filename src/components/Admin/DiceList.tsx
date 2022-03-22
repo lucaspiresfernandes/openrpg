@@ -1,5 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Col, ListGroup, Row } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { RetrieveSocket } from '../../contexts';
 import DataContainer from '../DataContainer';
 
@@ -25,7 +27,6 @@ export default function DiceList(props: DiceListProps) {
         if (!socket) return;
 
         socket.on('diceResult', (playerID, _dices, _results) => {
-            console.log(playerID, _dices, _results);
             const playerName = props.players.find(p => p.id === playerID)?.name || 'Desconhecido';
 
             const dices = _dices.map(dice => {

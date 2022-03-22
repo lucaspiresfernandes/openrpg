@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Fade, Image } from 'react-bootstrap';
+import Fade from 'react-bootstrap/Fade';
+import Image from 'react-bootstrap/Image';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import config from '../../../openrpg.config.json';

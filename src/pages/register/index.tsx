@@ -1,5 +1,9 @@
 import ApplicationHead from '../../components/ApplicationHead';
-import { Button, Col, Container, FormControl, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import api from '../../utils/api';
@@ -33,9 +37,15 @@ export default function Register(): JSX.Element {
 
     if (username.length === 0 || password.length === 0 || confirmPassword.length === 0) {
       addToast(new Error('Todos os campos devem ser preenchidos.'));
+      setPassword('');
+      setConfirmPassword('');
+      setLoading(false);
     }
     else if (password !== confirmPassword) {
       addToast(new Error('As senhas não coincidem.'));
+      setPassword('');
+      setConfirmPassword('');
+      setLoading(false);
     }
     else {
       try {
@@ -43,7 +53,9 @@ export default function Register(): JSX.Element {
         router.replace('/sheet/1');
       }
       catch (err) {
-        console.error(err);
+        setPassword('');
+        setConfirmPassword('');
+        setLoading(false);
         addToast(err);
       }
     }
@@ -62,19 +74,19 @@ export default function Register(): JSX.Element {
       <form onSubmit={onFormSubmit}>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl className='text-center theme-element' placeholder='Login' id='username' name='username'
+            <Form.Control className='text-center theme-element' placeholder='Login' id='username' name='username'
               value={username} onChange={e => setUsername(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
+            <Form.Control type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
               value={password} onChange={e => setPassword(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <FormControl type='password' className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
+            <Form.Control type='password' className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
               name='confirmPassword' value={confirmPassword} onChange={e => setConfirmPassword(e.currentTarget.value)} />
           </Col>
         </Row>

@@ -1,5 +1,7 @@
 import React, { FormEvent, FormEventHandler, MouseEvent, MouseEventHandler } from 'react';
-import { Button, Form, Modal, ModalDialog, ModalProps } from 'react-bootstrap';
+import Modal, { ModalProps } from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 interface SheetModalProps extends ModalProps {
     title: string;

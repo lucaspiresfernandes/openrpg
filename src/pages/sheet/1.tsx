@@ -1,6 +1,9 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, Container, Form, Row, Table } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Table from 'react-bootstrap/Table';
 import SheetNavbar from '../../components/SheetNavbar';
 import database from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
@@ -19,30 +22,16 @@ import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import Router from 'next/router';
-import PlayerSkillContainer, { PlayerSkill } from '../../components/Player/Skill/PlayerSkillContainer';
-import { Spell } from '@prisma/client';
+import PlayerSkillContainer from '../../components/Player/Skill/PlayerSkillContainer';
 import PlayerSpellField from '../../components/Player/PlayerSpellField';
 import ApplicationHead from '../../components/ApplicationHead';
 import PlayerCurrencyField from '../../components/Player/PlayerCurrencyField';
 import AddDataModal from '../../components/Modals/AddDataModal';
 import DiceRollResultModal from '../../components/Modals/DiceRollResultModal';
 import GeneralDiceRollModal from '../../components/Modals/GeneralDiceRollModal';
-import PlayerItemContainer, { PlayerItem } from '../../components/Player/Item/PlayerItemContainer';
+import PlayerItemContainer from '../../components/Player/Item/PlayerItemContainer';
 
 const bonusDamageName = config.player.bonus_damage_name;
-
-type PlayerEquipment = {
-    currentAmmo: number;
-    Equipment: {
-        id: number;
-        ammo: number | null;
-        attacks: string;
-        damage: string;
-        name: string;
-        range: string;
-        type: string;
-    };
-};
 
 export default function Sheet1(props: InferGetServerSidePropsType<typeof getServerSidePropsPage1>): JSX.Element {
     //Toast
@@ -68,19 +57,14 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     //Equipments
     const [addEquipmentShow, setAddEquipmentShow] = useState(false);
-    const [equipments, setEquipments] = useState<{ id: number, name: string }[]>(props.availableEquipments.map(eq => {
-        return {
-            id: eq.id,
-            name: eq.name
-        };
-    }));
-    const [playerEquipments, setPlayerEquipments] = useState<PlayerEquipment[]>(props.playerEquipments);
+    const [equipments, setEquipments] = useState<{ id: number, name: string }[]>(props.availableEquipments);
+    const [playerEquipments, setPlayerEquipments] = useState(props.playerEquipments);
     const playerEquipmentsRef = useRef(playerEquipments);
     playerEquipmentsRef.current = playerEquipments;
 
     function onAddEquipment(id: number) {
         api.put('/sheet/player/equipment', { id }).then(res => {
-            const equipment = res.data.equipment as PlayerEquipment;
+            const equipment = res.data.equipment;
             setPlayerEquipments([...playerEquipments, equipment]);
 
             const newEquipments = [...equipments];
@@ -93,6 +77,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         const newPlayerEquipments = [...playerEquipments];
         const index = newPlayerEquipments.findIndex(eq => eq.Equipment.id === id);
 
+        if (index === -1) return;
+
         newPlayerEquipments.splice(index, 1);
         setPlayerEquipments(newPlayerEquipments);
 
@@ -102,13 +88,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     //Skills
     const [addSkillShow, setAddSkillShow] = useState(false);
-    const [skills, setSkills] = useState<{ id: number, name: string }[]>(props.availableSkills.map(eq => {
-        return {
-            id: eq.id,
-            name: eq.name
-        };
-    }));
-    const [playerSkills, setPlayerSkills] = useState<PlayerSkill[]>(props.playerSkills);
+    const [skills, setSkills] = useState<{ id: number, name: string }[]>(props.availableSkills);
+    const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
 
     function onAddSkill(id: number) {
         api.put('/sheet/player/skill', { id }).then(res => {
@@ -123,19 +104,14 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     //Items
     const [addItemShow, setAddItemShow] = useState(false);
-    const [items, setItems] = useState<{ id: number, name: string }[]>(props.availableItems.map(eq => {
-        return {
-            id: eq.id,
-            name: eq.name
-        };
-    }));
-    const [playerItems, setPlayerItems] = useState<PlayerItem[]>(props.playerItems);
+    const [items, setItems] = useState<{ id: number, name: string }[]>(props.availableItems);
+    const [playerItems, setPlayerItems] = useState(props.playerItems);
     const playerItemsRef = useRef(playerItems);
     playerItemsRef.current = playerItems;
 
     function onAddItem(id: number) {
         api.put('/sheet/player/item', { id }).then(res => {
-            const item = res.data.item as PlayerItem;
+            const item = res.data.item;
             setPlayerItems([...playerItems, item]);
 
             const newItems = [...items];
@@ -157,16 +133,14 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     //Spells
     const [addSpellShow, setAddSpellShow] = useState(false);
-    const [spells, setSpells] = useState<{ id: number, name: string }[]>(props.availableSpells.map(sp => {
-        return { id: sp.id, name: sp.name };
-    }));
-    const [playerSpells, setPlayerSpells] = useState<Spell[]>(props.playerSpells.map(sp => sp.Spell));
+    const [spells, setSpells] = useState<{ id: number, name: string }[]>(props.availableSpells);
+    const [playerSpells, setPlayerSpells] = useState(props.playerSpells);
     const playerSpellsRef = useRef(playerSpells);
     playerSpellsRef.current = playerSpells;
 
     function onAddSpell(id: number) {
         api.put('/sheet/player/spell', { id }).then(res => {
-            const spell = res.data.spell as Spell;
+            const spell = res.data.spell;
             setPlayerSpells([...playerSpells, spell]);
 
             const newSpells = [...spells];
@@ -177,12 +151,12 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     function onDeleteSpell(id: number) {
         const newPlayerSpells = [...playerSpells];
-        const index = newPlayerSpells.findIndex(spell => spell.id === id);
+        const index = newPlayerSpells.findIndex(spell => spell.Spell.id === id);
 
         newPlayerSpells.splice(index, 1);
         setPlayerSpells(newPlayerSpells);
 
-        const modalSpell = { id, name: playerSpells[index].name };
+        const modalSpell = { id, name: playerSpells[index].Spell.name };
         setSpells([...spells, modalSpell]);
     }
 
@@ -308,7 +282,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         socket.on('playerSpellAdd', (id, name) => {
             setSpells(spells => {
                 if (spells.findIndex(spell => spell.id === id) > -1 ||
-                    playerSpellsRef.current.findIndex(spell => spell.id === id) > -1)
+                    playerSpellsRef.current.findIndex(spell => spell.Spell.id === id) > -1)
                     return spells;
                 return [...spells, { id, name }];
             });
@@ -327,11 +301,11 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
         socket.on('playerSpellChange', (id, spell) => {
             setPlayerSpells(spells => {
-                const index = spells.findIndex(spell => spell.id === id);
+                const index = spells.findIndex(spell => spell.Spell.id === id);
                 if (index === -1) return spells;
 
                 const newSpells = [...spells];
-                newSpells[index] = spell;
+                newSpells[index].Spell = spell;
                 return newSpells;
             });
 
@@ -395,7 +369,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Col>
                         </Row>
                         <Row>
-                            <DataContainer outline title='Características'>
+                            <DataContainer outline title='Atributos'>
                                 <Row className='mb-3 text-center align-items-end justify-content-center'>
                                     {props.playerCharacteristics.map(char =>
                                         <PlayerCharacteristicField key={char.Characteristic.id}
@@ -454,14 +428,14 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             <DataContainer outline title='Magias' addButton={{ onAdd: () => setAddSpellShow(true) }}>
                                 <Row className='justify-content-center'>
                                     {playerSpells.map(spell =>
-                                        <PlayerSpellField key={spell.id} spell={spell} onDelete={onDeleteSpell} />
+                                        <PlayerSpellField key={spell.Spell.id} spell={spell.Spell} onDelete={onDeleteSpell} />
                                     )}
                                 </Row>
                             </DataContainer>
                         </Row>
                     </Container>
                     <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
-                        showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
+                        showDiceRollResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 </ShowDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage.current} />
@@ -563,14 +537,14 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
         database.playerItem.findMany({
             where: { player_id: playerID },
             select: {
-                Item: { select: { name: true, id: true } },
-                currentDescription: true, quantity: true, weight: true
+                Item: { select: { name: true, id: true, weight: true } },
+                currentDescription: true, quantity: true
             }
         }),
 
         database.playerSpell.findMany({
             where: { player_id: playerID },
-            include: { Spell: true }
+            select: { Spell: true }
         }),
 
         database.equipment.findMany({

@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 import api from '../utils/api';
 
 export default function AdminNavbar() {

@@ -1,6 +1,7 @@
-import Prisma from '@prisma/client';
+import { Spec } from '@prisma/client';
 import { useContext } from 'react';
-import { Col, Form } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
@@ -8,7 +9,7 @@ import BottomTextInput from '../BottomTextInput';
 
 type PlayerSpecFieldProps = {
     value: string;
-    Spec: Prisma.Spec;
+    Spec: Spec;
     onSpecChanged?(name: string, newValue: string): void;
 }
 

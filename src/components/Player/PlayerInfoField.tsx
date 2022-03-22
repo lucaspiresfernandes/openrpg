@@ -1,13 +1,15 @@
-import Prisma from '@prisma/client';
+import { Info } from '@prisma/client';
 import { useContext, useState } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
 type PlayerInfoFieldProps = {
-    info: Prisma.Info,
+    info: Info,
     value: string
 }
 

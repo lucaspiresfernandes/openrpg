@@ -1,6 +1,8 @@
 import { Attribute, AttributeStatus } from '@prisma/client';
 import { useState } from 'react';
-import { Col, Image, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Image from 'react-bootstrap/Image';
 import PlayerAttributeField from './PlayerAttributeField';
 import PlayerAvatarImage from './PlayerAvatarImage';
 

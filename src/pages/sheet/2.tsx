@@ -1,5 +1,7 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Col, Container, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import DataContainer from '../../components/DataContainer';
 import SheetNavbar from '../../components/SheetNavbar';
 import useToast from '../../hooks/useToast';
@@ -16,12 +18,12 @@ import api from '../../utils/api';
 import Router from 'next/router';
 import ApplicationHead from '../../components/ApplicationHead';
 
-export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>): JSX.Element {
+export default function Sheet2({ playerExtraInfo, playerID, playerNotes }: InferGetServerSidePropsType<typeof getServerSidePropsPage2>) {
     const [toasts, addToast] = useToast();
     const [socket, setSocket] = useState<SocketIO | null>(null);
 
     useSocket(socket => {
-        socket.emit('roomJoin', `player${props.playerID}`);
+        socket.emit('roomJoin', `player${playerID}`);
         setSocket(socket);
     });
 
@@ -46,12 +48,12 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                     </Row>
                     <Row>
                         <DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
-                            <PlayerAnnotationsField value={props.playerNotes} />
+                            <PlayerAnnotationsField value={playerNotes} />
                         </DataContainer>
                     </Row>
                     <Row>
                         <DataContainer title='Detalhes Pessoais' outline>
-                            {props.playerExtraInfo.map(info =>
+                            {playerExtraInfo.map(info =>
                                 <PlayerExtraInfoField key={info.ExtraInfo.id} value={info.value} extraInfo={info.ExtraInfo} />
                             )}
                         </DataContainer>

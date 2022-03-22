@@ -206,7 +206,6 @@ model PlayerItem {
   item_id            Int
   currentDescription String
   quantity           Int
-  weight             Float  @default(0)
 
   @@id([player_id, item_id])
 }

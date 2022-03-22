@@ -4,7 +4,7 @@ import { sessionAPI } from '../../utils/session';
 import { hash } from '../../utils/encryption';
 import config from '../../../openrpg.config.json';
 import { Player } from '@prisma/client';
-import { NextApiResponseServerIO } from '../../utils';
+import { NextApiResponseServerIO } from '../../utils/socket';
 
 function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
   if (req.method === 'POST') return handlePost(req, res);

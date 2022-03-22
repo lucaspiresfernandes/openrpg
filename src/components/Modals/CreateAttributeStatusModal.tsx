@@ -1,6 +1,7 @@
 import { Attribute } from '@prisma/client';
 import { useState } from 'react';
-import { Col, Container, Form, Row } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 import SheetModal from './SheetModal';
 
 type CreateAttributeStatusModalProps = {
@@ -26,25 +27,21 @@ export default function CreateAttributeStatusModal(props: CreateAttributeStatusM
                 onApply: () => props.onCreate(name, attributeID),
                 disabled: props.attributes.length === 0
             }}>
-            <Container>
-                <Row>
-                    <Col>
-                        <Form.Group controlId='createStatusName' className='mb-3'>
-                            <Form.Label>Nome</Form.Label>
-                            <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        </Form.Group>
-                        <Form.Group controlId='createStatusAttribute' className='mb-3'>
-                            <Form.Label>Atributo</Form.Label>
-                            <Form.Select value={attributeID} className='theme-element'
-                                onChange={ev => setAttributeID(parseInt(ev.currentTarget.value))} >
-                                {props.attributes.map(attr =>
-                                    <option key={attr.id} value={attr.id}>{attr.name}</option>
-                                )}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
+            <Container fluid>
+                <Form.Group controlId='createStatusName' className='mb-3'>
+                    <Form.Label>Nome</Form.Label>
+                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </Form.Group>
+                <Form.Group controlId='createStatusAttribute' className='mb-3'>
+                    <Form.Label>Atributo</Form.Label>
+                    <Form.Select value={attributeID} className='theme-element'
+                        onChange={ev => setAttributeID(parseInt(ev.currentTarget.value))} >
+                        {props.attributes.map(attr =>
+                            <option key={attr.id} value={attr.id}>{attr.name}</option>
+                        )}
+                    </Form.Select>
+                </Form.Group>
             </Container>
-        </SheetModal>
+        </SheetModal >
     );
 }

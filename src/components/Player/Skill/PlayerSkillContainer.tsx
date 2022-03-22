@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import PlayerSkillField from './PlayerSkillField';
 
-export type PlayerSkill = {
+type PlayerSkill = {
     value: number;
     Skill: {
         id: number;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Container, Form } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 import SheetModal from './SheetModal';
 
 type AddDataModalProps = {

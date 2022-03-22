@@ -1,4 +1,4 @@
-import { Toast } from 'react-bootstrap';
+import Toast from 'react-bootstrap/Toast';
 
 type ErrorToastProps = {
     id: number,
@@ -6,7 +6,7 @@ type ErrorToastProps = {
     onClose(ev?: React.MouseEvent | React.KeyboardEvent | undefined): void
 }
 
-export default function ErrorToast({ err, onClose }: ErrorToastProps): JSX.Element {
+export default function ErrorToast({ err, onClose }: ErrorToastProps) {
     
     let message = err.message;
     const responseData = err.response?.data;

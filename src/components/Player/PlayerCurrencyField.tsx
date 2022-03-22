@@ -1,6 +1,7 @@
 import { Currency, PlayerCurrency } from '@prisma/client';
 import { useContext } from 'react';
-import { Col, Form } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
@@ -21,7 +22,7 @@ export default function PlayerCurrencyField({ currency }: PlayerCurrencyFieldPro
     }
 
     return (
-        <Col>
+        <Col xs={6} lg={4}>
             <Form.Label htmlFor={`playerCurrency${currency.currency_id}`}>{currency.Currency.name}:</Form.Label>
             <BottomTextInput id={`playerCurrency${currency.currency_id}`} value={value}
                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onBlur} className='ms-2'

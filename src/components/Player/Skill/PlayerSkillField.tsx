@@ -1,5 +1,6 @@
 import { FormEvent, useContext } from 'react';
-import { Col, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import config from '../../../../openrpg.config.json';

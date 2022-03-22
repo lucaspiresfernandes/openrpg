@@ -1,6 +1,8 @@
 import { Spell } from '@prisma/client';
 import { useContext } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 

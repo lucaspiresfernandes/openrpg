@@ -1,5 +1,5 @@
 import { NextApiRequest } from 'next';
-import { NextApiResponseServerIO } from '../../utils';
+import { NextApiResponseServerIO } from '../../utils/socket';
 import prisma from '../../utils/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {

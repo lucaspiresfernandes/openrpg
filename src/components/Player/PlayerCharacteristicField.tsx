@@ -1,6 +1,9 @@
-import Prisma from '@prisma/client';
+import { Characteristic } from '@prisma/client';
 import { ChangeEvent, useContext } from 'react';
-import { Col, Form, Image, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Image from 'react-bootstrap/Image';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import config from '../../../openrpg.config.json';
@@ -9,7 +12,7 @@ import { ErrorLogger, ShowDiceResult } from '../../contexts';
 
 type PlayerCharacteristicFieldProps = {
     value: number;
-    characteristic: Prisma.Characteristic;
+    characteristic: Characteristic;
 }
 
 export default function PlayerCharacteristicField({ value: initialValue, characteristic }: PlayerCharacteristicFieldProps) {

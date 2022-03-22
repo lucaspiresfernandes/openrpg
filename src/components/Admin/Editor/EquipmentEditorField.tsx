@@ -1,6 +1,7 @@
-import { Equipment, Skill } from '@prisma/client';
+import { Equipment } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';

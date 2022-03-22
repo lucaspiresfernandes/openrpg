@@ -1,25 +1,22 @@
-import React, { ChangeEvent, useState } from 'react';
-import { Button, Col, ListGroup, Row } from 'react-bootstrap';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import ListGroup from 'react-bootstrap/ListGroup';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 
 export default function NPCContainer() {
-    const [names, setNames] = useState<string[]>([]);
+    const [npcs, setNPCs] = useState<number[]>([]);
 
     function addNewNPC() {
-        setNames([...names, `NPC ${names.length}`]);
+        setNPCs([...npcs, Date.now()]);
     }
 
-    function changeNPC(ev: ChangeEvent<HTMLInputElement>, index: number) {
-        const newNpcs = [...names];
-        newNpcs[index] = ev.currentTarget.value;
-        setNames(newNpcs);
-    }
-
-    function removeNPC(index: number) {
-        const newNpcs = [...names];
-        newNpcs.splice(index, 1);
-        setNames(newNpcs);
+    function removeNPC(id: number) {
+        const newNpcs = [...npcs];
+        newNpcs.splice(newNpcs.findIndex(npcID => npcID === id), 1);
+        setNPCs(newNpcs);
     }
 
     return (
@@ -28,12 +25,12 @@ export default function NPCContainer() {
                 <Col>
                     <div className='w-100 wrapper'>
                         <ListGroup variant='flush' className='text-center'>
-                            {names.map((name, index) =>
-                                <ListGroup.Item key={index}>
-                                    <BottomTextInput value={name} onChange={ev => changeNPC(ev, index)} className='w-25 mx-1' />
-                                    <BottomTextInput type='number' defaultValue='0' className='w-25' />
+                            {npcs.map(id =>
+                                <ListGroup.Item key={id}>
+                                    <BottomTextInput defaultValue='NPC' className='w-25 mx-1' />
+                                    <BottomTextInput type='number' defaultValue='0' style={{ maxWidth: '3rem' }} />
                                     <Button size='sm' variant='secondary' className='ms-1'
-                                        onClick={() => removeNPC(index)}>-</Button>
+                                        onClick={() => removeNPC(id)}>-</Button>
                                 </ListGroup.Item>
                             )}
                         </ListGroup>

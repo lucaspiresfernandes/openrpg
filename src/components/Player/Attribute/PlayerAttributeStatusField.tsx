@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 

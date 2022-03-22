@@ -1,6 +1,6 @@
 import { Attribute, AttributeStatus } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';

@@ -1,6 +1,9 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useState } from 'react';
-import { Col, Container, Image, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 import AdminGlobalConfigurations from '../../../components/Admin/AdminGlobalConfigurations';
 import CombatContainer from '../../../components/Admin/CombatContainer';
 import DiceList, { PlayerName } from '../../../components/Admin/DiceList';
@@ -80,7 +83,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                     </Container>
                 </RetrieveSocket.Provider>
                 <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
-                    showDiceResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
+                    showDiceRollResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
                     onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} />
             </ErrorLogger.Provider>
@@ -112,7 +115,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.player.findMany({
             where: { role: 'PLAYER' },
             select: {
-                id: true,
+                id: true, maxLoad: true,
                 PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
                 PlayerInfo: {
                     where: { Info: { name: { in: ['Nome'] } } },

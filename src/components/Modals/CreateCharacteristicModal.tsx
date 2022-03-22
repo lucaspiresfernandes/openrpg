@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Col, Container, Form, Row } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 import SheetModal from './SheetModal';
 
 type CreateCharacteristicModalProps = {
@@ -21,20 +22,16 @@ export default function CreateCharacteristicModal(props: CreateCharacteristicMod
         <SheetModal title='Nova Característica'
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}
             show={props.show} onHide={props.onHide} onExited={reset} >
-            <Container>
-                <Row>
-                    <Col>
-                        <Form.Group className='mb-3' controlId='createCharacteristicName'>
-                            <Form.Label>Nome</Form.Label>
-                            <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                        </Form.Group>
-                        <Form.Group controlId='createCharacteristicRollable'>
-                            <Form.Check inline
-                                checked={rollable} onChange={() => setRollable(r => !r)} />
-                                <Form.Label>Testável?</Form.Label>
-                        </Form.Group>
-                    </Col>
-                </Row>
+            <Container fluid>
+                <Form.Group className='mb-3' controlId='createCharacteristicName'>
+                    <Form.Label>Nome</Form.Label>
+                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </Form.Group>
+                <Form.Group controlId='createCharacteristicRollable'>
+                    <Form.Check inline
+                        checked={rollable} onChange={() => setRollable(r => !r)} />
+                    <Form.Label>Testável?</Form.Label>
+                </Form.Group>
             </Container>
         </SheetModal>
     );

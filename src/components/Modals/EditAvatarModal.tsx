@@ -1,12 +1,14 @@
-import { AttributeStatus } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
-import { Col, Container, Form, Row } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
 
 type EditAvatarModalProps = {
-    attributeStatus: AttributeStatus[];
+    attributeStatus: { id: number, name: string }[];
     show?: boolean;
     onHide?(): void;
     onUpdate(): void;

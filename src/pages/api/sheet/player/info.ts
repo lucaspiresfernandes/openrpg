@@ -1,5 +1,5 @@
 import { NextApiRequest } from 'next';
-import { NextApiResponseServerIO } from '../../../../utils';
+import { NextApiResponseServerIO } from '../../../../utils/socket';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
 

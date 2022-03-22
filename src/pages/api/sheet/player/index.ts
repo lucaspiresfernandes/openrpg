@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { NextApiResponseServerIO } from '../../../../utils';
+import { NextApiRequest } from 'next';
+import { NextApiResponseServerIO } from '../../../../utils/socket';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
 
@@ -25,6 +25,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     });
 
     res.end();
+    
+    res.socket.server.io?.emit('maxLoadChange', player.id, maxLoad);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
