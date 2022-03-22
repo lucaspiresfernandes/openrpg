@@ -96,7 +96,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     res.end();
 
-    res.socket.server.io?.emit('playerEquipmentRemove', id);
+    res.socket.server.io?.emit('playerEquipmentRemove', id, true);
 }
 
 export default sessionAPI(handler);

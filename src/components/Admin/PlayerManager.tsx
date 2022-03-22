@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
-import { ErrorLogger, RetrieveSocket } from '../../contexts';
+import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
 import AvatarField from './AvatarField';
 
@@ -54,7 +54,7 @@ type PlayerManagerProps = {
 
 export default function PlayerManager({ players: _players }: PlayerManagerProps) {
     const [players, setPlayers] = useState(_players);
-    const socket = useContext(RetrieveSocket);
+    const socket = useContext(Socket);
     const logError = useContext(ErrorLogger);
 
     function onDeletePlayer(id: number) {

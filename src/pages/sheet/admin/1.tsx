@@ -18,7 +18,7 @@ import { sessionSSR } from '../../../utils/session';
 import { ResolvedDice } from '../../../utils';
 import PlayerManager from '../../../components/Admin/PlayerManager';
 import useSocket, { SocketIO } from '../../../hooks/useSocket';
-import { ErrorLogger, RetrieveSocket } from '../../../contexts';
+import { ErrorLogger, Socket } from '../../../contexts';
 import ApplicationHead from '../../../components/ApplicationHead';
 import GeneralDiceRollModal from '../../../components/Modals/GeneralDiceRollModal';
 import DiceRollResultModal from '../../../components/Modals/DiceRollResultModal';
@@ -45,7 +45,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
             <ApplicationHead title='Painel do Administrador' />
             <AdminNavbar />
             <ErrorLogger.Provider value={addToast}>
-                <RetrieveSocket.Provider value={socket}>
+                <Socket.Provider value={socket}>
                     <Container>
                         <Row className='my-4'>
                             <Col className='text-center h5'>
@@ -81,7 +81,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                             </DataContainer>
                         </Row>
                     </Container>
-                </RetrieveSocket.Provider>
+                </Socket.Provider>
                 <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
                     showDiceRollResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}

@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { RetrieveSocket } from '../../contexts';
+import { Socket } from '../../contexts';
 import DataContainer from '../DataContainer';
 
 type DiceListProps = {
@@ -17,7 +17,7 @@ export type PlayerName = {
 export default function DiceList(props: DiceListProps) {
     const [values, setValues] = useState<{ name: string, dices: string, results: string }[]>([]);
     const wrapper = useRef<HTMLDivElement | null>(null);
-    const socket = useContext(RetrieveSocket);
+    const socket = useContext(Socket);
 
     useEffect(() => {
         if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });

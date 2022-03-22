@@ -49,13 +49,13 @@ export interface ServerToClientEvents {
     playerDelete: () => void;
     playerSkillChange: (id: number, name: string, specialization: { name: string } | null) => void;
     playerEquipmentAdd: (id: number, name: string) => void;
-    playerEquipmentRemove: (id: number) => void;
+    playerEquipmentRemove: (id: number, hardRemove?: boolean) => void;
     playerEquipmentChange: (id: number, equipment: SocketEquipment) => void;
     playerItemAdd: (id: number, name: string) => void;
-    playerItemRemove: (id: number) => void;
+    playerItemRemove: (id: number, hardRemove?: boolean) => void;
     playerItemChange: (id: number, name: string) => void;
     playerSpellAdd: (id: number, name: string) => void;
-    playerSpellRemove: (id: number) => void;
+    playerSpellRemove: (id: number, hardRemove?: boolean) => void;
     playerSpellChange: (id: number, spell: Spell) => void;
 
     //Dice Events

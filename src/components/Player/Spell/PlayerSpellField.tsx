@@ -3,8 +3,8 @@ import { useContext } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { ErrorLogger } from '../../contexts';
-import api from '../../utils/api';
+import { ErrorLogger } from '../../../contexts';
+import api from '../../../utils/api';
 
 type PlayerSpellFieldProps = {
     spell: Spell;

@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import PlayerSkillField from './PlayerSkillField';
+import DataContainer from '../../DataContainer';
+import AddDataModal from '../../Modals/AddDataModal';
+import { ErrorLogger, Socket } from '../../../contexts';
+import { Skill } from '@prisma/client';
+import api from '../../../utils/api';
 
 type PlayerSkill = {
     value: number;
@@ -15,26 +20,80 @@ type PlayerSkill = {
     };
 };
 
-export default function PlayerSkillContainer({ skills }: { skills: PlayerSkill[] }) {
+type PlayerSkillContainerProps = {
+    playerSkills: PlayerSkill[];
+    availableSkills: Skill[];
+}
+
+export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
+    const [addSkillShow, setAddSkillShow] = useState(false);
+    const [skills, setSkills] = useState<{ id: number, name: string }[]>(props.availableSkills);
+    const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
     const [search, setSearch] = useState('');
+
+    const socket = useContext(Socket);
+    const logError = useContext(ErrorLogger);
+
+    function onAddSkill(id: number) {
+        api.put('/sheet/player/skill', { id }).then(res => {
+            const skill = res.data.skill;
+            setPlayerSkills([...playerSkills, skill]);
+
+            const newSkills = [...skills];
+            newSkills.splice(newSkills.findIndex(eq => eq.id === id), 1);
+            setSkills(newSkills);
+        }).catch(logError);
+    }
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('playerSkillChange', (id, name, Specialization) => {
+            setPlayerSkills(skills => {
+                const index = skills.findIndex(skill => skill.Skill.id === id);
+                if (index === -1) return skills;
+
+                const newSkills = [...skills];
+                newSkills[index].Skill = { id, name, Specialization };
+                return newSkills;
+            });
+
+            setSkills(skills => {
+                const index = skills.findIndex(skill => skill.id === id);
+                if (index === -1) return skills;
+
+                const newSkills = [...skills];
+                newSkills[index].name = name;
+                return newSkills;
+            });
+        });
+
+        return () => {
+            socket.off('playerSkillChange');
+        };
+    }, [socket]);
 
     return (
         <>
-            <Row className='mb-3'>
-                <Col>
-                    <Form.Control className='theme-element' placeholder='Procurar'
-                        value={search} onChange={ev => setSearch(ev.currentTarget.value)} />
-                </Col>
-            </Row>
-            <Row className='mb-3 mx-1 text-center justify-content-center'>
-                {skills.map(skill => {
-                    if (skill.Skill.name.toLowerCase().includes(search.toLowerCase())) return (
-                        <PlayerSkillField key={skill.Skill.id} value={skill.value}
-                            skill={skill.Skill} />
-                    );
-                    return null;
-                })}
-            </Row>
+            <DataContainer outline title='Perícias' addButton={{ onAdd: () => setAddSkillShow(true) }}>
+                <Row className='mb-3'>
+                    <Col>
+                        <Form.Control className='theme-element' placeholder='Procurar'
+                            value={search} onChange={ev => setSearch(ev.currentTarget.value)} />
+                    </Col>
+                </Row>
+                <Row className='mb-3 mx-1 text-center justify-content-center'>
+                    {playerSkills.map(skill => {
+                        if (skill.Skill.name.toLowerCase().includes(search.toLowerCase())) return (
+                            <PlayerSkillField key={skill.Skill.id} value={skill.value}
+                                skill={skill.Skill} />
+                        );
+                        return null;
+                    })}
+                </Row>
+            </DataContainer>
+            <AddDataModal title='Adicionar Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
+                data={skills} onAddData={onAddSkill} />
         </>
     );
 }
