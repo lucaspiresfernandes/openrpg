@@ -37,7 +37,6 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
 
     const [socket, setSocket] = useState<SocketIO | null>(null);
 
-    const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
     const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
 
     const bonusDamage = useRef(props.playerSpecs.find(spec => spec.Spec.name === bonusDamageName)?.value);
@@ -88,8 +87,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </DataContainer>
                                 <Col>
                                     <PlayerAttributeContainer playerAttributes={props.playerAttributes}
-                                        playerAttributeStatus={props.playerAttributeStatus}
-                                        onDiceClick={() => setGeneralDiceRollShow(true)} />
+                                        playerAttributeStatus={props.playerAttributeStatus} />
                                 </Col>
                             </Row>
                             <Row>
@@ -110,14 +108,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills} />
                             </Row>
                             <Row>
-                                <Row className='text-center justify-content-center'>
-                                    {props.playerCurrency.map(curr =>
-                                        <PlayerCurrencyField key={curr.currency_id} currency={curr} />
-                                    )}
-                                </Row>
-                                <hr />
                                 <PlayerItemContainer playerItems={props.playerItems} availableItems={props.availableItems}
-                                    playerMaxLoad={props.player.maxLoad} />
+                                    playerMaxLoad={props.player.maxLoad} playerCurrency={props.playerCurrency} />
                             </Row>
                             <Row>
                                 <PlayerSpellContainer playerSpells={props.playerSpells.map(sp => sp.Spell)}
@@ -125,12 +117,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Row>
                         </Container>
                     </Socket.Provider>
-                    <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
-                        showDiceRollResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
                 </ShowDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
-                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} bonusDamage={bonusDamage.current} />
-
+                    onHide={() => setDiceRoll({ dices: '', resolverKey: undefined })} bonusDamage={bonusDamage.current} />
             </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>
@@ -246,7 +235,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 
         database.playerCurrency.findMany({
             where: { player_id: playerID },
-            include: { Currency: true }
+            select: { value: true, Currency: true }
         }),
 
         database.player.findUnique({

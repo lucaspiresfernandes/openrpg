@@ -52,16 +52,12 @@ export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult 
     }
     ]);
 
-    function onRoll() {
+    function reset() {
         const rollDices: ResolvedDice[] = [];
         dices.map(dice => {
             if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
         });
-        onHide();
-        showDiceRollResult(rollDices);
-    }
-
-    function reset() {
+        if (rollDices.length > 0) showDiceRollResult(rollDices);
         setDices(dices.map(dice => {
             dice.num = 0;
             return dice;
@@ -76,7 +72,7 @@ export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult 
     }
 
     return (
-        <SheetModal show={show} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onRoll }}
+        <SheetModal show={show} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onHide }}
             onHide={onHide} centered>
             <Container fluid>
                 <Row className='text-center'>

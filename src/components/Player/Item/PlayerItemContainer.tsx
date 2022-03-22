@@ -9,7 +9,8 @@ import BottomTextInput from '../../BottomTextInput';
 import PlayerItemField from './PlayerItemField';
 import DataContainer from '../../DataContainer';
 import AddDataModal from '../../Modals/AddDataModal';
-import { Item } from '@prisma/client';
+import { Currency, Item } from '@prisma/client';
+import PlayerCurrencyField from '../PlayerCurrencyField';
 
 type PlayerItemContainerProps = {
     playerItems: {
@@ -23,6 +24,10 @@ type PlayerItemContainerProps = {
     }[];
     availableItems: Item[];
     playerMaxLoad: number;
+    playerCurrency: {
+        value: string;
+        Currency: Currency;
+    }[];
 };
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
@@ -131,6 +136,12 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
     return (
         <>
             <DataContainer outline title='Itens' addButton={{ onAdd: () => setAddItemShow(true) }}>
+                <Row className='text-center justify-content-center'>
+                    {props.playerCurrency.map(curr =>
+                        <PlayerCurrencyField key={curr.Currency.id} currency={curr} />
+                    )}
+                </Row>
+                <hr />
                 <Row>
                     <Col className='text-center h5'>
                         <span className='me-2'>Capacidade:</span>

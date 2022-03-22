@@ -30,12 +30,12 @@ type PlayerAttributeFieldProps = {
             attribute_id: number;
         };
     }[];
-    onStatusChanged?(id: number): void;
+    onStatusChange?(id: number): void;
 }
 
 let valueTimeout: NodeJS.Timeout;
 
-export default function PlayerAttributeField({ playerAttribute, playerStatus, onStatusChanged }: PlayerAttributeFieldProps) {
+export default function PlayerAttributeField({ playerAttribute, playerStatus, onStatusChange: onStatusChanged }: PlayerAttributeFieldProps) {
     const attributeID = playerAttribute.Attribute.id;
     const [value, setValue] = useState(playerAttribute.value);
     const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
