@@ -25,9 +25,11 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.info.id)} size='sm' variant='secondary'>
-                    <BsTrash color='white' size={24} />
-                </Button>
+                {!props.info.default &&
+                    <Button onClick={() => props.onDelete(props.info.id)} size='sm' variant='secondary'>
+                        <BsTrash color='white' size={24} />
+                    </Button>
+                }
             </td>
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
