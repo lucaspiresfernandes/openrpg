@@ -9,7 +9,6 @@ type CreateEquipmentModalProps = {
     onCreate(name: string, type: string, damage: string, range: string, attacks: string, ammo: number | null): void;
     show: boolean;
     onHide(): void;
-    skill: Skill[];
 }
 
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
@@ -45,8 +44,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
         <SheetModal title='Novo Equipamento' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{
                 name: 'Criar',
-                onApply: () => props.onCreate(name, type, damage, range, attacks, ammo),
-                disabled: props.skill.length === 0
+                onApply: () => props.onCreate(name, type, damage, range, attacks, ammo)
             }} scrollable>
             <Container fluid>
                 <Form.Group controlId='createEquipmentName' className='mb-3'>

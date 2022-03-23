@@ -91,7 +91,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </Col>
                             </Row>
                             <Row>
-                                <DataContainer outline title='Atributos'>
+                                <DataContainer outline title='Características'>
                                     <Row className='mb-3 text-center align-items-end justify-content-center'>
                                         {props.playerCharacteristics.map(char =>
                                             <PlayerCharacteristicField key={char.Characteristic.id}
