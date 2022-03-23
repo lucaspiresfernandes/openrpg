@@ -1,12 +1,12 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import { useContext, useState } from 'react';
 import { ExtraInfo } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateExtraInfoModal from '../../Modals/CreateExtraInfoModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateExtraInfoModal from '../../../Modals/CreateExtraInfoModal';
 import ExtraInfoEditorField from './ExtraInfoEditorField';
 
 type ExtraInfoEditorContainerProps = {

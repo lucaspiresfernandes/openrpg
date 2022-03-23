@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import EquipmentEditorField from './EquipmentEditorField';
 import { useContext, useState } from 'react';
 import { Equipment } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateEquipmentModal from '../../Modals/CreateEquipmentModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateEquipmentModal from '../../../Modals/CreateEquipmentModal';
 
 type EquipmentEditorContainerProps = {
     equipment: Equipment[];

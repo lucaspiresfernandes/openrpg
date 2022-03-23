@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import CharacteristicEditorField from './CharacteristicEditorField';
 import { useContext, useState } from 'react';
 import { Characteristic } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateCharacteristicModal from '../../Modals/CreateCharacteristicModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateCharacteristicModal from '../../../Modals/CreateCharacteristicModal';
 
 type CharacteristicEditorContainerProps = {
     characteristic: Characteristic[];

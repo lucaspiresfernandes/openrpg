@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import SpecEditorField from './SpecEditorField';
 import { useContext, useState } from 'react';
 import { Spec } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateSpecModal from '../../Modals/CreateSpecModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateSpecModal from '../../../Modals/CreateSpecModal';
 
 type SpecEditorContainerProps = {
     spec: Spec[];

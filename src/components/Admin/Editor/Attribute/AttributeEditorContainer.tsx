@@ -1,15 +1,15 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import AttributeEditorField from './AttributeEditorField';
 import { useContext, useState } from 'react';
 import { Attribute, AttributeStatus } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateAttributeModal from '../../Modals/CreateAttributeModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateAttributeModal from '../../../Modals/CreateAttributeModal';
 import AttributeStatusEditorField from './StatusEditorField';
-import CreateAttributeStatusModal from '../../Modals/CreateAttributeStatusModal';
+import CreateAttributeStatusModal from '../../../Modals/CreateAttributeStatusModal';
 
 type AttributeEditorContainerProps = {
     attribute: Attribute[];

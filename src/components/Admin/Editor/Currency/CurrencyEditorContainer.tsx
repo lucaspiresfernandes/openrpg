@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import CurrencyEditorField from './CurrencyEditorField';
 import { useContext, useState } from 'react';
 import { Currency } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateCurrencyModal from '../../Modals/CreateCurrencyModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateCurrencyModal from '../../../Modals/CreateCurrencyModal';
 
 type CurrencyEditorContainerProps = {
     currency: Currency[];

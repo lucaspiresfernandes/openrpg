@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import InfoEditorField from './InfoEditorField';
 import { useContext, useState } from 'react';
 import { Info } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateInfoModal from '../../Modals/CreateInfoModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateInfoModal from '../../../Modals/CreateInfoModal';
 
 type InfoEditorContainerProps = {
     info: Info[];

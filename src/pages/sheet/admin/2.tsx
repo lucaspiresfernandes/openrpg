@@ -10,16 +10,16 @@ import { ErrorLogger } from '../../../contexts';
 import useToast from '../../../hooks/useToast';
 import prisma from '../../../utils/database';
 import { sessionSSR } from '../../../utils/session';
-import InfoEditorContainer from '../../../components/Admin/Editor/InfoEditorContainer';
-import AttributeEditorContainer from '../../../components/Admin/Editor/AttributeEditorContainer';
-import CharacteristicEditorContainer from '../../../components/Admin/Editor/CharacteristicEditorContainer';
-import SpellEditorContainer from '../../../components/Admin/Editor/SpellEditorContainer';
-import ItemEditorContainer from '../../../components/Admin/Editor/ItemEditorContainer';
-import EquipmentEditorContainer from '../../../components/Admin/Editor/EquipmentEditorContainer';
-import SkillEditorContainer from '../../../components/Admin/Editor/SkillEditorContainer';
-import CurrencyEditorContainer from '../../../components/Admin/Editor/CurrencyEditorContainer';
-import SpecEditorContainer from '../../../components/Admin/Editor/SpecEditorContainer';
-import ExtraInfoEditorContainer from '../../../components/Admin/Editor/ExtraInfoEditorContainer';
+import InfoEditorContainer from '../../../components/Admin/Editor/Info/InfoEditorContainer';
+import AttributeEditorContainer from '../../../components/Admin/Editor/Attribute/AttributeEditorContainer';
+import CharacteristicEditorContainer from '../../../components/Admin/Editor/Characteristic/CharacteristicEditorContainer';
+import SpellEditorContainer from '../../../components/Admin/Editor/Spell/SpellEditorContainer';
+import ItemEditorContainer from '../../../components/Admin/Editor/Item/ItemEditorContainer';
+import EquipmentEditorContainer from '../../../components/Admin/Editor/Equipment/EquipmentEditorContainer';
+import SkillEditorContainer from '../../../components/Admin/Editor/Skill/SkillEditorContainer';
+import CurrencyEditorContainer from '../../../components/Admin/Editor/Currency/CurrencyEditorContainer';
+import SpecEditorContainer from '../../../components/Admin/Editor/Spec/SpecEditorContainer';
+import ExtraInfoEditorContainer from '../../../components/Admin/Editor/ExtraInfo/ExtraInfoEditorContainer';
 
 export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();

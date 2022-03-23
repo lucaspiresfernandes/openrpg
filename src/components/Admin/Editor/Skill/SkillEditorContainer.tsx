@@ -1,15 +1,15 @@
-import DataContainer from '../../DataContainer';
+import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import SkillEditorField from './SkillEditorField';
 import { useContext, useState } from 'react';
 import { Skill, Specialization } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateSkillModal from '../../Modals/CreateSkillModal';
+import api from '../../../../utils/api';
+import { ErrorLogger } from '../../../../contexts';
+import CreateSkillModal from '../../../Modals/CreateSkillModal';
 import SpecializationEditorField from './SpecializationEditorField';
-import CreateSpecializationModal from '../../Modals/CreateSpecializationModal';
+import CreateSpecializationModal from '../../../Modals/CreateSpecializationModal';
 
 type SkillEditorContainerProps = {
     skill: Skill[];

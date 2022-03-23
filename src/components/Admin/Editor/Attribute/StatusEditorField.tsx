@@ -2,18 +2,18 @@ import { Attribute, AttributeStatus } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import { BsTrash } from 'react-icons/bs';
-import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
-import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
+import { ErrorLogger } from '../../../../contexts';
+import useExtendedState from '../../../../hooks/useExtendedState';
+import api from '../../../../utils/api';
+import BottomTextInput from '../../../BottomTextInput';
 
-type StatusEditorFieldProps = {
+type AttributeStatusEditorFieldProps = {
     attributeStatus: AttributeStatus;
     attributes: Attribute[];
     onDelete(id: number): void;
 }
 
-export default function StatusEditorField(props: StatusEditorFieldProps) {
+export default function AttributeStatusEditorField(props: AttributeStatusEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.attributeStatus.name);
     const [attributeID, setAttributeID] = useState(props.attributeStatus.attribute_id);
     const logError = useContext(ErrorLogger);
