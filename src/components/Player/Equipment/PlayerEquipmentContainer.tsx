@@ -1,13 +1,13 @@
-import DataContainer from '../../DataContainer';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import PlayerEquipmentField from './PlayerEquipmentField';
-import AddDataModal from '../../Modals/AddDataModal';
-import { useContext, useEffect, useRef, useState } from 'react';
 import { Equipment } from '@prisma/client';
+import { useContext, useEffect, useRef, useState } from 'react';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../../contexts';
 import api from '../../../utils/api';
+import DataContainer from '../../DataContainer';
+import AddDataModal from '../../Modals/AddDataModal';
+import PlayerEquipmentField from './PlayerEquipmentField';
 
 type PlayerEquipmentContainerProps = {
     playerEquipments: {

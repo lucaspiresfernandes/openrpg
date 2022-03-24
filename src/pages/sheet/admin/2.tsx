@@ -1,8 +1,18 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import React from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import AttributeEditorContainer from '../../../components/Admin/Editor/Attribute/AttributeEditorContainer';
+import CharacteristicEditorContainer from '../../../components/Admin/Editor/Characteristic/CharacteristicEditorContainer';
+import CurrencyEditorContainer from '../../../components/Admin/Editor/Currency/CurrencyEditorContainer';
+import EquipmentEditorContainer from '../../../components/Admin/Editor/Equipment/EquipmentEditorContainer';
+import ExtraInfoEditorContainer from '../../../components/Admin/Editor/ExtraInfo/ExtraInfoEditorContainer';
+import InfoEditorContainer from '../../../components/Admin/Editor/Info/InfoEditorContainer';
+import ItemEditorContainer from '../../../components/Admin/Editor/Item/ItemEditorContainer';
+import SkillEditorContainer from '../../../components/Admin/Editor/Skill/SkillEditorContainer';
+import SpecEditorContainer from '../../../components/Admin/Editor/Spec/SpecEditorContainer';
+import SpellEditorContainer from '../../../components/Admin/Editor/Spell/SpellEditorContainer';
 import AdminNavbar from '../../../components/AdminNavbar';
 import ApplicationHead from '../../../components/ApplicationHead';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
@@ -10,16 +20,6 @@ import { ErrorLogger } from '../../../contexts';
 import useToast from '../../../hooks/useToast';
 import prisma from '../../../utils/database';
 import { sessionSSR } from '../../../utils/session';
-import InfoEditorContainer from '../../../components/Admin/Editor/Info/InfoEditorContainer';
-import AttributeEditorContainer from '../../../components/Admin/Editor/Attribute/AttributeEditorContainer';
-import CharacteristicEditorContainer from '../../../components/Admin/Editor/Characteristic/CharacteristicEditorContainer';
-import SpellEditorContainer from '../../../components/Admin/Editor/Spell/SpellEditorContainer';
-import ItemEditorContainer from '../../../components/Admin/Editor/Item/ItemEditorContainer';
-import EquipmentEditorContainer from '../../../components/Admin/Editor/Equipment/EquipmentEditorContainer';
-import SkillEditorContainer from '../../../components/Admin/Editor/Skill/SkillEditorContainer';
-import CurrencyEditorContainer from '../../../components/Admin/Editor/Currency/CurrencyEditorContainer';
-import SpecEditorContainer from '../../../components/Admin/Editor/Spec/SpecEditorContainer';
-import ExtraInfoEditorContainer from '../../../components/Admin/Editor/ExtraInfo/ExtraInfoEditorContainer';
 
 export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();

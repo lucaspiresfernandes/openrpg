@@ -1,11 +1,11 @@
-import Row from 'react-bootstrap/Row';
+import Router from 'next/router';
+import { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
-import { useState } from 'react';
+import Row from 'react-bootstrap/Row';
 import api from '../../utils/api';
-import Router from 'next/router';
 
 export default function WelcomePage({ logError }: { logError: (err: any) => void }) {
     const [loading, setLoading] = useState(false);

@@ -1,9 +1,9 @@
-import { NextApiRequest } from 'next';
-import database from '../../utils/database';
-import { sessionAPI } from '../../utils/session';
-import { hash } from '../../utils/encryption';
-import config from '../../../openrpg.config.json';
 import { Player } from '@prisma/client';
+import { NextApiRequest } from 'next';
+import config from '../../../openrpg.config.json';
+import database from '../../utils/database';
+import { hash } from '../../utils/encryption';
+import { sessionAPI } from '../../utils/session';
 import { NextApiResponseServerIO } from '../../utils/socket';
 
 function handler(req: NextApiRequest, res: NextApiResponseServerIO) {

@@ -1,8 +1,8 @@
 import { Equipment, Spell } from '@prisma/client';
+import { Server as NetServer, Socket as NetSocket } from 'net';
 import { NextApiResponse } from 'next';
-import { DiceResult, ResolvedDice } from '.';
 import { Server as SocketIOServer } from 'socket.io';
-import { Socket as NetSocket, Server as NetServer } from 'net';
+import { DiceResult, ResolvedDice } from '.';
 
 type SocketPlayerEquipment = {
     Equipment: Equipment;

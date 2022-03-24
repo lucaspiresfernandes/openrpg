@@ -1,16 +1,16 @@
+import { Currency, Item } from '@prisma/client';
 import { useContext, useEffect, useRef, useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
-import PlayerItemField from './PlayerItemField';
 import DataContainer from '../../DataContainer';
 import AddDataModal from '../../Modals/AddDataModal';
-import { Currency, Item } from '@prisma/client';
 import PlayerCurrencyField from '../PlayerCurrencyField';
+import PlayerItemField from './PlayerItemField';
 
 type PlayerItemContainerProps = {
     playerItems: {

@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import api from '../utils/api';
+import Navbar from 'react-bootstrap/Navbar';
 import config from '../../openrpg.config.json';
+import api from '../utils/api';
 
 export default function SheetNavbar() {
     const router = useRouter();

@@ -1,17 +1,17 @@
-import ApplicationHead from '../../components/ApplicationHead';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
-import React, { useState } from 'react';
-import api from '../../utils/api';
-import ErrorToastContainer from '../../components/ErrorToastContainer';
-import useToast from '../../hooks/useToast';
 import { useRouter } from 'next/router';
-import homeStyles from '../../styles/modules/Home.module.scss';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import ApplicationHead from '../../components/ApplicationHead';
+import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useAuthentication from '../../hooks/useAuthentication';
+import useToast from '../../hooks/useToast';
+import homeStyles from '../../styles/modules/Home.module.scss';
+import api from '../../utils/api';
 
 export default function Register(): JSX.Element {
   const [username, setUsername] = useState('');

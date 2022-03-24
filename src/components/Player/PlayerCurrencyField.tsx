@@ -1,4 +1,4 @@
-import { Currency, PlayerCurrency } from '@prisma/client';
+import { Currency } from '@prisma/client';
 import { useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';

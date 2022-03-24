@@ -1,11 +1,11 @@
+import { Spell } from '@prisma/client';
+import { useContext, useEffect, useRef, useState } from 'react';
+import Row from 'react-bootstrap/Row';
+import { ErrorLogger, Socket } from '../../../contexts';
+import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import AddDataModal from '../../Modals/AddDataModal';
-import Row from 'react-bootstrap/Row';
 import PlayerSpellField from './PlayerSpellField';
-import { useContext, useEffect, useRef, useState } from 'react';
-import api from '../../../utils/api';
-import { ErrorLogger, Socket } from '../../../contexts';
-import { Spell } from '@prisma/client';
 
 type PlayerSpellContainerProps = {
     playerSpells: Spell[];

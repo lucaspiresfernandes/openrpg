@@ -1,6 +1,6 @@
 import { NextApiRequest } from 'next';
-import { NextApiResponseServerIO } from '../../utils/socket';
 import prisma from '../../utils/database';
+import { NextApiResponseServerIO } from '../../utils/socket';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     const key = req.body.key;

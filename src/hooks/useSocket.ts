@@ -1,8 +1,7 @@
-import { Socket } from 'socket.io-client';
-import io from 'socket.io-client';
+import { useEffect } from 'react';
+import io, { Socket } from 'socket.io-client';
 import api from '../utils/api';
 import { ClientToServerEvents, ServerToClientEvents } from '../utils/socket';
-import { useEffect } from 'react';
 
 export type SocketIO = Socket<ServerToClientEvents, ClientToServerEvents>;
 

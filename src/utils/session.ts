@@ -1,6 +1,6 @@
 import { IronSessionOptions } from 'iron-session';
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next';
-import { NextApiHandler, GetServerSidePropsContext, NextApiRequest } from 'next';
+import { GetServerSidePropsContext, NextApiHandler, NextApiRequest } from 'next';
 import { NextApiResponseServerIO } from './socket';
 
 export const cookieName = 'openrpg_session';

@@ -1,14 +1,14 @@
 import { Characteristic } from '@prisma/client';
 import { ChangeEvent, useContext } from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
+import config from '../../../openrpg.config.json';
+import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import config from '../../../openrpg.config.json';
 import BottomTextInput from '../BottomTextInput';
-import { ErrorLogger, ShowDiceResult } from '../../contexts';
 
 type PlayerCharacteristicFieldProps = {
     value: number;

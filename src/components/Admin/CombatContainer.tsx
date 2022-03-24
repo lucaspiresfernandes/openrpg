@@ -1,3 +1,4 @@
+import { arrayMoveImmutable } from 'array-move';
 import { FormEvent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -5,12 +6,11 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
+import { SortableContainer, SortableElement, SortEnd } from 'react-sortable-hoc';
 import { clamp } from '../../utils';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import { PlayerName } from './DiceList';
-import { SortableContainer, SortableElement, SortEnd } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
 
 export default function CombatContainer({ players }: { players: PlayerName[] }) {
     const [round, setRound] = useState(1);

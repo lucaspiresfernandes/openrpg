@@ -1,13 +1,13 @@
+import { Skill } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import PlayerSkillField from './PlayerSkillField';
+import Row from 'react-bootstrap/Row';
+import { ErrorLogger, Socket } from '../../../contexts';
+import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import AddDataModal from '../../Modals/AddDataModal';
-import { ErrorLogger, Socket } from '../../../contexts';
-import { Skill } from '@prisma/client';
-import api from '../../../utils/api';
+import PlayerSkillField from './PlayerSkillField';
 
 type PlayerSkill = {
     value: number;

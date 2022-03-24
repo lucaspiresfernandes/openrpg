@@ -1,8 +1,7 @@
+import { Server as HTTPServer } from 'http';
 import { NextApiRequest } from 'next';
 import { Server } from 'socket.io';
-import { Server as HTTPServer } from 'http';
 import { ClientToServerEvents, NextApiResponseServerIO, ServerToClientEvents } from '../../utils/socket';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 export default function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (!res.socket.server.io) {

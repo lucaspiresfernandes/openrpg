@@ -1,8 +1,8 @@
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
-import { sessionAPI } from '../../utils/session';
 import config from '../../../openrpg.config.json';
 import { DiceResult, ResolvedDice } from '../../utils';
+import { sessionAPI } from '../../utils/session';
 import { NextApiResponseServerIO } from '../../utils/socket';
 
 const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });

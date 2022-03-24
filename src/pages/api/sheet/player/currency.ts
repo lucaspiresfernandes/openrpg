@@ -1,7 +1,7 @@
 import { NextApiRequest } from 'next';
-import { NextApiResponseServerIO } from '../../../../utils/socket';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
+import { NextApiResponseServerIO } from '../../../../utils/socket';
 
 function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     if (req.method === 'POST') {

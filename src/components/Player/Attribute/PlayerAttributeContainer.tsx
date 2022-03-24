@@ -1,13 +1,13 @@
 import { Attribute, AttributeStatus } from '@prisma/client';
 import { useContext, useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
-import PlayerAttributeField from './PlayerAttributeField';
-import PlayerAvatarImage from './PlayerAvatarImage';
+import Row from 'react-bootstrap/Row';
+import { ShowDiceResult } from '../../../contexts';
 import EditAvatarModal from '../../Modals/EditAvatarModal';
 import GeneralDiceRollModal from '../../Modals/GeneralDiceRollModal';
-import { ShowDiceResult } from '../../../contexts';
+import PlayerAttributeField from './PlayerAttributeField';
+import PlayerAvatarImage from './PlayerAvatarImage';
 
 type PlayerAttributeContainerProps = {
     playerAttributes: {

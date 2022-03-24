@@ -1,11 +1,11 @@
 import { FormEvent, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
+import { BsTrash } from 'react-icons/bs';
+import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
-import { ErrorLogger, ShowDiceResult } from '../../../contexts';
-import { BsTrash } from 'react-icons/bs';
 
 type PlayerEquipmentFieldProps = {
     currentAmmo: number;

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sessionAPI } from '../../utils/session';
 import database from '../../utils/database';
 import { compare } from '../../utils/encryption';
+import { sessionAPI } from '../../utils/session';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') return handlePost(req, res);

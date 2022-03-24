@@ -1,12 +1,12 @@
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
+import config from '../../../openrpg.config.json';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
-import config from '../../../openrpg.config.json';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import prisma from '../../utils/database';
 import { DiceResult, ResolvedDice, sleep } from '../../utils';
+import prisma from '../../utils/database';
 
 export default function CharacterPortrait(props: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
     const [attributes, setAttributes] = useState(props.attributes);

@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Col, { ColProps } from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import Row from 'react-bootstrap/Row';
 
 interface DataContainerProps extends ColProps {
     title: string;

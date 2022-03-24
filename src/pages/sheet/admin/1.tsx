@@ -1,28 +1,27 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
 import AdminGlobalConfigurations from '../../../components/Admin/AdminGlobalConfigurations';
 import CombatContainer from '../../../components/Admin/CombatContainer';
 import DiceList, { PlayerName } from '../../../components/Admin/DiceList';
 import NPCContainer from '../../../components/Admin/NPCContainer';
+import PlayerManager from '../../../components/Admin/PlayerManager';
 import AdminNavbar from '../../../components/AdminNavbar';
+import ApplicationHead from '../../../components/ApplicationHead';
 import DataContainer from '../../../components/DataContainer';
 import ErrorToastContainer from '../../../components/ErrorToastContainer';
+import DiceRollResultModal from '../../../components/Modals/DiceRollResultModal';
+import GeneralDiceRollModal from '../../../components/Modals/GeneralDiceRollModal';
 import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
+import { ErrorLogger, Socket } from '../../../contexts';
+import useSocket, { SocketIO } from '../../../hooks/useSocket';
 import useToast from '../../../hooks/useToast';
+import { ResolvedDice } from '../../../utils';
 import prisma from '../../../utils/database';
 import { sessionSSR } from '../../../utils/session';
-import { ResolvedDice } from '../../../utils';
-import PlayerManager from '../../../components/Admin/PlayerManager';
-import useSocket, { SocketIO } from '../../../hooks/useSocket';
-import { ErrorLogger, Socket } from '../../../contexts';
-import ApplicationHead from '../../../components/ApplicationHead';
-import GeneralDiceRollModal from '../../../components/Modals/GeneralDiceRollModal';
-import DiceRollResultModal from '../../../components/Modals/DiceRollResultModal';
-import WelcomeAdmin from '../../../components/Admin/WelcomePage';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();

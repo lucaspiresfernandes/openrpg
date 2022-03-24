@@ -1,16 +1,16 @@
 import { FormEvent, useContext, useState } from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import Row from 'react-bootstrap/Row';
+import config from '../../../../openrpg.config.json';
+import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';
-import config from '../../../../openrpg.config.json';
-import PlayerAttributeStatusField from './PlayerAttributeStatusField';
 import BottomTextInput from '../../BottomTextInput';
-import { ErrorLogger, ShowDiceResult } from '../../../contexts';
+import PlayerAttributeStatusField from './PlayerAttributeStatusField';
 
 type PlayerAttributeFieldProps = {
     playerAttribute: {

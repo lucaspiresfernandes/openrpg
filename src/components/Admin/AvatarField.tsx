@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
 
 type AvatarFieldProps = {
     status: { id: number; value: boolean; }[];
