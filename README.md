@@ -145,8 +145,8 @@ Caso tenha feito edições nos Atributos do sistema, irá perceber que, na ficha
 
 ``` CSS
   .NomeDoSeuAtributoAqui {
-    $background: #2c4470;
-    $foreground: #1f3ce0;
+    $background: #ffffff;
+    $foreground: #ffffff;
 
     &.progress {
         background-color: $background;
