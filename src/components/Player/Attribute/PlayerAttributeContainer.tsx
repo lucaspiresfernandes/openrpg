@@ -7,7 +7,6 @@ import PlayerAttributeField from './PlayerAttributeField';
 import PlayerAvatarImage from './PlayerAvatarImage';
 import EditAvatarModal from '../../Modals/EditAvatarModal';
 import GeneralDiceRollModal from '../../Modals/GeneralDiceRollModal';
-import { ResolvedDice } from '../../../utils';
 import { ShowDiceResult } from '../../../contexts';
 
 type PlayerAttributeContainerProps = {

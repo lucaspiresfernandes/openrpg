@@ -1,9 +1,18 @@
+import { AttributeStatus } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
-import { PlayerStatus } from './PlayerAttributeContainer';
 
-export default function PlayerAvatarContainer(props: { statusID?: number, onClick?(): void, playerStatus: PlayerStatus[] }) {
+type PlayerAvatarContainerProps = {
+    statusID?: number;
+    onClick?(): void;
+    playerStatus: {
+        value: boolean;
+        AttributeStatus: AttributeStatus;
+    }[];
+}
+
+export default function PlayerAvatarContainer(props: PlayerAvatarContainerProps) {
     const statusID = props.statusID || 0;
 
     const [src, setSrc] = useState(`/api/sheet/player/avatar/${statusID}`);
