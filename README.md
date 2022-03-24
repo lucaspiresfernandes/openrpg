@@ -26,7 +26,7 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 - Anotações pessoais
 - Editor do sistema
 
-Além da edição do sistema, o mestre também pode editar o design do site, mudando suas cores. Para saber mais, visite a seção de [Como editar o aplicativo?](#como-editar-o-aplicativo)
+Além da edição do sistema, o mestre também pode editar vários outros aspectos do aplicativo. Para saber mais, visite a seção de [Extras](#extras).
 
 O Open RPG pode utilizar o serviço do [Random.org](https://www.random.org/) para geração de números aleatórios.
 
@@ -39,9 +39,11 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 - Atributos (editável)
 - Rolagem de dados
 
-## FAQs
+## Regras do aplicativo
 
-1. Meu
+Nessa seção, explicarei algumas regras que o aplicativo possui.
+
+- Existem 2 tipos de itens editáveis no editor: os estáticos e os dinâmicos. Estáticos são itens que não podem ser modificados após a criação de um novo player (ficha) e desaparecerão do editor, como Atributos, Características, Informações Pessoais, etc. Dimânicos são itens que podem ser editados independente do número de players (fichas) criados, como Perícias, Equipamentos, Magias e Itens.
 
 ## Instalação
 
