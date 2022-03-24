@@ -1,5 +1,7 @@
 Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas dos personagens de sua campanha e agilizar processos comuns.
 
+Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/).
+
 ## Introdução
 
 Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres quanto para os jogadores, sendo elas:
