@@ -51,15 +51,9 @@ Nessa seção, ensinarei do processo de configuração até o deployment do proj
 Antes de começarmos, você deverá cumprir alguns passos preliminares.
 
 1. Você deverá criar uma conta na [Cloudinary](https://cloudinary.com/). É muito simples e intuitivo, e o mais importante: é de graça!
-2. Você deverá criar uma conta na [Vercel](https://vercel.com/).
+2. Você deverá criar uma conta na [Heroku](https://heroku.com/).
 3. (Opcional) Você deverá criar uma conta na [Random.org](https://www.random.org/). Caso não esteja interessado em usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
 
 ### Primeiro passo
 
 Agora, estamos prontos para começar o processo de deployment na nuvem!
-
-
-
-## Como editar o aplicativo?
-
-[Under development]
