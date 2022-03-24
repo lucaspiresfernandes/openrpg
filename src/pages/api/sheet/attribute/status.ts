@@ -47,7 +47,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const attributeStatus = await database.attributeStatus.create({ data: { name, attribute_id, order: 0 } });
+    const attributeStatus = await database.attributeStatus.create({ data: { name, attribute_id } });
 
     res.send({ id: attributeStatus.id });
 }
