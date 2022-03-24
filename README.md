@@ -156,7 +156,7 @@ Agora, acompanharei com você cada configuração do arquivo.
 
 | NOME DA CHAVE | SIGNIFICADO |
 | ------------- | ----------- |
-| Application Name | O nome da aplicação. Por padrão, o nome da aplicação é Open RPG. |
+| application_name | O nome da aplicação. Por padrão, o nome da aplicação é Open RPG. |
 | player>admin_key | A chave do administrador. É recomendável trocá-la. O padrão é 123456. ATENÇÃO: a chave, apesar de ser composta por números, deve ser englobada por aspas duplas como um texto. |
 | player>role | A função do jogador, que é mostrada como um Header na ficha do jogador. O padrão é Investigador. |
 | player>bonus_damage_name | O nome da especificação de jogador "Dano Bônus". Caso queira editá-la para um nome diferente, também deve editar esse campo. O padrão é Dano Bônus. |
