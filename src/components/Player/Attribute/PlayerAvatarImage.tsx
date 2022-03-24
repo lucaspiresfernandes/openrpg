@@ -17,14 +17,14 @@ export default function PlayerAvatarContainer(props: PlayerAvatarContainerProps)
     useEffect(() => {
         setSrc(`/api/sheet/player/avatar/${statusID}?v=${Date.now()}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [props.rerender]);
 
     useEffect(() => {
         if (statusID === previousStatusID.current) return;
         previousStatusID.current = statusID;
         setSrc(`/api/sheet/player/avatar/${statusID}?v=${Date.now()}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.statusID, props.rerender]);
+    }, [props.statusID]);
 
     return (
         <Col xl={{ offset: 2 }} className='text-center'>
