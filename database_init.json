@@ -1,14 +1,17 @@
 {
     "attribute": [
         {
+            "id": 1,
             "name": "Vida",
             "rollable": false
         },
         {
+            "id": 2,
             "name": "Sanidade",
             "rollable": true
         },
         {
+            "id": 3,
             "name": "Magia",
             "rollable": false
         }
@@ -622,12 +625,30 @@
         "Exposição Paranormal"
     ],
     "specialization": [
-        "Armas de Fogo",
-        "Arte e Ofício",
-        "Ciência",
-        "Língua",
-        "Pilotar",
-        "Sobrevivência"
+        {
+            "id": 1,
+            "name": "Armas de Fogo"
+        },
+        {
+            "id": 2,
+            "name": "Arte e Ofício"
+        },
+        {
+            "id": 3,
+            "name": "Ciência"
+        },
+        {
+            "id": 4,
+            "name": "Língua"
+        },
+        {
+            "id": 5,
+            "name": "Pilotar"
+        },
+        {
+            "id": 6,
+            "name": "Sobrevivência"
+        }
     ],
     "spell": [
         {

@@ -35,13 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 };
             })
         }),
-        prisma.specialization.createMany({
-            data: databaseInit.specialization.map(name => {
-                return {
-                    name
-                };
-            })
-        }),
+        prisma.specialization.createMany({ data: databaseInit.specialization }),
         prisma.equipment.createMany({ data: databaseInit.equipment }),
         prisma.item.createMany({ data: databaseInit.item }),
         prisma.spell.createMany({ data: databaseInit.spell }),
