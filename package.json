@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build & npx prisma db push",
     "start": "next start -p $PORT",
     "lint": "next lint"
   },
