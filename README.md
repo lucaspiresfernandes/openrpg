@@ -28,10 +28,7 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 
 Além da edição do sistema, o mestre também pode editar o design do site, mudando suas cores. Para saber mais, visite a seção de [Como editar o aplicativo?](#como-editar-o-aplicativo)
 
-O Open RPG usa alguns serviços de terceiros para seu funcionamento. São eles:
-
-- Cloudinary (Repositório de imagens)
-- Random.org (Opcional - Gerador de números aleatórios)
+O Open RPG pode utilizar o serviço do [Random.org](https://www.random.org/) para geração de números aleatórios.
 
 ## Integração com OBS
 
@@ -50,10 +47,7 @@ Nessa seção, ensinarei do processo de configuração até o deployment do proj
 
 Antes de começarmos, você deverá cumprir alguns passos preliminares.
 
-1. Você deverá criar uma conta na [Cloudinary](https://cloudinary.com/). É muito simples e intuitivo, e o mais importante: é de graça!
-2. Você deverá criar uma conta na [Heroku](https://heroku.com/).
-3. (Opcional) Você deverá criar uma conta na [Random.org](https://www.random.org/). Caso não esteja interessado em usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
+1. Você deverá criar uma conta aqui, no [GitHub](https://github.com/signup). Caso já possua uma conta, pode pular essa preliminar.
+3. Você deverá criar uma conta na [Heroku](https://id.heroku.com/signup), o servidor no qual hospedaremos o nosso aplicativo.
+4. (Opcional) Você deverá criar uma conta na [Random.org](https://accounts.random.org/create). Caso não esteja interessado em usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
 
-### Primeiro passo
-
-Agora, estamos prontos para começar o processo de deployment na nuvem!
