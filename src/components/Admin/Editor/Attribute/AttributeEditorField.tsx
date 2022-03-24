@@ -21,9 +21,10 @@ export default function AttributeEditorField(props: AttributeEditorFieldProps) {
 
     function onBlur() {
         if (name === lastName) return;
-        setName(name);
-        if (props.onNameChange) props.onNameChange(props.attribute.id, name);
-        api.post('/sheet/attribute', { id: props.attribute.id, name }).catch(logError);
+        const newName = name.replace(/\s/g, '');
+        setName(newName);
+        if (props.onNameChange) props.onNameChange(props.attribute.id, newName);
+        api.post('/sheet/attribute', { id: props.attribute.id, name: newName }).catch(logError);
     }
 
     function changeRollable() {

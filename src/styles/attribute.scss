@@ -1,11 +1,14 @@
 $proggress-bar-height: 40px;
 
+.progress {
+    height: $proggress-bar-height;
+}
+
 .Vida {
     $background: #5a1e1e;
     $foreground: #b62323;
 
     &.progress {
-        height: $proggress-bar-height;
         background-color: $background;
         .progress-bar {
             background-color: $foreground;
@@ -27,7 +30,6 @@ $proggress-bar-height: 40px;
     $foreground: #ffbb00;
 
     &.progress {
-        height: $proggress-bar-height;
         background-color: $background;
         .progress-bar {
             background-color: $foreground;
@@ -49,7 +51,6 @@ $proggress-bar-height: 40px;
     $foreground: #1f3ce0;
 
     &.progress {
-        height: $proggress-bar-height;
         background-color: $background;
         .progress-bar {
             background-color: $foreground;
@@ -71,7 +72,6 @@ $proggress-bar-height: 40px;
     $foreground: #ae00ff;
 
     &.progress {
-        height: $proggress-bar-height;
         background-color: $background;
         .progress-bar {
             background-color: $foreground;
