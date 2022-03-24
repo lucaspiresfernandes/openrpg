@@ -67,9 +67,18 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    await database.attribute.delete({ where: { id } });
+    try {
+        await database.attribute.delete({ where: { id } });
 
-    res.end();
+        res.end();
+    }
+    catch (err: any) {
+        if (err.code === 'P2003') {
+            res.status(400).send({ message: 'Não é possível excluir esse atributo pois há algum outro elemento ligado a ele.' });
+            return;
+        }
+        res.status(500).end();
+    }
 }
 
 export default sessionAPI(handler);

@@ -12,51 +12,60 @@ import SpecializationEditorField from './SpecializationEditorField';
 import CreateSpecializationModal from '../../../Modals/CreateSpecializationModal';
 
 type SkillEditorContainerProps = {
-    skill: Skill[];
-    specialization: Specialization[];
+    skills: Skill[];
+    specializations: Specialization[];
 }
 
 export default function SkillEditorContainer(props: SkillEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showSkillModal, setShowSkillModal] = useState(false);
-    const [skill, setSkill] = useState(props.skill);
+    const [skills, setSkills] = useState(props.skills);
     const [showSpecModal, setShowSpecModal] = useState(false);
-    const [specialization, setSpec] = useState(props.specialization);
+    const [specializations, setSpecializations] = useState(props.specializations);
 
     function createSkill(name: string, mandatory: boolean, specializationID: number | null) {
         api.put('/sheet/skill', { name, specializationID, mandatory }).then(res => {
             const id = res.data.id;
-            setSkill([...skill, { id, name, specialization_id: specializationID, mandatory }]);
+            setSkills([...skills, { id, name, specialization_id: specializationID, mandatory }]);
         }).catch(logError);
     }
 
     function deleteSkill(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/skill', { data: { id } }).then(() => {
-            const newSkill = [...skill];
+            const newSkill = [...skills];
             const index = newSkill.findIndex(skill => skill.id === id);
             if (index > -1) {
                 newSkill.splice(index, 1);
-                setSkill(newSkill);
+                setSkills(newSkill);
             }
         }).catch(logError);
     }
 
-    function createSpec(name: string) {
+    function onSpecializationNameChange(id: number, name: string) {
+        const newSpecializations = [...specializations];
+        const sp = newSpecializations.find(sp => sp.id === id);
+        if (sp) {
+            sp.name = name;
+            setSpecializations(newSpecializations);
+        }
+    }
+
+    function createSpecialization(name: string) {
         api.put('/sheet/specialization', { name }).then(res => {
             const id = res.data.id;
-            setSpec([...specialization, { id, name }]);
+            setSpecializations([...specializations, { id, name }]);
         }).catch(logError);
     }
 
-    function deleteSpec(id: number) {
+    function deleteSpecialization(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/specialization', { data: { id } }).then(() => {
-            const newSpec = [...specialization];
+            const newSpec = [...specializations];
             const index = newSpec.findIndex(specialization => specialization.id === id);
             if (index > -1) {
                 newSpec.splice(index, 1);
-                setSpec(newSpec);
+                setSpecializations(newSpec);
             }
         }).catch(logError);
     }
@@ -76,9 +85,10 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {specialization.map(specialization =>
+                                    {specializations.map(specialization =>
                                         <SpecializationEditorField key={specialization.id}
-                                            specialization={specialization} onDelete={deleteSpec} />
+                                            specialization={specialization} onDelete={deleteSpecialization}
+                                            onNameChange={onSpecializationNameChange} />
                                     )}
                                 </tbody>
                             </Table>
@@ -101,9 +111,9 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {skill.map(skill =>
+                                    {skills.map(skill =>
                                         <SkillEditorField key={skill.id}
-                                            skill={skill} onDelete={deleteSkill} specializations={specialization} />
+                                            skill={skill} onDelete={deleteSkill} specializations={specializations} />
                                     )}
                                 </tbody>
                             </Table>
@@ -112,9 +122,9 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                 </DataContainer>
             </Row>
             <CreateSpecializationModal show={showSpecModal} onHide={() => setShowSpecModal(false)}
-                onCreate={createSpec} />
+                onCreate={createSpecialization} />
             <CreateSkillModal show={showSkillModal} onHide={() => setShowSkillModal(false)}
-                onCreate={createSkill} specialization={specialization} />
+                onCreate={createSkill} specialization={specializations} />
         </>
     );
 }

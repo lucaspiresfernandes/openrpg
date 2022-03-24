@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateSpellModal from '../../../Modals/CreateSpellModal';
 
 type SpellEditorContainerProps = {
-    spell: Spell[];
+    spells: Spell[];
 }
 
 export default function SpellEditorContainer(props: SpellEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showSpellModal, setShowSpellModal] = useState(false);
-    const [spell, setSpell] = useState(props.spell);
+    const [spell, setSpell] = useState(props.spells);
 
     function createSpell(name: string, description: string, cost: string, type: string,
         damage: string, castingTime: string, range: string, duration: string) {

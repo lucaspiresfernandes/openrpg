@@ -41,27 +41,27 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                         <Row>
                             <ExtraInfoEditorContainer extraInfo={props.extraInfo} />
                         </Row>
-                        <AttributeEditorContainer attribute={props.attribute} attributeStatus={props.attributeStatus} />
+                        <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus} />
                         <Row>
-                            <SpecEditorContainer spec={props.spec} />
+                            <SpecEditorContainer specs={props.spec} />
                         </Row>
                         <Row>
-                            <CharacteristicEditorContainer characteristic={props.characteristic} />
+                            <CharacteristicEditorContainer characteristics={props.characteristic} />
                         </Row>
                         <Row>
-                            <CurrencyEditorContainer currency={props.currency} />
+                            <CurrencyEditorContainer currencies={props.currency} />
                         </Row>
                     </>
                 }
-                <SkillEditorContainer skill={props.skill} specialization={props.specialization} />
+                <SkillEditorContainer skills={props.skill} specializations={props.specialization} />
                 <Row>
-                    <EquipmentEditorContainer equipment={props.equipment} />
+                    <EquipmentEditorContainer equipments={props.equipment} />
                 </Row>
                 <Row>
-                    <ItemEditorContainer item={props.item} />
+                    <ItemEditorContainer items={props.item} />
                 </Row>
                 <Row>
-                    <SpellEditorContainer spell={props.spell} />
+                    <SpellEditorContainer spells={props.spell} />
                 </Row>
             </Container>
             <ErrorToastContainer toasts={toasts} />

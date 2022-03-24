@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateCharacteristicModal from '../../../Modals/CreateCharacteristicModal';
 
 type CharacteristicEditorContainerProps = {
-    characteristic: Characteristic[];
+    characteristics: Characteristic[];
 }
 
 export default function CharacteristicEditorContainer(props: CharacteristicEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showCharacteristicModal, setShowCharacteristicModal] = useState(false);
-    const [characteristic, setCharacteristic] = useState(props.characteristic);
+    const [characteristic, setCharacteristic] = useState(props.characteristics);
 
     function createCharacteristic(name: string, rollable: boolean) {
         api.put('/sheet/characteristic', { name, rollable }).then(res => {

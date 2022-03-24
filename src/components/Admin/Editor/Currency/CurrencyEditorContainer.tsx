@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateCurrencyModal from '../../../Modals/CreateCurrencyModal';
 
 type CurrencyEditorContainerProps = {
-    currency: Currency[];
+    currencies: Currency[];
 }
 
 export default function CurrencyEditorContainer(props: CurrencyEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showCurrencyModal, setShowCurrencyModal] = useState(false);
-    const [currency, setCurrency] = useState(props.currency);
+    const [currency, setCurrency] = useState(props.currencies);
 
     function createCurrency(name: string) {
         api.put('/sheet/currency', { name }).then(res => {

@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
     const value = req.body.value;
 
     if (!key || value === undefined) {
-        res.status(400).send({ message: 'Key is undefined.' });
+        res.status(400).send({ message: 'A chave não é especificada. Contate o desenvolvedor do aplicativo para resolver esse erro.' });
         return;
     }
 

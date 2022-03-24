@@ -8,36 +8,45 @@ import { Attribute, AttributeStatus } from '@prisma/client';
 import api from '../../../../utils/api';
 import { ErrorLogger } from '../../../../contexts';
 import CreateAttributeModal from '../../../Modals/CreateAttributeModal';
-import AttributeStatusEditorField from './StatusEditorField';
+import AttributeStatusEditorField from './AttributeStatusEditorField';
 import CreateAttributeStatusModal from '../../../Modals/CreateAttributeStatusModal';
 
 type AttributeEditorContainerProps = {
-    attribute: Attribute[];
+    attributes: Attribute[];
     attributeStatus: AttributeStatus[];
 }
 
 export default function AttributeEditorContainer(props: AttributeEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showAttributeModal, setShowAttributeModal] = useState(false);
-    const [attribute, setAttribute] = useState(props.attribute);
+    const [attributes, setAttributes] = useState(props.attributes);
     const [showAttributeStatusModal, setShowAttributeStatusModal] = useState(false);
     const [attributeStatus, setAttributeStatus] = useState(props.attributeStatus);
+
+    function onAttributeNameChange(id: number, name: string) {
+        const newAttributes = [...attributes];
+        const attr = newAttributes.find(attr => attr.id === id);
+        if (attr) {
+            attr.name = name;
+            setAttributes(newAttributes);
+        }
+    }
 
     function createAttribute(name: string, rollable: boolean) {
         api.put('/sheet/attribute', { name, rollable }).then(res => {
             const id = res.data.id;
-            setAttribute([...attribute, { id, name, rollable }]);
+            setAttributes([...attributes, { id, name, rollable }]);
         }).catch(logError);
     }
 
     function deleteAttribute(id: number) {
         if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
         api.delete('/sheet/attribute', { data: { id } }).then(() => {
-            const newAttribute = [...attribute];
+            const newAttribute = [...attributes];
             const index = newAttribute.findIndex(attr => attr.id === id);
             if (index > -1) {
                 newAttribute.splice(index, 1);
-                setAttribute(newAttribute);
+                setAttributes(newAttribute);
             }
         }).catch(logError);
     }
@@ -77,9 +86,10 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {attribute.map(attribute =>
+                                    {attributes.map(attribute =>
                                         <AttributeEditorField key={attribute.id}
-                                            attribute={attribute} onDelete={deleteAttribute} />
+                                            attribute={attribute} onDelete={deleteAttribute}
+                                            onNameChange={onAttributeNameChange} />
                                     )}
                                 </tbody>
                             </Table>
@@ -103,7 +113,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 <tbody>
                                     {attributeStatus.map(stat =>
                                         <AttributeStatusEditorField key={stat.id} attributeStatus={stat}
-                                            attributes={attribute} onDelete={deleteAttributeStatus} />
+                                            attributes={attributes} onDelete={deleteAttributeStatus} />
                                     )}
                                 </tbody>
                             </Table>
@@ -114,7 +124,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
             <CreateAttributeModal show={showAttributeModal} onHide={() => setShowAttributeModal(false)}
                 onCreate={createAttribute} />
             <CreateAttributeStatusModal show={showAttributeStatusModal} onHide={() => setShowAttributeStatusModal(false)}
-                onCreate={createAttributeStatus} attributes={attribute} />
+                onCreate={createAttributeStatus} attributes={attributes} />
         </>
     );
 }

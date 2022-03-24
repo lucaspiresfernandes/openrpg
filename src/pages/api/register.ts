@@ -17,14 +17,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
   const adminKey = req.body.adminKey as string;
 
   if (!username || !plainPassword) {
-    res.status(400).send({ message: 'Username or password is blank.' });
+    res.status(400).send({ message: 'Usuário ou senha está em branco.' });
     return;
   }
 
   const user = await database.player.findFirst({ where: { username } });
 
   if (user) {
-    res.status(401).send({ message: 'Username already exists.' });
+    res.status(401).send({ message: 'Usuário já existe.' });
     return;
   }
 
@@ -34,7 +34,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
       isAdmin = true;
     }
     else {
-      res.status(401).send({ message: 'Admin key is incorrect.' });
+      res.status(401).send({ message: 'Chave do administrador incorreta.' });
       return;
     }
   }

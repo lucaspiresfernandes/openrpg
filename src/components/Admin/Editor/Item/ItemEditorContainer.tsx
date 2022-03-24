@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateItemModal from '../../../Modals/CreateItemModal';
 
 type ItemEditorContainerProps = {
-    item: Item[];
+    items: Item[];
 }
 
 export default function ItemEditorContainer(props: ItemEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showItemModal, setShowItemModal] = useState(false);
-    const [item, setItem] = useState(props.item);
+    const [item, setItem] = useState(props.items);
 
     function createItem(name: string, description: string) {
         api.put('/sheet/item', { name, description }).then(res => {

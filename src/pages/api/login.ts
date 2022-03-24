@@ -13,21 +13,21 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const plainPassword = req.body.password;
 
   if (!username || !plainPassword) {
-    res.status(400).send({ message: 'Username or password is blank.' });
+    res.status(400).send({ message: 'Usuário ou senha está em branco.' });
     return;
   }
 
   const user = await database.player.findFirst({ where: { username } });
 
   if (!user) {
-    res.status(401).send({ message: 'Username or password is incorrect.' });
+    res.status(401).send({ message: 'Usuário ou senha estão incorretos.' });
     return;
   }
 
   const isValidPassword = compare(plainPassword, user.password);
 
   if (!isValidPassword) {
-    res.status(401).send({ message: 'Username or password is incorrect.' });
+    res.status(401).send({ message: 'Usuário ou senha estão incorretos.' });
     return;
   }
 

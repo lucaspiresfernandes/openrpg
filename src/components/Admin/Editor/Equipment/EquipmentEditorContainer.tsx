@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateEquipmentModal from '../../../Modals/CreateEquipmentModal';
 
 type EquipmentEditorContainerProps = {
-    equipment: Equipment[];
+    equipments: Equipment[];
 }
 
 export default function EquipmentEditorContainer(props: EquipmentEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showEquipmentModal, setShowEquipmentModal] = useState(false);
-    const [equipment, setEquipment] = useState(props.equipment);
+    const [equipment, setEquipment] = useState(props.equipments);
 
     function createEquipment(name: string, type: string, damage: string, range: string,
         attacks: string, ammo: number | null = null) {

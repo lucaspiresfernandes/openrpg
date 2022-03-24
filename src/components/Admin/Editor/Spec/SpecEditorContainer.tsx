@@ -10,13 +10,13 @@ import { ErrorLogger } from '../../../../contexts';
 import CreateSpecModal from '../../../Modals/CreateSpecModal';
 
 type SpecEditorContainerProps = {
-    spec: Spec[];
+    specs: Spec[];
 }
 
 export default function SpecEditorContainer(props: SpecEditorContainerProps) {
     const logError = useContext(ErrorLogger);
     const [showSpecModal, setShowSpecModal] = useState(false);
-    const [spec, setSpec] = useState(props.spec);
+    const [spec, setSpec] = useState(props.specs);
 
     function createSpec(name: string) {
         api.put('/sheet/spec', { name }).then(res => {

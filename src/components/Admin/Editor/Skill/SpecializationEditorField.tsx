@@ -10,6 +10,7 @@ import BottomTextInput from '../../../BottomTextInput';
 type SpecializationEditorFieldProps = {
     specialization: Specialization;
     onDelete(id: number): void;
+    onNameChange?(id: number, newName: string): void;
 }
 
 export default function SpecializationEditorField(props: SpecializationEditorFieldProps) {
@@ -19,6 +20,7 @@ export default function SpecializationEditorField(props: SpecializationEditorFie
     function onBlur() {
         if (name === lastName) return;
         setName(name);
+        if (props.onNameChange) props.onNameChange(props.specialization.id, name);
         api.post('/sheet/specialization', { id: props.specialization.id, name }).catch(logError);
     }
 

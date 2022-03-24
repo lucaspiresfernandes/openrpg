@@ -46,5 +46,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         prisma.skill.createMany({ data: databaseInit.skill }),
     ]);
 
-    res.send({ message: 'OK!' });
+    res.end();
 }

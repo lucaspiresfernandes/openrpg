@@ -11,6 +11,7 @@ import BottomTextInput from '../../../BottomTextInput';
 type AttributeEditorFieldProps = {
     attribute: Attribute;
     onDelete(id: number): void;
+    onNameChange?(id: number, newName: string): void;
 }
 
 export default function AttributeEditorField(props: AttributeEditorFieldProps) {
@@ -21,6 +22,7 @@ export default function AttributeEditorField(props: AttributeEditorFieldProps) {
     function onBlur() {
         if (name === lastName) return;
         setName(name);
+        if (props.onNameChange) props.onNameChange(props.attribute.id, name);
         api.post('/sheet/attribute', { id: props.attribute.id, name }).catch(logError);
     }
 
