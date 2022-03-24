@@ -22,6 +22,12 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
         api.post('/sheet/info', { id: props.info.id, name }).catch(logError);
     }
 
+    function Field() {
+        if (props.info.default) return <>{name}</>;
+        return <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
+            onBlur={onBlur} />;
+    }
+
     return (
         <tr>
             <td>
@@ -32,8 +38,7 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
                 }
             </td>
             <td>
-                <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                    onBlur={onBlur} />
+                <Field />
             </td>
         </tr>
     );
