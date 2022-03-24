@@ -44,11 +44,17 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
                 addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <Table responsive className='align-middle text-center'>
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Dano</th>
+                                    <th>Alcance</th>
+                                    <th>Ataques</th>
+                                    <th>Munição</th>
+                                    <th>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

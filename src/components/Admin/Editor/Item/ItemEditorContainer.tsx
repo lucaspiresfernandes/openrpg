@@ -48,6 +48,9 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Peso</th>
+                                    <th>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

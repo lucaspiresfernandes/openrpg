@@ -44,11 +44,19 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
                 addButton={{ onAdd: () => setShowSpellModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <Table responsive className='align-middle text-center'>
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Custo</th>
+                                    <th>Tipo</th>
+                                    <th>Dano</th>
+                                    <th>Tempo de Conjuração</th>
+                                    <th>Alcance</th>
+                                    <th>Duração</th>
+                                    <th>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

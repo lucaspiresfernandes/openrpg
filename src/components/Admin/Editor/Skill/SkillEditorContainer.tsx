@@ -96,6 +96,8 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                     <tr>
                                         <th></th>
                                         <th>Nome</th>
+                                        <th>Especialização</th>
+                                        <th>Obrigatório</th>
                                     </tr>
                                 </thead>
                                 <tbody>

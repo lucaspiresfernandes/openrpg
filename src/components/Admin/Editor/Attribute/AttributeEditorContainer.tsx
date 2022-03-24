@@ -73,6 +73,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                     <tr>
                                         <th></th>
                                         <th>Nome</th>
+                                        <th>Rolável</th>
                                     </tr>
                                 </thead>
                                 <tbody>

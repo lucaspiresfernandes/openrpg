@@ -48,6 +48,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
+                                    <th>Rolável</th>
                                 </tr>
                             </thead>
                             <tbody>
