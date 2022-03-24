@@ -32,8 +32,7 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                 <Row className='display-5 text-center'>
                     <Col>Painel do Administrador</Col>
                 </Row>
-                {
-                    props.players.length === 0 &&
+                {props.players.length === 0 ?
                     <>
                         <Row>
                             <InfoEditorContainer info={props.info} />
@@ -50,6 +49,14 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                         </Row>
                         <Row>
                             <CurrencyEditorContainer currencies={props.currency} />
+                        </Row>
+                    </> :
+                    <>
+                        <Row>
+                            <Col className='h4 text-center my-4' style={{ color: 'gray' }}>
+                                Alguns editores não estão disponíveis quando existem jogadores ativos.
+                                Caso queira acessá-los, deve apagar os jogadores ativos restantes.
+                            </Col>
                         </Row>
                     </>
                 }
