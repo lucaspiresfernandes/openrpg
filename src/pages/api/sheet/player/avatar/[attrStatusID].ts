@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import api from '../../../../../utils/api';
-import { getImageURL } from '../../../../../utils/image';
+import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -10,15 +10,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const playerID = req.session.player?.id || parseInt(req.query.playerID as string);
-    const statusID: number = parseInt(req.query.attrStatusID as string) || 0;
+    const statusID: number | null = parseInt(req.query.attrStatusID as string) || null;
     if (!playerID) {
         res.status(401).end();
         return;
     }
 
+    const avatar = await prisma.playerAvatar.findFirst({
+        where: {
+            player_id: playerID,
+            attribute_status_id: statusID
+        },
+        select: { link: true }
+    });
+
+    if (avatar === null || avatar.link === null) {
+        res.status(404).end();
+        return;
+    }
+
     try {
-        const url = getImageURL(playerID, statusID);
-        const response = await api.get(url, { responseType: 'arraybuffer', timeout: 1000 });
+        const response = await api.get(avatar.link, { responseType: 'arraybuffer', timeout: 1000 });
         res.setHeader('content-type', response.headers['content-type']);
         res.end(response.data, 'binary');
     }

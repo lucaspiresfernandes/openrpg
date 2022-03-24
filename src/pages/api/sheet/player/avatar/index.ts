@@ -1,41 +1,46 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
-import { parseMultipart, getImageURL, uploadImage } from '../../../../../utils/image';
 
-export const config = {
-    api: {
-        bodyParser: false
-    }
-};
+export type AvatarData = {
+    id: number | null;
+    link: string | null;
+}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') return;
 
     const player = req.session.player;
+    const avatarData: AvatarData[] = req.body.avatarData;
 
-    if (!player) {
+    if (!player || !avatarData) {
         res.status(401).end();
         return;
     }
 
-    try {
-        const data = await parseMultipart(req);
+    const avatars = await prisma.playerAvatar.findMany({
+        where: { player_id: player.id },
+        select: { id: true, attribute_status_id: true, link: true }
+    });
 
-        let filesAux = data.files.file;
-        const fileList = Array.isArray(filesAux) ? filesAux : [filesAux];
-        let idsAux = data.fields.attrID;
-        const ids = Array.isArray(idsAux) ? idsAux : [idsAux];
-        
-        await Promise.all(fileList.map((file, i) => {
-            const attrID = parseInt(ids[i]);
-            return uploadImage(file.filepath, player.id, attrID);
-        }));
-        res.end();
-    }
-    catch (err) {
-        res.status(400).send('Form data malformation.');
+    if (avatars.length !== avatarData.length) {
+        res.status(401).end();
+        return;
     }
 
+    await Promise.all(avatars.map(avatar => {
+        const statusID = avatar.attribute_status_id;
+        const newAvatar = avatarData.find(av => av.id === statusID);
+
+        if (!newAvatar || newAvatar.link === avatar.link) return;
+
+        return prisma.playerAvatar.update({
+            where: { id: avatar.id },
+            data: { link: newAvatar.link }
+        });
+    }));
+
+    res.end();
 }
 
 export default sessionAPI(handler);

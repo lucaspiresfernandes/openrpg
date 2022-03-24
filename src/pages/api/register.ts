@@ -73,6 +73,19 @@ async function registerPlayerData(player: Player) {
     database.currency.findMany()
   ]);
 
+  const playerAvatarData: {
+    player_id: number,
+    attribute_status_id: number | null,
+    link: null,
+  }[] = results[2].map(attrStatus => {
+    return {
+      player_id: player.id,
+      attribute_status_id: attrStatus.id,
+      link: null
+    };
+  });
+  playerAvatarData.push({ player_id: player.id, attribute_status_id: null, link: null });
+
   await Promise.all([
     database.playerInfo.createMany({
       data: results[0].map(info => {
@@ -152,7 +165,10 @@ async function registerPlayerData(player: Player) {
         player_id: player.id,
         value: ''
       }
-    })
+    }),
+    database.playerAvatar.createMany({
+      data: playerAvatarData,
+    }),
   ]);
 }
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useState } from 'react';
+import { ChangeEvent, useContext, useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,53 +7,53 @@ import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
 
+export type AvatarData = {
+    id: number | null;
+    link: string | null;
+    name: string;
+}
+
+type PlayerAvatar = {
+    link: string | null;
+    AttributeStatus: {
+        id: number;
+        name: string;
+    } | null;
+};
+
 type EditAvatarModalProps = {
-    attributeStatus: { id: number, name: string }[];
+    playerAvatars: PlayerAvatar[];
     show?: boolean;
     onHide?(): void;
     onUpdate(): void;
-}
+};
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {
-    const [files, setFiles] = useState<{ id: number, file: File }[]>(new Array(props.attributeStatus.length + 1));
     const logError = useContext(ErrorLogger);
-
-    function onHide() {
-        setFiles(new Array(props.attributeStatus.length + 1));
-        if (props.onHide) props.onHide();
-    }
+    const [avatars, setAvatars] = useState<AvatarData[]>(props.playerAvatars.map(avatar => {
+        return {
+            id: avatar.AttributeStatus?.id || null,
+            name: avatar.AttributeStatus?.name || 'Padrão',
+            link: avatar.link
+        };
+    }));
 
     function onUpdateAvatar() {
-        const form = new FormData();
-        let anyEntry = false;
-        const ids: number[] = [];
-        for (const file of files) {
-            if (!file) continue;
-            anyEntry = true;
-            form.append('file', file.file);
-            form.append('attrID', file.id.toString());
-            ids.push(file.id);
-        }
-
-        if (!anyEntry) return;
-
-        api.post('/sheet/player/avatar', form, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        }).then(props.onUpdate).catch(logError);
+        api.post('/sheet/player/avatar', { avatarData: avatars }).then(props.onUpdate).catch(logError);
     }
 
-    function onFileChange(index: number, id: number, ev: ChangeEvent<HTMLInputElement>) {
-        let auxFiles = ev.currentTarget.files;
-        if (auxFiles) {
-            const newFiles = [...files];
-            newFiles[index] = { id, file: auxFiles[0] };
-            setFiles(newFiles);
-        }
+    function onAvatarChange(id: number | null, ev: ChangeEvent<HTMLInputElement>) {
+        setAvatars(avatars => {
+            const newAvatars = [...avatars];
+            const av = newAvatars.find(avatar => avatar.id === id);
+            if (av) av.link = ev.target.value || null;
+            return newAvatars;
+        });
     }
 
     return (
         <SheetModal title='Editar Avatar' applyButton={{ name: 'Atualizar', onApply: onUpdateAvatar }} show={props.show}
-            onHide={onHide} scrollable>
+            onHide={props.onHide} scrollable>
             <Container fluid>
                 <Row className='mb-3 h4 text-center'>
                     <Col>
@@ -61,16 +61,11 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
                         no tamanho de <b>420x600</b> e em formato <b>PNG</b>.
                     </Col>
                 </Row>
-                <Form.Group className='mb-3'>
-                    <Form.Label>Avatar</Form.Label>
-                    <Form.Control type='file' accept='image/*'
-                        onChange={ev => onFileChange(0, 0, ev as ChangeEvent<HTMLInputElement>)} />
-                </Form.Group>
-                {props.attributeStatus.map((stat, index) =>
-                    <Form.Group key={stat.id} className='mb-3'>
-                        <Form.Label>Avatar ({stat.name})</Form.Label>
-                        <Form.Control type='file' accept='image/*'
-                            onChange={ev => onFileChange(index + 1, stat.id, ev as ChangeEvent<HTMLInputElement>)} />
+                {avatars.map(avatar =>
+                    <Form.Group className='mb-3' key={avatar.id || null}>
+                        <Form.Label>Avatar ({avatar.name || 'Padrão'})</Form.Label>
+                        <Form.Control className='theme-element' value={avatar.link || ''}
+                            onChange={ev => onAvatarChange(avatar.id || null, ev as ChangeEvent<HTMLInputElement>)} />
                     </Form.Group>
                 )}
             </Container>

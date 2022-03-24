@@ -16,15 +16,12 @@ import PlayerInfoField from '../../components/Player/PlayerInfoField';
 import PlayerAttributeContainer from '../../components/Player/Attribute/PlayerAttributeContainer';
 import PlayerCharacteristicField from '../../components/Player/PlayerCharacteristicField';
 import api from '../../utils/api';
-import EditAvatarModal from '../../components/Modals/EditAvatarModal';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import Router from 'next/router';
 import PlayerSkillContainer from '../../components/Player/Skill/PlayerSkillContainer';
 import ApplicationHead from '../../components/ApplicationHead';
-import PlayerCurrencyField from '../../components/Player/PlayerCurrencyField';
 import DiceRollResultModal from '../../components/Modals/DiceRollResultModal';
-import GeneralDiceRollModal from '../../components/Modals/GeneralDiceRollModal';
 import PlayerItemContainer from '../../components/Player/Item/PlayerItemContainer';
 import PlayerEquipmentContainer from '../../components/Player/Equipment/PlayerEquipmentContainer';
 import { Socket } from '../../contexts';
@@ -87,7 +84,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </DataContainer>
                                 <Col>
                                     <PlayerAttributeContainer playerAttributes={props.playerAttributes}
-                                        playerAttributeStatus={props.playerAttributeStatus} />
+                                        playerAttributeStatus={props.playerAttributeStatus} playerAvatars={props.playerAvatars} />
                                 </Col>
                             </Row>
                             <Row>
@@ -140,17 +137,18 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 playerInfo: [],
                 playerAttributes: [],
                 playerAttributeStatus: [],
+                playerAvatars: [],
                 playerSpecs: [],
                 playerCharacteristics: [],
                 playerEquipments: [],
                 playerSkills: [],
+                playerCurrency: [],
                 playerItems: [],
                 playerSpells: [],
                 availableEquipments: [],
                 availableSkills: [],
                 availableItems: [],
                 availableSpells: [],
-                playerCurrency: [],
             }
         };
     }
@@ -238,6 +236,14 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             select: { value: true, Currency: true }
         }),
 
+        database.playerAvatar.findMany({
+            where: { player_id: playerID },
+            select: {
+                link: true,
+                AttributeStatus: { select: { id: true, name: true } }
+            }
+        }),
+
         database.player.findUnique({
             where: { id: playerID }, select: { maxLoad: true }
         })
@@ -259,7 +265,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             availableItems: results[11],
             availableSpells: results[12],
             playerCurrency: results[13],
-            player: { id: playerID, maxLoad: results[14]?.maxLoad || 0 },
+            playerAvatars: results[14],
+            player: { id: playerID, maxLoad: results[15]?.maxLoad || 0 },
         }
     };
 }

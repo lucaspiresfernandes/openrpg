@@ -11,6 +11,7 @@ interface SheetModalProps extends ModalProps {
         onApply(ev: MouseEvent | FormEvent | undefined): MouseEventHandler | FormEventHandler | void;
         disabled?: boolean;
     };
+    onCancel?(): void;
 }
 
 export default function SheetModal(props: SheetModalProps) {
@@ -44,7 +45,12 @@ export default function SheetModal(props: SheetModalProps) {
                             {props.applyButton.name}
                         </Button>
                     }
-                    <Button variant='secondary' onClick={props.onHide}>Fechar</Button>
+                    <Button variant='secondary' onClick={() => {
+                        if (props.onCancel) props.onCancel();
+                        if (props.onHide) props.onHide();
+                    }}>
+                        Fechar
+                    </Button>
                 </Modal.Footer>
             </Form>
         </Modal >

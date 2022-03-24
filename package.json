@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build & npx prisma db push",
+    "build": "next build",
     "start": "next start -p $PORT",
     "lint": "next lint"
   },
@@ -17,7 +17,6 @@
     "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
     "bootstrap": "^5.1.3",
-    "cloudinary": "^1.28.1",
     "dotenv": "^16.0.0",
     "formidable": "^2.0.1",
     "iron-session": "^6.0.5",

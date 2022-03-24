@@ -28,6 +28,7 @@ model Player {
   PlayerNote            PlayerNote[]
   PlayerSpell           PlayerSpell[]
   PlayerCurrency        PlayerCurrency[]
+  PlayerAvatar          PlayerAvatar[]
 }
 
 model Info {
@@ -51,6 +52,7 @@ model AttributeStatus {
   Attribute             Attribute               @relation(fields: [attribute_id], references: [id])
   attribute_id          Int
   PlayerAttributeStatus PlayerAttributeStatus[]
+  PlayerAvatar          PlayerAvatar[]
 }
 
 model Spec {
@@ -245,6 +247,17 @@ model PlayerNote {
   value     String
 
   @@id([player_id])
+}
+
+model PlayerAvatar {
+  id                  Int              @id @default(autoincrement())
+  Player              Player           @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  player_id           Int
+  AttributeStatus     AttributeStatus? @relation(fields: [attribute_status_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  attribute_status_id Int?
+  link                String?
+
+  @@unique([player_id, attribute_status_id])
 }
 
 model Config {
