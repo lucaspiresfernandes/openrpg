@@ -56,7 +56,18 @@ Antes de começarmos, você deverá cumprir alguns passos preliminares.
 3. (Opcional) Você deverá criar uma conta na [Random.org](https://accounts.random.org/create). Caso não esteja interessado em criar uma conta no Random.org e usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
 4. Você deverá fazer o [fork](https://github.com/alyssapiresfernandescefet/openrpg/fork) desse repositório para a sua conta.
 
-### 
+### Sobre o Random.org (Opcional)
+
+Caso tenha optado por não usar os serviços do Random.org, pode pular essa seção.
+
+Após criar uma conta no Random.org, você deverá criar um serviço de API. Siga os passos:
+
+1. Logue e acesse a [sua conta](https://accounts.random.org/).
+2. Procure por "API Services" e clique em "Use this service".
+3. Crie um novo serviço, clicando em "Create a new API key".
+4. Digite o nome do serviço (para fins de identificação, é recomendável que o nome do serviço seja "nomeDoSeuApp_random") e clique em "Create".
+5. Após criar, clique no novo item que foi criado na lista.
+6. Copie o primeiro item, "API Key", e salve em algum lugar do seu computador (em um bloco de notas). Você vai precisar dessa chave mais para frente.
 
 ### Iniciando
 
@@ -71,7 +82,7 @@ OBS: Caso esteja tendo dificuldades com o passo-a-passo, pode optar por ver um [
 |             KEY           |                                                    VALUE                                                 |
 | ------------------------- | -------------------------------------------------------------------------------------------------------- |
 | SESSION_SECRET            | Um valor aleatório, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
-| RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org, que pode ser acessada [aqui](https://api.random.org/dashboard).            |
+| RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.             |
 | DATABASE_URL              | Esse campo pode ser deixado em branco. Na próxima sessão ensinarei como preenchê-lo.                     |
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
@@ -101,11 +112,26 @@ Siga esses passos:
 
 ### Configurando o Banco de Dados (Usando o [db4free](https://www.db4free.net/))
 
+1. [Cadastre-se](https://www.db4free.net/signup.php) no db4free e confirme o cadastro no seu e-mail.
+2. Na tela de confirmação do cadastro, você precisará salvar os dados mostrados na tela e montar a seguinte URL:
+
+`
+mysql://usuário:senha@db4free.net:3306/NomeDoBancoDeDados
+`
+
+3. a URL deverá parecer como a do seguinte exemplo:
+
+`
+mysql://OpenRPG:197324685@db4free.net:3306/openrpgdb
+`
+
+4. De volta para suas config vars na aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings) do Heroku, use a url como o valor da variável DATABASE_URL.
 
 ### Fazendo o Deploy
 
-Após Configurar a Heroku e configurar o banco de dados, você irá acessar novamente a página de [Deploy](https://dashboard.heroku.com/apps/openrpgdemoo/deploy) e, no final da página, clique em "Deploy Branch". Espere o seu deploy terminar, e bom jogo!
+Após configurar a Heroku e configurar o banco de dados, você irá acessar novamente a página de [Deploy](https://dashboard.heroku.com/apps/openrpgdemoo/deploy) e, no final da página, clicar em "Deploy Branch". Espere o seu deploy terminar, e bom jogo!
 
+## Extras
 
 ### Configurações Profundas (Barras de Atributo)
 
