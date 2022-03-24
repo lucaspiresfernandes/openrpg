@@ -4,6 +4,10 @@ $proggress-bar-height: 40px;
     height: $proggress-bar-height;
 }
 
+.attribute-dice {
+    max-height: $proggress-bar-height;
+}
+
 .Vida {
     $background: #5a1e1e;
     $foreground: #b62323;
@@ -86,8 +90,4 @@ $proggress-bar-height: 40px;
         color: white;
         text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
     }
-}
-
-.attribute-dice {
-    max-height: $proggress-bar-height;
 }

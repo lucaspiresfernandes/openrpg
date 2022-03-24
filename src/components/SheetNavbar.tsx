@@ -16,7 +16,7 @@ export default function SheetNavbar() {
     return (
         <Navbar sticky='top' expand='sm' className='mb-3'>
             <Container fluid>
-                <Navbar.Brand>{config.application.name}</Navbar.Brand>
+                <Navbar.Brand>{config.application_name}</Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                     <Nav className='me-auto' navbarScroll>

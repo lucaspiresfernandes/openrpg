@@ -1,8 +1,5 @@
 {
-    "application": {
-        "name": "Open RPG",
-        "description": "An open-source RPG"
-    },
+    "application_name": "Open RPG",
     "player": {
         "admin_key": "123456",
         "role": "Investigador",
