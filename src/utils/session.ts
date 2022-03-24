@@ -3,7 +3,7 @@ import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next';
 import { NextApiHandler, GetServerSidePropsContext, NextApiRequest } from 'next';
 import { NextApiResponseServerIO } from './socket';
 
-export const cookieName = 'openrpgcookiesession';
+export const cookieName = 'openrpg_session';
 
 declare module 'iron-session' {
   interface IronSessionData {
