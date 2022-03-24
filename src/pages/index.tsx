@@ -10,24 +10,17 @@ import api from '../utils/api';
 import ErrorToastContainer from '../components/ErrorToastContainer';
 import useToast from '../hooks/useToast';
 import styles from '../styles/modules/Home.module.scss';
-import useAuthentication from '../hooks/useAuthentication';
 import Router from 'next/router';
+import WelcomePage from '../components/Admin/WelcomePage';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import prisma from '../utils/database';
+import { sessionSSR } from '../utils/session';
 
-export default function Home() {
+export default function Home({ init, error }: InferGetServerSidePropsType<typeof getSSP>) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [toasts, addToast] = useToast();
-
-  useAuthentication(player => {
-    if (player) {
-      if (player.admin) {
-        return Router.replace('/sheet/admin/1');
-      }
-      return Router.replace('/sheet/1');
-    }
-    setLoading(false);
-  });
 
   function onFormSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault();
@@ -49,9 +42,29 @@ export default function Home() {
     });
   }
 
-  if (loading) {
-    return <></>;
-  }
+  if (error) return (
+    <Container className='text-center'>
+      <Row>
+        <Col className='h1 mt-3' style={{ color: 'red' }}>
+          O banco de dados não foi inicializado corretamente.
+        </Col>
+      </Row>
+      <Row>
+        <Col className='h3 mt-2'>
+          Certifique-se de inicializar seu banco
+        </Col>
+      </Row>
+    </Container>
+  );
+
+  if (init === null) return (
+    <>
+      <WelcomePage logError={addToast} />
+      <ErrorToastContainer toasts={toasts} />
+    </>
+  );
+
+  if (loading) return <></>;
 
   return (
     <>
@@ -96,3 +109,50 @@ export default function Home() {
     </>
   );
 }
+
+async function getSSP(ctx: GetServerSidePropsContext) {
+  const player = ctx.req.session.player;
+
+  if (player) {
+    if (player.admin) {
+      return {
+        redirect: {
+          destination: '/sheet/admin/1',
+          permanent: false
+        },
+        props: {
+          init: null
+        }
+      };
+    }
+    return {
+      redirect: {
+        destination: '/sheet/1',
+        permanent: false
+      },
+      props: {
+        init: null
+      }
+    };
+  }
+
+  try {
+    const init = await prisma.config.findUnique({ where: { key: 'init' } });
+
+    return {
+      props: {
+        init
+      }
+    };
+  }
+  catch (err) {
+    return {
+      props: {
+        init: null,
+        error: true
+      }
+    };
+  }
+}
+
+export const getServerSideProps = sessionSSR(getSSP);

@@ -22,6 +22,7 @@ import { ErrorLogger, Socket } from '../../../contexts';
 import ApplicationHead from '../../../components/ApplicationHead';
 import GeneralDiceRollModal from '../../../components/Modals/GeneralDiceRollModal';
 import DiceRollResultModal from '../../../components/Modals/DiceRollResultModal';
+import WelcomeAdmin from '../../../components/Admin/WelcomePage';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();

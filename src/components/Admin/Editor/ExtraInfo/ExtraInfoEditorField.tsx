@@ -2,10 +2,10 @@ import { ExtraInfo } from '@prisma/client';
 import { useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import { BsTrash } from 'react-icons/bs';
-import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
-import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
+import { ErrorLogger } from '../../../../contexts';
+import useExtendedState from '../../../../hooks/useExtendedState';
+import api from '../../../../utils/api';
+import BottomTextInput from '../../../BottomTextInput';
 
 type ExtraInfoEditorFieldProps = {
     extraInfo: ExtraInfo;

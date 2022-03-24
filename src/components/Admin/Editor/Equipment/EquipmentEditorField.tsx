@@ -3,11 +3,11 @@ import { ChangeEvent, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { BsTrash } from 'react-icons/bs';
-import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
-import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
-import config from '../../../../openrpg.config.json';
+import { ErrorLogger } from '../../../../contexts';
+import useExtendedState from '../../../../hooks/useExtendedState';
+import api from '../../../../utils/api';
+import BottomTextInput from '../../../BottomTextInput';
+import config from '../../../../../openrpg.config.json';
 
 type EquipmentEditorFieldProps = {
     equipment: Equipment;
