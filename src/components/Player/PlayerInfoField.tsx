@@ -36,7 +36,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         );
 
         return (
-            <BottomTextInput autoFocus className='w-100' id={`info${infoID}`} autoComplete='off' value={value}
+            <BottomTextInput className='w-100' id={`info${infoID}`} autoComplete='off' value={value}
                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
         );
     }

@@ -68,7 +68,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                     Perfil de {config.player.role}
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row className='mb-3'>
                                 <DataContainer outline title='Detalhes Pessoais'>
                                     <>
                                         {props.playerInfo.map(pinfo =>

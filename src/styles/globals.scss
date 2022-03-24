@@ -1,5 +1,6 @@
-@import "bootstrap";
 @import "./palette";
+$secondary: $secondary-buttons !default;
+@import "bootstrap";
 @import "./attribute";
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap");
 
@@ -19,16 +20,16 @@ body {
 }
 
 .theme-element {
-  background-color: $primary-color;
+  background-color: $background-color;
   color: $text-color;
 
   &:focus {
-    background-color: $primary-color;
+    background-color: $background-color;
     color: $text-color;
   }
 
   &:disabled {
-    background-color: darken($primary-color, 10%);
+    background-color: darken($background-color, 10%);
     border-color: darken($text-color, 10%);
     color: $text-color;
   }

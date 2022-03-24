@@ -18,7 +18,7 @@
 
 // Cor do plano de fundo.
 // Em geral, é recomendado que essa cor seja escura.
-$background-color: #000000;
+$background-color: #0e0e0e;
 
 // Cor primária da paleta de cores.
 // Usado como cor de fundo de caixa de textos e bordas.
@@ -53,3 +53,6 @@ $navbar-text-color: #ffffff;
 
 // Cor de fundo do contêiner de perícia.
 $skill-container-outline-color: #ffffff;
+
+// Cor dos botões secundários (todos os botões auxiliares do jogo, como o de adicionar (+), fechar, apagar, retrato, etc.)
+$secondary-buttons: #6c757d !default;

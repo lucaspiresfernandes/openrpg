@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import api from '../utils/api';
+import config from '../../openrpg.config.json';
 
 export default function AdminNavbar() {
     const router = useRouter();
@@ -15,7 +16,7 @@ export default function AdminNavbar() {
     return (
         <Navbar sticky='top' expand='sm' className='mb-3'>
             <Container fluid>
-                <Navbar.Brand>Open RPG</Navbar.Brand>
+                <Navbar.Brand>{config.application.name}</Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                     <Nav className='me-auto' navbarScroll>
