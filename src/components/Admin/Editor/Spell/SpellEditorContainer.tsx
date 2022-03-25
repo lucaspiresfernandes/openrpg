@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import SpellEditorField from './SpellEditorField';
 import { useContext, useState } from 'react';
 import { Spell } from '@prisma/client';
@@ -44,7 +44,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
                 addButton={{ onAdd: () => setShowSpellModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle text-center'>
+                        <AdminTable centerText>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -65,7 +65,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
                                         spell={spell} onDelete={deleteSpell} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

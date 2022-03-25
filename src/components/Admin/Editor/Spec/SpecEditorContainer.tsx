@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import SpecEditorField from './SpecEditorField';
 import { useContext, useState } from 'react';
 import { Spec } from '@prisma/client';
@@ -43,7 +43,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
                 addButton={{ onAdd: () => setShowSpecModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -56,7 +56,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
                                         spec={spec} onDelete={deleteSpec} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

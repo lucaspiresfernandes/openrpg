@@ -1,13 +1,13 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
 import { useContext, useState } from 'react';
 import { ExtraInfo } from '@prisma/client';
 import api from '../../../../utils/api';
 import { ErrorLogger } from '../../../../contexts';
 import CreateExtraInfoModal from '../../../Modals/CreateExtraInfoModal';
 import ExtraInfoEditorField from './ExtraInfoEditorField';
+import AdminTable from '../../AdminTable';
 
 type ExtraInfoEditorContainerProps = {
     extraInfo: ExtraInfo[];
@@ -43,7 +43,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
                 addButton={{ onAdd: () => setShowInfoModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -56,7 +56,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
                                         extraInfo={info} onDelete={deleteExtraInfo} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

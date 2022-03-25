@@ -1,13 +1,13 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
 import InfoEditorField from './InfoEditorField';
 import { useContext, useState } from 'react';
 import { Info } from '@prisma/client';
 import api from '../../../../utils/api';
 import { ErrorLogger } from '../../../../contexts';
 import CreateInfoModal from '../../../Modals/CreateInfoModal';
+import AdminTable from '../../AdminTable';
 
 type InfoEditorContainerProps = {
     info: Info[];
@@ -43,7 +43,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
                 addButton={{ onAdd: () => setShowInfoModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -56,7 +56,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
                                         info={info} onDelete={deleteInfo} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

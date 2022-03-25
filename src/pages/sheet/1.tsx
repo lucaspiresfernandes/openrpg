@@ -73,7 +73,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                         {props.playerInfo.map(pinfo =>
                                             <PlayerInfoField key={pinfo.Info.id} info={pinfo.Info} value={pinfo.value} />
                                         )}
-                                        <Row className='justify-content-center'>
+                                        <hr />
+                                        <Row className='justify-content-center mt-2'>
                                             {props.playerSpecs.map(spec =>
                                                 <PlayerSpecField key={spec.Spec.id} value={spec.value} Spec={spec.Spec}
                                                     onSpecChanged={onSpecChanged} />

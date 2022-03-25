@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import SkillEditorField from './SkillEditorField';
 import { useContext, useState } from 'react';
 import { Skill, Specialization } from '@prisma/client';
@@ -77,7 +77,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                     addButton={{ onAdd: () => setShowSpecModal(true) }}>
                     <Row>
                         <Col>
-                            <Table responsive className='align-middle'>
+                            <AdminTable>
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -91,7 +91,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                             onNameChange={onSpecializationNameChange} />
                                     )}
                                 </tbody>
-                            </Table>
+                            </AdminTable>
                         </Col>
                     </Row>
                 </DataContainer>
@@ -101,7 +101,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                     addButton={{ onAdd: () => setShowSkillModal(true) }}>
                     <Row>
                         <Col>
-                            <Table responsive className='align-middle'>
+                            <AdminTable>
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -116,7 +116,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                             skill={skill} onDelete={deleteSkill} specializations={specializations} />
                                     )}
                                 </tbody>
-                            </Table>
+                            </AdminTable>
                         </Col>
                     </Row>
                 </DataContainer>

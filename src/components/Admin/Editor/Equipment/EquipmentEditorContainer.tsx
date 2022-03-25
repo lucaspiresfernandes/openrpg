@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import EquipmentEditorField from './EquipmentEditorField';
 import { useContext, useState } from 'react';
 import { Equipment } from '@prisma/client';
@@ -44,7 +44,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
                 addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle text-center'>
+                        <AdminTable centerText>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -63,7 +63,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
                                         equipment={equipment} onDelete={deleteEquipment} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

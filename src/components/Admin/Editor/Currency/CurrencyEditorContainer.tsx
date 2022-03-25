@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import CurrencyEditorField from './CurrencyEditorField';
 import { useContext, useState } from 'react';
 import { Currency } from '@prisma/client';
@@ -43,7 +43,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
                 addButton={{ onAdd: () => setShowCurrencyModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -56,7 +56,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
                                         currency={currency} onDelete={deleteCurrency} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>

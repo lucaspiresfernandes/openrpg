@@ -1,7 +1,7 @@
 import DataContainer from '../../../DataContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import AdminTable from '../../AdminTable';
 import CharacteristicEditorField from './CharacteristicEditorField';
 import { useContext, useState } from 'react';
 import { Characteristic } from '@prisma/client';
@@ -43,7 +43,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                 addButton={{ onAdd: () => setShowCharacteristicModal(true) }}>
                 <Row>
                     <Col>
-                        <Table responsive className='align-middle'>
+                        <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -57,7 +57,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                                         characteristic={characteristic} onDelete={deleteCharacteristic} />
                                 )}
                             </tbody>
-                        </Table>
+                        </AdminTable>
                     </Col>
                 </Row>
             </DataContainer>
