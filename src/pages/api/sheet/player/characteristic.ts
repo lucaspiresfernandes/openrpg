@@ -26,15 +26,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     }
 
     const value = req.body.value;
+    const modifier = req.body.modifier;
 
     await database.playerCharacteristic.update({
-        data: { value },
+        data: { value, modifier },
         where: { player_id_characteristic_id: { player_id: player.id, characteristic_id: charID } }
     });
 
     res.end();
-
-    res.socket.server.io?.emit('characteristicChange', player.id, charID, value);
 }
 
 export default sessionAPI(handler);

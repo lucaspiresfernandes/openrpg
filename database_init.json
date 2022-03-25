@@ -35,42 +35,14 @@
         }
     ],
     "characteristic": [
-        {
-            "name": "Força",
-            "rollable": true
-        },
-        {
-            "name": "Destreza",
-            "rollable": true
-        },
-        {
-            "name": "Inteligência",
-            "rollable": true
-        },
-        {
-            "name": "Constituição",
-            "rollable": true
-        },
-        {
-            "name": "Aparência",
-            "rollable": true
-        },
-        {
-            "name": "Poder",
-            "rollable": true
-        },
-        {
-            "name": "Tamanho",
-            "rollable": true
-        },
-        {
-            "name": "Educação",
-            "rollable": true
-        },
-        {
-            "name": "Movimento",
-            "rollable": false
-        }
+        "Força",
+        "Destreza",
+        "Inteligência",
+        "Constituição",
+        "Aparência",
+        "Poder",
+        "Tamanho",
+        "Educação"
     ],
     "config": [
         {
@@ -622,7 +594,8 @@
     "spec": [
         "Dano Bônus",
         "Corpo",
-        "Exposição Paranormal"
+        "Exposição Paranormal",
+        "Taxa de Movimento"
     ],
     "specialization": [
         {

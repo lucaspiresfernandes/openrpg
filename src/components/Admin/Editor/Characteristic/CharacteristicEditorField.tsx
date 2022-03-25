@@ -15,22 +15,12 @@ type CharacteristicEditorFieldProps = {
 
 export default function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.characteristic.name);
-    const [rollable, setRollable] = useState(props.characteristic.rollable);
     const logError = useContext(ErrorLogger);
 
     function onBlur() {
         if (name === lastName) return;
         setName(name);
         api.post('/sheet/characteristic', { id: props.characteristic.id, name }).catch(logError);
-    }
-
-    function changeRollable() {
-        const newRollable = !rollable;
-        setRollable(newRollable);
-        api.post('/sheet/characteristic', { id: props.characteristic.id, rollable: newRollable }).catch(err => {
-            setRollable(rollable);
-            logError(err);
-        });
     }
 
     return (
@@ -43,9 +33,6 @@ export default function CharacteristicEditorField(props: CharacteristicEditorFie
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
                     onBlur={onBlur} />
-            </td>
-            <td>
-                <Form.Check checked={rollable} onChange={changeRollable} />
             </td>
         </tr>
     );

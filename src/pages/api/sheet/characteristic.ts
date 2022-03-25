@@ -19,14 +19,13 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
     const id = req.body.id;
     const name = req.body.name;
-    const rollable = req.body.rollable;
 
     if (!id) {
         res.status(400).send({ message: 'Info ID is undefined.' });
         return;
     }
 
-    await database.characteristic.update({ where: { id }, data: { name, rollable } });
+    await database.characteristic.update({ where: { id }, data: { name } });
 
     res.end();
 }
@@ -40,14 +39,13 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const name = req.body.name;
-    const rollable = req.body.rollable;
 
-    if (name === undefined || rollable === undefined) {
-        res.status(400).send({ message: 'Name or rollable is undefined.' });
+    if (name === undefined) {
+        res.status(400).send({ message: 'Name is undefined.' });
         return;
     }
 
-    const char = await database.characteristic.create({ data: { name, rollable } });
+    const char = await database.characteristic.create({ data: { name } });
 
     res.send({ id: char.id });
 }

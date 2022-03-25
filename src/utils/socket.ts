@@ -37,7 +37,6 @@ export interface ServerToClientEvents {
     infoChange: (playerID: number, infoID: number, value: string) => void;
     attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
     specChange: (playerID: number, specID: number, value: string) => void;
-    characteristicChange: (playerID: number, characteristicID: number, value: number) => void;
     equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
     equipmentRemove: (playerID: number, id: number) => void;
     itemAdd: (playerID: number, item: SocketPlayerItem) => void;

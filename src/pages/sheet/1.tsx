@@ -92,7 +92,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                     <Row className='mb-3 text-center align-items-end justify-content-center'>
                                         {props.playerCharacteristics.map(char =>
                                             <PlayerCharacteristicField key={char.Characteristic.id}
-                                                characteristic={char.Characteristic} value={char.value} />
+                                                characteristic={char.Characteristic} value={char.value}
+                                                modifier={char.modifier} />
                                         )}
                                     </Row>
                                 </DataContainer>
@@ -178,7 +179,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 
         database.playerCharacteristic.findMany({
             where: { player_id: playerID },
-            select: { Characteristic: true, value: true }
+            select: { Characteristic: true, value: true, modifier: true }
         }),
 
         database.playerEquipment.findMany({

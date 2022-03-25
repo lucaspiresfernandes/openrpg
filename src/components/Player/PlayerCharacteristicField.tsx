@@ -1,7 +1,6 @@
 import { Characteristic } from '@prisma/client';
 import { ChangeEvent, useContext } from 'react';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import config from '../../../openrpg.config.json';
@@ -12,15 +11,17 @@ import BottomTextInput from '../BottomTextInput';
 
 type PlayerCharacteristicFieldProps = {
     value: number;
+    modifier: string;
     characteristic: Characteristic;
 }
 
-export default function PlayerCharacteristicField({ value: initialValue, characteristic }: PlayerCharacteristicFieldProps) {
-    const [lastValue, value, setValue] = useExtendedState(initialValue);
+export default function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
+    const [lastValue, value, setValue] = useExtendedState(props.value);
+    const [lastModifier, modifier, setModifier] = useExtendedState(props.modifier);
     const logError = useContext(ErrorLogger);
     const showDiceRollResult = useContext(ShowDiceResult);
 
-    const charID = characteristic.id;
+    const charID = props.characteristic.id;
 
     function onChange(ev: ChangeEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;
@@ -32,37 +33,57 @@ export default function PlayerCharacteristicField({ value: initialValue, charact
         setValue(newValue);
     }
 
-    function onBlur() {
+    function onValueBlur() {
         if (value === lastValue) return;
         setValue(value);
-        api.post('/sheet/player/characteristic', { value, id: charID }).catch(err => {
-            logError(err);
-            setValue(lastValue);
-        });
+        api.post('/sheet/player/characteristic', { value, id: charID }).catch(logError);
+    }
+
+    function onModifierBlur() {
+        if (modifier === lastModifier) return;
+        const num = parseInt(modifier);
+        let newModifier = modifier;
+
+        if (isNaN(num)) newModifier = '+0';
+        else if (num > 9) newModifier = '+9';
+        else if (num < -9) newModifier = '-9';
+        else if (newModifier.length === 1) newModifier = `+${num}`;
+
+        setModifier(newModifier);
+        api.post('/sheet/player/characteristic', { modifier: newModifier, id: charID }).catch(logError);
     }
 
     function rollDice() {
         const base = config.player.base;
-        showDiceRollResult([{ num: 1, roll: base.dice, ref: value }], `${base.dice}${base.branched ? 'b' : ''}`);
+        showDiceRollResult([{ num: 1, roll: base.dice, ref: Math.max(1, value + parseInt(modifier)) }],
+            `${base.dice}${base.branched ? 'b' : ''}`);
     }
+
+    let modifierValue = modifier;
 
     return (
         <Col xs={6} md={4} xl={3} className='my-2'>
-            {characteristic.rollable &&
-                <Row>
-                    <Col className='mb-2'>
-                        <Image fluid alt='Dado' className='clickable' src='/dice20.png'
-                            onClick={rollDice} style={{ maxHeight: 50 }} />
-                    </Col>
-                </Row>
-            }
+            <Row>
+                <Col className='mb-2'>
+                    <Image fluid alt='Dado' className='clickable' src='/dice20.png'
+                        onClick={rollDice} style={{ maxHeight: 50 }} />
+                </Col>
+            </Row>
             <Row>
                 <Col>
-                    <Form.Group controlId={`char${characteristic.id}`}>
-                        <Form.Label className='w-100'>{characteristic.name}</Form.Label>
-                        <BottomTextInput className='h5 w-75 text-center' id={`char${characteristic.id}`}
-                            value={value} onChange={onChange} onBlur={onBlur} maxLength={3} />
-                    </Form.Group>
+                    <label htmlFor={`char${props.characteristic.id}`}>{props.characteristic.name}</label>
+                </Col>
+            </Row>
+            <Row className='justify-content-center mb-2'>
+                <Col xs={3}>
+                    <BottomTextInput className='text-center w-100' value={modifierValue}
+                        onChange={ev => setModifier(ev.currentTarget.value)} onBlur={onModifierBlur} />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <BottomTextInput className='h5 w-75 text-center' id={`char${props.characteristic.id}`}
+                        value={value} onChange={onChange} onBlur={onValueBlur} maxLength={3} />
                 </Col>
             </Row>
         </Col>

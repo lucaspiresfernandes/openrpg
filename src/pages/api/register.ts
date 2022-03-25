@@ -129,7 +129,8 @@ async function registerPlayerData(player: Player) {
         return {
           player_id: player.id,
           characteristic_id: char.id,
-          value: 0
+          value: 0,
+          modifier: '+0'
         };
       })
     }),

@@ -27,7 +27,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 };
             })
         }),
-        prisma.characteristic.createMany({ data: databaseInit.characteristic }),
+        prisma.characteristic.createMany({
+            data: databaseInit.characteristic.map(name => {
+                return {
+                    name
+                };
+            })
+        }),
         prisma.currency.createMany({
             data: databaseInit.currency.map(name => {
                 return {

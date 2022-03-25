@@ -18,10 +18,10 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
     const [showCharacteristicModal, setShowCharacteristicModal] = useState(false);
     const [characteristic, setCharacteristic] = useState(props.characteristics);
 
-    function createCharacteristic(name: string, rollable: boolean) {
-        api.put('/sheet/characteristic', { name, rollable }).then(res => {
+    function createCharacteristic(name: string) {
+        api.put('/sheet/characteristic', { name }).then(res => {
             const id = res.data.id;
-            setCharacteristic([...characteristic, { id, name, rollable }]);
+            setCharacteristic([...characteristic, { id, name }]);
         }).catch(logError);
     }
 
@@ -48,7 +48,6 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
-                                    <th>Rolável</th>
                                 </tr>
                             </thead>
                             <tbody>

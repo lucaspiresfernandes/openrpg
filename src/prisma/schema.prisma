@@ -64,7 +64,6 @@ model Spec {
 model Characteristic {
   id                   Int                    @id @default(autoincrement())
   name                 String
-  rollable             Boolean
   PlayerCharacteristic PlayerCharacteristic[]
 }
 
@@ -177,6 +176,7 @@ model PlayerCharacteristic {
   Characteristic    Characteristic @relation(fields: [characteristic_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   characteristic_id Int
   value             Int
+  modifier          String
 
   @@id([player_id, characteristic_id])
 }
