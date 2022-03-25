@@ -81,7 +81,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
+                                        <th title='Nome da Especialização.'>Nome</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -105,9 +105,9 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
-                                        <th>Especialização</th>
-                                        <th>Obrigatório</th>
+                                        <th title='Nome da Perícia.'>Nome</th>
+                                        <th title='Define qual Especialização será ligada à Perícia.'>Especialização</th>
+                                        <th title='Define se essa Perícia será obrigatória a um jogador ter.'>Obrigatório</th>
                                     </tr>
                                 </thead>
                                 <tbody>

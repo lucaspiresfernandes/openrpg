@@ -68,7 +68,7 @@ async function registerPlayerData(player: Player) {
     database.attributeStatus.findMany(),
     database.spec.findMany(),
     database.characteristic.findMany(),
-    database.skill.findMany(),
+    database.skill.findMany({ where: { mandatory: true } }),
     database.extraInfo.findMany(),
     database.currency.findMany()
   ]);

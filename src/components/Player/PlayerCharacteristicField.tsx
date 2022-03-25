@@ -47,6 +47,7 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
         if (isNaN(num)) newModifier = '+0';
         else if (num > 9) newModifier = '+9';
         else if (num < -9) newModifier = '-9';
+        else if (newModifier === '-0') newModifier = '+0';
         else if (newModifier.length === 1) newModifier = `+${num}`;
 
         setModifier(newModifier);

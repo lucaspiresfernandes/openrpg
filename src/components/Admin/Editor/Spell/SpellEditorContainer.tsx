@@ -48,15 +48,15 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                    <th>Custo</th>
-                                    <th>Tipo</th>
-                                    <th>Dano</th>
-                                    <th>Tempo de Conjuração</th>
-                                    <th>Alcance</th>
-                                    <th>Duração</th>
-                                    <th>Visível</th>
+                                    <th title='Nome da Magia.'>Nome</th>
+                                    <th title='Descrição da Magia.'>Descrição</th>
+                                    <th title='Custo da Magia.'>Custo</th>
+                                    <th title='Tipo da Magia.'>Tipo</th>
+                                    <th title='Dano da Magia.'>Dano</th>
+                                    <th title='Tempo de conjuração da Magia.'>Tempo de Conjuração</th>
+                                    <th title='Alcance, em metros, da Magia.'>Alcance</th>
+                                    <th title='Duração da Magia.'>Duração</th>
+                                    <th title='Define se a Magia será visível para o jogador.'>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

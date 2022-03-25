@@ -47,7 +47,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
+                                    <th title='Nome da Característica.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>

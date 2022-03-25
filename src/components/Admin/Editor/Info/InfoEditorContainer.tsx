@@ -47,7 +47,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
+                                    <th title='Nome da Informação Pessoal.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>

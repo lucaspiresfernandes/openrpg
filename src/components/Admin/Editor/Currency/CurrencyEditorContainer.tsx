@@ -47,7 +47,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
+                                    <th title='Nome da Moeda.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>

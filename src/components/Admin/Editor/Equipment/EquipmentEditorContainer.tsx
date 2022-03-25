@@ -48,13 +48,13 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
-                                    <th>Tipo</th>
-                                    <th>Dano</th>
-                                    <th>Alcance</th>
-                                    <th>Ataques</th>
-                                    <th>Munição</th>
-                                    <th>Visível</th>
+                                    <th title='Nome do Equipamento.'>Nome</th>
+                                    <th title='Tipo do Equipamento.'>Tipo</th>
+                                    <th title='Dano do Equipamento.'>Dano</th>
+                                    <th title='Alcance, em metros, do Equipamento.'>Alcance</th>
+                                    <th title='Números de ataques por round do Equipamento.'>Ataques</th>
+                                    <th title='Munição total do Equipamento.'>Munição</th>
+                                    <th title='Define se o Equipamento será visível para o jogador.'>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

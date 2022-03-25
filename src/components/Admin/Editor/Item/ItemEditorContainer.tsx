@@ -47,10 +47,10 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                    <th>Peso</th>
-                                    <th>Visível</th>
+                                    <th title='Nome do Item.'>Nome</th>
+                                    <th title='Descrição do Item.'>Descrição</th>
+                                    <th title='Peso do Item.'>Peso</th>
+                                    <th title='Define se o Item será visível para o jogador.'>Visível</th>
                                 </tr>
                             </thead>
                             <tbody>

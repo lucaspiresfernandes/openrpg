@@ -81,8 +81,8 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
-                                        <th>Rolável</th>
+                                        <th title='Nome do Atributo.'>Nome</th>
+                                        <th title='Define se o Atributo pode ser usado para testes de dado.'>Testável</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,8 +106,8 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
-                                        <th>Atributo</th>
+                                        <th title='Nome do Status de Atributo.'>Nome</th>
+                                        <th title='Define a qual Atributo esse Status será ligado.'>Atributo</th>
                                     </tr>
                                 </thead>
                                 <tbody>

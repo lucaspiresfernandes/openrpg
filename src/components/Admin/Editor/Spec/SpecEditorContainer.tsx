@@ -47,7 +47,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
+                                    <th title='Nome da Especificação de Jogador.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>
