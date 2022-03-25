@@ -39,7 +39,7 @@ export default function WelcomePage({ logError }: { logError: (err: any) => void
             </Row>
             <Row>
                 <Col className='h3 mt-3'>
-                    Antes de começar, você precisa inicializar o sistema. Certifique-se de que o banco de dados está devidamente conectado
+                    Antes de começar, você precisa inicializar o sistema.
                 </Col>
             </Row>
             <Row>

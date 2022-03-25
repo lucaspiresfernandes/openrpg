@@ -51,7 +51,7 @@ export default function Home({ init, error }: InferGetServerSidePropsType<typeof
       </Row>
       <Row>
         <Col className='h3 mt-2'>
-          Certifique-se de inicializar seu banco
+          Certifique-se de ter integrado um banco de dados ao aplicativo, criado a variável de ambiente <b>DATABASE_URL</b> e preenchido seu valor corretamente.
         </Col>
       </Row>
     </Container>
