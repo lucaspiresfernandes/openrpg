@@ -2,6 +2,8 @@ Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas do
 
 Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/). Caso queira criar uma conta de mestre/administrador, use "123456" como chave do administrador.
 
+Os dados criados no site da demo são excluídos semanalmente, então se quiser gerir a sua própria instância do Open RPG, leia a seção [Instalação](#instalacao).
+
 ## Introdução
 
 Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres quanto para os jogadores, sendo elas:
