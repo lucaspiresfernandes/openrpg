@@ -47,6 +47,7 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 
 Nessa seção, explicarei algumas regras que o aplicativo possui.
 
+- A Informação Pessoal (Geral) "Nome" é obrigatória e não pode ser excluída ou modificada. Ela serve para identificar o jogador nos retratos e no painel do administrador.
 - Existem 2 tipos de itens editáveis no editor: os estáticos e os dinâmicos. Estáticos são itens que não podem ser modificados após a criação de um novo player (ficha) e desaparecerão do editor, como Atributos, Características, Informações Pessoais, etc. Dimânicos são itens que podem ser editados independente do número de players (fichas) criados, como Perícias, Equipamentos, Magias e Itens.
 
 ## Instalação
