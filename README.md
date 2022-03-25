@@ -171,7 +171,7 @@ Caso tenha feito edições nos Atributos do sistema, irá perceber que, na ficha
 
 ### Configurações Profundas (Paleta de cores)
 
-Caso não se sinta à vontade na paleta de cores padrão do Open RPG, você tem total liberdade de alterá-la através do arquivo "palette.scss". Procure por ele no seu repositório e edite-o como desejar. Mais instruções estão no arquivo.
+Caso não se sinta à vontade na paleta de cores padrão do Open RPG, você tem total liberdade de alterá-la através do arquivo "palette.scss". Procure por ele no seu repositório e edite-o como desejar. Mais instruções estão no arquivo. Depois da edição, é necessário [refazer o deploy](#fazendo-o-deploy).
 
 
 ### Configurações Profundas (Lógica e Identidade)
@@ -203,3 +203,5 @@ Agora, acompanharei com você cada configuração do arquivo.
 | spell>types | Os tipos disponíveis de magias. Você pode adicionar, remover ou modificar os itens. |
 | portrait>attributes | A lista de atributos que vão aparecer no retrato do personagem (Exclusivo para o OBS). O padrão é Vida e Sanidade. |
 | portrait>side_attribute | Define o atributo que fica dentro do retrato do personagem (Exclusivo para o OBS). O padrão é Magia. |
+
+Após qualquer mudança, é necessário [refazer o deploy](#fazendo-o-deploy).
