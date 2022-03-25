@@ -4,6 +4,10 @@ Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/). Caso queir
 
 Os dados criados no site da demo são excluídos semanalmente, então se quiser gerir a sua própria instância do Open RPG, leia a seção [Instalação](#instalação).
 
+## (ATENÇÃO: Versão Beta)
+
+O Open RPG está atualmente em sua versão Beta, com problemas e bugs para ainda serem tratados. Até o seu lançamento oficial, o Open RPG sofrerá diversas modificações e melhorias, então fique ligado e deixe sua instância do Open RPG sempre atualizada também!
+
 ## Introdução
 
 Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres quanto para os jogadores, sendo elas:
