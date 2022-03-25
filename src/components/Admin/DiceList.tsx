@@ -48,20 +48,21 @@ export default function DiceList(props: DiceListProps) {
                 results: results.join(', ')
             };
 
-            if (values.length > 6) {
-                const newValues = [...values];
-                newValues[0] = message;
-                setValues(newValues);
-                return;
-            }
-
-            setValues([...values, message]);
+            setValues(values => {
+                if (values.length > 5) {
+                    const newValues = [...values];
+                    newValues.unshift(message);
+                    newValues.splice(newValues.length - 1, 1);
+                    return newValues;
+                }
+                return [...values, message];
+            });
         });
 
         return () => {
             socket.off('diceResult');
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket]);
 
     return (
