@@ -1,11 +1,12 @@
 import { Info } from '@prisma/client';
-import { useContext } from 'react';
+import { ChangeEvent, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
 import api from '../../../../utils/api';
 import BottomTextInput from '../../../BottomTextInput';
 import { BsTrash } from 'react-icons/bs';
+import { FocusEvent } from 'react';
 
 type InfoEditorFieldProps = {
     info: Info;
@@ -22,12 +23,6 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
         api.post('/sheet/info', { id: props.info.id, name }).catch(logError);
     }
 
-    function Field() {
-        if (props.info.default) return <>{name}</>;
-        return <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-            onBlur={onBlur} />;
-    }
-
     return (
         <tr>
             <td>
@@ -38,7 +33,10 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
                 }
             </td>
             <td>
-                <Field />
+                {props.info.default ? <>{name}</> :
+                    <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
+                        onBlur={onBlur} />
+                }
             </td>
         </tr>
     );

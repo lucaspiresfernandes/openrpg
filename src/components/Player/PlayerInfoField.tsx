@@ -1,4 +1,6 @@
 import { Info } from '@prisma/client';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -6,7 +8,6 @@ import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import BottomTextInput from '../BottomTextInput';
 
 type PlayerInfoFieldProps = {
     info: Info,
@@ -16,9 +17,19 @@ type PlayerInfoFieldProps = {
 export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
     const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
     const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
+    const fieldRef = useRef<HTMLInputElement>(null);
+    const firstUpdate = useRef(true);
 
     const logError = useContext(ErrorLogger);
     const infoID = playerInfo.info.id;
+
+    useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
+        if (!isDefined && fieldRef.current) fieldRef.current.focus();
+    }, [isDefined]);
 
     function onValueBlur() {
         if (value.length > 0) setDefined(true);
@@ -27,27 +38,20 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
     }
 
-    function Field() {
-        if (isDefined) return (
-            <>
-                <br />
-                <label onDoubleClick={() => setDefined(false)}>{value}</label>
-            </>
-        );
-
-        return (
-            <BottomTextInput className='w-100' id={`info${infoID}`} autoComplete='off' value={value}
-                onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} />
-        );
-    }
-
     return (
         <Row className='mb-4'>
             <Col className='mx-2'>
                 <Row>
                     <Form.Group controlId={`info${infoID}`}>
                         <Form.Label className='h5'>{playerInfo.info.name}</Form.Label>
-                        <Field />
+                        {isDefined ?
+                            <>
+                                <br />
+                                <label onDoubleClick={() => setDefined(false)}>{value}</label>
+                            </> :
+                            <input className='theme-element bottom-text w-100' id={`info${infoID}`} autoComplete='off' value={value}
+                                onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} ref={fieldRef} />
+                        }
                     </Form.Group>
                 </Row>
             </Col>
