@@ -208,7 +208,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 <div className={styles.nameContainer}>{playerName || 'Desconhecido'}</div>
             </Fade>
             <div className={styles.diceContainer}>
-                <video height="240" muted className={`popout${showDice ? ' show' : ''}`} ref={diceVideo}>
+                <video height="350" muted className={`popout${showDice ? ' show' : ''}`} ref={diceVideo}>
                     <source src="/dice_animation.webm" />
                 </video>
                 <Fade in={diceResultShow}><div className={styles.result}>{diceResult}</div></Fade>

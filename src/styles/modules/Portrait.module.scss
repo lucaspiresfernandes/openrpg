@@ -8,20 +8,20 @@
 
 .sideContainer {
     position: absolute;
-    top: 450px;
+    top: 400px;
     background-image: url(/side_placeholder.png);
     background-size: 100% 100%;
-    width: 150px;
-    height: 150px;
+    width: 250px;
+    height: 250px;
 }
 
 .side {
     position: absolute;
 
-    top: 46%;
-    left: 46%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 48px;
+    font-size: 82px;
 }
 
 .nameContainer {
@@ -34,7 +34,7 @@
     color: white;
     text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
 
-    font-size: 82px;
+    font-size: 96px;
     font-style: italic;
     text-transform: uppercase;
 
@@ -43,31 +43,34 @@
 
 .combat {
     position: absolute;
-    top: 300px;
-    left: 450px;
+    top: 325px;
+    left: 425px;
     transform: translateY(-50%);
     width: auto;
 }
 
 .attribute {
-    font-size: 84px;
+    $size: 108px;
+
+    font-size: $size;
     font-style: italic;
     max-width: 250px;
     color: white;
+    line-height: $size + 20px;
 }
 
 .diceContainer {
     position: absolute;
     top: 10px;
-    left: 100px;
+    left: 40px;
 }
 
 .result {
     position: absolute;
-    top: 120px;
-    left: 120px;
+    top: 190px;
+    left: 175px;
 
-    font-size: 84px;
+    font-size: 108px;
     color: white;
 
     transform: translate(-50%, -50%);
@@ -76,10 +79,10 @@
 
 .description {
     position: absolute;
-    top: 240px;
-    left: 120px;
+    top: 350px;
+    left: 170px;
 
-    font-size: 63px;
+    font-size: 84px;
     color: white;
 
     transform: translate(-50%, -50%);
