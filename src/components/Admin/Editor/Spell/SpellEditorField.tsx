@@ -149,7 +149,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
                     onBlur={onSlotsBlur} style={{ maxWidth: '6rem' }} className='text-center' />
             </td>
             <td>
-                <Form.Check checked={visible} onChange={onVisibleChange} />
+                <Form.Check checked={visible} onChange={onVisibleChange} style={{ maxWidth: '3rem' }} />
             </td>
         </tr>
     );
