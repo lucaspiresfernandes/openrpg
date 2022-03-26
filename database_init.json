@@ -616,10 +616,14 @@
         },
         {
             "id": 5,
-            "name": "Pilotar"
+            "name": "Lutar"
         },
         {
             "id": 6,
+            "name": "Pilotar"
+        },
+        {
+            "id": 7,
             "name": "Sobrevivência"
         }
     ],
