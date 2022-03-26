@@ -107,7 +107,7 @@ CREATE TABLE `Currency` (
 -- CreateTable
 CREATE TABLE `ExtraInfo` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` TEXT NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -217,7 +217,7 @@ CREATE TABLE `PlayerCurrency` (
 CREATE TABLE `PlayerExtraInfo` (
     `player_id` INTEGER NOT NULL,
     `extra_info_id` INTEGER NOT NULL,
-    `value` VARCHAR(191) NOT NULL,
+    `value` TEXT NOT NULL,
 
     PRIMARY KEY (`player_id`, `extra_info_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

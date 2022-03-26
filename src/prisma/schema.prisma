@@ -112,7 +112,7 @@ model Currency {
 
 model ExtraInfo {
   id              Int               @id @default(autoincrement())
-  name            String            @db.Text
+  name            String
   PlayerExtraInfo PlayerExtraInfo[]
 }
 
@@ -229,7 +229,7 @@ model PlayerExtraInfo {
   player_id     Int
   ExtraInfo     ExtraInfo @relation(fields: [extra_info_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   extra_info_id Int
-  value         String
+  value         String    @db.Text
 
   @@id([player_id, extra_info_id])
 }
