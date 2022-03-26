@@ -24,6 +24,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
     const [lastCastingTime, castingTime, setCastingTime] = useExtendedState(spell.castingTime);
     const [lastRange, range, setRange] = useExtendedState(spell.range);
     const [lastDuration, duration, setDuration] = useExtendedState(spell.duration);
+    const [lastSlots, slots, setSlots] = useExtendedState(spell.slots);
     const [visible, setVisible] = useState(spell.visible);
 
     function onNameBlur() {
@@ -77,6 +78,22 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
         api.post('/sheet/spell', { id: spell.id, duration }).catch(logError);
     }
 
+    function onSlotsChange(ev: ChangeEvent<HTMLInputElement>) {
+        const aux = ev.currentTarget.value;
+        let newSlots = parseInt(aux);
+
+        if (aux.length === 0) newSlots = 0;
+        else if (isNaN(newSlots)) return;
+
+        setSlots(newSlots);
+    }
+
+    function onSlotsBlur() {
+        if (slots === lastSlots) return;
+        setSlots(slots);
+        api.post('/sheet/spell', { id: spell.id, slots }).catch(logError);
+    }
+
     function onVisibleChange() {
         const newVisible = !visible;
         setVisible(newVisible);
@@ -126,6 +143,10 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
             <td>
                 <BottomTextInput value={duration} onChange={ev => setDuration(ev.currentTarget.value)}
                     onBlur={onDurationBlur} style={{ maxWidth: '6rem' }} className='text-center' />
+            </td>
+            <td>
+                <BottomTextInput value={slots} onChange={onSlotsChange}
+                    onBlur={onSlotsBlur} style={{ maxWidth: '6rem' }} className='text-center' />
             </td>
             <td>
                 <Form.Check checked={visible} onChange={onVisibleChange} />

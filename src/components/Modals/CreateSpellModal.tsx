@@ -1,12 +1,12 @@
 import SheetModal from './SheetModal';
 import config from '../../../openrpg.config.json';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 
 type CreateSpellModalProps = {
     onCreate(name: string, description: string, cost: string, type: string,
-        damage: string, castingTime: string, range: string, duration: string): void;
+        damage: string, castingTime: string, range: string, duration: string, slots: number): void;
     show: boolean;
     onHide(): void;
 }
@@ -20,6 +20,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
     const [castingTime, setCastingTime] = useState('');
     const [range, setRange] = useState('');
     const [duration, setDuration] = useState('');
+    const [slots, setSlots] = useState(1);
 
     function reset() {
         setName('');
@@ -32,11 +33,21 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
         setDuration('');
     }
 
+    function onSlotsChange(ev: ChangeEvent<HTMLInputElement>) {
+        const aux = ev.currentTarget.value;
+        let newSlots = parseInt(aux);
+
+        if (aux.length === 0) newSlots = 0;
+        else if (isNaN(newSlots)) return;
+
+        setSlots(newSlots);
+    }
+
     return (
         <SheetModal title='Nova Magia' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{
                 name: 'Criar',
-                onApply: () => props.onCreate(name, description, cost, type, damage, castingTime, range, duration)
+                onApply: () => props.onCreate(name, description, cost, type, damage, castingTime, range, duration, slots)
             }} scrollable>
             <Container fluid>
                 <Form.Group controlId='createSpellName' className='mb-3'>
@@ -90,6 +101,12 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
                     <Form.Label>Duração</Form.Label>
                     <Form.Control className='theme-element' value={duration}
                         onChange={ev => setDuration(ev.currentTarget.value)} />
+                </Form.Group>
+
+                <Form.Group controlId='createSpellSlots' className='mb-3'>
+                    <Form.Label>Espaços</Form.Label>
+                    <Form.Control className='theme-element' value={slots}
+                        onChange={onSlotsChange} />
                 </Form.Group>
             </Container>
         </SheetModal>

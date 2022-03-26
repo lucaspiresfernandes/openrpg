@@ -626,13 +626,14 @@
     "spell": [
         {
             "name": "Bola de Fogo",
-            "description": "",
+            "description": "Gera uma pequena bola de fogo na mão do usuário.",
             "cost": "1d4+2 PM",
             "type": "Nenhum",
             "damage": "1d10",
             "castingTime": "Instantâneo",
             "range": "25 Metros",
             "duration": "Instantâneo",
+            "slots": 1,
             "visible": true
         }
     ]

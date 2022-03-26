@@ -70,6 +70,11 @@ export default function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldPr
                             Duração: {spell.duration}
                         </Col>
                     </Row>
+                    <Row className='mb-2'>
+                        <Col>
+                            Espaços Utilizados: {spell.slots}
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </Col>

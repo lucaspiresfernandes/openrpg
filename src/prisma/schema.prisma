@@ -15,6 +15,7 @@ model Player {
   username              String
   password              String
   maxLoad               Float                   @default(1)
+  spellSlots            Float                   @default(1)
   role                  Role
   PlayerInfo            PlayerInfo[]
   PlayerAttributes      PlayerAttribute[]
@@ -125,6 +126,7 @@ model Spell {
   castingTime String
   range       String
   duration    String
+  slots       Int
   visible     Boolean
   PlayerSpell PlayerSpell[]
 }

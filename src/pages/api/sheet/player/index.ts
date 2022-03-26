@@ -18,10 +18,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     }
 
     const maxLoad = req.body.maxLoad;
+    const maxSlots = req.body.maxSlots;
 
     await database.player.update({
         where: { id: player.id },
-        data: { maxLoad }
+        data: { maxLoad, spellSlots: maxSlots }
     });
 
     res.end();

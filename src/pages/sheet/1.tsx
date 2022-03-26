@@ -111,7 +111,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Row>
                             <Row>
                                 <PlayerSpellContainer playerSpells={props.playerSpells.map(sp => sp.Spell)}
-                                    availableSpells={props.availableSpells} />
+                                    availableSpells={props.availableSpells} playerMaxSlots={props.player.maxSlots} />
                             </Row>
                         </Container>
                     </Socket.Provider>
@@ -134,7 +134,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 permanent: false
             },
             props: {
-                player: { id: 0, maxLoad: 0 },
+                player: { id: 0, maxLoad: 0, maxSlots: 0 },
                 playerInfo: [],
                 playerAttributes: [],
                 playerAttributeStatus: [],
@@ -246,7 +246,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
         }),
 
         database.player.findUnique({
-            where: { id: playerID }, select: { maxLoad: true }
+            where: { id: playerID }, select: { maxLoad: true, spellSlots: true }
         })
     ]);
 
@@ -267,7 +267,11 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             availableSpells: results[12],
             playerCurrency: results[13],
             playerAvatars: results[14],
-            player: { id: playerID, maxLoad: results[15]?.maxLoad || 0 },
+            player: {
+                id: playerID,
+                maxLoad: results[15]?.maxLoad || 0,
+                maxSlots: results[15]?.spellSlots || 0
+            },
         }
     };
 }

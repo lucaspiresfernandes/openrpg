@@ -26,6 +26,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     const castingTime = req.body.castingTime;
     const range = req.body.range;
     const duration = req.body.duration;
+    const slots = req.body.slots;
     const visible = req.body.visible;
 
     if (!id) {
@@ -35,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const spell = await database.spell.update({
         where: { id },
-        data: { name, description, cost, type, castingTime, range, duration, visible }
+        data: { name, description, cost, type, castingTime, range, duration, slots, visible }
     });
 
     res.end();
@@ -63,9 +64,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     const castingTime = req.body.castingTime;
     const range = req.body.range;
     const duration = req.body.duration;
+    const slots = req.body.slots;
 
     if (name === undefined || description === undefined || cost === undefined || type === undefined ||
-        damage === undefined || castingTime === undefined || range === undefined || duration === undefined) {
+        damage === undefined || castingTime === undefined || range === undefined || duration === undefined ||
+        slots === undefined) {
         res.status(400).send({
             message: 'All fields are required: name, description, cost, ' +
                 'type, damage, casting time, range and duration.'
@@ -75,7 +78,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const spell = await database.spell.create({
         data: {
-            name, description, cost, type, damage,
+            name, description, cost, type, damage, slots,
             castingTime, range, duration, visible: true
         }
     });

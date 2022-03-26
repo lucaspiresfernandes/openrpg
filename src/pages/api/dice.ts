@@ -98,6 +98,7 @@ const successTypes = config.success_types;
 function resolveSuccessType(key: ResolverKey, reference: number, roll: number) {
     switch (key) {
         case '20':
+            if (roll == 1) return successTypes.failure;
             if (roll > 20 - reference) return successTypes.success;
             return successTypes.failure;
         case '20b':
