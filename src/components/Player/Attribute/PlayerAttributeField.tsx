@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useState } from 'react';
+import { FormEvent, useContext, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -33,12 +33,11 @@ type PlayerAttributeFieldProps = {
     onStatusChange?(id: number): void;
 }
 
-let valueTimeout: NodeJS.Timeout;
-
 export default function PlayerAttributeField({ playerAttribute, playerStatus, onStatusChange: onStatusChanged }: PlayerAttributeFieldProps) {
     const attributeID = playerAttribute.Attribute.id;
     const [value, setValue] = useState(playerAttribute.value);
     const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
+    const timeout = useRef<NodeJS.Timeout>();
 
     const showDiceRollResult = useContext(ShowDiceResult);
     const logError = useContext(ErrorLogger);
@@ -52,10 +51,9 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
 
         setValue(newVal);
 
-        clearTimeout(valueTimeout);
-        valueTimeout = setTimeout(() => {
-            api.post('/sheet/player/attribute', { id: attributeID, value: newVal }).catch(logError);
-        }, 250);
+        if (timeout.current) clearTimeout(timeout.current);
+        timeout.current = setTimeout(() =>
+            api.post('/sheet/player/attribute', { id: attributeID, value: newVal }).catch(logError), 750);
     }
 
     function updateMaxValue(ev: FormEvent<HTMLInputElement>) {
