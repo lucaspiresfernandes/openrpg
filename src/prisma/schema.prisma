@@ -98,7 +98,7 @@ model Equipment {
 model Item {
   id          Int          @id @default(autoincrement())
   name        String
-  description String
+  description String       @db.Text
   weight      Float        @default(0)
   visible     Boolean
   PlayerItem  PlayerItem[]
@@ -112,14 +112,14 @@ model Currency {
 
 model ExtraInfo {
   id              Int               @id @default(autoincrement())
-  name            String
+  name            String            @db.Text
   PlayerExtraInfo PlayerExtraInfo[]
 }
 
 model Spell {
   id          Int           @id @default(autoincrement())
   name        String
-  description String
+  description String        @db.Text
   cost        String
   type        String
   damage      String
@@ -208,7 +208,7 @@ model PlayerItem {
   player_id          Int
   Item               Item   @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   item_id            Int
-  currentDescription String
+  currentDescription String @db.Text
   quantity           Int
 
   @@id([player_id, item_id])
@@ -246,7 +246,7 @@ model PlayerSpell {
 model PlayerNote {
   Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   player_id Int
-  value     String
+  value     String @db.Text
 
   @@id([player_id])
 }
@@ -257,7 +257,7 @@ model PlayerAvatar {
   player_id           Int
   AttributeStatus     AttributeStatus? @relation(fields: [attribute_status_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
   attribute_status_id Int?
-  link                String?
+  link                String?          @db.Text
 
   @@unique([player_id, attribute_status_id])
 }
