@@ -21,20 +21,17 @@ type PlayerItemFieldProps = {
 export default function PlayerItemField(props: PlayerItemFieldProps) {
     const [lastQuantity, currentQuantity, setCurrentQuantity] = useExtendedState(props.quantity);
     const [lastDescription, currentDescription, setCurrentDescription] = useExtendedState(props.description);
-    const [disabled, setDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
     const logError = useContext(ErrorLogger);
     const itemID = props.item.id;
 
     function deleteItem() {
         if (!confirm('Você realmente deseja excluir esse item?')) return;
-        setDisabled(true);
+        setLoading(true);
         props.onDelete(itemID);
         api.delete('/sheet/player/item', {
             data: { id: itemID }
-        }).then(() => props.onDelete(itemID)).catch(err => {
-            logError(err);
-            setDisabled(false);
-        });
+        }).then(() => props.onDelete(itemID)).catch(logError).finally(() => setLoading(false));
     }
 
     function quantityChange(ev: FormEvent<HTMLInputElement>) {
@@ -64,7 +61,7 @@ export default function PlayerItemField(props: PlayerItemFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={deleteItem} disabled={disabled} size='sm' variant='secondary'>
+                <Button onClick={deleteItem} disabled={loading} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

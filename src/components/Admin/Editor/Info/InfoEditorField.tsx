@@ -1,12 +1,11 @@
 import { Info } from '@prisma/client';
-import { ChangeEvent, useContext } from 'react';
+import { useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
 import api from '../../../../utils/api';
 import BottomTextInput from '../../../BottomTextInput';
 import { BsTrash } from 'react-icons/bs';
-import { FocusEvent } from 'react';
 
 type InfoEditorFieldProps = {
     info: Info;

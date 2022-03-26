@@ -1,5 +1,5 @@
 import { Spell } from '@prisma/client';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -13,12 +13,14 @@ type PlayerSpellFieldProps = {
 
 export default function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
     const logError = useContext(ErrorLogger);
+    const [loading, setLoading] = useState(false);
 
     function deleteSpell() {
         if (!confirm('Tem certeza que deseja apagar essa magia?')) return;
+        setLoading(true);
         api.delete('/sheet/player/spell', { data: { id: spell.id } }).then(() => {
             onDelete(spell.id);
-        }).catch(logError);
+        }).catch(logError).finally(() => setLoading(false));
     }
 
     return (
@@ -27,7 +29,9 @@ export default function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldPr
                 <Col className='data-container mx-3'>
                     <Row className='my-2'>
                         <Col>
-                            <Button variant='secondary' size='sm' onClick={deleteSpell}>Apagar</Button>
+                            <Button variant='secondary' size='sm' onClick={deleteSpell} disabled={loading}>
+                                Apagar
+                            </Button>
                         </Col>
                     </Row>
                     <Row className='mb-2'>
