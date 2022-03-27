@@ -48,13 +48,10 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
         else if (newModifier === '-0') newModifier = '+0';
         else if (newModifier.length === 1) newModifier = `+${num}`;
         
-        if (modifier === newModifier) return;
-
-        setModifier(newModifier);
+        if (modifier !== newModifier) setModifier(newModifier);
 
         if (newModifier === lastModifier.current) return;
         lastModifier.current = newModifier;
-
         api.post('/sheet/player/characteristic', { modifier: newModifier, id: charID }).catch(logError);
     }
 
