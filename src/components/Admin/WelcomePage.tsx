@@ -39,12 +39,12 @@ export default function WelcomePage({ logError }: { logError: (err: any) => void
             </Row>
             <Row>
                 <Col className='h3 mt-3'>
-                    Antes de começar, você precisa inicializar o sistema.
+                    Antes de começar, você precisa realizar a configuração inicial do sistema.
                 </Col>
             </Row>
             <Row>
                 <Col className='mt-3'>
-                    <Button variant='secondary' size='lg' onClick={init}>Inicializar</Button>
+                    <Button variant='secondary' size='lg' onClick={init}>Configurar</Button>
                 </Col>
             </Row>
         </Container>

@@ -27,19 +27,15 @@ export default function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldPr
         <Col xs={12} className='mb-3 w-100 text-center'>
             <Row>
                 <Col className='data-container mx-3'>
-                    <Row className='my-2'>
-                        <Col>
-                            <Button variant='secondary' size='sm' onClick={deleteSpell} disabled={loading}>
+                    <Row className='mt-2'>
+                        <Col className='h2'>
+                            {spell.name}
+                            <Button className='ms-3' variant='secondary' size='sm' onClick={deleteSpell} disabled={loading}>
                                 Apagar
                             </Button>
                         </Col>
                     </Row>
-                    <Row className='mb-2'>
-                        <Col className='h2'>
-                            {spell.name}
-                        </Col>
-                    </Row>
-                    <Row className='mb-2'>
+                    <Row>
                         <Col className='h5' style={{ color: 'darkgray' }}>
                             {spell.description}
                         </Col>

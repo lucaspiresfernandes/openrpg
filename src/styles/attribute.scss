@@ -29,27 +29,6 @@ $proggress-bar-height: 40px;
     }
 }
 
-.Armadura {
-    $background: #916b03;
-    $foreground: #ffbb00;
-
-    &.progress {
-        background-color: $background;
-        .progress-bar {
-            background-color: $foreground;
-        }
-    }
-
-    &.attribute-color {
-        color: $foreground;
-    }
-
-    &.portrait-color {
-        color: white;
-        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
-    }
-}
-
 .Sanidade {
     $background: #2c4470;
     $foreground: #1f3ce0;
