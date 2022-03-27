@@ -20,6 +20,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
     const [lastDescription, description, setDescription] = useExtendedState(spell.description);
     const [lastCost, cost, setCost] = useExtendedState(spell.cost);
     const [type, setType] = useState(spell.type);
+    const [lastTarget, target, setTarget] = useExtendedState(spell.target);
     const [lastDamage, damage, setDamage] = useExtendedState(spell.damage);
     const [lastCastingTime, castingTime, setCastingTime] = useExtendedState(spell.castingTime);
     const [lastRange, range, setRange] = useExtendedState(spell.range);
@@ -52,6 +53,12 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
             logError(err);
             setType(type);
         });
+    }
+
+    function onTargetBlur() {
+        if (target === lastTarget) return;
+        setTarget(target);
+        api.post('/sheet/spell', { id: spell.id, target }).catch(logError);
     }
 
     function onDamageBlur() {
@@ -131,6 +138,10 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
             <td>
                 <BottomTextInput value={damage} onChange={ev => setDamage(ev.currentTarget.value)}
                     onBlur={onDamageBlur} style={{ maxWidth: '5rem' }} className='text-center' />
+            </td>
+            <td>
+                <BottomTextInput value={target} onChange={ev => setTarget(ev.currentTarget.value)}
+                    onBlur={onTargetBlur} style={{ maxWidth: '6rem' }} className='text-center' />
             </td>
             <td>
                 <BottomTextInput value={castingTime} onChange={ev => setCastingTime(ev.currentTarget.value)}

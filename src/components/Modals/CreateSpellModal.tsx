@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 
 type CreateSpellModalProps = {
     onCreate(name: string, description: string, cost: string, type: string,
-        damage: string, castingTime: string, range: string, duration: string, slots: number): void;
+        damage: string, castingTime: string, range: string, duration: string, slots: number, target: string): void;
     show: boolean;
     onHide(): void;
 }
@@ -17,6 +17,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
     const [cost, setCost] = useState('');
     const [type, setType] = useState(config.spell.types[0]);
     const [damage, setDamage] = useState('');
+    const [target, setTarget] = useState('');
     const [castingTime, setCastingTime] = useState('');
     const [range, setRange] = useState('');
     const [duration, setDuration] = useState('');
@@ -28,6 +29,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
         setCost('');
         setType(config.spell.types[0]);
         setDamage('');
+        setTarget('');
         setCastingTime('');
         setRange('');
         setDuration('');
@@ -47,7 +49,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
         <SheetModal title='Nova Magia' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{
                 name: 'Criar',
-                onApply: () => props.onCreate(name, description, cost, type, damage, castingTime, range, duration, slots)
+                onApply: () => props.onCreate(name, description, cost, type, damage, castingTime, range, duration, slots, target)
             }} scrollable>
             <Container fluid>
                 <Form.Group controlId='createSpellName' className='mb-3'>
@@ -83,6 +85,12 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
                     <Form.Label>Dano</Form.Label>
                     <Form.Control className='theme-element' value={damage}
                         onChange={ev => setDamage(ev.currentTarget.value)} />
+                </Form.Group>
+
+                <Form.Group controlId='createSpellTarget' className='mb-3'>
+                    <Form.Label>Alvo</Form.Label>
+                    <Form.Control className='theme-element' value={target}
+                        onChange={ev => setTarget(ev.currentTarget.value)} />
                 </Form.Group>
 
                 <Form.Group controlId='createSpellCastingTime' className='mb-3'>

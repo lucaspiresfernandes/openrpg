@@ -23,6 +23,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
     const description = req.body.description;
     const cost = req.body.cost;
     const type = req.body.type;
+    const target = req.body.target;
     const castingTime = req.body.castingTime;
     const range = req.body.range;
     const duration = req.body.duration;
@@ -36,7 +37,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const spell = await database.spell.update({
         where: { id },
-        data: { name, description, cost, type, castingTime, range, duration, slots, visible }
+        data: { name, description, cost, type, target, castingTime, range, duration, slots, visible }
     });
 
     res.end();
@@ -60,6 +61,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
     const description = req.body.description;
     const cost = req.body.cost;
     const type = req.body.type;
+    const target = req.body.target;
     const damage = req.body.damage;
     const castingTime = req.body.castingTime;
     const range = req.body.range;
@@ -68,7 +70,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     if (name === undefined || description === undefined || cost === undefined || type === undefined ||
         damage === undefined || castingTime === undefined || range === undefined || duration === undefined ||
-        slots === undefined) {
+        slots === undefined || target === undefined) {
         res.status(400).send({
             message: 'All fields are required: name, description, cost, ' +
                 'type, damage, casting time, range and duration.'
@@ -78,7 +80,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     const spell = await database.spell.create({
         data: {
-            name, description, cost, type, damage, slots,
+            name, description, cost, type, damage, slots, target,
             castingTime, range, duration, visible: true
         }
     });

@@ -61,6 +61,11 @@ export default function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldPr
                     </Row>
                     <Row className='mb-2'>
                         <Col>
+                            Alvo: {spell.target}
+                        </Col>
+                    </Row>
+                    <Row className='mb-2'>
+                        <Col>
                             Tempo de Conjuração: {spell.castingTime}
                         </Col>
                     </Row>

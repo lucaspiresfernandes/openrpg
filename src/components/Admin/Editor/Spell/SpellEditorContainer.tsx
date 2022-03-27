@@ -19,10 +19,16 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
     const [spell, setSpell] = useState(props.spells);
 
     function createSpell(name: string, description: string, cost: string, type: string,
-        damage: string, castingTime: string, range: string, duration: string, slots: number) {
-        api.put('/sheet/spell', { name, description, cost, type, damage, castingTime, range, duration, slots }).then(res => {
+        damage: string, castingTime: string, range: string, duration: string, slots: number, target: string) {
+        api.put('/sheet/spell', {
+            name, description, cost, type, damage,
+            castingTime, range, duration, slots, target
+        }).then(res => {
             const id = res.data.id;
-            setSpell([...spell, { id, name, description, cost, type, damage, castingTime, range, duration, slots, visible: true }]);
+            setSpell([...spell, {
+                id, name, description, cost, type,
+                damage, castingTime, range, duration, slots, target, visible: true
+            }]);
         }).catch(logError);
     }
 
@@ -53,6 +59,9 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
                                     <th title='Custo da Magia.'>Custo</th>
                                     <th title='Tipo da Magia.'>Tipo</th>
                                     <th title='Dano da Magia.'>Dano</th>
+                                    <th title='Alvo da Magia. Pode ser próprio, único, múltiplo ou área (especifique o tamanho).'>
+                                        Alvo
+                                    </th>
                                     <th title='Tempo de conjuração da Magia.'>Tempo de Conjuração</th>
                                     <th title='Alcance, em metros, da Magia.'>Alcance</th>
                                     <th title='Duração da Magia.'>Duração</th>

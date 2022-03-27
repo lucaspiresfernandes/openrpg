@@ -123,6 +123,7 @@ model Spell {
   cost        String
   type        String
   damage      String
+  target      String
   castingTime String
   range       String
   duration    String
