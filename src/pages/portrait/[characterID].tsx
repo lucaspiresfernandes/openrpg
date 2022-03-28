@@ -57,16 +57,16 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
                 const newAttributes = [...attributes];
 
-                if (value !== null) newAttributes[index].value = value;
-                if (maxValue !== null) newAttributes[index].maxValue = maxValue;
+                if (value !== undefined) newAttributes[index].value = value;
+                if (maxValue !== undefined) newAttributes[index].maxValue = maxValue;
 
                 return newAttributes;
             });
 
             setSideAttribute(attr => {
-                if (attributeId !== attr.Attribute.id) return attr;
+                if (attributeId !== attr.Attribute.id || value === undefined) return attr;
                 return {
-                    value: value || attr.value,
+                    value: value,
                     Attribute: { ...attr.Attribute }
                 };
             });
