@@ -35,13 +35,13 @@ export interface ServerToClientEvents {
     maxLoadChange: (playerID: number, newLoad: number) => void;
     attributeStatusChange: (playerID: number, attStatusID: number, value: boolean) => void;
     infoChange: (playerID: number, infoID: number, value: string) => void;
-    attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
+    attributeChange: (playerID: number, attributeID: number, value?: number, maxValue?: number) => void;
     specChange: (playerID: number, specID: number, value: string) => void;
     equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
     equipmentRemove: (playerID: number, id: number) => void;
     itemAdd: (playerID: number, item: SocketPlayerItem) => void;
     itemRemove: (playerID: number, id: number) => void;
-    itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
+    itemChange: (playerID: number, itemID: number, currentDescription?: string, quantity?: number) => void;
     currencyChange: (playerID: number, currencyID: number, value: string) => void;
 
     //Player Events
