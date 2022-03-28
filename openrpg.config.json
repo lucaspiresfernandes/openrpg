@@ -6,7 +6,7 @@
         "bonus_damage_name": "Dano Bônus",
         "base": {
             "dice": 20,
-            "branched": false
+            "branched": true
         },
         "attribute_bar": {
             "dice": 100,
@@ -41,14 +41,11 @@
     "spell": {
         "types": [
             "Nenhum",
-            "Abjuração",
-            "Advinhação",
-            "Conjuração",
-            "Encantamento",
-            "Evocação",
-            "Ilusão",
-            "Necromancia",
-            "Transmutação"
+            "Sangue",
+            "Morte",
+            "Energia",
+            "Conhecimento",
+            "Medo"
         ]
     },
     "portrait": {
