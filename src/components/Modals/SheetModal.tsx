@@ -15,6 +15,7 @@ interface SheetModalProps extends ModalProps {
         name?: string;
         disabled?: boolean;
     }
+    bodyStyle?: React.CSSProperties;
     onCancel?(): void;
 }
 
@@ -40,7 +41,7 @@ export default function SheetModal(props: SheetModalProps) {
                 <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>
             <Form onSubmit={submit} style={{ display: 'contents' }}>
-                <Modal.Body>
+                <Modal.Body style={props.bodyStyle}>
                     {props.children}
                 </Modal.Body>
                 <Modal.Footer>

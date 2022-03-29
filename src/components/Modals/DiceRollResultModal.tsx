@@ -64,7 +64,8 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
             title='Resultado da Rolagem' onHide={props.onHide}
             closeButton={{ disabled: loadingDice ? true : false }}
             backdrop={loadingDice ? 'static' : true}
-            keyboard={loadingDice ? false : true} centered>
+            keyboard={loadingDice ? false : true} centered
+            bodyStyle={{ minHeight: 120, display: 'flex', alignItems: 'center' }}>
             <Container fluid className='text-center'>
                 {resultDices.length === 0 &&
                     <Row>
