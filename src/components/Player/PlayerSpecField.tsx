@@ -27,7 +27,7 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
     }
 
     return (
-        <Col xs={12} sm={6} lg={4} className='text-center mb-3'>
+        <Col xs={12} sm={6} lg={4} className='text-center mb-2'>
             <Form.Group controlId={`spec${specID}`}>
                 <BottomTextInput className='w-100 text-center h5' onBlur={onValueBlur}
                     id={`spec${specID}`} autoComplete='off' value={value}
