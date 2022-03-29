@@ -22,6 +22,7 @@ export default function AdminNavbar() {
                         <Link href='/admin/main' passHref><Nav.Link>Painel Geral</Nav.Link></Link>
                         <Link href='/admin/editor' passHref><Nav.Link>Editor</Nav.Link></Link>
                         <Link href='/admin/configurations' passHref><Nav.Link>Configurações</Nav.Link></Link>
+                        <Link href='/admin/about' passHref><Nav.Link>Sobre</Nav.Link></Link>
                     </Nav>
                     <Nav>
                         <Nav.Link href='#' onClick={logout}>Sair</Nav.Link>

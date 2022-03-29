@@ -32,11 +32,7 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 - Histórico de rolagem dos jogadores
 - Gerenciamento de NPCs genéricos
 - Anotações pessoais
-- Editor do sistema
-
-Além da edição do sistema, o mestre também pode editar vários outros aspectos do aplicativo. Para saber mais, visite a seção de [Extras](#extras).
-
-O Open RPG pode utilizar o serviço do [Random.org](https://www.random.org/) para geração de números aleatórios.
+- Editor/Configurações do sistema
 
 ## Integração com OBS
 
@@ -44,19 +40,16 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 
 - Avatar
 - Nome
-- Atributos (editável)
+- Atributos
 - Rolagem de dados
 
-## Regras do aplicativo
+## Integração com o Random.org
 
-Nessa seção, explicarei algumas regras que o aplicativo possui.
-
-- A Informação Pessoal (Geral) "Nome" é obrigatória e não pode ser excluída ou modificada. Ela serve para identificar o jogador nos retratos e no painel do administrador.
-- Existem 2 tipos de itens editáveis no editor: os estáticos e os dinâmicos. Estáticos são itens que não podem ser modificados após a criação de um novo player (ficha) e desaparecerão do editor, como Atributos, Características, Informações Pessoais, etc. Dimânicos são itens que podem ser editados independente do número de players (fichas) criados, como Perícias, Equipamentos, Magias e Itens.
+O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar números aleatórios. Se, por qualquer razão, o aplicativo não conseguir se conectar com a API do Random.org, ele passa a gerar números pseudoaleatórios com a API embutida do Node.js.
 
 ## Instalação
 
-Nessa seção, ensinarei do processo de configuração até o deployment do projeto na nuvem.
+Nessa seção, ensinarei do processo de deployment do projeto na nuvem.
 
 ### Importante!
 
@@ -82,37 +75,37 @@ Após criar uma conta no Random.org, você deverá criar um serviço de API. Sig
 
 ### Iniciando
 
-OBS: Caso esteja tendo dificuldades com o passo-a-passo, pode optar por ver um [vídeo tutorial](https://youtube.com/).
+1. Primeiramente, você deve acessar o seu [Dashboard](https://dashboard.heroku.com/) na Heroku e criar um novo App. Você deverá preencher o nome do aplicativo e a região em que o aplicativo irá ser hospedado. Digite um nome simples mas que lembre o nome do seu RPG, porque esse nome também será o endereço do seu site. Já na região, selecione Estados Unidos e clique em Criar App.
 
-1. Agora, você deve acessar o seu [Dashboard](https://dashboard.heroku.com/) na Heroku e criar um novo App. Você deverá preencher o nome do aplicativo e a região em que o aplicativo irá ser hospedado. Digite um nome simples mas que lembre o nome da sua campanha, porque esse nome também será a URL do seu aplicativo! Já na região, selecione Estados Unidos (ou United States). Clique em Criar App (ou Create App).
+2. Após isso, você deverá acessar a aba de Deploy. Em "Deployment method", selecione GitHub e conecte a sua conta do GitHub ao Heroku. Depois de conectada, você se direcionará a seção de "Connect to GitHub", logo abaixo de "Deployment method". Nessa seção, em repo-name, você deverá digitar "openrpg" e clicar em "Search". Depois de alguns segundos, um item com o nome do seu GitHub / openrpg vai aparecer, e logo ao lado um botão com o nome "Connect". Clique no botão.
 
-2. Após isso, você deverá acessar a aba de [Deploy](https://dashboard.heroku.com/apps/openrpgdemoo/deploy). Em "Deployment method", selecione GitHub e conecte a sua conta do GitHub ao Heroku. Depois de conectada, você se direcionará a seção de "Connect to GitHub", logo abaixo de "Deployment method". Nessa seção, em repo-name, você deverá digitar "openrpg" e clicar em "Search". Depois de alguns segundos, um item com o nome do seu GitHub / openrpg vai aparecer, e logo ao lado um botão chamado "Connect". Clique no botão.
-
-3. Depois de conectar o seu repositório GitHub ao Heroku, você precisa configurar o aplicativo para o uso. Acesse a aba [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings), e na segunda seção, em "Config Vars", você clicará em "Reveal Config Vars". Após isso, dois campos de textos irão aparecer com o nome KEY e VALUE, respectivamente. Você deverá preencher alguns campos agora. Abaixo, haverá uma tabela dos campos que devem ser preenchidos:
+3. Depois de conectar o seu repositório GitHub ao Heroku, você precisará configurar o aplicativo para o uso. Acesse a aba [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings), e na segunda seção, em "Config Vars", você clicará em "Reveal Config Vars". Após isso, dois campos de textos irão aparecer com o nome KEY e VALUE, respectivamente. Você deverá preencher alguns campos agora. Abaixo, haverá uma tabela dos campos que devem ser preenchidos:
 
 |             KEY           |                                                    VALUE                                                 |
 | ------------------------- | -------------------------------------------------------------------------------------------------------- |
-| SESSION_SECRET            | Um valor aleatório, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
+| SESSION_SECRET            | Um valor aleatório de no mínimo 32 dígitos, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
 | RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.             |
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
 
 ![image](https://user-images.githubusercontent.com/71353674/160008042-5df854df-8c47-4235-8233-92303c881660.png)
 
-Não se preocupe se a chave SESSION_SECRET não está igual. Cada aplicativo deve possuir uma diferente.
-
 ### Configurando o Banco de Dados
 
-Antes de utilizar o seu aplicativo, você precisa configurar o seu banco de dados. Existem 2 métodos de configurar o seu banco de dados:
+Se você iniciar o seu aplicativo agora e acessar o seu site, verá uma tela de erro, dizendo que o banco de dados não foi inicializado. Isso ocorre porque o Open RPG usa um banco de dados remoto para carregar, salvar e modificar informações.
+
+Antes de utilizar o seu aplicativo, você precisa configurar o seu banco de dados. Existem 2 métodos:
 
 1. Usando a Heroku: Você irá precisar de um cartão de crédito. Não se preocupe, a Heroku não te cobra nada, ela só precisa de um cartão para firmar um contrato com um provedor de banco de dados. No caso, o provedor que escolheremos é grátis, então não será cobrado nada no cartão. Os provedores de banco de dados da Heroku são totalmente confiáveis e muito eficientes, então essa é a opção mais recomendada.
-2. Usando o [db4free](https://www.db4free.net/): Você não irá precisar de um cartão de crédito. Apesar do benefício, essa opção é muito menos recomendada pelo fato do provedor db4free ser instável, lento e não ser apropriado para aplicativos de grande porte como esse. Caso escolha essa opção, prepare-se para carregamentos muito lentos, erros muito comuns e muito estresse na hora de jogar a sua campanha.
+2. Usando o [db4free](https://www.db4free.net/): Você não irá precisar de um cartão de crédito. Apesar do benefício, essa opção é muito menos recomendada pelo fato do provedor db4free ser instável, lento e não ser apropriado para aplicativos como esse. Caso escolha essa opção, prepare-se para carregamentos muito lentos e erros muito recorrentes.
+
+OBS: Esses são os 2 métodos que eu conheço para criar um banco de dados remoto GRATUITAMENTE. Caso saiba de outras opções e queira ajudar, abra um Issue que eu irei adicionar aqui.
 
 ### Configurando o Banco de Dados (Usando a Heroku)
 
 Siga esses passos:
 
-1. Acesse a aba de [Resources](https://dashboard.heroku.com/apps/openrpgdemo/resources). Na seção "Add-ons" você irá procurar por "ClearDB MySQL".
+1. Acesse a aba de Resources. Na seção "Add-ons" você irá procurar por "ClearDB MySQL".
 
 ![image](https://user-images.githubusercontent.com/71353674/160009589-58dd6722-0b31-45bc-b4db-65734460627e.png)
 
@@ -134,7 +127,7 @@ mysql://usuário:senha@db4free.net:3306/NomeDoBancoDeDados
 mysql://OpenRPG:197324685@db4free.net:3306/openrpgdb
 `
 
-4. De volta para suas config vars na aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings) do Heroku, use a url como o valor da nova variável CLEARDB_DATABASE_URL.
+4. De volta para suas config vars na aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings) do Heroku, use a url como o valor de uma nova variável, chamada CLEARDB_DATABASE_URL.
 
 ### Fazendo o Deploy
 
