@@ -23,6 +23,7 @@ CREATE TABLE `Info` (
 CREATE TABLE `Attribute` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
+    `color` CHAR(6) NOT NULL DEFAULT '0d6efd',
     `rollable` BOOLEAN NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -120,6 +121,7 @@ CREATE TABLE `Spell` (
     `cost` VARCHAR(191) NOT NULL,
     `type` VARCHAR(191) NOT NULL,
     `damage` VARCHAR(191) NOT NULL,
+    `target` VARCHAR(191) NOT NULL,
     `castingTime` VARCHAR(191) NOT NULL,
     `range` VARCHAR(191) NOT NULL,
     `duration` VARCHAR(191) NOT NULL,
@@ -251,10 +253,10 @@ CREATE TABLE `PlayerAvatar` (
 
 -- CreateTable
 CREATE TABLE `Config` (
-    `key` VARCHAR(191) NOT NULL,
-    `value` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `value` JSON NOT NULL,
 
-    PRIMARY KEY (`key`)
+    PRIMARY KEY (`name`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
