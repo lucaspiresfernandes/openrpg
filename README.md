@@ -94,7 +94,6 @@ OBS: Caso esteja tendo dificuldades com o passo-a-passo, pode optar por ver um [
 | ------------------------- | -------------------------------------------------------------------------------------------------------- |
 | SESSION_SECRET            | Um valor aleatório, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
 | RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.             |
-| DATABASE_URL              | Esse campo pode ser deixado em branco. Na próxima sessão ensinarei como preenchê-lo.                     |
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
 
@@ -118,8 +117,7 @@ Siga esses passos:
 ![image](https://user-images.githubusercontent.com/71353674/160009589-58dd6722-0b31-45bc-b4db-65734460627e.png)
 
 2. Selecione esse item e logo após surgirá uma tela de planos. Selecione o plano Ignite - Free e clique em "Submit Order Form". Caso ele peça seu cartão de crédito, preencha.
-3. Após um tempo, a ordem de "compra" irá suceder, e você voltará para a aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings).
-4. Note que agora, em suas config vars, um novo campo foi adicionado automaticamente: CLEARDB_DATABASE_URL. Copie o valor desse campo e cole na variável DATABASE_URL, que antes estava vazia.
+3. Após um tempo, a ordem de "compra" irá suceder, e o banco de dados estará instalado e pronto para uso!
 
 ### Configurando o Banco de Dados (Usando o [db4free](https://www.db4free.net/))
 
@@ -136,7 +134,7 @@ mysql://usuário:senha@db4free.net:3306/NomeDoBancoDeDados
 mysql://OpenRPG:197324685@db4free.net:3306/openrpgdb
 `
 
-4. De volta para suas config vars na aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings) do Heroku, use a url como o valor da variável DATABASE_URL.
+4. De volta para suas config vars na aba de [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings) do Heroku, use a url como o valor da nova variável CLEARDB_DATABASE_URL.
 
 ### Fazendo o Deploy
 
