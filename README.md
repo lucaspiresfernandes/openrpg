@@ -144,43 +144,6 @@ Após configurar a Heroku e configurar o banco de dados, você irá acessar nova
 
 ## Extras
 
-### Configurações Profundas (Barras de Atributo)
-
-Caso tenha feito edições nos Atributos do sistema, irá perceber que, na ficha do jogador, as barras de atributo possuem a cor padrão de branco e azul. Caso queira mudar isso, deverá mergulhar um pouco mais no sistema, mas não se preocupe, estou aqui para te ajudar!
-
-1. Acesse a página do seu repositório do Open RPG no GitHub. Provavelmente, o seu repositório se encontra em "https://github.com/Nome_Do_Seu_Usuário_Aqui/openrpg". Lá, procure por um arquivo chamado "attribute.scss". Nesse arquivo, você deverá adicionar um novo pedaço de código no final:
-
-``` CSS
-  .NomeDoSeuAtributoAqui {
-    $background: #ffffff;
-    $foreground: #ffffff;
-
-    &.progress {
-        background-color: $background;
-        .progress-bar {
-            background-color: $foreground;
-        }
-    }
-
-    &.attribute-color {
-        color: $foreground;
-    }
-
-    &.portrait-color {
-        color: white;
-        text-shadow: 0 0 10px $foreground, 0 0 30px $foreground, 0 0 50px $foreground;
-    }
-}
-```
-2. Na primeira linha, edite "NomeDoSeuAtributoAqui" para o nome do atributo que você criou (EX: Sanidade, Magia, Esforço, etc.). Note que há um ponto (.) antecedendo o nome, então certifique-se de mantê-lo.
-3. Na segunda e terceira linha, edite as variáveis background e foreground para um valor hexadecimal (ATENÇÃO: O valor hexadecimal deve sempre possuir um # no começo. Caso esqueça, o programa não irá reconhecer a cor desejada e irá ignorá-la.
-4. Ao fazer essas modificações, salve o arquivo e refaça o [deploy](#fazendo-o-deploy).
-
-### Configurações Profundas (Paleta de cores)
-
-Caso não se sinta à vontade na paleta de cores padrão do Open RPG, você tem total liberdade de alterá-la através do arquivo "palette.scss". Procure por ele no seu repositório e edite-o como desejar. Mais instruções estão no arquivo. Depois da edição, é necessário [refazer o deploy](#fazendo-o-deploy).
-
-
 ### Configurações Profundas (Lógica e Identidade)
 
 Caso queria mudar a forma como o sistema se comporta, você pode fazer isso editando o arquivo "openrpg.config.json". Procure por ele no seu repositório. Para editá-lo, considere algumas coisas antes:
