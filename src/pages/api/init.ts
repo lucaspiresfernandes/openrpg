@@ -73,16 +73,19 @@ const databaseData = {
         {
             id: 1,
             name: 'Vida',
+            color: 'b62323',
             rollable: false
         },
         {
             id: 2,
             name: 'Sanidade',
+            color: '1f3ce0',
             rollable: true
         },
         {
             id: 3,
             name: 'Magia',
+            color: 'ae00ff',
             rollable: false
         }
     ],
