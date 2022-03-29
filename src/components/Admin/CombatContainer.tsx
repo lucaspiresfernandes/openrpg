@@ -12,46 +12,21 @@ import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import { PlayerName } from './DiceList';
 
+let __id = 0;
+function getId() {
+    return __id++;
+}
+
+type Entity = {
+    id: number;
+    name: string;
+}
+
+//TODO: fix entity bug where its name would reset when the order is changed.
 export default function CombatContainer({ players }: { players: PlayerName[] }) {
     const [round, setRound] = useState(1);
-    const [entities, setEntities] = useState<string[]>([]);
+    const [entities, setEntities] = useState<Entity[]>([]);
     const [pointer, setPointer] = useState(0);
-
-    const SortableItem = SortableElement((props: { value: string, selected?: boolean, count: number }) => {
-        return (
-            <ListGroup.Item className={props.selected ? 'selected' : ''}>
-                <BottomTextInput defaultValue={props.value} className='text-center' />
-                <Button size='sm' variant='secondary' className='ms-1' onClick={() => removeEntity(props.count)}>-</Button>
-            </ListGroup.Item>
-        );
-    });
-
-    const SortableList = SortableContainer(({ items }: { items: string[] }) => {
-        return (
-            <ListGroup variant='flush' className='text-center'>
-                {items.map((val: any, index: number) =>
-                    <SortableItem key={val} index={index} count={index} value={val} selected={pointer === index} />
-                )}
-            </ListGroup>
-        );
-    });
-
-    const dropdown = (
-        <>
-            {players.map(pl => {
-                if (entities.find(e => e === pl.name)) return null;
-                return (
-                    <Dropdown.Item key={pl.id} onClick={ev => setEntities([...entities, pl.name])}>
-                        {pl.name}
-                    </Dropdown.Item>
-                );
-            })}
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={() => setEntities([...entities, `NPC ${entities.length}`])}>
-                Novo...
-            </Dropdown.Item>
-        </>
-    );
 
     function roundUpdate(ev: FormEvent<HTMLInputElement>) {
         const aux = ev.currentTarget.value;
@@ -76,7 +51,14 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
         setPointer(currentIndex);
     }
 
-    function removeEntity(index: number) {
+    function addNPCEntity() {
+        const name = prompt('Digite o nome:');
+        if (!name) return;
+        setEntities([...entities, { id: getId(), name }]);
+    }
+
+    function removeEntity(id: number) {
+        const index = entities.findIndex(e => e.id === id);
         if (index < pointer) setPointer(pointer - 1);
         const newEntities = [...entities];
         newEntities.splice(index, 1);
@@ -89,13 +71,48 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
         setRound(1);
     }
 
+    const SortableList = SortableContainer(({ entities }: { entities: Entity[] }) => {
+        return (
+            <ListGroup variant='flush' className='text-center'>
+                {entities.map((entity, index) =>
+                    <SortableItem key={entity.id} index={index} entity={entity} selected={pointer === index} />
+                )}
+            </ListGroup>
+        );
+    });
+
+    const SortableItem = SortableElement(({ entity, selected }: { entity: Entity, selected?: boolean }) => {
+        return (
+            <ListGroup.Item className={selected ? 'selected' : ''}>
+                <div className='d-inline-block w-75'>{entity.name}</div>
+                <Button size='sm' variant='secondary' className='ms-1' onClick={() => removeEntity(entity.id)}>-</Button>
+            </ListGroup.Item>
+        );
+    });
+
+    const dropdown = (
+        <>
+            {players.map(pl => {
+                if (entities.find(e => e.name === pl.name)) return null;
+                return (
+                    <Dropdown.Item key={pl.id}
+                        onClick={() => setEntities([...entities, { id: getId(), name: pl.name }])}>
+                        {pl.name}
+                    </Dropdown.Item>
+                );
+            })}
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={addNPCEntity}>Novo...</Dropdown.Item>
+        </>
+    );
+
     return (
         <DataContainer xs={12} lg title='Combate' addButton={{ type: 'dropdown', children: dropdown }} >
             <Row className='my-2'>
                 <Col>
                     <Form.Group controlId='combatRound'>
                         <Form.Label className='h5'>Rodada:</Form.Label>
-                        <BottomTextInput id='combatRound' type='number' className='ms-1 h4' value={round}
+                        <BottomTextInput id='combatRound' type='number' className='ms-2 h4' value={round}
                             onChange={roundUpdate} style={{ maxWidth: '4rem' }} />
                     </Form.Group>
                 </Col>
@@ -103,7 +120,7 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
             <Row>
                 <Col>
                     <div className='w-100 wrapper'>
-                        <SortableList items={entities} onSortEnd={onSortEnd} />
+                        <SortableList entities={entities} onSortEnd={onSortEnd} />
                     </div>
                 </Col>
             </Row>
