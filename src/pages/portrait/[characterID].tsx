@@ -177,6 +177,13 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         setShowAvatar(true);
     }
 
+    const getAttributeStyle = (color: string) => {
+        return {
+            color: 'white',
+            textShadow: `0 0 10px #${color}, 0 0 30px #${color}, 0 0 50px #${color}`
+        };
+    };
+
     return (
         <>
             <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
@@ -188,14 +195,14 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 </Fade>
             </div>
             <div className={styles.sideContainer}>
-                <div className={`${styles.side} portrait-color ${sideAttribute.Attribute.name}`}>
+                <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
                     {sideAttribute.value}
                 </div>
             </div>
             <Fade in={environment === 'combat'}>
                 <div className={styles.combat}>
                     {attributes.map(attr =>
-                        <div className={`${styles.attribute} portrait-color ${attr.Attribute.name}`}
+                        <div className={styles.attribute} style={getAttributeStyle(attr.Attribute.color)}
                             key={attr.Attribute.id}>
                             {attr.value}/{attr.maxValue}
                         </div>
@@ -223,11 +230,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         prisma.config.findUnique({ where: { key: 'environment' } }),
         prisma.playerAttribute.findMany({
             where: { Attribute: { name: { in: config.portrait.attributes } }, player_id: id },
-            select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true } } }
+            select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttribute.findFirst({
             where: { Attribute: { name: config.portrait.side_attribute }, player_id: id },
-            select: { value: true, Attribute: { select: { id: true, name: true } } }
+            select: { value: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttributeStatus.findMany({
             where: { player_id: id },
@@ -241,7 +248,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             playerId: id,
             environment: results[0]?.value || 'idle',
             attributes: results[1],
-            sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '' } },
+            sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '', color: '' } },
             attributeStatus: results[3],
             playerName: results[4] || { value: 'Desconhecido', info_id: 0 }
         }

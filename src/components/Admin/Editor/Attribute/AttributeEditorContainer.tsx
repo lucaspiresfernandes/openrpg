@@ -36,7 +36,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
     function createAttribute(name: string, rollable: boolean) {
         api.put('/sheet/attribute', { name, rollable }).then(res => {
             const id = res.data.id;
-            setAttributes([...attributes, { id, name, rollable }]);
+            setAttributes([...attributes, { id, name, rollable, color: res.data.color }]);
         }).catch(logError);
     }
 
@@ -83,6 +83,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                     <tr>
                                         <th></th>
                                         <th title='Nome do Atributo.'>Nome</th>
+                                        <th title='Cor do Atributo.'>Cor</th>
                                         <th title='Define se o Atributo pode ser usado para testes de dado.'>Testável</th>
                                     </tr>
                                 </thead>

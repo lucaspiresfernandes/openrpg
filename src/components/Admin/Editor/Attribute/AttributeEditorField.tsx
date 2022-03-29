@@ -1,7 +1,8 @@
 import { Attribute } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -17,15 +18,21 @@ type AttributeEditorFieldProps = {
 
 export default function AttributeEditorField(props: AttributeEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.attribute.name);
+    const [lastColor, color, setColor] = useExtendedState(`#${props.attribute.color}`);
     const [rollable, setRollable] = useState(props.attribute.rollable);
     const logError = useContext(ErrorLogger);
 
-    function onBlur() {
+    function onNameBlur() {
         if (name === lastName) return;
-        const newName = name.replace(/\s/g, '');
-        setName(newName);
-        if (props.onNameChange) props.onNameChange(props.attribute.id, newName);
-        api.post('/sheet/attribute', { id: props.attribute.id, name: newName }).catch(logError);
+        setName(name);
+        if (props.onNameChange) props.onNameChange(props.attribute.id, name);
+        api.post('/sheet/attribute', { id: props.attribute.id, name }).catch(logError);
+    }
+
+    function onColorBlur() {
+        if (color === lastColor) return;
+        setColor(color);
+        api.post('/sheet/attribute', { id: props.attribute.id, color: color.substring(1) }).catch(logError);
     }
 
     function changeRollable() {
@@ -47,10 +54,14 @@ export default function AttributeEditorField(props: AttributeEditorFieldProps) {
             </td>
             <td>
                 <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                    onBlur={onBlur} />
+                    onBlur={onNameBlur} />
             </td>
             <td>
-                <Form.Check checked={rollable} onChange={changeRollable} />
+                <FormControl type='color' value={color} onChange={ev => setColor(ev.currentTarget.value)}
+                    onBlur={onColorBlur} className='theme-element' />
+            </td>
+            <td>
+                <FormCheck checked={rollable} onChange={changeRollable} />
             </td>
         </tr>
     );

@@ -19,6 +19,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
     const id = req.body.id;
     const name = req.body.name;
+    const color = req.body.color;
     const rollable = req.body.rollable;
 
     if (!id) {
@@ -26,7 +27,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    await database.attribute.update({ where: { id }, data: { name, rollable } });
+    await database.attribute.update({ where: { id }, data: { name, color, rollable } });
 
     res.end();
 }
@@ -49,7 +50,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     const attr = await database.attribute.create({ data: { name, rollable } });
 
-    res.send({ id: attr.id });
+    res.send({ id: attr.id, color: attr.color });
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {

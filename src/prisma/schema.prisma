@@ -42,6 +42,7 @@ model Info {
 model Attribute {
   id              Int               @id @default(autoincrement())
   name            String
+  color           String            @db.Char(6) @default("0d6efd")
   rollable        Boolean
   PlayerAttribute PlayerAttribute[]
   AttributeStatus AttributeStatus[]

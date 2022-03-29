@@ -1,4 +1,5 @@
-import { FormEvent, useContext, useRef, useState } from 'react';
+import { Attribute } from '@prisma/client';
+import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -16,11 +17,7 @@ type PlayerAttributeFieldProps = {
     playerAttribute: {
         value: number;
         maxValue: number;
-        Attribute: {
-            id: number;
-            name: string;
-            rollable: boolean;
-        };
+        Attribute: Attribute;
     };
     playerStatus: {
         value: boolean;
@@ -37,10 +34,19 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     const attributeID = playerAttribute.Attribute.id;
     const [value, setValue] = useState(playerAttribute.value);
     const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
+    const barRef = useRef<HTMLDivElement>(null);
     const timeout = useRef<NodeJS.Timeout>();
 
     const showDiceRollResult = useContext(ShowDiceResult);
     const logError = useContext(ErrorLogger);
+
+    useEffect(() => {
+        if (barRef.current === null) return;
+        const inner = barRef.current.querySelector('.progress-bar') as HTMLDivElement;
+        if (inner) inner.style.backgroundColor = `#${playerAttribute.Attribute.color}`;
+        else console.warn('Could not find .progress-bar inner node inside PlayerAttributeField component.');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [barRef]);
 
     function updateValue(ev: React.MouseEvent, coeff: number) {
         if (ev.shiftKey) coeff *= 10;
@@ -98,7 +104,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
             </Row>
             <Row>
                 <Col>
-                    <ProgressBar now={value} min={0} max={maxValue} className={playerAttribute.Attribute.name} />
+                    <ProgressBar now={value} min={0} max={maxValue} ref={barRef} />
                 </Col>
                 {playerAttribute.Attribute.rollable &&
                     <Col xs='auto' className='align-self-center'>
