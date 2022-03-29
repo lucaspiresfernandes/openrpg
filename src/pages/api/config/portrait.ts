@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 
     await prisma.config.update({
         where: { name: 'portrait' },
-        data: { value: portraitConfigurations }
+        data: { value: JSON.stringify(portraitConfigurations) }
     });
 
     res.end();

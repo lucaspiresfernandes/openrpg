@@ -223,7 +223,8 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const id = parseInt(ctx.query.characterID as string);
 
-    const portraitConfig = (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value as Prisma.JsonObject;
+    const portraitConfig = JSON.parse(
+        (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || '') as Prisma.JsonObject;
     const configAttributes = portraitConfig['attributes'] as Array<string>;
     const configSideAttribute = portraitConfig['side_attribute'] as string;
 

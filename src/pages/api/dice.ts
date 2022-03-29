@@ -25,7 +25,8 @@ async function nextInt(min: number, max: number, n: number) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-    const enabledSuccessTypes = (await prisma.config.findUnique({ where: { name: 'enable_success_types' } }))?.value as boolean;
+    const enabledSuccessTypes = JSON.parse(
+        (await prisma.config.findUnique({ where: { name: 'enable_success_types' } }))?.value || '') as boolean;
 
     if (req.method !== 'POST') {
         res.status(404).end();

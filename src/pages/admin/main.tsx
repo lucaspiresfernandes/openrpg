@@ -138,7 +138,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            environment: results[0]?.value as string,
+            environment: results[0]?.value || 'idle',
             players: results[1],
             notes: results[2]
         }

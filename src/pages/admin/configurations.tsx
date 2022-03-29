@@ -281,10 +281,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            adminKey: results[0]?.value as string,
-            enableSuccessTypes: results[1]?.value as boolean,
-            diceConfig: results[2]?.value as Prisma.JsonObject,
-            portraitConfig: results[3]?.value as Prisma.JsonObject,
+            adminKey: results[0]?.value || '',
+            enableSuccessTypes: JSON.parse(results[1]?.value || '{}') as boolean,
+            diceConfig: JSON.parse(results[2]?.value || '{}') as Prisma.JsonObject,
+            portraitConfig: JSON.parse(results[3]?.value || '{}') as Prisma.JsonObject,
             attributes: results[4]
         }
     };

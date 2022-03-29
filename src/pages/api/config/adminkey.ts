@@ -3,7 +3,7 @@ import prisma from '../../../utils/database';
 import { NextApiResponseServerIO } from '../../../utils/socket';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-    const key = req.body.key;
+    const key: string = req.body.key;
 
     if (key === undefined) {
         res.status(400).end();

@@ -34,7 +34,7 @@ const databaseData = {
     config: [
         {
             name: 'init',
-            value: true
+            value: JSON.stringify(true)
         },
         {
             name: 'environment',
@@ -46,11 +46,11 @@ const databaseData = {
         },
         {
             name: 'enable_success_types',
-            value: false
+            value: JSON.stringify(false)
         },
         {
             name: 'dice',
-            value: {
+            value: JSON.stringify({
                 base: {
                     value: 20,
                     branched: false
@@ -59,14 +59,14 @@ const databaseData = {
                     value: 100,
                     branched: false
                 }
-            }
+            })
         },
         {
             name: 'portrait',
-            value: {
+            value: JSON.stringify({
                 attributes: ['Vida', 'Sanidade'],
                 side_attribute: 'Magia'
-            }
+            })
         }
     ],
     attribute: [

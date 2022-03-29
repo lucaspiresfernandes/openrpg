@@ -267,7 +267,7 @@ model PlayerAvatar {
 model Config {
   id    Int    @id @default(autoincrement())
   name  String @unique
-  value Json
+  value String @db.LongText
 }
 
 enum Role {

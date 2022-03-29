@@ -276,7 +276,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 maxLoad: results[15]?.maxLoad || 0,
                 maxSlots: results[15]?.spellSlots || 0
             },
-            diceConfig: results[16]?.value as Prisma.JsonObject,
+            diceConfig: JSON.parse(results[16]?.value || '{}') as Prisma.JsonObject,
         }
     };
 }

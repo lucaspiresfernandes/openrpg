@@ -255,7 +255,7 @@ CREATE TABLE `PlayerAvatar` (
 CREATE TABLE `Config` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `value` JSON NOT NULL,
+    `value` LONGTEXT NOT NULL,
 
     UNIQUE INDEX `Config_name_key`(`name`),
     PRIMARY KEY (`id`)

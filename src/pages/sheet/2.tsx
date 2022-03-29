@@ -96,7 +96,7 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
         props: {
             playerID: player.id,
             playerExtraInfo: results[0],
-            playerNotes: results[1]?.value
+            playerNotes: results[1]?.value || ''
         }
     };
 }

@@ -3,7 +3,7 @@ import prisma from '../../../utils/database';
 import { NextApiResponseServerIO } from '../../../utils/socket';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-    const value = req.body.value;
+    const value: string = req.body.value;
 
     if (value === undefined) {
         res.status(400).end();
