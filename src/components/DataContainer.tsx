@@ -46,7 +46,7 @@ export default function DataContainer(props: DataContainerProps) {
 
 
     return (
-        <Col xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl} xxl={props.xxl}
+        <Col hidden={props.hidden} xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl} xxl={props.xxl}
             className={`${props.outline ? 'data-container ' : ''}${props.className ? props.className + ' ' : ''}h-100 my-2`}>
             <Head />
             {props.children}

@@ -1,8 +1,8 @@
+import { Prisma } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
-import config from '../../../openrpg.config.json';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { DiceResult, ResolvedDice, sleep } from '../../utils';
@@ -43,10 +43,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('configChange', (key, value) => {
-            if (key !== 'environment') return;
-            setEnvironment(value);
-        });
+        socket.on('environmentChange', setEnvironment);
 
         socket.on('attributeChange', (playerId, attributeId, value, maxValue) => {
             if (playerId !== props.playerId) return;
@@ -152,7 +149,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         socket.on('diceResult', onDiceResult);
 
         return () => {
-            socket.off('configChange');
+            socket.off('environmentChange');
             socket.off('attributeChange');
             socket.off('attributeStatusChange');
             socket.off('infoChange');
@@ -226,14 +223,18 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const id = parseInt(ctx.query.characterID as string);
 
+    const portraitConfig = (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value as Prisma.JsonObject;
+    const configAttributes = portraitConfig['attributes'] as Array<string>;
+    const configSideAttribute = portraitConfig['side_attribute'] as string;
+
     const results = await Promise.all([
-        prisma.config.findUnique({ where: { key: 'environment' } }),
+        prisma.config.findUnique({ where: { name: 'environment' } }),
         prisma.playerAttribute.findMany({
-            where: { Attribute: { name: { in: config.portrait.attributes } }, player_id: id },
+            where: { Attribute: { name: { in: configAttributes } }, player_id: id },
             select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttribute.findFirst({
-            where: { Attribute: { name: config.portrait.side_attribute }, player_id: id },
+            where: { Attribute: { name: configSideAttribute }, player_id: id },
             select: { value: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttributeStatus.findMany({

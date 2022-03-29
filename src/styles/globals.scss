@@ -126,6 +126,18 @@ $list-group-color: #222222;
       background-color: $list-group-color;
     }
   }
+
+  .list-group-item {
+    @extend .theme-element;
+    background-color: $list-group-color;
+
+    &.selected {
+      background-color: lighten($list-group-color, 10%);
+      input {
+        background-color: lighten($list-group-color, 10%) !important;
+      }
+    }
+  }
 }
 
 .wrapper::-webkit-scrollbar {
@@ -139,18 +151,6 @@ $list-group-color: #222222;
 .player-container {
   @extend .data-container;
   background-color: $player-container-color;
-}
-
-.list-group-item {
-  @extend .theme-element;
-  background-color: $list-group-color;
-
-  &.selected {
-    background-color: lighten($list-group-color, 10%);
-    input {
-      background-color: lighten($list-group-color, 10%) !important;
-    }
-  }
 }
 
 .skill-container {
@@ -192,13 +192,13 @@ $list-group-color: #222222;
 $proggress-bar-height: 40px;
 
 .progress {
-    height: $proggress-bar-height;
+  height: $proggress-bar-height;
 }
 
 .attribute-dice {
-    max-height: $proggress-bar-height;
+  max-height: $proggress-bar-height;
 }
 
 .progress {
-    background-color: #2b2b2b;
+  background-color: #2b2b2b;
 }

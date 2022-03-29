@@ -4,7 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
-import AdminGlobalConfigurations from '../../components/Admin/AdminGlobalConfigurations';
+import AdminEnvironmentConfigurations from '../../components/Admin/AdminEnvironmentConfigurations';
 import CombatContainer from '../../components/Admin/CombatContainer';
 import DiceList, { PlayerName } from '../../components/Admin/DiceList';
 import NPCContainer from '../../components/Admin/NPCContainer';
@@ -22,6 +22,7 @@ import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
+import { Prisma } from '@prisma/client';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -47,9 +48,12 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
             <ErrorLogger.Provider value={addToast}>
                 <Socket.Provider value={socket}>
                     <Container>
+                        <Row className='display-5 text-center'>
+                            <Col>Painel do Administrador</Col>
+                        </Row>
                         <Row className='my-4'>
                             <Col className='text-center h5'>
-                                <AdminGlobalConfigurations environment={props.environment} />
+                                <AdminEnvironmentConfigurations environment={props.environment} />
                             </Col>
                         </Row>
                         <Row className='justify-content-center'>
@@ -101,7 +105,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 permanent: false
             },
             props: {
-                environment: null,
+                environment: '',
                 players: [],
                 notes: null
             }
@@ -109,9 +113,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
     }
 
     const results = await Promise.all([
-        prisma.config.findUnique({
-            where: { key: 'environment' }
-        }),
+        prisma.config.findUnique({ where: { name: 'environment' } }),
         prisma.player.findMany({
             where: { role: 'PLAYER' },
             select: {
@@ -136,7 +138,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            environment: results[0],
+            environment: results[0]?.value as string,
             players: results[1],
             notes: results[2]
         }

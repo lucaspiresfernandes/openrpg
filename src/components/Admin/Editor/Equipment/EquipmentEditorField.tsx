@@ -7,7 +7,6 @@ import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
 import api from '../../../../utils/api';
 import BottomTextInput from '../../../BottomTextInput';
-import config from '../../../../../openrpg.config.json';
 
 type EquipmentEditorFieldProps = {
     equipment: Equipment;
@@ -16,7 +15,7 @@ type EquipmentEditorFieldProps = {
 
 export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
     const [lastName, name, setName] = useExtendedState(props.equipment.name);
-    const [type, setType] = useState(props.equipment.type);
+    const [lastType, type, setType] = useExtendedState(props.equipment.type);
     const [lastDamage, damage, setDamage] = useExtendedState(props.equipment.damage);
     const [lastRange, range, setRange] = useExtendedState(props.equipment.range);
     const [lastAttacks, attacks, setAttacks] = useExtendedState(props.equipment.attacks);
@@ -31,13 +30,10 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
         api.post('/sheet/equipment', { id: props.equipment.id, name }).catch(logError);
     }
 
-    function typeChange(ev: ChangeEvent<HTMLSelectElement>) {
-        const newType = ev.currentTarget.value;
-        setType(newType);
-        api.post('/sheet/equipment', { id: props.equipment.id, type: newType }).catch(err => {
-            logError(err);
-            setType(type);
-        });
+    function onTypeBlur() {
+        if (type === lastType) return;
+        setType(type);
+        api.post('/sheet/equipment', { id: props.equipment.id, type }).catch(logError);
     }
 
     function onDamageBlur() {
@@ -95,10 +91,8 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
                     onBlur={onNameBlur} />
             </td>
             <td>
-                <select className='theme-element' value={type}
-                    onChange={typeChange}>
-                    {config.equipment.types.map((name, i) => <option key={i} value={name}>{name}</option>)}
-                </select>
+                <BottomTextInput value={type} onChange={ev => setType(ev.currentTarget.value)}
+                    onBlur={onTypeBlur} />
             </td>
             <td>
                 <BottomTextInput value={damage} onChange={ev => setDamage(ev.currentTarget.value)}

@@ -57,7 +57,7 @@ export default function Home({ init, error }: InferGetServerSidePropsType<typeof
     </Container>
   );
 
-  if (init === null) return (
+  if (!init) return (
     <>
       <WelcomePage logError={addToast} />
       <ErrorToastContainer toasts={toasts} />
@@ -121,7 +121,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
           permanent: false
         },
         props: {
-          init: null
+          init: false
         }
       };
     }
@@ -131,24 +131,24 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         permanent: false
       },
       props: {
-        init: null
+        init: false
       }
     };
   }
 
   try {
-    const init = await prisma.config.findUnique({ where: { key: 'init' } });
-
+    const init = await prisma.config.findUnique({ where: { name: 'init' } });
     return {
       props: {
-        init
+        init: init === null ? false : true
       }
     };
   }
   catch (err) {
+    console.error(err);
     return {
       props: {
-        init: null,
+        init: false,
         error: true
       }
     };

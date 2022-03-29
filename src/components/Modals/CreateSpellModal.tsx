@@ -1,5 +1,4 @@
 import SheetModal from './SheetModal';
-import config from '../../../openrpg.config.json';
 import { ChangeEvent, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -15,7 +14,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [cost, setCost] = useState('');
-    const [type, setType] = useState(config.spell.types[0]);
+    const [type, setType] = useState('Nenhum');
     const [damage, setDamage] = useState('');
     const [target, setTarget] = useState('');
     const [castingTime, setCastingTime] = useState('');
@@ -27,7 +26,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
         setName('');
         setDescription('');
         setCost('');
-        setType(config.spell.types[0]);
+        setType('Nenhum');
         setDamage('');
         setTarget('');
         setCastingTime('');
@@ -73,12 +72,8 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
 
                 <Form.Group controlId='createSpellType' className='mb-3'>
                     <Form.Label>Tipo</Form.Label>
-                    <Form.Select value={type} className='theme-element'
-                        onChange={ev => setType(ev.currentTarget.value)} >
-                        {config.spell.types.map((typeName, index) =>
-                            <option key={index} value={typeName}>{typeName}</option>
-                        )}
-                    </Form.Select>
+                    <Form.Control className='theme-element' value={type}
+                        onChange={ev => setType(ev.currentTarget.value)} />
                 </Form.Group>
 
                 <Form.Group controlId='createSpellDamage' className='mb-3'>

@@ -1,4 +1,4 @@
-import { Attribute, AttributeStatus } from '@prisma/client';
+import { Attribute, AttributeStatus, Prisma } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -26,6 +26,7 @@ type PlayerAttributeContainerProps = {
             name: string;
         } | null;
     }[];
+    attributeDice: Prisma.JsonObject;
 }
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
@@ -65,8 +66,8 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
             {props.playerAttributes.map(attr => {
                 const status = playerAttributeStatus.filter(stat =>
                     stat.AttributeStatus.attribute_id === attr.Attribute.id);
-                return <PlayerAttributeField key={attr.Attribute.id}
-                    playerAttribute={attr} playerStatus={status} onStatusChange={onStatusChange} />;
+                return <PlayerAttributeField key={attr.Attribute.id} attributeDice={props.attributeDice}
+                    playerAttribute={attr} playerStatus={status} onStatusChanged={onStatusChange} />;
             })}
             <EditAvatarModal playerAvatars={props.playerAvatars} show={avatarModalShow}
                 onHide={() => setAvatarModalShow(false)} onUpdate={() => setNotify(n => !n)} />

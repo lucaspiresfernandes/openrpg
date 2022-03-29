@@ -42,7 +42,7 @@ model Info {
 model Attribute {
   id              Int               @id @default(autoincrement())
   name            String
-  color           String            @db.Char(6) @default("0d6efd")
+  color           String            @default("0d6efd") @db.Char(6)
   rollable        Boolean
   PlayerAttribute PlayerAttribute[]
   AttributeStatus AttributeStatus[]
@@ -265,8 +265,8 @@ model PlayerAvatar {
 }
 
 model Config {
-  key   String @id
-  value String
+  name  String @id
+  value Json
 }
 
 enum Role {

@@ -1,4 +1,4 @@
-import { Skill } from '@prisma/client';
+import { Prisma, Skill } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -23,6 +23,7 @@ type PlayerSkill = {
 type PlayerSkillContainerProps = {
     playerSkills: PlayerSkill[];
     availableSkills: Skill[];
+    baseDice: Prisma.JsonObject;
 }
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
@@ -86,7 +87,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
                     {playerSkills.map(skill => {
                         if (skill.Skill.name.toLowerCase().includes(search.toLowerCase())) return (
                             <PlayerSkillField key={skill.Skill.id} value={skill.value}
-                                skill={skill.Skill} />
+                                skill={skill.Skill} baseDice={props.baseDice} />
                         );
                         return null;
                     })}

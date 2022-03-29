@@ -1,11 +1,10 @@
-import { Attribute } from '@prisma/client';
+import { Attribute, Prisma } from '@prisma/client';
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
-import config from '../../../../openrpg.config.json';
 import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import { clamp } from '../../../utils';
@@ -27,13 +26,14 @@ type PlayerAttributeFieldProps = {
             attribute_id: number;
         };
     }[];
-    onStatusChange?(id: number): void;
+    onStatusChanged?(id: number): void;
+    attributeDice: Prisma.JsonObject;
 }
 
-export default function PlayerAttributeField({ playerAttribute, playerStatus, onStatusChange: onStatusChanged }: PlayerAttributeFieldProps) {
-    const attributeID = playerAttribute.Attribute.id;
-    const [value, setValue] = useState(playerAttribute.value);
-    const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(playerAttribute.maxValue);
+export default function PlayerAttributeField(props: PlayerAttributeFieldProps) {
+    const attributeID = props.playerAttribute.Attribute.id;
+    const [value, setValue] = useState(props.playerAttribute.value);
+    const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(props.playerAttribute.maxValue);
     const barRef = useRef<HTMLDivElement>(null);
     const timeout = useRef<NodeJS.Timeout>();
 
@@ -43,7 +43,7 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     useEffect(() => {
         if (barRef.current === null) return;
         const inner = barRef.current.querySelector('.progress-bar') as HTMLDivElement;
-        if (inner) inner.style.backgroundColor = `#${playerAttribute.Attribute.color}`;
+        if (inner) inner.style.backgroundColor = `#${props.playerAttribute.Attribute.color}`;
         else console.warn('Could not find .progress-bar inner node inside PlayerAttributeField component.');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [barRef]);
@@ -90,23 +90,23 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
     }
 
     function diceClick() {
-        const roll = config.player.attribute_bar.dice;
-        const resolver = `${roll}${config.player.attribute_bar.branched ? 'b' : ''}`;
-        showDiceRollResult([{ num: 1, roll: roll, ref: value }], resolver);
+        const roll = props.attributeDice['value'] as number;
+        const branched = props.attributeDice['branched'] as boolean;
+        showDiceRollResult([{ num: 1, roll: roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
     }
 
     return (
         <>
             <Row>
                 <Col><label htmlFor={`attribute${attributeID}`}>
-                    Pontos de {playerAttribute.Attribute.name}
+                    Pontos de {props.playerAttribute.Attribute.name}
                 </label></Col>
             </Row>
             <Row>
                 <Col>
                     <ProgressBar now={value} min={0} max={maxValue} ref={barRef} />
                 </Col>
-                {playerAttribute.Attribute.rollable &&
+                {props.playerAttribute.Attribute.rollable &&
                     <Col xs='auto' className='align-self-center'>
                         <Image src='/dice20.png' alt='Dado' className='attribute-dice clickable' onClick={diceClick} />
                     </Col>
@@ -132,9 +132,9 @@ export default function PlayerAttributeField({ playerAttribute, playerStatus, on
             </Row>
             <Row className='mb-3'>
                 <Col>
-                    {playerStatus.map(stat =>
+                    {props.playerStatus.map(stat =>
                         <PlayerAttributeStatusField key={stat.AttributeStatus.id}
-                            playerAttributeStatus={stat} onStatusChanged={onStatusChanged} />
+                            playerAttributeStatus={stat} onStatusChanged={props.onStatusChanged} />
                     )}
                 </Col>
             </Row>

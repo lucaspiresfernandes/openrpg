@@ -29,9 +29,6 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
             <ApplicationHead title='Editor' />
             <AdminNavbar />
             <Container>
-                <Row className='display-5 text-center'>
-                    <Col>Painel do Administrador</Col>
-                </Row>
                 {props.players.length > 0 &&
                     <Row>
                         <Col className='h4 text-center my-4' style={{ color: 'gray' }}>
@@ -112,7 +109,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.item.findMany(),
         prisma.specialization.findMany(),
         prisma.spell.findMany(),
-        prisma.currency.findMany(),
+        prisma.currency.findMany()
     ]);
 
     return {

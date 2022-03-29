@@ -6,7 +6,6 @@ import DataContainer from '../../components/DataContainer';
 import SheetNavbar from '../../components/SheetNavbar';
 import useToast from '../../hooks/useToast';
 import { sessionSSR } from '../../utils/session';
-import config from '../../../openrpg.config.json';
 import prisma from '../../utils/database';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
@@ -18,12 +17,12 @@ import api from '../../utils/api';
 import Router from 'next/router';
 import ApplicationHead from '../../components/ApplicationHead';
 
-export default function Sheet2({ playerExtraInfo, playerID, playerNotes }: InferGetServerSidePropsType<typeof getServerSidePropsPage2>) {
+export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>) {
     const [toasts, addToast] = useToast();
     const [socket, setSocket] = useState<SocketIO | null>(null);
 
     useSocket(socket => {
-        socket.emit('roomJoin', `player${playerID}`);
+        socket.emit('roomJoin', `player${props.playerID}`);
         setSocket(socket);
     });
 
@@ -43,17 +42,17 @@ export default function Sheet2({ playerExtraInfo, playerID, playerNotes }: Infer
                 <Container>
                     <Row className='display-5 text-center'>
                         <Col>
-                            Perfil de {config.player.role}
+                            Ficha do Personagem
                         </Col>
                     </Row>
                     <Row>
                         <DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
-                            <PlayerAnnotationsField value={playerNotes} />
+                            <PlayerAnnotationsField value={props.playerNotes} />
                         </DataContainer>
                     </Row>
                     <Row>
                         <DataContainer title='Detalhes Pessoais' outline>
-                            {playerExtraInfo.map(info =>
+                            {props.playerExtraInfo.map(info =>
                                 <PlayerExtraInfoField key={info.ExtraInfo.id} value={info.value} extraInfo={info.ExtraInfo} />
                             )}
                         </DataContainer>
@@ -82,7 +81,7 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
         };
     }
 
-    const results = await Promise.all([
+    const results = await prisma.$transaction([
         prisma.playerExtraInfo.findMany({
             where: { player_id: player.id },
             select: { value: true, ExtraInfo: true }

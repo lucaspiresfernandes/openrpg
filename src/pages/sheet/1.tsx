@@ -1,10 +1,10 @@
+import { Prisma } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import Router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import config from '../../../openrpg.config.json';
 import ApplicationHead from '../../components/ApplicationHead';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
@@ -23,10 +23,10 @@ import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import api from '../../utils/api';
-import database from '../../utils/database';
+import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
-const bonusDamageName = config.player.bonus_damage_name;
+const bonusDamageName = 'Dano Bônus';
 
 export default function Sheet1(props: InferGetServerSidePropsType<typeof getServerSidePropsPage1>): JSX.Element {
     const [toasts, addToast] = useToast();
@@ -64,7 +64,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                         <Container>
                             <Row className='display-5 text-center'>
                                 <Col>
-                                    Perfil de {config.player.role}
+                                    Ficha do Personagem
                                 </Col>
                             </Row>
                             <Row className='mb-3'>
@@ -84,6 +84,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </DataContainer>
                                 <Col>
                                     <PlayerAttributeContainer playerAttributes={props.playerAttributes}
+                                        attributeDice={props.diceConfig['attribute'] as Prisma.JsonObject}
                                         playerAttributeStatus={props.playerAttributeStatus} playerAvatars={props.playerAvatars} />
                                 </Col>
                             </Row>
@@ -91,9 +92,9 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 <DataContainer outline title='Características'>
                                     <Row className='mb-3 text-center align-items-end justify-content-center'>
                                         {props.playerCharacteristics.map(char =>
-                                            <PlayerCharacteristicField key={char.Characteristic.id}
+                                            <PlayerCharacteristicField key={char.Characteristic.id} modifier={char.modifier}
                                                 characteristic={char.Characteristic} value={char.value}
-                                                modifier={char.modifier} />
+                                                baseDice={props.diceConfig['base'] as Prisma.JsonObject} />
                                         )}
                                     </Row>
                                 </DataContainer>
@@ -103,7 +104,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                     playerEquipments={props.playerEquipments} />
                             </Row>
                             <Row>
-                                <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills} />
+                                <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills}
+                                    baseDice={props.diceConfig['base'] as Prisma.JsonObject} />
                             </Row>
                             <Row>
                                 <PlayerItemContainer playerItems={props.playerItems} availableItems={props.availableItems}
@@ -150,39 +152,40 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableSkills: [],
                 availableItems: [],
                 availableSpells: [],
+                diceConfig: {} as Prisma.JsonObject
             }
         };
     }
 
     const playerID = player.id;
 
-    const results = await Promise.all([
-        database.playerInfo.findMany({
+    const results = await prisma.$transaction([
+        prisma.playerInfo.findMany({
             where: { player_id: playerID },
             select: { Info: true, value: true }
         }),
 
-        database.playerAttribute.findMany({
+        prisma.playerAttribute.findMany({
             where: { player_id: playerID },
             select: { Attribute: true, value: true, maxValue: true }
         }),
 
-        database.playerAttributeStatus.findMany({
+        prisma.playerAttributeStatus.findMany({
             where: { player_id: playerID },
             select: { AttributeStatus: true, value: true }
         }),
 
-        database.playerSpec.findMany({
+        prisma.playerSpec.findMany({
             where: { player_id: playerID },
             select: { Spec: true, value: true }
         }),
 
-        database.playerCharacteristic.findMany({
+        prisma.playerCharacteristic.findMany({
             where: { player_id: playerID },
             select: { Characteristic: true, value: true, modifier: true }
         }),
 
-        database.playerEquipment.findMany({
+        prisma.playerEquipment.findMany({
             where: { player_id: playerID },
             select: {
                 Equipment: {
@@ -195,7 +198,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             }
         }),
 
-        database.playerSkill.findMany({
+        prisma.playerSkill.findMany({
             where: { player_id: playerID },
             select: {
                 Skill: { select: { id: true, name: true, Specialization: { select: { name: true } } } },
@@ -203,7 +206,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             }
         }),
 
-        database.playerItem.findMany({
+        prisma.playerItem.findMany({
             where: { player_id: playerID },
             select: {
                 Item: { select: { name: true, id: true, weight: true } },
@@ -211,33 +214,33 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             }
         }),
 
-        database.playerSpell.findMany({
+        prisma.playerSpell.findMany({
             where: { player_id: playerID },
             select: { Spell: true }
         }),
 
-        database.equipment.findMany({
+        prisma.equipment.findMany({
             where: { visible: true, PlayerEquipment: { none: { player_id: playerID } } },
         }),
 
-        database.skill.findMany({
+        prisma.skill.findMany({
             where: { PlayerSkill: { none: { player_id: playerID } } },
         }),
 
-        database.item.findMany({
+        prisma.item.findMany({
             where: { visible: true, PlayerItem: { none: { player_id: playerID } } },
         }),
 
-        database.spell.findMany({
+        prisma.spell.findMany({
             where: { visible: true, PlayerSpell: { none: { player_id: playerID } } },
         }),
 
-        database.playerCurrency.findMany({
+        prisma.playerCurrency.findMany({
             where: { player_id: playerID },
             select: { value: true, Currency: true }
         }),
 
-        database.playerAvatar.findMany({
+        prisma.playerAvatar.findMany({
             where: { player_id: playerID },
             select: {
                 link: true,
@@ -245,9 +248,10 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
             }
         }),
 
-        database.player.findUnique({
+        prisma.player.findUnique({
             where: { id: playerID }, select: { maxLoad: true, spellSlots: true }
-        })
+        }),
+        prisma.config.findUnique({ where: { name: 'dice' } })
     ]);
 
     return {
@@ -272,6 +276,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 maxLoad: results[15]?.maxLoad || 0,
                 maxSlots: results[15]?.spellSlots || 0
             },
+            diceConfig: results[16]?.value as Prisma.JsonObject,
         }
     };
 }

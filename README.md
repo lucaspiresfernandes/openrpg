@@ -141,37 +141,3 @@ mysql://OpenRPG:197324685@db4free.net:3306/openrpgdb
 ### Fazendo o Deploy
 
 Após configurar a Heroku e configurar o banco de dados, você irá acessar novamente a página de [Deploy](https://dashboard.heroku.com/apps/openrpgdemoo/deploy) e, no final da página, clicar em "Deploy Branch". Espere o seu deploy terminar, e bom jogo!
-
-## Extras
-
-### Configurações Profundas (Lógica e Identidade)
-
-Caso queria mudar a forma como o sistema se comporta, você pode fazer isso editando o arquivo "openrpg.config.json". Procure por ele no seu repositório. Para editá-lo, considere algumas coisas antes:
-
-1. Textos sempre são englobados por aspas duplas (EX: "The Fallen Omen RPG"), números nunca são englobados por aspas duplas (EX: 20), e os valores "true" e "false" também não.
-2. "True" e "false" também podem ser interpretados como "Sim" e "Não". (EX: Você gostaria de usar tipos de sucessos na hora da rolagem? true (Sim) ou false (Não).)
-3. Ramificações de sucesso são os detalhes da rolagem ("Bom" e "Extremo").
-
-Agora, acompanharei com você cada configuração do arquivo.
-
-| NOME DA CHAVE | SIGNIFICADO |
-| ------------- | ----------- |
-| application_name | O nome da aplicação. Por padrão, o nome da aplicação é Open RPG. |
-| player>admin_key | A chave do administrador. É recomendável trocá-la. O padrão é 123456. ATENÇÃO: a chave, apesar de ser composta por números, deve ser englobada por aspas duplas como um texto. |
-| player>role | A função do jogador, que é mostrada como um Header na ficha do jogador. O padrão é Investigador. |
-| player>bonus_damage_name | O nome da especificação de jogador "Dano Bônus". Caso queira editá-la para um nome diferente, também deve editar esse campo. O padrão é Dano Bônus. |
-| player>base>dice | O sistema de dados base que o aplicativo irá usar. Ele aceita 20 ou 100 como valor, que representam os sistemas de d20 e d100. O padrão é 20. |
-| player>base>branched | Deseja mostrar as ramificações de sucesso dos dados? Sim (true) ou não (false). Caso true, o sistema irá utilizar ramificações, como Bom e Extremo, para as descrições de sucesso dos dados. |
-| player>attribute_bar>dice | O sistema de dados que as barras de atributo irão utilizar. Ele aceita 20 ou 100 como valor. O padrão é 100. |
-| player>attribute_bar>branched | Deseja mostrar as ramificações de sucesso dos dados de atributo? Sim (true) ou não (false). |
-| success_types>use_success_types | Deseja usar descrições de sucesso? (EX: Sucesso, Fracasso). Caso sim, o sistema irá utilizar essas descrições no resultado dos dados. Caso não, o sistema não utilizará nenhuma descrição no resultado dos dados. |
-| success_types>failure | O nome do tipo de sucesso Fracasso. O padrão é Fracasso. |
-| success_types>success | O nome do tipo de sucesso Sucesso. O padrão é Sucesso. |
-| success_types>hard | O nome do tipo de sucesso Bom. O padrão é Bom. |
-| success_types>extreme | O nome do tipo de sucesso Extremo. O padrão é Extremo. |
-| equipment>types | Os tipos disponíveis de equipamento. Você pode adicionar, remover ou modificar os itens. |
-| spell>types | Os tipos disponíveis de magias. Você pode adicionar, remover ou modificar os itens. |
-| portrait>attributes | A lista de atributos que vão aparecer no retrato do personagem (Exclusivo para o OBS). O padrão é Vida e Sanidade. |
-| portrait>side_attribute | Define o atributo que fica dentro do retrato do personagem (Exclusivo para o OBS). O padrão é Magia. |
-
-Após qualquer mudança, é necessário [refazer o deploy](#fazendo-o-deploy).
