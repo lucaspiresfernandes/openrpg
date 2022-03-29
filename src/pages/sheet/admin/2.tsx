@@ -32,34 +32,31 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
                 <Row className='display-5 text-center'>
                     <Col>Painel do Administrador</Col>
                 </Row>
-                {props.players.length === 0 ?
-                    <>
-                        <Row>
-                            <InfoEditorContainer info={props.info} />
-                        </Row>
-                        <Row>
-                            <ExtraInfoEditorContainer extraInfo={props.extraInfo} />
-                        </Row>
-                        <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus} />
-                        <Row>
-                            <SpecEditorContainer specs={props.spec} />
-                        </Row>
-                        <Row>
-                            <CharacteristicEditorContainer characteristics={props.characteristic} />
-                        </Row>
-                        <Row>
-                            <CurrencyEditorContainer currencies={props.currency} />
-                        </Row>
-                    </> :
-                    <>
-                        <Row>
-                            <Col className='h4 text-center my-4' style={{ color: 'gray' }}>
-                                Alguns editores não estão disponíveis quando existem jogadores ativos.
-                                Caso queira acessá-los, deve apagar os jogadores ativos restantes.
-                            </Col>
-                        </Row>
-                    </>
+                {props.players.length > 0 &&
+                    <Row>
+                        <Col className='h4 text-center my-4' style={{ color: 'gray' }}>
+                            Algumas funções do editor não estão disponíveis quando existem jogadores cadastrados.
+                            Caso queira acessá-los, deve apagar os jogadores cadastrados restantes.
+                        </Col>
+                    </Row>
                 }
+                <Row>
+                    <InfoEditorContainer info={props.info} disabled={props.players.length > 0} />
+                </Row>
+                <Row>
+                    <ExtraInfoEditorContainer extraInfo={props.extraInfo} disabled={props.players.length > 0} />
+                </Row>
+                <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus}
+                    disabled={props.players.length > 0} />
+                <Row>
+                    <SpecEditorContainer specs={props.spec} disabled={props.players.length > 0} />
+                </Row>
+                <Row>
+                    <CharacteristicEditorContainer characteristics={props.characteristic} disabled={props.players.length > 0} />
+                </Row>
+                <Row>
+                    <CurrencyEditorContainer currencies={props.currency} disabled={props.players.length > 0} />
+                </Row>
                 <SkillEditorContainer skills={props.skill} specializations={props.specialization} />
                 <Row>
                     <EquipmentEditorContainer equipments={props.equipment} />

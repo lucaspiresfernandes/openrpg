@@ -1,7 +1,6 @@
 import { Characteristic } from '@prisma/client';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -10,6 +9,7 @@ import BottomTextInput from '../../../BottomTextInput';
 
 type CharacteristicEditorFieldProps = {
     characteristic: Characteristic;
+    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -26,7 +26,8 @@ export default function CharacteristicEditorField(props: CharacteristicEditorFie
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.characteristic.id)} size='sm' variant='secondary'>
+                <Button onClick={() => props.onDelete(props.characteristic.id)} size='sm'
+                    variant='secondary' disabled={props.deleteDisabled}>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

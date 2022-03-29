@@ -63,12 +63,10 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 return newAttributes;
             });
 
+            if (value === undefined) return;
             setSideAttribute(attr => {
-                if (attributeId !== attr.Attribute.id || value === undefined) return attr;
-                return {
-                    value: value,
-                    Attribute: { ...attr.Attribute }
-                };
+                if (attributeId !== attr.Attribute.id) return attr;
+                return { value: value, Attribute: { ...attr.Attribute } };
             });
         });
 

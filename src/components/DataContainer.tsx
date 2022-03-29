@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 interface DataContainerProps extends ColProps {
     title: string;
     children?: JSX.Element | JSX.Element[];
-    addButton?: { type?: 'button' | 'dropdown', onAdd?(): void, children?: JSX.Element | JSX.Element[] };
+    addButton?: { type?: 'button' | 'dropdown', onAdd?(): void, children?: JSX.Element | JSX.Element[], disabled?: boolean };
     htmlFor?: string;
     outline?: boolean;
 }
@@ -25,10 +25,10 @@ export default function DataContainer(props: DataContainerProps) {
                     </Col>
                     <Col xs={3} className='align-self-center'>
                         {props.addButton.type === 'dropdown' ?
-                            <DropdownButton title='+' variant='secondary' menuVariant='dark'>
+                            <DropdownButton title='+' variant='secondary' menuVariant='dark' disabled={props.addButton.disabled}>
                                 {props.addButton.children}
                             </DropdownButton> :
-                            <Button variant='secondary' onClick={props.addButton.onAdd}>+</Button>
+                            <Button variant='secondary' onClick={props.addButton.onAdd} disabled={props.addButton.disabled}>+</Button>
                         }
                     </Col>
                     <hr />

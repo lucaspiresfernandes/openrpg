@@ -11,6 +11,7 @@ import AdminTable from '../../AdminTable';
 
 type ExtraInfoEditorContainerProps = {
     extraInfo: ExtraInfo[];
+    disabled?: boolean;
 }
 
 export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
     return (
         <>
             <DataContainer outline title='Informações Pessoais (Extra)'
-                addButton={{ onAdd: () => setShowInfoModal(true) }}>
+                addButton={{ onAdd: () => setShowInfoModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
                         <AdminTable>
@@ -52,7 +53,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
                             </thead>
                             <tbody>
                                 {extraInfo.map(info =>
-                                    <ExtraInfoEditorField key={info.id}
+                                    <ExtraInfoEditorField key={info.id} deleteDisabled={props.disabled}
                                         extraInfo={info} onDelete={deleteExtraInfo} />
                                 )}
                             </tbody>
