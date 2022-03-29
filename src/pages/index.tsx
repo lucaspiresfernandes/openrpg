@@ -34,7 +34,7 @@ export default function Home({ init, error }: InferGetServerSidePropsType<typeof
     }
 
     api.post('/login', { username, password }).then(res => {
-      if (res.data.admin) return Router.replace('/sheet/admin/1');
+      if (res.data.admin) return Router.replace('/admin/main');
       Router.replace('/sheet/1');
     }).catch(err => {
       setLoading(false);
@@ -117,7 +117,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
     if (player.admin) {
       return {
         redirect: {
-          destination: '/sheet/admin/1',
+          destination: '/admin/main',
           permanent: false
         },
         props: {

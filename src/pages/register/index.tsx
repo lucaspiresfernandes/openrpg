@@ -24,7 +24,7 @@ export default function Register(): JSX.Element {
   useAuthentication(player => {
     if (player) {
       if (player.admin) {
-        return router.replace('/sheet/admin/1');
+        return router.replace('/admin/main');
       }
       return router.replace('/sheet/1');
     }
