@@ -75,7 +75,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
                 }
                 <Row>
                     <Fade in={resultFade}>
-                        <Col className={result?.roll ? 'h1' : ''}>
+                        <Col className={result?.roll ? 'h1 m-0' : ''}>
                             {result?.roll}
                         </Col>
                     </Fade>
