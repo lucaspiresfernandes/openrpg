@@ -33,10 +33,8 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
                 }
             </td>
             <td>
-                {props.info.default ? <>{name}</> :
-                    <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                        onBlur={onBlur} />
-                }
+                <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
+                    onBlur={onBlur} readOnly={props.info.default} disabled={props.info.default} />
             </td>
         </tr>
     );
