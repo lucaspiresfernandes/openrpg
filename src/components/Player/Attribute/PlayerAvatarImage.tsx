@@ -29,7 +29,7 @@ export default function PlayerAvatarContainer(props: PlayerAvatarContainerProps)
     return (
         <Col xl={{ offset: 2 }} className='text-center'>
             <Image fluid src={src} alt='Avatar' className='clickable'
-                style={{ minWidth: 100, minHeight: 100, maxHeight: 400 }}
+                style={{ minWidth: 100, minHeight: 100, maxHeight: 550 }}
                 onError={() => setSrc('/avatar404.png')} onClick={props.onClick} />
         </Col>
     );
