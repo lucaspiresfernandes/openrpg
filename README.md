@@ -1,3 +1,5 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z3BVAJ2)
+
 # Open RPG: Ficha eletrônica de RPG
 
 Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas dos personagens de sua campanha e agilizar processos comuns.
@@ -5,6 +7,10 @@ Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas do
 Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/). Caso queira criar uma conta de mestre/administrador, use "123456" como chave do administrador.
 
 Os dados criados no site da demo são excluídos semanalmente, então se quiser gerir a sua própria instância do Open RPG, leia a seção [Instalação][].
+
+## Ko-fi
+
+Gostou do meu trabalho? Considere fazer uma doação para mim no meu [Ko-fi](https://ko-fi.com/alyssafernandes). Doações me ajudam financeiramente e me incentivam a criar mais conteúdo gratuito para a comunidade.
 
 ## Documentação
 
