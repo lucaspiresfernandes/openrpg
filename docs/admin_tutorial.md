@@ -129,7 +129,7 @@ Editar sistema de dados.
 
 ### Tipos de Sucesso
 
-Os tipos de sucesso são as descrições que vêm com uma rolagem de dado simples (Característica ou Perícia).
+Os tipos de sucesso são as descrições que vêm com uma rolagem de dado simples (Característica ou Perícia). Elas podem ser "Sucesso" ou "Fracasso".
 
 ![image](https://user-images.githubusercontent.com/71353674/160731143-5e7e136f-728d-4b90-a97a-74f11c087c7d.png)
 
