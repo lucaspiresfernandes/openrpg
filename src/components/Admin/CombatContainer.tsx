@@ -1,4 +1,3 @@
-import { arrayMoveImmutable } from 'array-move';
 import { FormEvent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -22,7 +21,28 @@ type Entity = {
     name: string;
 }
 
-//TODO: fix entity bug where its name would reset when the order is changed.
+const SortableList = SortableContainer(({ entities, pointer, removeEntity }:
+    { entities: Entity[], pointer: number, removeEntity(id: number): void }) => {
+    return (
+        <ListGroup variant='flush' className='text-center'>
+            {entities.map((entity, index) =>
+                <SortableItem key={entity.id} index={index} entity={entity}
+                    selected={pointer === index} removeEntity={removeEntity} />
+            )}
+        </ListGroup>
+    );
+});
+
+const SortableItem = SortableElement(({ entity, selected, removeEntity }:
+    { entity: Entity, selected?: boolean, removeEntity(id: number): void }) => {
+    return (
+        <ListGroup.Item className={selected ? 'selected' : ''}>
+            <div className='d-inline-block w-75'>{entity.name}</div>
+            <Button size='sm' variant='secondary' className='ms-1' onClick={() => removeEntity(entity.id)}>-</Button>
+        </ListGroup.Item>
+    );
+});
+
 export default function CombatContainer({ players }: { players: PlayerName[] }) {
     const [round, setRound] = useState(1);
     const [entities, setEntities] = useState<Entity[]>([]);
@@ -38,7 +58,12 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
 
     function onSortEnd({ oldIndex, newIndex }: SortEnd) {
         if (oldIndex === newIndex) return;
-        setEntities(entities => arrayMoveImmutable(entities, oldIndex, newIndex));
+        setEntities(entities => {
+            const newEntities = [...entities];
+            const aux = newEntities.splice(oldIndex, 1)[0];
+            newEntities.splice(newIndex, 0, aux);
+            return newEntities;
+        });
         if (oldIndex === pointer) return setPointer(newIndex);
         if (newIndex >= pointer && oldIndex < pointer) return setPointer(pointer - 1);
         if (oldIndex > pointer && newIndex <= pointer) return setPointer(pointer + 1);
@@ -71,25 +96,6 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
         setRound(1);
     }
 
-    const SortableList = SortableContainer(({ entities }: { entities: Entity[] }) => {
-        return (
-            <ListGroup variant='flush' className='text-center'>
-                {entities.map((entity, index) =>
-                    <SortableItem key={entity.id} index={index} entity={entity} selected={pointer === index} />
-                )}
-            </ListGroup>
-        );
-    });
-
-    const SortableItem = SortableElement(({ entity, selected }: { entity: Entity, selected?: boolean }) => {
-        return (
-            <ListGroup.Item className={selected ? 'selected' : ''}>
-                <div className='d-inline-block w-75'>{entity.name}</div>
-                <Button size='sm' variant='secondary' className='ms-1' onClick={() => removeEntity(entity.id)}>-</Button>
-            </ListGroup.Item>
-        );
-    });
-
     const dropdown = (
         <>
             {players.map(pl => {
@@ -120,7 +126,7 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
             <Row>
                 <Col>
                     <div className='w-100 wrapper'>
-                        <SortableList entities={entities} onSortEnd={onSortEnd} />
+                        <SortableList entities={entities} onSortEnd={onSortEnd} pointer={pointer} removeEntity={removeEntity} />
                     </div>
                 </Col>
             </Row>

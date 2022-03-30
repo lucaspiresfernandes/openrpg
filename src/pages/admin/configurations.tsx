@@ -219,9 +219,9 @@ function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(
                     </DropdownButton>
                 </Col>
             </Row>
-            <Row className='text-center mb-4 mt-2'>
+            <Row className='text-center'>
                 <Col>
-                    <ListGroup variant='flush' >
+                    <ListGroup variant='flush' className='theme-element'>
                         {attributes.map(attr =>
                             <ListGroup.Item key={attr.id} className='theme-element'>
                                 {attr.name}
@@ -232,6 +232,7 @@ function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(
                     </ListGroup>
                 </Col>
             </Row>
+            <hr />
             <Row className='my-2 text-center'>
                 <Col className='h5'>
                     <label htmlFor='portraitSideAttribute' className='me-2'>Atributo Secundário:</label>

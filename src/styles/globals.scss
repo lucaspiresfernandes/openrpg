@@ -19,8 +19,8 @@ body {
 }
 
 .theme-element {
-  background-color: $background-color;
-  color: $text-color;
+  background-color: $background-color !important;
+  color: $text-color !important;
 
   &:focus {
     background-color: $background-color;
@@ -111,31 +111,34 @@ $list-group-color: #222222;
   max-height: 260px;
 
   .list-group {
-    background-color: $list-group-color;
-    border-radius: 0;
     min-height: 200px;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-
-    .list-group-item {
-      padding: 0.5rem 1rem;
-    }
-
-    input.bottom-text {
-      background-color: $list-group-color;
-    }
   }
+}
+
+.list-group {
+  background-color: $list-group-color;
+  border-radius: 0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 
   .list-group-item {
-    @extend .theme-element;
-    background-color: $list-group-color;
+    padding: 0.5rem 1rem;
+  }
 
-    &.selected {
-      background-color: lighten($list-group-color, 10%);
-      input {
-        background-color: lighten($list-group-color, 10%) !important;
-      }
+  input.bottom-text {
+    background-color: $list-group-color;
+  }
+}
+
+.list-group-item {
+  @extend .theme-element;
+  background-color: $list-group-color;
+
+  &.selected {
+    background-color: lighten($list-group-color, 10%);
+    input {
+      background-color: lighten($list-group-color, 10%) !important;
     }
   }
 }
