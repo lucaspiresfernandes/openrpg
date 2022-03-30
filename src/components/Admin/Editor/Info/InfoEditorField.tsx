@@ -9,6 +9,7 @@ import { BsTrash } from 'react-icons/bs';
 
 type InfoEditorFieldProps = {
     info: Info;
+    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -26,16 +27,14 @@ export default function InfoEditorField(props: InfoEditorFieldProps) {
         <tr>
             <td>
                 {!props.info.default &&
-                    <Button onClick={() => props.onDelete(props.info.id)} size='sm' variant='secondary'>
+                    <Button onClick={() => props.onDelete(props.info.id)} size='sm' variant='secondary' disabled={props.deleteDisabled}>
                         <BsTrash color='white' size={24} />
                     </Button>
                 }
             </td>
             <td>
-                {props.info.default ? <>{name}</> :
-                    <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
-                        onBlur={onBlur} />
-                }
+                <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
+                    onBlur={onBlur} readOnly={props.info.default} disabled={props.info.default} />
             </td>
         </tr>
     );

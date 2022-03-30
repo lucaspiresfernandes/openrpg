@@ -9,6 +9,7 @@ import { BsTrash } from 'react-icons/bs';
 
 type CurrencyEditorFieldProps = {
     currency: Currency;
+    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -25,7 +26,8 @@ export default function CurrencyEditorField(props: CurrencyEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.currency.id)} size='sm' variant='secondary'>
+                <Button onClick={() => props.onDelete(props.currency.id)} size='sm'
+                    variant='secondary' disabled={props.deleteDisabled}>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

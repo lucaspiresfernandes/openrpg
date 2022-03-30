@@ -25,7 +25,7 @@ export default function Register() {
   useAuthentication(player => {
     if (player) {
       if (player.admin) {
-        return router.replace('/sheet/admin/1');
+        return router.replace('/admin/main');
       }
       return router.replace('/sheet/1');
     }
@@ -50,7 +50,7 @@ export default function Register() {
     else {
       try {
         await api.post('/register', { username, password, adminKey });
-        router.replace('/sheet/admin/1');
+        router.replace('/admin/main');
       }
       catch (err) {
         addToast(err);

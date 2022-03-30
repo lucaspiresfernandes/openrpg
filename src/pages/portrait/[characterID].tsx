@@ -1,8 +1,8 @@
+import { Prisma } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
-import config from '../../../openrpg.config.json';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { DiceResult, ResolvedDice, sleep } from '../../utils';
@@ -43,10 +43,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('configChange', (key, value) => {
-            if (key !== 'environment') return;
-            setEnvironment(value);
-        });
+        socket.on('environmentChange', setEnvironment);
 
         socket.on('attributeChange', (playerId, attributeId, value, maxValue) => {
             if (playerId !== props.playerId) return;
@@ -63,12 +60,10 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 return newAttributes;
             });
 
+            if (value === undefined) return;
             setSideAttribute(attr => {
-                if (attributeId !== attr.Attribute.id || value === undefined) return attr;
-                return {
-                    value: value,
-                    Attribute: { ...attr.Attribute }
-                };
+                if (attributeId !== attr.Attribute.id) return attr;
+                return { value: value, Attribute: { ...attr.Attribute } };
             });
         });
 
@@ -154,7 +149,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         socket.on('diceResult', onDiceResult);
 
         return () => {
-            socket.off('configChange');
+            socket.off('environmentChange');
             socket.off('attributeChange');
             socket.off('attributeStatusChange');
             socket.off('infoChange');
@@ -179,6 +174,13 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         setShowAvatar(true);
     }
 
+    const getAttributeStyle = (color: string) => {
+        return {
+            color: 'white',
+            textShadow: `0 0 10px #${color}, 0 0 30px #${color}, 0 0 50px #${color}`
+        };
+    };
+
     return (
         <>
             <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
@@ -190,14 +192,14 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 </Fade>
             </div>
             <div className={styles.sideContainer}>
-                <div className={`${styles.side} portrait-color ${sideAttribute.Attribute.name}`}>
+                <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
                     {sideAttribute.value}
                 </div>
             </div>
             <Fade in={environment === 'combat'}>
                 <div className={styles.combat}>
                     {attributes.map(attr =>
-                        <div className={`${styles.attribute} portrait-color ${attr.Attribute.name}`}
+                        <div className={styles.attribute} style={getAttributeStyle(attr.Attribute.color)}
                             key={attr.Attribute.id}>
                             {attr.value}/{attr.maxValue}
                         </div>
@@ -221,15 +223,20 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const id = parseInt(ctx.query.characterID as string);
 
+    const portraitConfig = JSON.parse(
+        (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || '') as Prisma.JsonObject;
+    const configAttributes = portraitConfig['attributes'] as Array<string>;
+    const configSideAttribute = portraitConfig['side_attribute'] as string;
+
     const results = await Promise.all([
-        prisma.config.findUnique({ where: { key: 'environment' } }),
+        prisma.config.findUnique({ where: { name: 'environment' } }),
         prisma.playerAttribute.findMany({
-            where: { Attribute: { name: { in: config.portrait.attributes } }, player_id: id },
-            select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true } } }
+            where: { Attribute: { name: { in: configAttributes } }, player_id: id },
+            select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttribute.findFirst({
-            where: { Attribute: { name: config.portrait.side_attribute }, player_id: id },
-            select: { value: true, Attribute: { select: { id: true, name: true } } }
+            where: { Attribute: { name: configSideAttribute }, player_id: id },
+            select: { value: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttributeStatus.findMany({
             where: { player_id: id },
@@ -243,7 +250,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             playerId: id,
             environment: results[0]?.value || 'idle',
             attributes: results[1],
-            sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '' } },
+            sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '', color: '' } },
             attributeStatus: results[3],
             playerName: results[4] || { value: 'Desconhecido', info_id: 0 }
         }

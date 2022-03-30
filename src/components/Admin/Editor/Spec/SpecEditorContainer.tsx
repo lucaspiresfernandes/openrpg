@@ -11,6 +11,7 @@ import CreateSpecModal from '../../../Modals/CreateSpecModal';
 
 type SpecEditorContainerProps = {
     specs: Spec[];
+    disabled?: boolean;
 }
 
 export default function SpecEditorContainer(props: SpecEditorContainerProps) {
@@ -39,20 +40,20 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Especificações de Jogador'
-                addButton={{ onAdd: () => setShowSpecModal(true) }}>
+            <DataContainer outline title='Especificações de Personagem'
+                addButton={{ onAdd: () => setShowSpecModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
                         <AdminTable>
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th title='Nome da Especificação de Jogador.'>Nome</th>
+                                    <th title='Nome da Especificação de Personagem.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {spec.map(spec =>
-                                    <SpecEditorField key={spec.id}
+                                    <SpecEditorField key={spec.id} deleteDisabled={props.disabled}
                                         spec={spec} onDelete={deleteSpec} />
                                 )}
                             </tbody>

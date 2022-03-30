@@ -1,7 +1,7 @@
+import { Prisma } from '@prisma/client';
 import { FormEvent, useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import config from '../../../../openrpg.config.json';
 import { ErrorLogger, ShowDiceResult } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
@@ -16,6 +16,7 @@ type PlayerSkillFieldProps = {
             name: string;
         } | null;
     };
+    baseDice: Prisma.JsonObject;
 };
 
 export default function PlayerSkillField(props: PlayerSkillFieldProps) {
@@ -43,8 +44,9 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
     }
 
     function rollDice() {
-        const base = config.player.base;
-        showDiceRollResult([{ num: 1, roll: base.dice, ref: value }], `${base.dice}${base.branched ? 'b' : ''}`);
+        const dice = props.baseDice['value'] as number;
+        const branched = props.baseDice['branched'] as boolean;
+        showDiceRollResult([{ num: 1, roll: dice, ref: value }], `${dice}${branched ? 'b' : ''}`);
     }
 
     let name = props.skill.name;

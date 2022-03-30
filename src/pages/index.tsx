@@ -34,7 +34,7 @@ export default function Home({ init, error }: InferGetServerSidePropsType<typeof
     }
 
     api.post('/login', { username, password }).then(res => {
-      if (res.data.admin) return Router.replace('/sheet/admin/1');
+      if (res.data.admin) return Router.replace('/admin/main');
       Router.replace('/sheet/1');
     }).catch(err => {
       setLoading(false);
@@ -51,13 +51,13 @@ export default function Home({ init, error }: InferGetServerSidePropsType<typeof
       </Row>
       <Row>
         <Col className='h3 mt-2'>
-          Certifique-se de ter integrado um banco de dados ao aplicativo, criado a variável de ambiente <b>DATABASE_URL</b> e preenchido seu valor corretamente.
+          Certifique-se de ter integrado um banco de dados ao aplicativo, criado a variável de ambiente <b>CLEARDB_DATABASE_URL</b> e preenchido seu valor corretamente.
         </Col>
       </Row>
     </Container>
   );
 
-  if (init === null) return (
+  if (!init) return (
     <>
       <WelcomePage logError={addToast} />
       <ErrorToastContainer toasts={toasts} />
@@ -117,11 +117,11 @@ async function getSSP(ctx: GetServerSidePropsContext) {
     if (player.admin) {
       return {
         redirect: {
-          destination: '/sheet/admin/1',
+          destination: '/admin/main',
           permanent: false
         },
         props: {
-          init: null
+          init: false
         }
       };
     }
@@ -131,24 +131,24 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         permanent: false
       },
       props: {
-        init: null
+        init: false
       }
     };
   }
 
   try {
-    const init = await prisma.config.findUnique({ where: { key: 'init' } });
-
+    const init = await prisma.config.findUnique({ where: { name: 'init' } });
     return {
       props: {
-        init
+        init: init === null ? false : true
       }
     };
   }
   catch (err) {
+    console.error(err);
     return {
       props: {
-        init: null,
+        init: false,
         error: true
       }
     };

@@ -1,7 +1,6 @@
 @import "./palette";
 $secondary: $secondary-buttons !default;
 @import "bootstrap";
-@import "./attribute";
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap");
 
 body {
@@ -29,9 +28,7 @@ body {
   }
 
   &:disabled {
-    background-color: darken($background-color, 10%);
-    border-color: darken($text-color, 10%);
-    color: $text-color;
+    color: darken($text-color, 20%);
   }
 
   &::-webkit-input-placeholder {
@@ -129,6 +126,18 @@ $list-group-color: #222222;
       background-color: $list-group-color;
     }
   }
+
+  .list-group-item {
+    @extend .theme-element;
+    background-color: $list-group-color;
+
+    &.selected {
+      background-color: lighten($list-group-color, 10%);
+      input {
+        background-color: lighten($list-group-color, 10%) !important;
+      }
+    }
+  }
 }
 
 .wrapper::-webkit-scrollbar {
@@ -142,18 +151,6 @@ $list-group-color: #222222;
 .player-container {
   @extend .data-container;
   background-color: $player-container-color;
-}
-
-.list-group-item {
-  @extend .theme-element;
-  background-color: $list-group-color;
-
-  &.selected {
-    background-color: lighten($list-group-color, 10%);
-    input {
-      background-color: lighten($list-group-color, 10%) !important;
-    }
-  }
 }
 
 .skill-container {
@@ -190,4 +187,18 @@ $list-group-color: #222222;
     transform: scale(1);
     transition: all 0.5s ease-out;
   }
+}
+
+$proggress-bar-height: 40px;
+
+.progress {
+  height: $proggress-bar-height;
+}
+
+.attribute-dice {
+  max-height: $proggress-bar-height;
+}
+
+.progress {
+  background-color: #2b2b2b;
 }

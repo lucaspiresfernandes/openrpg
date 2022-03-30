@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 interface DataContainerProps extends ColProps {
     title: string;
     children?: JSX.Element | JSX.Element[];
-    addButton?: { type?: 'button' | 'dropdown', onAdd?(): void, children?: JSX.Element | JSX.Element[] };
+    addButton?: { type?: 'button' | 'dropdown', onAdd?(): void, children?: JSX.Element | JSX.Element[], disabled?: boolean };
     htmlFor?: string;
     outline?: boolean;
 }
@@ -25,10 +25,10 @@ export default function DataContainer(props: DataContainerProps) {
                     </Col>
                     <Col xs={3} className='align-self-center'>
                         {props.addButton.type === 'dropdown' ?
-                            <DropdownButton title='+' variant='secondary' menuVariant='dark'>
+                            <DropdownButton title='+' variant='secondary' menuVariant='dark' disabled={props.addButton.disabled}>
                                 {props.addButton.children}
                             </DropdownButton> :
-                            <Button variant='secondary' onClick={props.addButton.onAdd}>+</Button>
+                            <Button variant='secondary' onClick={props.addButton.onAdd} disabled={props.addButton.disabled}>+</Button>
                         }
                     </Col>
                     <hr />
@@ -46,7 +46,7 @@ export default function DataContainer(props: DataContainerProps) {
 
 
     return (
-        <Col xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl} xxl={props.xxl}
+        <Col hidden={props.hidden} xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl} xxl={props.xxl}
             className={`${props.outline ? 'data-container ' : ''}${props.className ? props.className + ' ' : ''}h-100 my-2`}>
             <Head />
             {props.children}

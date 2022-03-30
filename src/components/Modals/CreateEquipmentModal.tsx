@@ -3,7 +3,6 @@ import { ChangeEvent, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import SheetModal from './SheetModal';
-import config from '../../../openrpg.config.json';
 
 type CreateEquipmentModalProps = {
     onCreate(name: string, type: string, damage: string, range: string, attacks: string, ammo: number | null): void;
@@ -13,7 +12,7 @@ type CreateEquipmentModalProps = {
 
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
     const [name, setName] = useState('');
-    const [type, setType] = useState(config.equipment.types[0]);
+    const [type, setType] = useState('Comum');
     const [damage, setDamage] = useState('');
     const [range, setRange] = useState('');
     const [attacks, setAttacks] = useState('');
@@ -21,7 +20,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 
     function reset() {
         setName('');
-        setType(config.equipment.types[0]);
+        setType('Comum');
         setDamage('');
         setRange('');
         setAttacks('');
@@ -54,12 +53,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 
                 <Form.Group controlId='createEquipmentType' className='mb-3'>
                     <Form.Label>Tipo</Form.Label>
-                    <Form.Select value={type} className='theme-element'
-                        onChange={ev => setType(ev.currentTarget.value)} >
-                        {config.equipment.types.map((typeName, index) =>
-                            <option key={index} value={typeName}>{typeName}</option>
-                        )}
-                    </Form.Select>
+                    <Form.Control className='theme-element' value={type} onChange={ev => setType(ev.currentTarget.value)} />
                 </Form.Group>
 
                 <Form.Group controlId='createEquipmentDamage' className='mb-3'>

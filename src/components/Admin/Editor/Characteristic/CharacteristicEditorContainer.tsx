@@ -11,6 +11,7 @@ import CreateCharacteristicModal from '../../../Modals/CreateCharacteristicModal
 
 type CharacteristicEditorContainerProps = {
     characteristics: Characteristic[];
+    disabled?: boolean;
 }
 
 export default function CharacteristicEditorContainer(props: CharacteristicEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
     return (
         <>
             <DataContainer outline title='Características'
-                addButton={{ onAdd: () => setShowCharacteristicModal(true) }}>
+                addButton={{ onAdd: () => setShowCharacteristicModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
                         <AdminTable>
@@ -52,7 +53,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
                             </thead>
                             <tbody>
                                 {characteristic.map(characteristic =>
-                                    <CharacteristicEditorField key={characteristic.id}
+                                    <CharacteristicEditorField key={characteristic.id} deleteDisabled={props.disabled}
                                         characteristic={characteristic} onDelete={deleteCharacteristic} />
                                 )}
                             </tbody>

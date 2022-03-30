@@ -11,6 +11,7 @@ import AdminTable from '../../AdminTable';
 
 type InfoEditorContainerProps = {
     info: Info[];
+    disabled?: boolean;
 }
 
 export default function InfoEditorContainer(props: InfoEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
     return (
         <>
             <DataContainer outline title='Informações Pessoais (Geral)'
-                addButton={{ onAdd: () => setShowInfoModal(true) }}>
+                addButton={{ onAdd: () => setShowInfoModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
                         <AdminTable>
@@ -52,7 +53,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
                             </thead>
                             <tbody>
                                 {info.map(info =>
-                                    <InfoEditorField key={info.id}
+                                    <InfoEditorField key={info.id} deleteDisabled={props.disabled}
                                         info={info} onDelete={deleteInfo} />
                                 )}
                             </tbody>

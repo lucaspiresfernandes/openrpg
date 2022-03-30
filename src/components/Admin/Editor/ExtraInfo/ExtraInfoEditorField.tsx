@@ -9,6 +9,7 @@ import BottomTextInput from '../../../BottomTextInput';
 
 type ExtraInfoEditorFieldProps = {
     extraInfo: ExtraInfo;
+    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -25,7 +26,7 @@ export default function ExtraInfoEditorField(props: ExtraInfoEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.extraInfo.id)} size='sm' variant='secondary'>
+                <Button onClick={() => props.onDelete(props.extraInfo.id)} size='sm' variant='secondary' disabled={props.deleteDisabled}>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

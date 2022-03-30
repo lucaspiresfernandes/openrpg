@@ -14,6 +14,7 @@ import CreateAttributeStatusModal from '../../../Modals/CreateAttributeStatusMod
 type AttributeEditorContainerProps = {
     attributes: Attribute[];
     attributeStatus: AttributeStatus[];
+    disabled?: boolean;
 }
 
 export default function AttributeEditorContainer(props: AttributeEditorContainerProps) {
@@ -35,7 +36,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
     function createAttribute(name: string, rollable: boolean) {
         api.put('/sheet/attribute', { name, rollable }).then(res => {
             const id = res.data.id;
-            setAttributes([...attributes, { id, name, rollable }]);
+            setAttributes([...attributes, { id, name, rollable, color: res.data.color }]);
         }).catch(logError);
     }
 
@@ -74,7 +75,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
         <>
             <Row>
                 <DataContainer outline title='Atributos'
-                    addButton={{ onAdd: () => setShowAttributeModal(true) }}>
+                    addButton={{ onAdd: () => setShowAttributeModal(true), disabled: props.disabled }}>
                     <Row>
                         <Col>
                             <Table responsive className='align-middle'>
@@ -82,12 +83,13 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                     <tr>
                                         <th></th>
                                         <th title='Nome do Atributo.'>Nome</th>
+                                        <th title='Cor do Atributo.'>Cor</th>
                                         <th title='Define se o Atributo pode ser usado para testes de dado.'>Testável</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {attributes.map(attribute =>
-                                        <AttributeEditorField key={attribute.id}
+                                        <AttributeEditorField key={attribute.id} deleteDisabled={props.disabled}
                                             attribute={attribute} onDelete={deleteAttribute}
                                             onNameChange={onAttributeNameChange} />
                                     )}
@@ -99,7 +101,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
             </Row>
             <Row>
                 <DataContainer outline title='Status de Atributos'
-                    addButton={{ onAdd: () => setShowAttributeStatusModal(true) }}>
+                    addButton={{ onAdd: () => setShowAttributeStatusModal(true), disabled: props.disabled }}>
                     <Row>
                         <Col>
                             <Table responsive className='align-middle'>
@@ -113,7 +115,8 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 <tbody>
                                     {attributeStatus.map(stat =>
                                         <AttributeStatusEditorField key={stat.id} attributeStatus={stat}
-                                            attributes={attributes} onDelete={deleteAttributeStatus} />
+                                            attributes={attributes} onDelete={deleteAttributeStatus}
+                                            deleteDisabled={props.disabled} />
                                     )}
                                 </tbody>
                             </Table>

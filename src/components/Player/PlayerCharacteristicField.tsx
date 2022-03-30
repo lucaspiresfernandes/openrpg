@@ -1,15 +1,15 @@
-import { Characteristic } from '@prisma/client';
+import { Characteristic, Prisma } from '@prisma/client';
 import { ChangeEvent, useContext, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
-import config from '../../../openrpg.config.json';
 import { ErrorLogger, ShowDiceResult } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
 type PlayerCharacteristicFieldProps = {
+    baseDice: Prisma.JsonObject;
     value: number;
     modifier: string;
     characteristic: Characteristic;
@@ -42,12 +42,12 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
 
     function onModifierBlur() {
         const num = parseInt(modifier);
-        
+
         let newModifier = modifier;
         if (isNaN(num)) newModifier = '+0';
         else if (newModifier === '-0') newModifier = '+0';
         else if (newModifier.length === 1) newModifier = `+${num}`;
-        
+
         if (modifier !== newModifier) setModifier(newModifier);
 
         if (newModifier === lastModifier.current) return;
@@ -56,9 +56,10 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
     }
 
     function rollDice() {
-        const base = config.player.base;
-        showDiceRollResult([{ num: 1, roll: base.dice, ref: Math.max(1, value + parseInt(modifier)) }],
-            `${base.dice}${base.branched ? 'b' : ''}`);
+        const base = props.baseDice;
+        const value = base['value'] as number;
+        const branched = base['branched'] as boolean;
+        showDiceRollResult([{ num: 1, roll: value, ref: Math.max(1, value + parseInt(modifier)) }], `${value}${branched ? 'b' : ''}`);
     }
 
     return (

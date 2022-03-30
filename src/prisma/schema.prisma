@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("CLEARDB_DATABASE_URL")
 }
 
 model Player {
@@ -42,6 +42,7 @@ model Info {
 model Attribute {
   id              Int               @id @default(autoincrement())
   name            String
+  color           String            @default("0d6efd") @db.Char(6)
   rollable        Boolean
   PlayerAttribute PlayerAttribute[]
   AttributeStatus AttributeStatus[]
@@ -264,8 +265,9 @@ model PlayerAvatar {
 }
 
 model Config {
-  key   String @id
-  value String
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  value String @db.LongText
 }
 
 enum Role {

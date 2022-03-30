@@ -1,6 +1,6 @@
 import { Player } from '@prisma/client';
 import { NextApiRequest } from 'next';
-import config from '../../../openrpg.config.json';
+import prisma from '../../utils/database';
 import database from '../../utils/database';
 import { hash } from '../../utils/encryption';
 import { sessionAPI } from '../../utils/session';
@@ -12,6 +12,8 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
+  const serverAdminKey = (await prisma.config.findUnique({ where: { name: 'admin_key' } }))?.value as string;
+
   const username = req.body.username as string;
   const plainPassword = req.body.password as string;
   const adminKey = req.body.adminKey as string;
@@ -30,7 +32,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
   let isAdmin = false;
   if (adminKey) {
-    if (adminKey === config.player.admin_key) {
+    if (adminKey === serverAdminKey) {
       isAdmin = true;
     }
     else {

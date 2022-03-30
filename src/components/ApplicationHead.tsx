@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import config from '../../openrpg.config.json';
 
 type ApplicationHeadProps = {
     title?: string,
@@ -9,7 +8,7 @@ type ApplicationHeadProps = {
 export default function ApplicationHead({ title, children }: ApplicationHeadProps) {
     return (
         <Head>
-            <title>{`${title || ''} - ${config.application_name}`}</title>
+            <title>{`${title || ''} - Open RPG`}</title>
             <meta name="description" content='Powered by Open RPG. Para saber mais: https://github.com/alyssapiresfernandescefet/openrpg' />
             <link rel="icon" href="/favicon.ico" />
             {children}

@@ -247,7 +247,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
                                 {player.PlayerAttributes.map(attr =>
                                     <Col key={attr.Attribute.id}>
                                         <Row>
-                                            <Col className={`h5 attribute-color ${attr.Attribute.name}`}>
+                                            <Col className='h5' style={{ color: `#${attr.Attribute.color}` }}>
                                                 {attr.value}/{attr.maxValue}
                                             </Col>
                                         </Row>

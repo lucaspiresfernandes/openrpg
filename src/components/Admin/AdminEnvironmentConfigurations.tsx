@@ -1,17 +1,16 @@
-import { Config } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 
-export default function AdminGlobalConfigurations(props: { environment: Config | null }) {
-    const [environment, setEnvironment] = useState(props.environment?.value || 'idle');
+export default function AdminEnvironmentConfigurations(props: { environment: string }) {
+    const [environment, setEnvironment] = useState(props.environment);
     const logError = useContext(ErrorLogger);
 
     function environmentChange() {
         const value = environment === 'combat' ? 'idle' : 'combat';
         setEnvironment(value);
-        api.post('/config', { key: 'environment', value }).catch(err => {
+        api.post('/config/environment', { value }).catch(err => {
             setEnvironment(environment);
             logError(err);
         });

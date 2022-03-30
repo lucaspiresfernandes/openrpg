@@ -1,7 +1,8 @@
+import { Prisma } from '@prisma/client';
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
-import config from '../../../openrpg.config.json';
 import { DiceResult, ResolvedDice } from '../../utils';
+import prisma from '../../utils/database';
 import { sessionAPI } from '../../utils/session';
 import { NextApiResponseServerIO } from '../../utils/socket';
 
@@ -24,6 +25,9 @@ async function nextInt(min: number, max: number, n: number) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
+    const enabledSuccessTypes = JSON.parse(
+        (await prisma.config.findUnique({ where: { name: 'enable_success_types' } }))?.value || '') as boolean;
+
     if (req.method !== 'POST') {
         res.status(404).end();
         return;
@@ -73,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
                 const roll = result.data.reduce((a, b) => a + b, 0);
                 results[index] = { roll };
 
-                if (!config.success_types.use_success_types || !resolverKey || reference === undefined) return;
+                if (!enabledSuccessTypes || !resolverKey || reference === undefined) return;
 
                 results[index].description = resolveSuccessType(resolverKey, reference, roll);
             });
@@ -94,29 +98,28 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     }
 }
 
-const successTypes = config.success_types;
 function resolveSuccessType(key: ResolverKey, reference: number, roll: number) {
     switch (key) {
         case '20':
-            if (roll == 1) return successTypes.failure;
-            if (roll > 20 - reference) return successTypes.success;
-            return successTypes.failure;
+            if (roll == 1) return 'Fracasso';
+            if (roll > 20 - reference) return 'Sucesso';
+            return 'Fracasso';
         case '20b':
-            if (roll == 1) return successTypes.failure;
-            if (roll > 20 - Math.floor(reference * 0.2)) return successTypes.extreme;
-            if (roll > 20 - Math.floor(reference * 0.5)) return successTypes.hard;
-            if (roll > 20 - reference) return successTypes.success;
-            return successTypes.failure;
+            if (roll == 1) return 'Fracasso';
+            if (roll > 20 - Math.floor(reference * 0.2)) return 'Extremo';
+            if (roll > 20 - Math.floor(reference * 0.5)) return 'Bom';
+            if (roll > 20 - reference) return 'Sucesso';
+            return 'Fracasso';
         case '100':
-            if (roll <= reference) return successTypes.success;
-            return successTypes.failure;
+            if (roll <= reference) return 'Sucesso';
+            return 'Fracasso';
         case '100b':
-            if (roll === 100) return successTypes.failure;
-            if (roll === 1) return successTypes.success;
-            if (roll <= Math.floor(reference * 0.2)) return successTypes.extreme;
-            if (roll <= Math.floor(reference * 0.5)) return successTypes.hard;
-            if (roll <= reference) return successTypes.success;
-            return successTypes.failure;
+            if (roll === 100) return 'Fracasso';
+            if (roll === 1) return 'Sucesso';
+            if (roll <= Math.floor(reference * 0.2)) return 'Extremo';
+            if (roll <= Math.floor(reference * 0.5)) return 'Bom';
+            if (roll <= reference) return 'Sucesso';
+            return 'Fracasso';
         default:
             return 'Unkown';
     }

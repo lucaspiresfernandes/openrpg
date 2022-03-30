@@ -7,7 +7,6 @@ import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
 import api from '../../../../utils/api';
 import BottomTextInput from '../../../BottomTextInput';
-import config from '../../../../../openrpg.config.json';
 
 type SpellEditorFieldProps = {
     spell: Spell;
@@ -19,7 +18,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
     const [lastName, name, setName] = useExtendedState(spell.name);
     const [lastDescription, description, setDescription] = useExtendedState(spell.description);
     const [lastCost, cost, setCost] = useExtendedState(spell.cost);
-    const [type, setType] = useState(spell.type);
+    const [lastType, type, setType] = useExtendedState(spell.type);
     const [lastTarget, target, setTarget] = useExtendedState(spell.target);
     const [lastDamage, damage, setDamage] = useExtendedState(spell.damage);
     const [lastCastingTime, castingTime, setCastingTime] = useExtendedState(spell.castingTime);
@@ -34,6 +33,12 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
         api.post('/sheet/spell', { id: spell.id, name }).catch(logError);
     }
 
+    function onTypeBlur() {
+        if (type === lastType) return;
+        setType(type);
+        api.post('/sheet/spell', { id: spell.id, type }).catch(logError);
+    }
+
     function onDescriptionBlur() {
         if (description === lastDescription) return;
         setDescription(description);
@@ -44,15 +49,6 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
         if (cost === lastCost) return;
         setCost(cost);
         api.post('/sheet/spell', { id: spell.id, cost }).catch(logError);
-    }
-
-    function onTypeChange(ev: ChangeEvent<HTMLSelectElement>) {
-        const newType = ev.currentTarget.value;
-        setType(newType);
-        api.post('/sheet/spell', { id: spell.id, type: newType }).catch(err => {
-            logError(err);
-            setType(type);
-        });
     }
 
     function onTargetBlur() {
@@ -130,10 +126,8 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
                     onBlur={onCostBlur} style={{ maxWidth: '5rem' }} className='text-center' />
             </td>
             <td>
-                <select className='theme-element' value={type}
-                    onChange={onTypeChange}>
-                    {config.spell.types.map((name, i) => <option key={i} value={name}>{name}</option>)}
-                </select>
+                <BottomTextInput value={type} onChange={ev => setType(ev.currentTarget.value)}
+                    onBlur={onTypeBlur} />
             </td>
             <td>
                 <BottomTextInput value={damage} onChange={ev => setDamage(ev.currentTarget.value)}

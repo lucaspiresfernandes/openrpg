@@ -11,6 +11,7 @@ import CreateCurrencyModal from '../../../Modals/CreateCurrencyModal';
 
 type CurrencyEditorContainerProps = {
     currencies: Currency[];
+    disabled?: boolean;
 }
 
 export default function CurrencyEditorContainer(props: CurrencyEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
     return (
         <>
             <DataContainer outline title='Moedas'
-                addButton={{ onAdd: () => setShowCurrencyModal(true) }}>
+                addButton={{ onAdd: () => setShowCurrencyModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
                         <AdminTable>
@@ -52,7 +53,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
                             </thead>
                             <tbody>
                                 {currency.map(currency =>
-                                    <CurrencyEditorField key={currency.id}
+                                    <CurrencyEditorField key={currency.id} deleteDisabled={props.disabled}
                                         currency={currency} onDelete={deleteCurrency} />
                                 )}
                             </tbody>

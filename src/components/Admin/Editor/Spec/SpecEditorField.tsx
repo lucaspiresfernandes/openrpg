@@ -9,6 +9,7 @@ import BottomTextInput from '../../../BottomTextInput';
 
 type SpecEditorFieldProps = {
     spec: Spec;
+    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -25,7 +26,8 @@ export default function SpecEditorField(props: SpecEditorFieldProps) {
     return (
         <tr>
             <td >
-                <Button onClick={() => props.onDelete(props.spec.id)} size='sm' variant='secondary'>
+                <Button onClick={() => props.onDelete(props.spec.id)} size='sm'
+                    variant='secondary' disabled={props.deleteDisabled}>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>
