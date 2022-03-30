@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -51,13 +51,17 @@ export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult 
         roll: 20
     }
     ]);
+    const applyRef = useRef(false);
 
     function reset() {
         const rollDices: ResolvedDice[] = [];
         dices.map(dice => {
             if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
         });
-        if (rollDices.length > 0) showDiceRollResult(rollDices);
+        if (rollDices.length > 0 && applyRef.current) {
+            showDiceRollResult(rollDices);
+            applyRef.current = false;
+        }
         setDices(dices.map(dice => {
             dice.num = 0;
             return dice;
@@ -72,7 +76,12 @@ export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult 
     }
 
     return (
-        <SheetModal show={show} onExited={reset} title='Rolagem Geral de Dados' applyButton={{ name: 'Rolar', onApply: onHide }}
+        <SheetModal show={show} onExited={reset} title='Rolagem Geral de Dados' applyButton={{
+            name: 'Rolar', onApply: () => {
+                applyRef.current = true;
+                onHide();
+            }
+        }}
             onHide={onHide} centered>
             <Container fluid>
                 <Row className='text-center'>
