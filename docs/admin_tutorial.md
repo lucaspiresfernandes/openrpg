@@ -28,7 +28,7 @@ Modificar os atributos.
 
 O campo "Testável" define se o atributo em questão pode ser testado, ou seja, se há um dado ao lado da barra de atributo (veja a Sanidade em [Ficha do Jogador][]). A cor define a cor da barra de atributo na ficha do personagem e no retrato (extensão OBS).
 
-[Ficha do Jogador]: ./docs/sheet.md
+[Ficha do Jogador]: ./sheet.md
 
 ## Status de Atributos
 
