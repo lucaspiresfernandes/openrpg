@@ -8,6 +8,14 @@ Os dados criados no site da demo são excluídos semanalmente, então se quiser 
 
 O Open RPG está atualmente em sua versão Beta, com problemas e bugs para ainda serem tratados. Até o seu lançamento oficial, o Open RPG sofrerá diversas modificações e melhorias, então fique ligado e deixe sua instância do Open RPG sempre atualizada também!
 
+## Documentação
+
+- [Instalação][]
+- [Visão da Ficha][]
+
+[Instalação]: ./docs/installing.md
+[Visão da Ficha]: ./docs/sheet.md
+
 ## Introdução
 
 Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres quanto para os jogadores, sendo elas:
@@ -46,11 +54,3 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 ## Integração com o Random.org
 
 O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar números aleatórios. Se, por qualquer razão, o aplicativo não conseguir se conectar com a API do Random.org, ele passa a gerar números pseudoaleatórios com a API embutida do Node.js.
-
-## Documentação
-
-- [Instalação][]
-- [Visão da Ficha][]
-
-[Instalação]: ./docs/installing.md
-[Visão da Ficha]: ./docs/sheet.md
