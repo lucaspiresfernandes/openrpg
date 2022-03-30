@@ -17,7 +17,7 @@ export default function CreateSpecModal(props: CreateSpecModalProps) {
     }
 
     return (
-        <SheetModal title='Nova Especificação de Jogador' onExited={reset}
+        <SheetModal title='Nova Especificação de Personagem' onExited={reset}
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
             show={props.show} onHide={props.onHide} >
             <Container fluid>

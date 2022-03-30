@@ -40,7 +40,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Especificações de Jogador'
+            <DataContainer outline title='Especificações de Personagem'
                 addButton={{ onAdd: () => setShowSpecModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>
@@ -48,7 +48,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th title='Nome da Especificação de Jogador.'>Nome</th>
+                                    <th title='Nome da Especificação de Personagem.'>Nome</th>
                                 </tr>
                             </thead>
                             <tbody>
