@@ -39,7 +39,7 @@ Após criar uma conta no Random.org, você deverá criar um serviço de API. Sig
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
 
-![image](https://user-images.githubusercontent.com/71353674/160008042-5df854df-8c47-4235-8233-92303c881660.png)
+![image](https://user-images.githubusercontent.com/71353674/160728220-49c66b8f-6634-46f2-a55e-78cf698ef810.png)
 
 ### Configurando o Banco de Dados
 
