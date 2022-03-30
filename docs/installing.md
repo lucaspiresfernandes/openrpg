@@ -17,7 +17,7 @@ Caso tenha optado por não usar os serviços do Random.org, pode pular essa seç
 
 Após criar uma conta no Random.org, você deverá criar um serviço de API. Siga os passos:
 
-1. Logue e acesse a [sua conta](https://accounts.random.org/).
+1. Acesse a [sua conta](https://accounts.random.org/) no Random.org.
 2. Procure por "API Services" e clique em "Use this service".
 3. Crie um novo serviço, clicando em "Create a new API key".
 4. Digite o nome do serviço (para fins de identificação, é recomendável que o nome do serviço seja "nomeDoSeuApp_random") e clique em "Create".
@@ -26,16 +26,16 @@ Após criar uma conta no Random.org, você deverá criar um serviço de API. Sig
 
 ### Iniciando
 
-1. Primeiramente, você deve acessar o seu [Dashboard](https://dashboard.heroku.com/) na Heroku e criar um novo App. Você deverá preencher o nome do aplicativo e a região em que o aplicativo irá ser hospedado. Digite um nome simples mas que lembre o nome do seu RPG, porque esse nome também será o endereço do seu site. Já na região, selecione Estados Unidos e clique em Criar App.
+1. Primeiramente, você deve acessar o seu [Dashboard](https://dashboard.heroku.com/) na Heroku e criar um novo App. Você deverá preencher o nome do aplicativo e a região em que o aplicativo irá ser hospedado. Digite um nome simples mas que lembre o nome do seu RPG, porque esse nome também será o endereço do seu site. Selecione a região mais próxima e clique em Criar App.
 
-2. Após isso, você deverá acessar a aba de Deploy. Em "Deployment method", selecione GitHub e conecte a sua conta do GitHub ao Heroku. Depois de conectada, você se direcionará a seção de "Connect to GitHub", logo abaixo de "Deployment method". Nessa seção, em repo-name, você deverá digitar "openrpg" e clicar em "Search". Depois de alguns segundos, um item com o nome do seu GitHub / openrpg vai aparecer, e logo ao lado um botão com o nome "Connect". Clique no botão.
+2. Após isso, você deverá acessar a aba de Deploy. Em "Deployment method", selecione GitHub e conecte a sua conta do GitHub ao Heroku. Depois de conectada, você se direcionará à seção de "Connect to GitHub", logo abaixo de "Deployment method". Nessa seção, em repo-name, você deverá digitar "openrpg" e clicar em "Search". Depois de alguns segundos, um item com o nome do seu GitHub / openrpg vai aparecer, e logo ao lado um botão nomeado "Connect". Clique no botão.
 
-3. Depois de conectar o seu repositório GitHub ao Heroku, você precisará configurar o aplicativo para o uso. Acesse a aba [Settings](https://dashboard.heroku.com/apps/openrpgdemoo/settings), e na segunda seção, em "Config Vars", você clicará em "Reveal Config Vars". Após isso, dois campos de textos irão aparecer com o nome KEY e VALUE, respectivamente. Você deverá preencher alguns campos agora. Abaixo, haverá uma tabela dos campos que devem ser preenchidos:
+3. Depois de conectar o seu repositório GitHub ao Heroku, você precisará configurar o aplicativo para uso. Acesse a aba Settings, e na segunda seção, em "Config Vars", clique em "Reveal Config Vars". Após isso, dois campos de textos irão aparecer com o nome KEY e VALUE, respectivamente. Você deverá preencher alguns campos agora. Abaixo, haverá uma tabela dos campos que devem ser preenchidos. Ao preencher cada valor, clique em "Add" para adicioná-los ao aplicativo.
 
-|             KEY           |                                                    VALUE                                                 |
-| ------------------------- | -------------------------------------------------------------------------------------------------------- |
+|            KEY            |                                                                VALUE                                                             |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | SESSION_SECRET            | Um valor aleatório de no mínimo 32 dígitos, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
-| RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.             |
+| RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.                                     |
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
 
