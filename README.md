@@ -1,12 +1,10 @@
+# Open RPG: Ficha eletrônica de RPG
+
 Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas dos personagens de sua campanha e agilizar processos comuns.
 
 Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/). Caso queira criar uma conta de mestre/administrador, use "123456" como chave do administrador.
 
 Os dados criados no site da demo são excluídos semanalmente, então se quiser gerir a sua própria instância do Open RPG, leia a seção [Instalação](#instalação).
-
-## (ATENÇÃO: Versão Beta)
-
-O Open RPG está atualmente em sua versão Beta, com problemas e bugs para ainda serem tratados. Até o seu lançamento oficial, o Open RPG sofrerá diversas modificações e melhorias, então fique ligado e deixe sua instância do Open RPG sempre atualizada também!
 
 ## Documentação
 
@@ -31,6 +29,7 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 - Moeda
 - Magias
 - Anotações pessoais
+- Rolagem de dados automática
 
 ### Para os mestres:
 
@@ -54,3 +53,13 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 ## Integração com o Random.org
 
 O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar números aleatórios. Se, por qualquer razão, o aplicativo não conseguir se conectar com a API do Random.org, ele passa a gerar números pseudoaleatórios com a API embutida do Node.js.
+
+## Status do projeto
+
+Atualmente, o Open RPG se encontra em sua versão 0.3.0 Beta e já é considerado completo. Os desafios que se encontram à frente do Open RPG agora são sobre UX.
+
+No entanto, ainda há a possibilidade de adicionar novas funcionalidades de acordo a demanda dos jogadores.
+
+## Comunidade
+
+Para perguntas, use as [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions).
