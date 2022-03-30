@@ -20,7 +20,7 @@ export default function AdminEnvironmentConfigurations(props: { environment: str
         <Form.Group>
             <Form.Check inline onChange={environmentChange}
                 checked={environment === 'combat'} id='changeEnvironment' />
-            <Form.Label htmlFor='changeEnvironment'>Ambiente de Combate?</Form.Label>
+            <Form.Label htmlFor='changeEnvironment'>Ambiente de Combate? (Extensão OBS)</Form.Label>
         </Form.Group>
     );
 }
