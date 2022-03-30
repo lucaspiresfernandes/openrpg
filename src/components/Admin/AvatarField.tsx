@@ -9,8 +9,8 @@ type AvatarFieldProps = {
 }
 
 export default function AvatarField({ status, playerId }: AvatarFieldProps) {
-    const [src, setSrc] = useState('/avatar404.png');
-    const previousStatusID = useRef(0);
+    const [src, setSrc] = useState('#');
+    const previousStatusID = useRef(Number.MAX_SAFE_INTEGER);
 
     useEffect(() => {
         let statusID = 0;

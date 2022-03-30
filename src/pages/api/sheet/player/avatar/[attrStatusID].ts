@@ -9,7 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const playerID = req.session.player?.id || parseInt(req.query.playerID as string);
+    const playerID = parseInt(req.query.playerID as string) || req.session.player?.id;
     const statusID: number | null = parseInt(req.query.attrStatusID as string) || null;
     if (!playerID) {
         res.status(401).end();
