@@ -50,7 +50,7 @@ Antes de utilizar o seu aplicativo, você precisa configurar o seu banco de dado
 1. Usando a Heroku: Você irá precisar de um cartão de crédito. Não se preocupe, a Heroku não te cobra nada, ela só precisa de um cartão para firmar um contrato com um provedor de banco de dados. No caso, o provedor que escolheremos é grátis, então não será cobrado nada no cartão. Os provedores de banco de dados da Heroku são totalmente confiáveis e muito eficientes, então essa é a opção mais recomendada.
 2. Usando o [db4free](https://www.db4free.net/): Você não irá precisar de um cartão de crédito. Apesar do benefício, essa opção é muito menos recomendada pelo fato do provedor db4free ser instável, lento e não ser apropriado para aplicativos como esse. Caso escolha essa opção, prepare-se para carregamentos muito lentos e erros muito recorrentes.
 
-OBS: Esses são os 2 métodos que eu conheço para criar um banco de dados remoto GRATUITAMENTE. Caso saiba de outras opções e queira ajudar, abra um Issue que eu irei adicionar aqui.
+OBS: Esses são os 2 métodos que eu conheço para criar um banco de dados remoto GRATUITAMENTE. Caso saiba de outras opções e queira ajudar, abra uma discussão nas [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions).
 
 ### Configurando o Banco de Dados (Usando a Heroku)
 
