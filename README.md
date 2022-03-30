@@ -10,9 +10,11 @@ Os dados criados no site da demo são excluídos semanalmente, então se quiser 
 
 - [Instalação][]
 - [Visão da Ficha][]
+- [Edição do Sistema][]
 
 [Instalação]: ./docs/installing.md
 [Visão da Ficha]: ./docs/sheet.md
+[Edição do Sistema]: ./docs/admin_tutorial.md
 
 ## Introdução
 
