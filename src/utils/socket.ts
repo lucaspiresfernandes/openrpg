@@ -35,26 +35,26 @@ export interface ServerToClientEvents {
     maxLoadChange: (playerID: number, newLoad: number) => void;
     attributeStatusChange: (playerID: number, attStatusID: number, value: boolean) => void;
     infoChange: (playerID: number, infoID: number, value: string) => void;
-    attributeChange: (playerID: number, attributeID: number, value?: number, maxValue?: number) => void;
+    attributeChange: (playerID: number, attributeID: number, value: number | null, maxValue: number | null) => void;
     specChange: (playerID: number, specID: number, value: string) => void;
     equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
     equipmentRemove: (playerID: number, id: number) => void;
     itemAdd: (playerID: number, item: SocketPlayerItem) => void;
     itemRemove: (playerID: number, id: number) => void;
-    itemChange: (playerID: number, itemID: number, currentDescription?: string, quantity?: number) => void;
+    itemChange: (playerID: number, itemID: number, currentDescription: string | null, quantity: number | null) => void;
     currencyChange: (playerID: number, currencyID: number, value: string) => void;
 
     //Player Events
     playerDelete: () => void;
     playerSkillChange: (id: number, name: string, specialization: { name: string } | null) => void;
     playerEquipmentAdd: (id: number, name: string) => void;
-    playerEquipmentRemove: (id: number, hardRemove?: boolean) => void;
+    playerEquipmentRemove: (id: number, hardRemove: boolean) => void;
     playerEquipmentChange: (id: number, equipment: SocketEquipment) => void;
     playerItemAdd: (id: number, name: string) => void;
-    playerItemRemove: (id: number, hardRemove?: boolean) => void;
+    playerItemRemove: (id: number, hardRemove: boolean) => void;
     playerItemChange: (id: number, name: string) => void;
     playerSpellAdd: (id: number, name: string) => void;
-    playerSpellRemove: (id: number, hardRemove?: boolean) => void;
+    playerSpellRemove: (id: number, hardRemove: boolean) => void;
     playerSpellChange: (id: number, spell: Spell) => void;
 
     //Dice Events

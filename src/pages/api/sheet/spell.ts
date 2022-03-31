@@ -44,7 +44,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     if (visible !== undefined) {
         if (visible) res.socket.server.io?.emit('playerSpellAdd', id, spell.name);
-        else res.socket.server.io?.emit('playerSpellRemove', id);
+        else res.socket.server.io?.emit('playerSpellRemove', id, false);
     }
     else res.socket.server.io?.emit('playerSpellChange', id, spell);
 }

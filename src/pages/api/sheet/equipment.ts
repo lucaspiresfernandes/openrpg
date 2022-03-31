@@ -44,7 +44,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
     if (visible !== undefined) {
         if (visible) res.socket.server.io?.emit('playerEquipmentAdd', id, eq.name);
-        else res.socket.server.io?.emit('playerEquipmentRemove', id);
+        else res.socket.server.io?.emit('playerEquipmentRemove', id, false);
     }
     else res.socket.server.io?.emit('playerEquipmentChange', id, eq);
 }

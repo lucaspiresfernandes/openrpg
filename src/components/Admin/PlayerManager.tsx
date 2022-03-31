@@ -95,8 +95,8 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
             if (!player) return players;
             const index = player.PlayerAttributes.findIndex(curr => curr.Attribute.id === attributeID);
             if (index === -1) return players;
-            if (value !== undefined) player.PlayerAttributes[index].value = value;
-            if (maxValue !== undefined) player.PlayerAttributes[index].maxValue = maxValue;
+            if (value !== null) player.PlayerAttributes[index].value = value;
+            if (maxValue !== null) player.PlayerAttributes[index].maxValue = maxValue;
             return newPlayers;
         }));
 
@@ -167,8 +167,8 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
             const newItems = [...player.PlayerItem];
             const index = newItems.findIndex(item => item.Item.id === itemID);
             if (index === -1) return players;
-            if (currentDescription !== undefined) newItems[index].currentDescription = currentDescription;
-            if (quantity !== undefined) newItems[index].quantity = quantity;
+            if (currentDescription !== null) newItems[index].currentDescription = currentDescription;
+            if (quantity !== null) newItems[index].quantity = quantity;
             return newPlayers;
         }));
 
