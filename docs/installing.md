@@ -41,45 +41,23 @@ Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelh
 
 ![image](https://user-images.githubusercontent.com/71353674/160728220-49c66b8f-6634-46f2-a55e-78cf698ef810.png)
 
-### Configurando o Banco de Dados
+### Configurando o Banco de Dados (Heroku Add-ons)
 
-Se você iniciar o seu aplicativo agora e acessar o seu site, verá uma tela de erro, dizendo que o banco de dados não foi inicializado. Isso ocorre porque o Open RPG usa um banco de dados remoto para carregar, salvar e modificar informações.
+Antes de utilizar o seu aplicativo, você precisa configurar o seu banco de dados pela Heroku.
 
-Antes de utilizar o seu aplicativo, você precisa configurar o seu banco de dados. Existem 2 métodos:
-
-1. Usando a Heroku: Você irá precisar de um cartão de crédito. Não se preocupe, a Heroku não te cobra nada, ela só precisa de um cartão para firmar um contrato com um provedor de banco de dados. No caso, o provedor que escolheremos é grátis, então não será cobrado nada no cartão. Os provedores de banco de dados da Heroku são totalmente confiáveis e muito eficientes, então essa é a opção mais recomendada.
-2. Usando o [db4free](https://www.db4free.net/): Você não irá precisar de um cartão de crédito. Apesar do benefício, essa opção é muito menos recomendada pelo fato do provedor db4free ser instável, lento e não ser apropriado para aplicativos como esse. Caso escolha essa opção, prepare-se para carregamentos muito lentos e erros muito recorrentes.
-
-OBS: Esses são os 2 métodos que eu conheço para criar um banco de dados remoto GRATUITAMENTE. Caso saiba de outras opções e queira ajudar, abra uma discussão nas [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions).
-
-### Configurando o Banco de Dados (Usando a Heroku)
+Primeiramente, você irá precisar de um cartão de crédito. Não se preocupe, a Heroku não te cobra nada, ela só precisa de um cartão para firmar um contrato com um provedor de banco de dados. No caso, o provedor que escolheremos é grátis, então não será cobrado nada no cartão. Os provedores de banco de dados da Heroku são totalmente confiáveis e muito eficientes.
 
 Siga esses passos:
 
-1. Acesse a aba de Resources. Na seção "Add-ons" você irá procurar por "ClearDB MySQL".
+1. Acesse a aba de Resources. Na seção Add-ons, você irá procurar por "ClearDB MySQL".
 
 ![image](https://user-images.githubusercontent.com/71353674/160009589-58dd6722-0b31-45bc-b4db-65734460627e.png)
 
 2. Selecione esse item e logo após surgirá uma tela de planos. Selecione o plano Ignite - Free e clique em "Submit Order Form". Caso ele peça seu cartão de crédito, preencha.
 3. Após um tempo, a ordem de "compra" irá suceder, e o banco de dados estará instalado e pronto para uso!
 
-### Configurando o Banco de Dados (Usando o [db4free](https://www.db4free.net/))
-
-1. [Cadastre-se](https://www.db4free.net/signup.php) no db4free e confirme o cadastro no seu e-mail.
-2. Na tela de confirmação do cadastro, você precisará salvar os dados mostrados na tela e montar a seguinte URL:
-
-`
-mysql://usuário:senha@db4free.net:3306/NomeDoBancoDeDados
-`
-
-3. a URL deverá parecer como a do seguinte exemplo:
-
-`
-mysql://OpenRPG:197324685@db4free.net:3306/openrpgdb
-`
-
-4. De volta para suas config vars na aba de Settings do Heroku, use a url como o valor de uma nova variável, chamada CLEARDB_DATABASE_URL.
-
 ### Fazendo o Deploy
 
 Após configurar a Heroku e configurar o banco de dados, você irá acessar novamente a página de Deploy e, no final da página, clicar em "Deploy Branch". Espere o seu deploy terminar, e bom jogo!
+
+Para acessar o seu app, role até o topo da página e clique em "Open App". Compartilhe a url do aplicativo para todos os jogadores!
