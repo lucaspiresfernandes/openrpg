@@ -64,7 +64,7 @@ O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar 
 
 ## Status do projeto
 
-Atualmente, o Open RPG se encontra em sua versão 1.0.0 Release Candidate e já é considerado completo. Os desafios que se encontram à frente do Open RPG agora são sobre UX.
+Atualmente, o Open RPG se encontra em sua versão 1.0.0 Beta e já é considerado completo. Os desafios que se encontram à frente do Open RPG agora são sobre UX.
 
 No entanto, ainda há a possibilidade de adicionar novas funcionalidades de acordo a demanda dos jogadores.
 
