@@ -44,9 +44,9 @@ export default function PlayerSkillField(props: PlayerSkillFieldProps) {
     }
 
     function rollDice() {
-        const dice = props.baseDice['value'] as number;
+        const roll = props.baseDice['value'] as number;
         const branched = props.baseDice['branched'] as boolean;
-        showDiceRollResult([{ num: 1, roll: dice, ref: value }], `${dice}${branched ? 'b' : ''}`);
+        showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
     }
 
     let name = props.skill.name;

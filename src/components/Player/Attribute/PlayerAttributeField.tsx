@@ -91,7 +91,7 @@ export default function PlayerAttributeField(props: PlayerAttributeFieldProps) {
     function diceClick() {
         const roll = props.attributeDice['value'] as number;
         const branched = props.attributeDice['branched'] as boolean;
-        showDiceRollResult([{ num: 1, roll: roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
+        showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
     }
 
     return (

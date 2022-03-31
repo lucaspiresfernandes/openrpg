@@ -56,10 +56,9 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
     }
 
     function rollDice() {
-        const base = props.baseDice;
-        const value = base['value'] as number;
-        const branched = base['branched'] as boolean;
-        showDiceRollResult([{ num: 1, roll: value, ref: Math.max(1, value + parseInt(modifier)) }], `${value}${branched ? 'b' : ''}`);
+        const roll = props.baseDice['value'] as number;
+        const branched = props.baseDice['branched'] as boolean;
+        showDiceRollResult([{ num: 1, roll, ref: Math.max(1, value + parseInt(modifier)) }], `${roll}${branched ? 'b' : ''}`);
     }
 
     return (
