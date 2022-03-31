@@ -101,11 +101,9 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 function resolveSuccessType(key: ResolverKey, reference: number, roll: number) {
     switch (key) {
         case '20':
-            if (roll == 1) return 'Fracasso';
             if (roll > 20 - reference) return 'Sucesso';
             return 'Fracasso';
         case '20b':
-            if (roll == 1) return 'Fracasso';
             if (roll > 20 - Math.floor(reference * 0.2)) return 'Extremo';
             if (roll > 20 - Math.floor(reference * 0.5)) return 'Bom';
             if (roll > 20 - reference) return 'Sucesso';
@@ -114,8 +112,6 @@ function resolveSuccessType(key: ResolverKey, reference: number, roll: number) {
             if (roll <= reference) return 'Sucesso';
             return 'Fracasso';
         case '100b':
-            if (roll === 100) return 'Fracasso';
-            if (roll === 1) return 'Sucesso';
             if (roll <= Math.floor(reference * 0.2)) return 'Extremo';
             if (roll <= Math.floor(reference * 0.5)) return 'Bom';
             if (roll <= reference) return 'Sucesso';
