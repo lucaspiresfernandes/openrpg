@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { FormEvent, useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -16,7 +15,10 @@ type PlayerSkillFieldProps = {
             name: string;
         } | null;
     };
-    baseDice: Prisma.JsonObject;
+    baseDice: {
+        value: number;
+        branched: boolean;
+    };
 };
 
 export default function PlayerSkillField(props: PlayerSkillFieldProps) {

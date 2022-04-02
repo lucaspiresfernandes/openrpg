@@ -1,4 +1,4 @@
-import { Characteristic, Prisma } from '@prisma/client';
+import { Characteristic } from '@prisma/client';
 import { ChangeEvent, useContext, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -9,7 +9,10 @@ import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
 type PlayerCharacteristicFieldProps = {
-    baseDice: Prisma.JsonObject;
+    baseDice: {
+        value: number;
+        branched: boolean;
+    };
     value: number;
     modifier: string;
     characteristic: Characteristic;

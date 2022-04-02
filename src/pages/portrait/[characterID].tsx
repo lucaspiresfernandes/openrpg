@@ -6,7 +6,24 @@ import Image from 'react-bootstrap/Image';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { DiceResult, ResolvedDice, sleep } from '../../utils';
+import { PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
+
+function getAttributeStyle(color: string) {
+    return {
+        color: 'white',
+        textShadow: `0 0 10px #${color}, 0 0 30px #${color}, 0 0 50px #${color}`
+    };
+}
+
+function getOrientationStyle(orientation: PortraitOrientation) {
+    switch (orientation) {
+        case 'center': return styles.center;
+        case 'top': return styles.top;
+        case 'bottom': return styles.bottom;
+        default: return styles.center;
+    }
+}
 
 export default function CharacterPortrait(props: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
     const [attributes, setAttributes] = useState(props.attributes);
@@ -53,7 +70,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 if (index === -1) return attributes;
 
                 const newAttributes = [...attributes];
-                
+
                 if (value !== null) newAttributes[index].value = value;
                 if (maxValue !== null) newAttributes[index].maxValue = maxValue;
 
@@ -166,34 +183,20 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function onAvatarLoadError() {
-        setSrc('/avatar404.png');
-    }
-
-    function onAvatarLoadSuccess() {
-        setShowAvatar(true);
-    }
-
-    const getAttributeStyle = (color: string) => {
-        return {
-            color: 'white',
-            textShadow: `0 0 10px #${color}, 0 0 30px #${color}, 0 0 50px #${color}`
-        };
-    };
-
     return (
         <>
-            <div className={`${styles.container}${showDice ? ' show' : ''} shadow`}>
+            <div className={`${showDice ? 'show ' : ''}shadow`}>
                 <Fade in={showAvatar}>
                     <div>
-                        <Image src={src} onError={onAvatarLoadError} alt='Avatar' onLoad={onAvatarLoadSuccess}
+                        <Image src={src} onError={() => setSrc('/avatar404.png')}
+                            alt='Avatar' onLoad={() => setShowAvatar(true)}
                             width={420} height={600} className={styles.avatar} />
                     </div>
                 </Fade>
-            </div>
-            <div className={styles.sideContainer}>
-                <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
-                    {sideAttribute.value}
+                <div className={`${styles.sideContainer} ${getOrientationStyle(props.orientation)}`}>
+                    <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
+                        {sideAttribute.value}
+                    </div>
                 </div>
             </div>
             <Fade in={environment === 'combat'}>
@@ -210,7 +213,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 <div className={styles.nameContainer}>{playerName || 'Desconhecido'}</div>
             </Fade>
             <div className={styles.diceContainer}>
-                <video height="350" muted className={`popout${showDice ? ' show' : ''}`} ref={diceVideo}>
+                <video height={357} muted className={`popout${showDice ? ' show' : ''}`} ref={diceVideo}>
                     <source src="/dice_animation.webm" />
                 </video>
                 <Fade in={diceResultShow}><div className={styles.result}>{diceResult}</div></Fade>
@@ -221,33 +224,32 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const id = parseInt(ctx.query.characterID as string);
+    const player_id = parseInt(ctx.query.characterID as string);
 
     const portraitConfig = JSON.parse(
-        (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || '') as Prisma.JsonObject;
-    const configAttributes = portraitConfig['attributes'] as Array<string>;
-    const configSideAttribute = portraitConfig['side_attribute'] as string;
+        (await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || 'null') as PortraitConfig;
 
     const results = await Promise.all([
         prisma.config.findUnique({ where: { name: 'environment' } }),
         prisma.playerAttribute.findMany({
-            where: { Attribute: { name: { in: configAttributes } }, player_id: id },
+            where: { Attribute: { id: { in: portraitConfig.attributes } }, player_id },
             select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttribute.findFirst({
-            where: { Attribute: { name: configSideAttribute }, player_id: id },
+            where: { Attribute: { id: portraitConfig.side_attribute }, player_id },
             select: { value: true, Attribute: { select: { id: true, name: true, color: true } } }
         }),
         prisma.playerAttributeStatus.findMany({
-            where: { player_id: id },
+            where: { player_id },
             select: { value: true, attribute_status_id: true }
         }),
-        prisma.playerInfo.findFirst({ where: { player_id: id, Info: { name: 'Nome' } }, select: { value: true, info_id: true } })
+        prisma.playerInfo.findFirst({ where: { player_id, Info: { name: 'Nome' } }, select: { value: true, info_id: true } })
     ]);
 
     return {
         props: {
-            playerId: id,
+            playerId: player_id,
+            orientation: portraitConfig.orientation || 'bottom',
             environment: results[0]?.value || 'idle',
             attributes: results[1],
             sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '', color: '' } },

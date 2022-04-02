@@ -22,7 +22,6 @@ import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
-import { Prisma } from '@prisma/client';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();

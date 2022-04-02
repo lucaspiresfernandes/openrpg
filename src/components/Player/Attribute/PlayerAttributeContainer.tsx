@@ -1,4 +1,4 @@
-import { Attribute, AttributeStatus, Prisma } from '@prisma/client';
+import { Attribute, AttributeStatus } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -26,7 +26,10 @@ type PlayerAttributeContainerProps = {
             name: string;
         } | null;
     }[];
-    attributeDice: Prisma.JsonObject;
+    attributeDice: {
+        value: number;
+        branched: boolean;
+    };
 }
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {

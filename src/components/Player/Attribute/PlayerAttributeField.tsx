@@ -1,4 +1,4 @@
-import { Attribute, Prisma } from '@prisma/client';
+import { Attribute } from '@prisma/client';
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -27,7 +27,10 @@ type PlayerAttributeFieldProps = {
         };
     }[];
     onStatusChanged?(id: number): void;
-    attributeDice: Prisma.JsonObject;
+    attributeDice: {
+        value: number;
+        branched: boolean;
+    };
 }
 
 export default function PlayerAttributeField(props: PlayerAttributeFieldProps) {

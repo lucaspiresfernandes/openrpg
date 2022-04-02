@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
 import { DiceResult, ResolvedDice } from '../../utils';

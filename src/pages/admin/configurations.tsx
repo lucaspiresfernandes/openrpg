@@ -1,5 +1,5 @@
 
-import { Attribute, Prisma } from '@prisma/client';
+import { Attribute } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { ChangeEvent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -20,6 +20,7 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useExtendedState from '../../hooks/useExtendedState';
 import useToast from '../../hooks/useToast';
 import api from '../../utils/api';
+import { DiceConfig, PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -38,8 +39,8 @@ export default function Configurations(props: InferGetServerSidePropsType<typeof
                     <AdminKeyContainer adminKey={props.adminKey} logError={addToast} />
                 </Row>
                 <Row className='mt-3'>
-                    <DiceContainer successTypeEnabled={props.enableSuccessTypes} diceConfig={props.diceConfig} logError={addToast} />
-                    <PortraitContainer portraitConfig={props.portraitConfig} attributes={props.attributes} logError={addToast} />
+                    <DiceContainer successTypeEnabled={props.enableSuccessTypes} diceConfig={props.dice} logError={addToast} />
+                    <PortraitContainer portrait={props.portrait} attributes={props.attributes} logError={addToast} />
                 </Row>
             </Container>
             <ErrorToastContainer toasts={toasts} />
@@ -64,16 +65,13 @@ function AdminKeyContainer(props: { adminKey: string, logError(err: any): void }
     );
 }
 
-function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: Prisma.JsonObject, logError(err: any): void }) {
-    const base = props.diceConfig['base'] as Prisma.JsonObject;
-    const attribute = props.diceConfig['attribute'] as Prisma.JsonObject;
-
+function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceConfig, logError(err: any): void }) {
     const [loading, setLoading] = useState(false);
     const [successTypeEnabled, setSuccessTypeEnabled] = useState(props.successTypeEnabled);
-    const [baseDiceNum, setBaseDiceNum] = useState(base['value'] as number);
-    const [baseDiceBranched, setBaseDiceBranched] = useState(base['branched'] as boolean);
-    const [attributeDiceNum, setAttributeDiceNum] = useState(attribute['value'] as number);
-    const [attributeDiceBranched, setAttributeDiceBranched] = useState(attribute['branched'] as boolean);
+    const [baseDiceNum, setBaseDiceNum] = useState(props.diceConfig.base.value);
+    const [baseDiceBranched, setBaseDiceBranched] = useState(props.diceConfig.base.branched);
+    const [attributeDiceNum, setAttributeDiceNum] = useState(props.diceConfig.attribute.value);
+    const [attributeDiceBranched, setAttributeDiceBranched] = useState(props.diceConfig.attribute.branched);
 
     function onApply() {
         setLoading(true);
@@ -165,26 +163,27 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: Prisma.
     );
 }
 
-function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(err: any): void, attributes: Attribute[] }) {
-    const attrs = props.portraitConfig['attributes'] as Array<string>;
+type PortraitContainerProps = {
+    portrait: { attributes: Attribute[], side_attribute: Attribute, orientation: PortraitOrientation };
+    attributes: Attribute[];
+    logError(err: any): void;
+};
 
+function PortraitContainer(props: PortraitContainerProps) {
     const [loading, setLoading] = useState(false);
-    const [attributes, setAttributes] = useState<Attribute[]>(props.attributes.filter(attr => {
-        if (attrs.includes(attr.name)) return attr;
-    }));
-    const [sideAttribute, setSideAttribute] = useState(props.attributes.find(attr =>
-        attr.name === props.portraitConfig['side_attribute'] as string) || props.attributes[0]);
-
-    const availableAttributes = props.attributes.filter(attr => {
-        if (!attributes.includes(attr) && sideAttribute.id !== attr.id) return attr;
-    });
+    const [attributes, setAttributes] = useState<Attribute[]>(props.portrait.attributes);
+    const [sideAttribute, setSideAttribute] = useState(props.portrait.side_attribute);
+    const [orientation, setOrientation] = useState<string>(props.portrait.orientation);
+    const availableAttributes = props.attributes.filter(attr =>
+        !attributes.find(at => at.id === attr.id) && attr.id !== sideAttribute.id);
 
     function onApply() {
         setLoading(true);
         api.post('/config/portrait', {
             portraitConfigurations: {
-                attributes: attributes.map(attr => attr.name),
-                side_attribute: sideAttribute.name
+                attributes: attributes.map(attr => attr.id),
+                side_attribute: sideAttribute.id,
+                orientation
             }
         }).then(() => alert('Configurações de retrato aplicados com sucesso.')).catch(props.logError).finally(() => setLoading(false));
     }
@@ -205,8 +204,19 @@ function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(
     }
 
     return (
-        <DataContainer title='Retrato' outline className='ms-3'>
-            <Row className='mt-2 text-center'>
+        <DataContainer title='Retrato' outline className='ms-3 text-center'>
+            <Row className='mt-2'>
+                <Col className='h5'>
+                    <label htmlFor='portraitOrientation' className='me-2'>Orientação:</label>
+                    <select id='portraitOrientation' className='theme-element' value={orientation}
+                        onChange={ev => setOrientation(ev.currentTarget.value)}>
+                        <option value='center'>Centro</option>
+                        <option value='top'>Superior</option>
+                        <option value='bottom'>Inferior</option>
+                    </select>
+                </Col>
+            </Row>
+            <Row className='mt-2'>
                 <Col xs={{ offset: 3, span: 6 }} className='h5 align-self-center'>
                     Atributos Principais:
                 </Col>
@@ -219,7 +229,7 @@ function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(
                     </DropdownButton>
                 </Col>
             </Row>
-            <Row className='text-center'>
+            <Row>
                 <Col>
                     <ListGroup variant='flush' className='theme-element'>
                         {attributes.map(attr =>
@@ -232,21 +242,20 @@ function PortraitContainer(props: { portraitConfig: Prisma.JsonObject, logError(
                     </ListGroup>
                 </Col>
             </Row>
-            <hr />
-            <Row className='my-2 text-center'>
+            <Row className='my-2'>
                 <Col className='h5'>
                     <label htmlFor='portraitSideAttribute' className='me-2'>Atributo Secundário:</label>
                     <select id='portraitSideAttribute' className='theme-element' value={sideAttribute.id}
                         onChange={onSideAttributeChange}>
                         {props.attributes.map(attr => {
-                            if (attributes.includes(attr)) return null;
+                            if (attributes.find(at => at.id === attr.id)) return null;
                             return <option value={attr.id} key={attr.id}>{attr.name}</option>;
                         })}
                     </select>
                 </Col>
             </Row>
             <Row className='mb-2'>
-                <Col className='text-center'>
+                <Col>
                     <Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>Aplicar</Button>
                 </Col>
             </Row>
@@ -265,28 +274,37 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             props: {
                 adminKey: '',
                 enableSuccessTypes: false,
-                diceConfig: {} as Prisma.JsonObject,
-                portraitConfig: {} as Prisma.JsonObject,
+                dice: {} as DiceConfig,
+                portrait: { attributes: [] as Attribute[], side_attribute: {} as Attribute, orientation: 'center' as PortraitOrientation },
                 attributes: []
             }
         };
     }
 
+    const portraitConfig = JSON.parse((await prisma.config.findUnique({
+        where: { name: 'portrait' }, select: { value: true }
+    }))?.value || 'null') as PortraitConfig;
+
     const results = await Promise.all([
-        prisma.config.findUnique({ where: { name: 'admin_key' } }),
-        prisma.config.findUnique({ where: { name: 'enable_success_types' } }),
-        prisma.config.findUnique({ where: { name: 'dice' } }),
-        prisma.config.findUnique({ where: { name: 'portrait' } }),
+        prisma.config.findUnique({ where: { name: 'admin_key' }, select: { value: true } }),
+        prisma.config.findUnique({ where: { name: 'enable_success_types' }, select: { value: true } }),
+        prisma.config.findUnique({ where: { name: 'dice' }, select: { value: true } }),
+        prisma.attribute.findMany({ where: { id: { in: portraitConfig.attributes } } }),
+        prisma.attribute.findUnique({ where: { id: portraitConfig.side_attribute } }),
         prisma.attribute.findMany(),
     ]);
 
     return {
         props: {
             adminKey: results[0]?.value || '',
-            enableSuccessTypes: JSON.parse(results[1]?.value || '{}') as boolean,
-            diceConfig: JSON.parse(results[2]?.value || '{}') as Prisma.JsonObject,
-            portraitConfig: JSON.parse(results[3]?.value || '{}') as Prisma.JsonObject,
-            attributes: results[4]
+            enableSuccessTypes: results[1]?.value === 'true',
+            dice: JSON.parse(results[2]?.value || 'null') as DiceConfig,
+            portrait: {
+                attributes: results[3],
+                side_attribute: results[4] as Attribute,
+                orientation: portraitConfig.orientation || 'bottom'
+            },
+            attributes: results[5]
         }
     };
 }

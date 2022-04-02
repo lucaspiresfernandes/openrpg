@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import Router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -23,6 +22,7 @@ import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import api from '../../utils/api';
+import { DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -84,7 +84,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </DataContainer>
                                 <Col>
                                     <PlayerAttributeContainer playerAttributes={props.playerAttributes}
-                                        attributeDice={props.diceConfig['attribute'] as Prisma.JsonObject}
+                                        attributeDice={props.diceConfig.attribute}
                                         playerAttributeStatus={props.playerAttributeStatus} playerAvatars={props.playerAvatars} />
                                 </Col>
                             </Row>
@@ -94,7 +94,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                         {props.playerCharacteristics.map(char =>
                                             <PlayerCharacteristicField key={char.Characteristic.id} modifier={char.modifier}
                                                 characteristic={char.Characteristic} value={char.value}
-                                                baseDice={props.diceConfig['base'] as Prisma.JsonObject} />
+                                                baseDice={props.diceConfig.base} />
                                         )}
                                     </Row>
                                 </DataContainer>
@@ -105,7 +105,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Row>
                             <Row>
                                 <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills}
-                                    baseDice={props.diceConfig['base'] as Prisma.JsonObject} />
+                                    baseDice={props.diceConfig.base} />
                             </Row>
                             <Row>
                                 <PlayerItemContainer playerItems={props.playerItems} availableItems={props.availableItems}
@@ -152,7 +152,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableSkills: [],
                 availableItems: [],
                 availableSpells: [],
-                diceConfig: {} as Prisma.JsonObject
+                diceConfig: {} as DiceConfig
             }
         };
     }
@@ -276,7 +276,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 maxLoad: results[15]?.maxLoad || 0,
                 maxSlots: results[15]?.spellSlots || 0
             },
-            diceConfig: JSON.parse(results[16]?.value || '{}') as Prisma.JsonObject,
+            diceConfig: JSON.parse(results[16]?.value || 'null') as DiceConfig,
         }
     };
 }

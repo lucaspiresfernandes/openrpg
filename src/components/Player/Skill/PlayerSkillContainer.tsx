@@ -23,7 +23,10 @@ type PlayerSkill = {
 type PlayerSkillContainerProps = {
     playerSkills: PlayerSkill[];
     availableSkills: Skill[];
-    baseDice: Prisma.JsonObject;
+    baseDice: {
+        value: number;
+        branched: boolean;
+    };
 }
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
