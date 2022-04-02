@@ -14,9 +14,9 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
   const serverAdminKey = (await prisma.config.findUnique({ where: { name: 'admin_key' } }))?.value as string;
 
-  const username = req.body.username as string;
-  const plainPassword = req.body.password as string;
-  const adminKey = req.body.adminKey as string;
+  const username = req.body.username;
+  const plainPassword = req.body.password;
+  const adminKey = req.body.adminKey;
 
   if (!username || !plainPassword) {
     res.status(400).send({ message: 'Usuário ou senha está em branco.' });

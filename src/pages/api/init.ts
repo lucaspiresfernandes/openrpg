@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const config = await prisma.config.findUnique({ where: { name: 'init' } });
 
-    if (config && config.value) return res.status(400).end();
+    if (config && config.value === 'true') return res.status(400).end();
 
     await Promise.all([
         prisma.config.createMany({ data: databaseData.config }),
