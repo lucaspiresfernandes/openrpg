@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
@@ -28,6 +28,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
     const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
     const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
     const [socket, setSocket] = useState<SocketIO | null>(null);
+    const lastRoll = useRef<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: [] });
 
     useSocket(socket => {
         socket.emit('roomJoin', 'admin');
@@ -39,6 +40,12 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
             id: player.id, name: player.PlayerInfo.find(info => info.Info.name === 'Nome')?.value || 'Desconhecido'
         };
     });
+
+    function onDiceRoll(dices: string | ResolvedDice[], resolverKey?: string) {
+        const roll = { dices, resolverKey };
+        lastRoll.current = roll;
+        setDiceRoll(roll);
+    }
 
     return (
         <>
@@ -86,9 +93,10 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                     </Container>
                 </Socket.Provider>
                 <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
-                    showDiceRollResult={(dices, resolverKey) => setDiceRoll({ dices, resolverKey })} />
+                    showDiceRollResult={onDiceRoll} />
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
-                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })} />
+                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })}
+                    onRollAgain={() => setDiceRoll(lastRoll.current)} />
             </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>

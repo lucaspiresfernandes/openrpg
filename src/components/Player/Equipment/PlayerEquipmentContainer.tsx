@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../../contexts';
+import { ResolvedDice } from '../../../utils';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import AddDataModal from '../../Modals/AddDataModal';

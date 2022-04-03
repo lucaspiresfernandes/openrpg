@@ -36,6 +36,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
     const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
 
     const bonusDamage = useRef(props.playerSpecs.find(spec => spec.Spec.name === bonusDamageName)?.value);
+    const lastRoll = useRef<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: [] });
 
     function onSpecChanged(name: string, value: string) {
         if (name !== bonusDamageName) return;
@@ -54,12 +55,18 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket]);
 
+    function onDiceRoll(dices: string | ResolvedDice[], resolverKey?: string) {
+        const roll = { dices, resolverKey };
+        lastRoll.current = roll;
+        setDiceRoll(roll);
+    }
+
     return (
         <>
             <ApplicationHead title='Ficha do Personagem' />
             <SheetNavbar />
             <ErrorLogger.Provider value={addToast}>
-                <ShowDiceResult.Provider value={(dices, resolverKey) => { setDiceRoll({ dices, resolverKey }); }}>
+                <ShowDiceResult.Provider value={onDiceRoll}>
                     <Socket.Provider value={socket}>
                         <Container>
                             <Row className='display-5 text-center'>
@@ -119,7 +126,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                     </Socket.Provider>
                 </ShowDiceResult.Provider>
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
-                    onHide={() => setDiceRoll({ dices: '', resolverKey: undefined })} bonusDamage={bonusDamage.current} />
+                    onHide={() => setDiceRoll({ dices: '', resolverKey: undefined })} bonusDamage={bonusDamage.current}
+                    onRollAgain={() => setDiceRoll(lastRoll.current)} />
             </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
         </>

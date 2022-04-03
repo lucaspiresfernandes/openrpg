@@ -18,7 +18,7 @@ type PlayerEquipmentFieldProps = {
         range: string;
         type: string;
     };
-    onDelete(id: number): void
+    onDelete(id: number): void;
 };
 
 export default function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {

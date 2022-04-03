@@ -14,6 +14,7 @@ type DiceRollResultModalProps = {
     dices: string | ResolvedDice[];
     resolverKey?: string;
     bonusDamage?: string;
+    onRollAgain(): void;
 }
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
@@ -22,6 +23,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
     const [descriptionFade, setDescriptionFade] = useState(false);
     const [loadingDice, setLoadingDice] = useState(false);
     const logError = useContext(ErrorLogger);
+    const rollAgain = useRef(false);
 
     useEffect(() => {
         if (props.dices.length === 0) return;
@@ -33,7 +35,6 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
             if (!aux) return;
             resolved = aux;
         }
-
         api.post('/dice', { dices: resolved, resolverKey: props.resolverKey }, { timeout: 5000 }).then(res => {
             setResultDices(res.data.results);
             setResultFade(true);
@@ -46,6 +47,8 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
         setResultDices([]);
         setResultFade(false);
         setDescriptionFade(false);
+        if (rollAgain.current) props.onRollAgain();
+        rollAgain.current = false;
     }
 
     let result: DiceResult | undefined = undefined;
@@ -62,9 +65,10 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
     return (
         <SheetModal show={props.dices.length != 0} onExited={reset}
             title='Resultado da Rolagem' onHide={props.onHide}
-            closeButton={{ disabled: loadingDice ? true : false }}
+            closeButton={{ disabled: loadingDice }}
             backdrop={loadingDice ? 'static' : true}
             keyboard={loadingDice ? false : true} centered
+            applyButton={{ name: 'Rolar Novamente', onApply: () => { rollAgain.current = true; }, disabled: loadingDice }}
             bodyStyle={{ minHeight: 120, display: 'flex', alignItems: 'center' }}>
             <Container fluid className='text-center'>
                 {resultDices.length === 0 &&

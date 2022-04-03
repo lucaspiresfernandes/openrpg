@@ -1,4 +1,4 @@
-import { Prisma, Skill } from '@prisma/client';
+import { Skill } from '@prisma/client';
 import { useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';

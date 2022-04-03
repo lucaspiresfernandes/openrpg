@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
