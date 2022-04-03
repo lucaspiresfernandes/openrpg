@@ -59,7 +59,7 @@ function AdminKeyContainer(props: { adminKey: string, logError(err: any): void }
 
     return (
         <Col className='h5'>
-            <label htmlFor='adminKeyField' className='me-2'>Chave do Administrador:</label>
+            <label htmlFor='adminKeyField' className='me-2'>Chave do Mestre:</label>
             <BottomTextInput id='adminKeyField' value={value} onChange={ev => setValue(ev.currentTarget.value)} onBlur={onBlur} />
         </Col>
     );

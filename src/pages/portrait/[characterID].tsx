@@ -135,7 +135,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
             setTimeout(() => {
                 setDiceDescription(description);
                 setDiceDescriptionShow(true);
-            }, 750);
+            }, 500);
         }
 
         async function showNextResult(playerId: number, dices: ResolvedDice[], results: DiceResult[]) {

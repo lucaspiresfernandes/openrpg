@@ -36,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
       isAdmin = true;
     }
     else {
-      res.status(401).send({ message: 'Chave do administrador incorreta.' });
+      res.status(401).send({ message: 'Chave do mestre incorreta.' });
       return;
     }
   }

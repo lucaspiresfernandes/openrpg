@@ -89,7 +89,7 @@ export default function Register() {
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <Form.Control type='password' className='text-center theme-element' placeholder='Chave do Administrador' id='adminKey'
+            <Form.Control type='password' className='text-center theme-element' placeholder='Chave do Mestre' id='adminKey'
               name='adminKey' value={adminKey} onChange={e => setAdminKey(e.currentTarget.value)} />
           </Col>
         </Row>
@@ -110,7 +110,7 @@ export default function Register() {
       <Container className='text-center mt-2'>
         <Row>
           <Col>
-            <h1><label htmlFor='username'>Cadastro de Administrador</label></h1>
+            <h1><label htmlFor='username'>Cadastro de Mestre</label></h1>
           </Col>
         </Row>
         {form()}

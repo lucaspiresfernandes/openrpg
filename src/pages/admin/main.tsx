@@ -49,13 +49,13 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
 
     return (
         <>
-            <ApplicationHead title='Painel do Administrador' />
+            <ApplicationHead title='Painel do Mestre' />
             <AdminNavbar />
             <ErrorLogger.Provider value={addToast}>
                 <Socket.Provider value={socket}>
                     <Container>
                         <Row className='display-5 text-center'>
-                            <Col>Painel do Administrador</Col>
+                            <Col>Painel do Mestre</Col>
                         </Row>
                         <Row className='my-4'>
                             <Col className='text-center h5'>

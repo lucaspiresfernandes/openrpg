@@ -117,11 +117,11 @@ O campo "visível" tem a mesma funcionalidade do campo do equipamento.
 
 As Configurações se encontra no painel do amininistrador, na barra de navegação.
 
-## Chave do Administrador
+## Chave do Mestre
 
-Editar a chave do administrador.
+Editar a chave do mestre.
 
-É recomendável editar a chave para que os jogadores não tenham acesso aos recursos do administrador.
+É recomendável editar a chave para que os jogadores não tenham acesso aos recursos do mestre.
 
 ## Dados
 

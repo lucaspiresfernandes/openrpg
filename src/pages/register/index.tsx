@@ -120,7 +120,7 @@ export default function Register(): JSX.Element {
             </Row>
             <Row className='my-3'>
               <Col>
-                É um administrador? <Link href='/register/admin'><a className={homeStyles.link}>Cadastrar-se como administrador</a></Link>
+                É o mestre? <Link href='/register/admin'><a className={homeStyles.link}>Cadastrar-se como mestre</a></Link>
               </Col>
             </Row>
           </Col>
