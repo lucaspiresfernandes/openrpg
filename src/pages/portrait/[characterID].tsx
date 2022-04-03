@@ -154,7 +154,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
             diceData.current = result;
             showDiceResult(result.roll, result.description || '');
-            await sleep(3000);
+            await sleep(2000);
             await hideDiceRoll();
             diceData.current = undefined;
 

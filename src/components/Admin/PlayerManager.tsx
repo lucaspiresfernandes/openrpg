@@ -218,7 +218,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
                 <Col key={player.id} xs={12} md={6} xl={4} className='text-center h-100 my-2'>
                     <Row className='mx-md-1 player-container'>
                         <Col>
-                            <Row className='mt-2'>
+                            <Row className='my-2'>
                                 <Col>
                                     <Button size='sm' variant='secondary' onClick={() => onDeletePlayer(player.id)}>
                                         Apagar

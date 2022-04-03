@@ -204,7 +204,7 @@ function PortraitContainer(props: PortraitContainerProps) {
     }
 
     return (
-        <DataContainer title='Retrato' outline className='ms-3 text-center'>
+        <DataContainer title='Retrato (Extensão OBS)' outline className='ms-3 text-center'>
             <Row className='mt-2'>
                 <Col className='h5'>
                     <label htmlFor='portraitOrientation' className='me-2'>Orientação:</label>
