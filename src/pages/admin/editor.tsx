@@ -29,30 +29,21 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
             <ApplicationHead title='Editor' />
             <AdminNavbar />
             <Container>
-                {props.players.length > 0 &&
-                    <Row>
-                        <Col className='h4 text-center my-4' style={{ color: 'gray' }}>
-                            Algumas funções do editor não estão disponíveis quando existem jogadores cadastrados.
-                            Caso queira acessá-los, deve apagar os jogadores cadastrados restantes.
-                        </Col>
-                    </Row>
-                }
                 <Row>
-                    <InfoEditorContainer info={props.info} disabled={props.players.length > 0} />
+                    <InfoEditorContainer info={props.info} />
                 </Row>
                 <Row>
-                    <ExtraInfoEditorContainer extraInfo={props.extraInfo} disabled={props.players.length > 0} />
+                    <ExtraInfoEditorContainer extraInfo={props.extraInfo} />
                 </Row>
-                <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus}
-                    disabled={props.players.length > 0} />
+                <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus} />
                 <Row>
-                    <SpecEditorContainer specs={props.spec} disabled={props.players.length > 0} />
-                </Row>
-                <Row>
-                    <CharacteristicEditorContainer characteristics={props.characteristic} disabled={props.players.length > 0} />
+                    <SpecEditorContainer specs={props.spec} />
                 </Row>
                 <Row>
-                    <CurrencyEditorContainer currencies={props.currency} disabled={props.players.length > 0} />
+                    <CharacteristicEditorContainer characteristics={props.characteristic} />
+                </Row>
+                <Row>
+                    <CurrencyEditorContainer currencies={props.currency} />
                 </Row>
                 <SkillEditorContainer skills={props.skill} specializations={props.specialization} />
                 <Row>

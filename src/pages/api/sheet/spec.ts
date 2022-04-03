@@ -45,7 +45,20 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const spec = await database.spec.create({ data: { name: name } });
+    const [spec, players] = await database.$transaction([
+        database.spec.create({ data: { name }, select: { id: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
+
+    if (players.length > 0) await database.playerSpec.createMany({
+        data: players.map(player => {
+            return {
+                spec_id: spec.id,
+                player_id: player.id,
+                value: '0'
+            };
+        })
+    });
 
     res.send({ id: spec.id });
 }

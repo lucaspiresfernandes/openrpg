@@ -45,9 +45,22 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const info = await database.extraInfo.create({ data: { name: name } });
+    const [extraInfo, players] = await database.$transaction([
+        database.extraInfo.create({ data: { name }, select: { id: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
 
-    res.send({ id: info.id });
+    if (players.length > 0) await database.playerExtraInfo.createMany({
+        data: players.map(player => {
+            return {
+                extra_info_id: extraInfo.id,
+                player_id: player.id,
+                value: ''
+            };
+        })
+    });
+
+    res.send({ id: extraInfo.id });
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {

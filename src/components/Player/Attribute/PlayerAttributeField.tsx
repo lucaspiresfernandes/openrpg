@@ -1,15 +1,13 @@
 import { Attribute } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger, ShowDiceResult } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
 import { clamp } from '../../../utils';
 import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
 import PlayerAttributeStatusField from './PlayerAttributeStatusField';
 
 type PlayerAttributeFieldProps = {
@@ -26,7 +24,7 @@ type PlayerAttributeFieldProps = {
             attribute_id: number;
         };
     }[];
-    onStatusChanged?(id: number): void;
+    onStatusChanged?(id: number, newValue: boolean): void;
     attributeDice: {
         value: number;
         branched: boolean;
@@ -36,7 +34,7 @@ type PlayerAttributeFieldProps = {
 export default function PlayerAttributeField(props: PlayerAttributeFieldProps) {
     const attributeID = props.playerAttribute.Attribute.id;
     const [value, setValue] = useState(props.playerAttribute.value);
-    const [lastMaxValue, maxValue, setMaxValue] = useExtendedState(props.playerAttribute.maxValue);
+    const [maxValue, setMaxValue] = useState(props.playerAttribute.maxValue);
     const barRef = useRef<HTMLDivElement>(null);
     const timeout = useRef<NodeJS.Timeout>();
 

@@ -47,7 +47,31 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const attributeStatus = await database.attributeStatus.create({ data: { name, attribute_id } });
+    const [attributeStatus, players] = await database.$transaction([
+        database.attributeStatus.create({ data: { name, attribute_id }, select: { id: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
+
+    if (players.length > 0) await database.$transaction([
+        database.playerAttributeStatus.createMany({
+            data: players.map(player => {
+                return {
+                    attribute_status_id: attributeStatus.id,
+                    player_id: player.id,
+                    value: false
+                };
+            })
+        }),
+        database.playerAvatar.createMany({
+            data: players.map(player => {
+                return {
+                    attribute_status_id: attributeStatus.id,
+                    player_id: player.id,
+                    link: null
+                };
+            })
+        })
+    ]);
 
     res.send({ id: attributeStatus.id });
 }

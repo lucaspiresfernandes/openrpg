@@ -12,7 +12,7 @@ type PlayerAttributeStatusFieldProps = {
             attribute_id: number;
         };
     };
-    onStatusChanged?(id: number): void;
+    onStatusChanged?(id: number, newValue: boolean): void;
 }
 
 export default function PlayerAttributeStatusField({ playerAttributeStatus, onStatusChanged }: PlayerAttributeStatusFieldProps) {
@@ -26,10 +26,10 @@ export default function PlayerAttributeStatusField({ playerAttributeStatus, onSt
         const value = !checked;
         setChecked(value);
         api.post('/sheet/player/attribute/status', { attrStatusID: id, value }).then(() => {
-            if (onStatusChanged) onStatusChanged(id);
+            if (onStatusChanged) onStatusChanged(id, value);
         }).catch(err => {
             logError(err);
-            setChecked(!value);
+            setChecked(checked);
         });
     }
 

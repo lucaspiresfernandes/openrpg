@@ -45,7 +45,20 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const currency = await database.currency.create({ data: { name: name } });
+    const [currency, players] = await database.$transaction([
+        database.currency.create({ data: { name }, select: { id: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
+
+    if (players.length > 0) await database.playerCurrency.createMany({
+        data: players.map(player => {
+            return {
+                currency_id: currency.id,
+                player_id: player.id,
+                value: ''
+            };
+        })
+    });
 
     res.send({ id: currency.id });
 }

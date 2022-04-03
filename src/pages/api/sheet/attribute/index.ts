@@ -48,7 +48,21 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const attr = await database.attribute.create({ data: { name, rollable } });
+    const [attr, players] = await database.$transaction([
+        database.attribute.create({ data: { name, rollable }, select: { id: true, color: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
+
+    if (players.length > 0) await database.playerAttribute.createMany({
+        data: players.map(player => {
+            return {
+                attribute_id: attr.id,
+                player_id: player.id,
+                value: 0,
+                maxValue: 0
+            };
+        })
+    });
 
     res.send({ id: attr.id, color: attr.color });
 }

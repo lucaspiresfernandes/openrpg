@@ -45,7 +45,21 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const char = await database.characteristic.create({ data: { name } });
+    const [char, players] = await database.$transaction([
+        database.characteristic.create({ data: { name }, select: { id: true } }),
+        database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } })
+    ]);
+
+    if (players.length > 0) await database.playerCharacteristic.createMany({
+        data: players.map(player => {
+            return {
+                characteristic_id: char.id,
+                player_id: player.id,
+                value: 0,
+                modifier: '+0'
+            };
+        })
+    });
 
     res.send({ id: char.id });
 }

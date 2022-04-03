@@ -11,7 +11,6 @@ import BottomTextInput from '../../../BottomTextInput';
 
 type AttributeEditorFieldProps = {
     attribute: Attribute;
-    deleteDisabled?: boolean;
     onDelete(id: number): void;
     onNameChange?(id: number, newName: string): void;
 }
@@ -47,8 +46,7 @@ export default function AttributeEditorField(props: AttributeEditorFieldProps) {
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.attribute.id)} size='sm'
-                    variant='secondary' disabled={props.deleteDisabled}>
+                <Button onClick={() => props.onDelete(props.attribute.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

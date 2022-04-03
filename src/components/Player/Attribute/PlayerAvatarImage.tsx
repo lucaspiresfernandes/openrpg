@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 
-type PlayerAvatarContainerProps = {
+type PlayerAvatarImageProps = {
     statusID?: number;
     rerender: boolean;
     onClick?(): void;
 }
 
-export default function PlayerAvatarContainer(props: PlayerAvatarContainerProps) {
+export default function PlayerAvatarImage(props: PlayerAvatarImageProps) {
     const statusID = props.statusID || 0;
 
     const [src, setSrc] = useState('#');

@@ -39,21 +39,11 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
     const [notify, setNotify] = useState(false);
     const showDiceResult = useContext(ShowDiceResult);
 
-    function onStatusChange(id: number) {
-        const firstID = playerAttributeStatus.find(stat => stat.value)?.AttributeStatus.id || playerAttributeStatus.length;
-
-        let rerender = false;
-        const newStatus = playerAttributeStatus.map(stat => {
-            if (stat.AttributeStatus.id === id) {
-                if (id <= firstID) {
-                    rerender = true;
-                }
-                stat.value = !stat.value;
-            }
-            return stat;
-        });
-
-        if (rerender) setPlayerStatus(newStatus);
+    function onStatusChanged(id: number, newValue: boolean) {
+        const newPlayerStatus = [...playerAttributeStatus];
+        const index = newPlayerStatus.findIndex(stat => stat.AttributeStatus.id === id);
+        newPlayerStatus[index].value = newValue;
+        setPlayerStatus(newPlayerStatus);
     }
 
     return (
@@ -70,7 +60,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
                 const status = playerAttributeStatus.filter(stat =>
                     stat.AttributeStatus.attribute_id === attr.Attribute.id);
                 return <PlayerAttributeField key={attr.Attribute.id} attributeDice={props.attributeDice}
-                    playerAttribute={attr} playerStatus={status} onStatusChanged={onStatusChange} />;
+                    playerAttribute={attr} playerStatus={status} onStatusChanged={onStatusChanged} />;
             })}
             <EditAvatarModal playerAvatars={props.playerAvatars} show={avatarModalShow}
                 onHide={() => setAvatarModalShow(false)} onUpdate={() => setNotify(n => !n)} />

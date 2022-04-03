@@ -10,7 +10,6 @@ import BottomTextInput from '../../../BottomTextInput';
 type AttributeStatusEditorFieldProps = {
     attributeStatus: AttributeStatus;
     attributes: Attribute[];
-    deleteDisabled?: boolean;
     onDelete(id: number): void;
 }
 
@@ -37,8 +36,7 @@ export default function AttributeStatusEditorField(props: AttributeStatusEditorF
     return (
         <tr>
             <td>
-                <Button onClick={() => props.onDelete(props.attributeStatus.id)} size='sm'
-                    variant='secondary' disabled={props.deleteDisabled}>
+                <Button onClick={() => props.onDelete(props.attributeStatus.id)} size='sm' variant='secondary'>
                     <BsTrash color='white' size={24} />
                 </Button>
             </td>

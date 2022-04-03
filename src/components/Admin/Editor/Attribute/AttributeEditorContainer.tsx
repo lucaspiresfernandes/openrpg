@@ -14,7 +14,6 @@ import CreateAttributeStatusModal from '../../../Modals/CreateAttributeStatusMod
 type AttributeEditorContainerProps = {
     attributes: Attribute[];
     attributeStatus: AttributeStatus[];
-    disabled?: boolean;
 }
 
 export default function AttributeEditorContainer(props: AttributeEditorContainerProps) {
@@ -75,7 +74,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
         <>
             <Row>
                 <DataContainer outline title='Atributos'
-                    addButton={{ onAdd: () => setShowAttributeModal(true), disabled: props.disabled }}>
+                    addButton={{ onAdd: () => setShowAttributeModal(true) }}>
                     <Row>
                         <Col>
                             <Table responsive className='align-middle'>
@@ -89,7 +88,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 </thead>
                                 <tbody>
                                     {attributes.map(attribute =>
-                                        <AttributeEditorField key={attribute.id} deleteDisabled={props.disabled}
+                                        <AttributeEditorField key={attribute.id}
                                             attribute={attribute} onDelete={deleteAttribute}
                                             onNameChange={onAttributeNameChange} />
                                     )}
@@ -101,7 +100,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
             </Row>
             <Row>
                 <DataContainer outline title='Status de Atributos'
-                    addButton={{ onAdd: () => setShowAttributeStatusModal(true), disabled: props.disabled }}>
+                    addButton={{ onAdd: () => setShowAttributeStatusModal(true) }}>
                     <Row>
                         <Col>
                             <Table responsive className='align-middle'>
@@ -115,8 +114,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
                                 <tbody>
                                     {attributeStatus.map(stat =>
                                         <AttributeStatusEditorField key={stat.id} attributeStatus={stat}
-                                            attributes={attributes} onDelete={deleteAttributeStatus}
-                                            deleteDisabled={props.disabled} />
+                                            attributes={attributes} onDelete={deleteAttributeStatus} />
                                     )}
                                 </tbody>
                             </Table>

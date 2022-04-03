@@ -257,7 +257,7 @@ model PlayerAvatar {
   id                  Int              @id @default(autoincrement())
   Player              Player           @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   player_id           Int
-  AttributeStatus     AttributeStatus? @relation(fields: [attribute_status_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  AttributeStatus     AttributeStatus? @relation(fields: [attribute_status_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   attribute_status_id Int?
   link                String?          @db.Text
 
