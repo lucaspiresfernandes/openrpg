@@ -22,6 +22,7 @@ import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
+import { Environment } from '../../utils/config';
 
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -112,7 +113,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 permanent: false
             },
             props: {
-                environment: '',
+                environment: 'idle' as Environment,
                 players: [],
                 notes: null
             }
@@ -145,7 +146,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            environment: results[0]?.value || 'idle',
+            environment: (results[0]?.value || 'idle') as Environment,
             players: results[1],
             notes: results[2]
         }

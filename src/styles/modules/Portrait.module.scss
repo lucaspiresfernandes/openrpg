@@ -15,7 +15,7 @@
     }
 
     &.center {
-        top: 400px;
+        top: 500px;
     }
 
     &.bottom {
@@ -47,6 +47,18 @@
     text-transform: uppercase;
 
     transform: translateY(-50%);
+
+    &.top {
+        top: 300px;
+    }
+
+    &.center {
+        top: 300px;
+    }
+
+    &.bottom {
+        top: 400px;
+    }
 }
 
 .combat {
@@ -55,6 +67,18 @@
     left: 430px;
     transform: translateY(-50%);
     width: auto;
+
+    &.top {
+        top: 300px;
+    }
+
+    &.center {
+        top: 300px;
+    }
+
+    &.bottom {
+        top: 400px;
+    }
 }
 
 .attribute {

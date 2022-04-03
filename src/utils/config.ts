@@ -16,3 +16,5 @@ export type PortraitConfig = {
     side_attribute: number;
     orientation: PortraitOrientation;
 }
+
+export type Environment = 'idle' | 'combat';

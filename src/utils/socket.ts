@@ -3,6 +3,7 @@ import { Server as NetServer, Socket as NetSocket } from 'net';
 import { NextApiResponse } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
 import { DiceResult, ResolvedDice } from '.';
+import { Environment } from './config';
 
 type SocketPlayerEquipment = {
     Equipment: Equipment;
@@ -62,7 +63,7 @@ export interface ServerToClientEvents {
     diceRoll: () => void;
 
     //Portrait Events
-    environmentChange: (newValue: string) => void;
+    environmentChange: (newValue: Environment) => void;
 }
 
 export interface ClientToServerEvents {

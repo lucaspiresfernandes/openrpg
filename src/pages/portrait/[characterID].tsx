@@ -5,7 +5,7 @@ import Image from 'react-bootstrap/Image';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { DiceResult, ResolvedDice, sleep } from '../../utils';
-import { PortraitConfig, PortraitOrientation } from '../../utils/config';
+import { Environment, PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
 
 function getAttributeStyle(color: string) {
@@ -24,7 +24,7 @@ function getOrientationStyle(orientation: PortraitOrientation) {
     }
 }
 
-export default function CharacterPortrait(props: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
+export default function CharacterPortrait(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [attributes, setAttributes] = useState(props.attributes);
     const [attributeStatus, setAttributeStatus] = useState(props.attributeStatus);
     const [sideAttribute, setSideAttribute] = useState(props.sideAttribute);
@@ -129,15 +129,6 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
         socket.on('diceRoll', showDiceRoll);
 
-        function showDiceResult(roll: number, description: string) {
-            setDiceResult(roll);
-            setDiceResultShow(true);
-            setTimeout(() => {
-                setDiceDescription(description);
-                setDiceDescriptionShow(true);
-            }, 500);
-        }
-
         async function showNextResult(playerId: number, dices: ResolvedDice[], results: DiceResult[]) {
             showDiceRoll();
             await sleep(1000);
@@ -153,8 +144,14 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
             if (!showDiceRef.current) return showNextResult(playerId, dices, results);
 
             diceData.current = result;
-            showDiceResult(result.roll, result.description || '');
-            await sleep(2000);
+            setDiceResult(result.roll);
+            setDiceResultShow(true);
+            if (result.description) {
+                await sleep(750);
+                setDiceDescription(result.description);
+                setDiceDescriptionShow(true);
+            }
+            await sleep(1500);
             await hideDiceRoll();
             diceData.current = undefined;
 
@@ -177,10 +174,13 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
     useEffect(() => {
         document.body.style.backgroundColor = 'transparent';
+        document.body.style.color = 'black';
         const id = attributeStatus.find(stat => stat.value)?.value || 0;
         setSrc(`/api/sheet/player/avatar/${id}?playerID=${props.playerId}&v=${Date.now()}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    if (props.notFound) return <h1>Personagem não existe.</h1>;
 
     return (
         <>
@@ -199,7 +199,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 </div>
             </div>
             <Fade in={environment === 'combat'}>
-                <div className={styles.combat}>
+                <div className={`${styles.combat} ${getOrientationStyle(props.orientation)}`}>
                     {attributes.map(attr =>
                         <div className={styles.attribute} style={getAttributeStyle(attr.Attribute.color)}
                             key={attr.Attribute.id}>
@@ -209,7 +209,9 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                 </div>
             </Fade>
             <Fade in={environment === 'idle'}>
-                <div className={styles.nameContainer}>{playerName || 'Desconhecido'}</div>
+                <div className={`${styles.nameContainer} ${getOrientationStyle(props.orientation)}`}>
+                    {playerName || 'Desconhecido'}
+                </div>
             </Fade>
             <div className={styles.diceContainer}>
                 <video height={357} muted className={`popout${showDice ? ' show' : ''}`} ref={diceVideo}>
@@ -230,30 +232,51 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const results = await Promise.all([
         prisma.config.findUnique({ where: { name: 'environment' } }),
-        prisma.playerAttribute.findMany({
-            where: { Attribute: { id: { in: portraitConfig.attributes } }, player_id },
-            select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
-        }),
-        prisma.playerAttribute.findFirst({
-            where: { Attribute: { id: portraitConfig.side_attribute }, player_id },
-            select: { value: true, Attribute: { select: { id: true, name: true, color: true } } }
-        }),
-        prisma.playerAttributeStatus.findMany({
-            where: { player_id },
-            select: { value: true, attribute_status_id: true }
-        }),
-        prisma.playerInfo.findFirst({ where: { player_id, Info: { name: 'Nome' } }, select: { value: true, info_id: true } })
+        prisma.player.findUnique({
+            where: { id: player_id },
+            select: {
+                PlayerAttributes: {
+                    where: { Attribute: { id: { in: [...portraitConfig.attributes, portraitConfig.side_attribute] } } },
+                    select: { value: true, maxValue: true, Attribute: { select: { id: true, name: true, color: true } } }
+                },
+                PlayerAttributeStatus: {
+                    select: { value: true, attribute_status_id: true }
+                },
+                PlayerInfo: {
+                    where: { Info: { name: 'Nome' } },
+                    select: { value: true, info_id: true }
+                }
+            }
+        })
     ]);
+
+    if (!results[1]) return {
+        props: {
+            playerId: player_id,
+            orientation: portraitConfig.orientation || 'bottom',
+            environment: 'idle' as Environment,
+            attributes: [],
+            sideAttribute: { value: 0, Attribute: { id: 0, name: '', color: '' } },
+            attributeStatus: [],
+            playerName: { value: 'Desconhecido', info_id: 0 },
+            notFound: true
+        }
+    };
+
+    const sideAttributeIndex = results[1].PlayerAttributes.findIndex(attr => attr.Attribute.id === portraitConfig.side_attribute);
+    const sideAttribute: { value: number, Attribute: { id: number, name: string, color: string } } =
+        results[1].PlayerAttributes.splice(sideAttributeIndex, 1)[0];
+    const attributes = results[1].PlayerAttributes;
 
     return {
         props: {
             playerId: player_id,
             orientation: portraitConfig.orientation || 'bottom',
-            environment: results[0]?.value || 'idle',
-            attributes: results[1],
-            sideAttribute: results[2] || { value: 0, Attribute: { id: 0, name: '', color: '' } },
-            attributeStatus: results[3],
-            playerName: results[4] || { value: 'Desconhecido', info_id: 0 }
+            environment: (results[0]?.value || 'idle') as Environment,
+            attributes,
+            sideAttribute,
+            attributeStatus: results[1].PlayerAttributeStatus,
+            playerName: results[1].PlayerInfo[0]
         }
     };
 }
