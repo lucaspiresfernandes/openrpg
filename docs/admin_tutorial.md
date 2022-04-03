@@ -2,10 +2,6 @@
 
 Nessa seção, ensinarei como editar o sistema.
 
-### Atenção
-
-Caso haja jogadores cadastrados, o sistema não permitirá a criação ou exclusão de alguns itens.
-
 # Acessando o Editor
 
 O Editor se encontra no painel do amininistrador, na barra de navegação.
