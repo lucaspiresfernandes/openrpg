@@ -1,6 +1,6 @@
 {
   "name": "openrpg",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "private": true,
   "cacheDirectories": [
     ".next/cache"
