@@ -225,8 +225,10 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
                                     </Button>
                                 </Col>
                                 <Col>
-                                    <Button size='sm' variant='secondary' onClick={() => {
-                                        navigator.clipboard.writeText(`${window.location.host}/portrait/${player.id}`);
+                                    <Button size='sm' variant='secondary' onClick={async () => {
+                                        const url = `${window.location.host}/portrait/${player.id}`;
+                                        if ('clipboard' in navigator) await navigator.clipboard.writeText(url);
+                                        else document.execCommand('copy', true, url);
                                         alert('Link copiado para sua área de transferência.');
                                     }}>
                                         Retrato
