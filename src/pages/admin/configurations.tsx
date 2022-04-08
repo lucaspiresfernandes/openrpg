@@ -164,7 +164,7 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
 }
 
 type PortraitContainerProps = {
-    portrait: { attributes: Attribute[], side_attribute: Attribute, orientation: PortraitOrientation };
+    portrait: { attributes: Attribute[], side_attribute: Attribute | null, orientation: PortraitOrientation };
     attributes: Attribute[];
     logError(err: any): void;
 };
@@ -175,14 +175,14 @@ function PortraitContainer(props: PortraitContainerProps) {
     const [sideAttribute, setSideAttribute] = useState(props.portrait.side_attribute);
     const [orientation, setOrientation] = useState<string>(props.portrait.orientation);
     const availableAttributes = props.attributes.filter(attr =>
-        !attributes.find(at => at.id === attr.id) && attr.id !== sideAttribute.id);
+        !attributes.find(at => at.id === attr.id) && attr.id !== sideAttribute?.id);
 
     function onApply() {
         setLoading(true);
         api.post('/config/portrait', {
             portraitConfigurations: {
                 attributes: attributes.map(attr => attr.id),
-                side_attribute: sideAttribute.id,
+                side_attribute: sideAttribute?.id || 0,
                 orientation
             }
         }).then(() => alert('Configurações de retrato aplicados com sucesso.')).catch(props.logError).finally(() => setLoading(false));
@@ -200,7 +200,7 @@ function PortraitContainer(props: PortraitContainerProps) {
 
     function onSideAttributeChange(ev: ChangeEvent<HTMLSelectElement>) {
         const id = parseInt(ev.currentTarget.value);
-        setSideAttribute(availableAttributes.find(attr => attr.id === id) || sideAttribute);
+        setSideAttribute(availableAttributes.find(attr => attr.id === id) || null);
     }
 
     return (
@@ -245,8 +245,9 @@ function PortraitContainer(props: PortraitContainerProps) {
             <Row className='my-2'>
                 <Col className='h5'>
                     <label htmlFor='portraitSideAttribute' className='me-2'>Atributo Secundário:</label>
-                    <select id='portraitSideAttribute' className='theme-element' value={sideAttribute.id}
+                    <select id='portraitSideAttribute' className='theme-element' value={sideAttribute?.id || 0}
                         onChange={onSideAttributeChange}>
+                        <option value={0} key={0}>Nenhum</option>
                         {props.attributes.map(attr => {
                             if (attributes.find(at => at.id === attr.id)) return null;
                             return <option value={attr.id} key={attr.id}>{attr.name}</option>;
@@ -275,7 +276,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 adminKey: '',
                 enableSuccessTypes: false,
                 dice: {} as DiceConfig,
-                portrait: { attributes: [] as Attribute[], side_attribute: {} as Attribute, orientation: 'center' as PortraitOrientation },
+                portrait: { attributes: [] as Attribute[], side_attribute: null, orientation: 'center' as PortraitOrientation },
                 attributes: []
             }
         };
@@ -301,7 +302,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             dice: JSON.parse(results[2]?.value || 'null') as DiceConfig,
             portrait: {
                 attributes: results[3],
-                side_attribute: results[4] as Attribute,
+                side_attribute: results[4],
                 orientation: portraitConfig.orientation || 'bottom'
             },
             attributes: results[5]

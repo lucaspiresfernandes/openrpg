@@ -78,7 +78,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
 
             if (value === null) return;
             setSideAttribute(attr => {
-                if (attributeId !== attr.Attribute.id) return attr;
+                if (attr === null || attributeId !== attr.Attribute.id) return attr;
                 return { value: value, Attribute: { ...attr.Attribute } };
             });
         });
@@ -192,11 +192,13 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
                             width={420} height={600} className={styles.avatar} />
                     </div>
                 </Fade>
-                <div className={`${styles.sideContainer} ${getOrientationStyle(props.orientation)}`}>
-                    <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
-                        {sideAttribute.value}
+                {sideAttribute &&
+                    <div className={`${styles.sideContainer} ${getOrientationStyle(props.orientation)}`}>
+                        <div className={styles.side} style={getAttributeStyle(sideAttribute.Attribute.color)}>
+                            {sideAttribute.value}
+                        </div>
                     </div>
-                </div>
+                }
             </div>
             <Fade in={environment === 'combat'}>
                 <div className={`${styles.combat} ${getOrientationStyle(props.orientation)}`}>
@@ -256,16 +258,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             orientation: portraitConfig.orientation || 'bottom',
             environment: 'idle' as Environment,
             attributes: [],
-            sideAttribute: { value: 0, Attribute: { id: 0, name: '', color: '' } },
             attributeStatus: [],
+            sideAttribute: null,
             playerName: { value: 'Desconhecido', info_id: 0 },
             notFound: true
         }
     };
 
     const sideAttributeIndex = results[1].PlayerAttributes.findIndex(attr => attr.Attribute.id === portraitConfig.side_attribute);
-    const sideAttribute: { value: number, Attribute: { id: number, name: string, color: string } } =
-        results[1].PlayerAttributes.splice(sideAttributeIndex, 1)[0];
+
+    let sideAttribute: { value: number, Attribute: { id: number, name: string, color: string } } | null = null;
+    if (sideAttributeIndex > -1) sideAttribute = results[1].PlayerAttributes.splice(sideAttributeIndex, 1)[0];
     const attributes = results[1].PlayerAttributes;
 
     return {
