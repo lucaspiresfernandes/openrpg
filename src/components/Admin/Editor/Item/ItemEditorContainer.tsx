@@ -11,6 +11,7 @@ import CreateItemModal from '../../../Modals/CreateItemModal';
 
 type ItemEditorContainerProps = {
     items: Item[];
+    title: string;
 }
 
 export default function ItemEditorContainer(props: ItemEditorContainerProps) {
@@ -39,7 +40,7 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
     
     return (
         <>
-            <DataContainer outline title='Itens'
+            <DataContainer outline title={props.title}
                 addButton={{ onAdd: () => setShowItemModal(true) }}>
                 <Row>
                     <Col>

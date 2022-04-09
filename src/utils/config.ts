@@ -18,3 +18,5 @@ export type PortraitConfig = {
 }
 
 export type Environment = 'idle' | 'combat';
+
+export type ContainerConfig = { originalName: string, name: string }[];

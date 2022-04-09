@@ -22,7 +22,7 @@ import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import { ResolvedDice } from '../../utils';
 import api from '../../utils/api';
-import { DiceConfig } from '../../utils/config';
+import { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -75,7 +75,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </Col>
                             </Row>
                             <Row className='mb-3'>
-                                <DataContainer outline title='Detalhes Pessoais'>
+                                <DataContainer outline title={props.containerConfig.find(c => c.originalName === 'Detalhes Pessoais')?.name || 'Detalhes Pessoais'}>
                                     <>
                                         {props.playerInfo.map(pinfo =>
                                             <PlayerInfoField key={pinfo.Info.id} info={pinfo.Info} value={pinfo.value} />
@@ -96,7 +96,8 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </Col>
                             </Row>
                             <Row>
-                                <DataContainer outline title='Características'>
+                                <DataContainer outline
+                                    title={props.containerConfig.find(c => c.originalName === 'Características')?.name || 'Características'}>
                                     <Row className='mb-3 text-center align-items-end justify-content-center'>
                                         {props.playerCharacteristics.map(char =>
                                             <PlayerCharacteristicField key={char.Characteristic.id} modifier={char.modifier}
@@ -108,19 +109,23 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Row>
                             <Row>
                                 <PlayerEquipmentContainer availableEquipments={props.availableEquipments}
-                                    playerEquipments={props.playerEquipments} />
+                                    playerEquipments={props.playerEquipments}
+                                    title={props.containerConfig.find(c => c.originalName === 'Combate')?.name || 'Combate'} />
                             </Row>
                             <Row>
                                 <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills}
-                                    baseDice={props.diceConfig.base} />
+                                    baseDice={props.diceConfig.base}
+                                    title={props.containerConfig.find(c => c.originalName === 'Perícias')?.name || 'Perícias'} />
                             </Row>
                             <Row>
                                 <PlayerItemContainer playerItems={props.playerItems} availableItems={props.availableItems}
-                                    playerMaxLoad={props.player.maxLoad} playerCurrency={props.playerCurrency} />
+                                    playerMaxLoad={props.player.maxLoad} playerCurrency={props.playerCurrency}
+                                    title={props.containerConfig.find(c => c.originalName === 'Itens')?.name || 'Itens'} />
                             </Row>
                             <Row>
                                 <PlayerSpellContainer playerSpells={props.playerSpells.map(sp => sp.Spell)}
-                                    availableSpells={props.availableSpells} playerMaxSlots={props.player.maxSlots} />
+                                    availableSpells={props.availableSpells} playerMaxSlots={props.player.maxSlots}
+                                    title={props.containerConfig.find(c => c.originalName === 'Magias')?.name || 'Magias'} />
                             </Row>
                         </Container>
                     </Socket.Provider>
@@ -160,7 +165,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 availableSkills: [],
                 availableItems: [],
                 availableSpells: [],
-                diceConfig: {} as DiceConfig
+                diceConfig: {} as DiceConfig,
+                containerConfig: {} as ContainerConfig,
             }
         };
     }
@@ -259,7 +265,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
         prisma.player.findUnique({
             where: { id: playerID }, select: { maxLoad: true, spellSlots: true }
         }),
-        prisma.config.findUnique({ where: { name: 'dice' } })
+        prisma.config.findUnique({ where: { name: 'dice' } }),
+        prisma.config.findUnique({ where: { name: 'container' } }),
     ]);
 
     return {
@@ -285,6 +292,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
                 maxSlots: results[15]?.spellSlots || 0
             },
             diceConfig: JSON.parse(results[16]?.value || 'null') as DiceConfig,
+            containerConfig: JSON.parse(results[17]?.value || '[]') as ContainerConfig
         }
     };
 }

@@ -12,6 +12,7 @@ import CreateCharacteristicModal from '../../../Modals/CreateCharacteristicModal
 type CharacteristicEditorContainerProps = {
     characteristics: Characteristic[];
     disabled?: boolean;
+    title: string;
 }
 
 export default function CharacteristicEditorContainer(props: CharacteristicEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function CharacteristicEditorContainer(props: CharacteristicEdito
 
     return (
         <>
-            <DataContainer outline title='Características'
+            <DataContainer outline title={props.title}
                 addButton={{ onAdd: () => setShowCharacteristicModal(true), disabled: props.disabled }}>
                 <Row>
                     <Col>

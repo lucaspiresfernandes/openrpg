@@ -24,6 +24,7 @@ type PlayerEquipmentContainerProps = {
         };
     }[];
     availableEquipments: Equipment[];
+    title: string;
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
@@ -117,7 +118,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 
     return (
         <>
-            <DataContainer outline title='Combate' addButton={{ onAdd: () => setAddEquipmentShow(true) }}>
+            <DataContainer outline title={props.title} addButton={{ onAdd: () => setAddEquipmentShow(true) }}>
                 <Row className='mb-3 text-center'>
                     <Col>
                         <Table responsive className='align-middle'>
@@ -144,7 +145,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
                     </Col>
                 </Row>
             </DataContainer>
-            <AddDataModal title='Adicionar Equipamento' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
+            <AddDataModal title='Adicionar' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
                 data={equipments} onAddData={onAddEquipment} />
         </>
     );

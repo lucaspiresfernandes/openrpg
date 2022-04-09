@@ -16,6 +16,7 @@ import useSocket, { SocketIO } from '../../hooks/useSocket';
 import api from '../../utils/api';
 import Router from 'next/router';
 import ApplicationHead from '../../components/ApplicationHead';
+import { ContainerConfig } from '../../utils/config';
 
 export default function Sheet2(props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>) {
     const [toasts, addToast] = useToast();
@@ -51,7 +52,8 @@ export default function Sheet2(props: InferGetServerSidePropsType<typeof getServ
                         </DataContainer>
                     </Row>
                     <Row>
-                        <DataContainer title='Detalhes Pessoais' outline>
+                        <DataContainer title={props.containerConfig.find(c => c.originalName === 'Detalhes Pessoais')?.name || 'Detalhes Pessoais'}
+                            outline>
                             {props.playerExtraInfo.map(info =>
                                 <PlayerExtraInfoField key={info.ExtraInfo.id} value={info.value} extraInfo={info.ExtraInfo} />
                             )}
@@ -76,7 +78,8 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
             props: {
                 playerID: 0,
                 playerExtraInfo: [],
-                playerNotes: undefined
+                playerNotes: undefined,
+                containerConfig: [] as ContainerConfig
             }
         };
     }
@@ -89,14 +92,16 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
         prisma.playerNote.findUnique({
             where: { player_id: player.id },
             select: { value: true }
-        })
+        }),
+        prisma.config.findUnique({ where: { name: 'container' } }),
     ]);
 
     return {
         props: {
             playerID: player.id,
             playerExtraInfo: results[0],
-            playerNotes: results[1]?.value || ''
+            playerNotes: results[1]?.value || '',
+            containerConfig: JSON.parse(results[2]?.value || '[]') as ContainerConfig
         }
     };
 }

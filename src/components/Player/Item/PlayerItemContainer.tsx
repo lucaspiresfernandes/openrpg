@@ -28,6 +28,7 @@ type PlayerItemContainerProps = {
         value: string;
         Currency: Currency;
     }[];
+    title: string;
 };
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
@@ -135,7 +136,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Itens' addButton={{ onAdd: () => setAddItemShow(true) }}>
+            <DataContainer outline title={props.title} addButton={{ onAdd: () => setAddItemShow(true) }}>
                 <Row className='text-center justify-content-center'>
                     {props.playerCurrency.map(curr =>
                         <PlayerCurrencyField key={curr.Currency.id} currency={curr} />
@@ -173,7 +174,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
                     </Col>
                 </Row>
             </DataContainer>
-            <AddDataModal title='Adicionar Item' show={addItemShow} onHide={() => setAddItemShow(false)}
+            <AddDataModal title='Adicionar' show={addItemShow} onHide={() => setAddItemShow(false)}
                 data={items} onAddData={onAddItem} />
         </>
     );

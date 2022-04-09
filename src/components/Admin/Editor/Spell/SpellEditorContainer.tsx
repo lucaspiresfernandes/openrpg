@@ -11,6 +11,7 @@ import CreateSpellModal from '../../../Modals/CreateSpellModal';
 
 type SpellEditorContainerProps = {
     spells: Spell[];
+    title: string;
 }
 
 export default function SpellEditorContainer(props: SpellEditorContainerProps) {
@@ -46,7 +47,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Magias'
+            <DataContainer outline title={props.title}
                 addButton={{ onAdd: () => setShowSpellModal(true) }}>
                 <Row>
                     <Col>

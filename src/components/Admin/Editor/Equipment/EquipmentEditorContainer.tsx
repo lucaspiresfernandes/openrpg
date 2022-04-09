@@ -11,6 +11,7 @@ import CreateEquipmentModal from '../../../Modals/CreateEquipmentModal';
 
 type EquipmentEditorContainerProps = {
     equipments: Equipment[];
+    title: string;
 }
 
 export default function EquipmentEditorContainer(props: EquipmentEditorContainerProps) {
@@ -40,7 +41,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 
     return (
         <>
-            <DataContainer outline title='Equipamentos'
+            <DataContainer outline title={props.title}
                 addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
                 <Row>
                     <Col>

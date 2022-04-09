@@ -20,6 +20,7 @@ import { ErrorLogger } from '../../contexts';
 import useToast from '../../hooks/useToast';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
+import { ContainerConfig } from '../../utils/config';
 
 export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -30,30 +31,36 @@ export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>
             <AdminNavbar />
             <Container>
                 <Row>
-                    <InfoEditorContainer info={props.info} />
+                    <InfoEditorContainer info={props.info}
+                        title={props.containerConfig.find(c => c.originalName === 'Detalhes Pessoais')?.name || 'Detalhes Pessoais'} />
                 </Row>
                 <Row>
-                    <ExtraInfoEditorContainer extraInfo={props.extraInfo} />
+                    <ExtraInfoEditorContainer extraInfo={props.extraInfo}
+                        title={props.containerConfig.find(c => c.originalName === 'Detalhes Pessoais')?.name || 'Detalhes Pessoais'} />
                 </Row>
                 <AttributeEditorContainer attributes={props.attribute} attributeStatus={props.attributeStatus} />
                 <Row>
                     <SpecEditorContainer specs={props.spec} />
                 </Row>
                 <Row>
-                    <CharacteristicEditorContainer characteristics={props.characteristic} />
+                    <CharacteristicEditorContainer characteristics={props.characteristic}
+                        title={props.containerConfig.find(c => c.originalName === 'Características')?.name || 'Características'} />
                 </Row>
                 <Row>
                     <CurrencyEditorContainer currencies={props.currency} />
                 </Row>
                 <SkillEditorContainer skills={props.skill} specializations={props.specialization} />
                 <Row>
-                    <EquipmentEditorContainer equipments={props.equipment} />
+                    <EquipmentEditorContainer equipments={props.equipment}
+                        title={props.containerConfig.find(c => c.originalName === 'Combate')?.name || 'Combate'} />
                 </Row>
                 <Row>
-                    <ItemEditorContainer items={props.item} />
+                    <ItemEditorContainer items={props.item}
+                        title={props.containerConfig.find(c => c.originalName === 'Itens')?.name || 'Itens'} />
                 </Row>
                 <Row>
-                    <SpellEditorContainer spells={props.spell} />
+                    <SpellEditorContainer spells={props.spell}
+                        title={props.containerConfig.find(c => c.originalName === 'Magias')?.name || 'Magias'} />
                 </Row>
             </Container>
             <ErrorToastContainer toasts={toasts} />
@@ -82,7 +89,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 item: [],
                 specialization: [],
                 spell: [],
-                currency: []
+                currency: [],
+                containerConfig: [] as ContainerConfig
             }
         };
     }
@@ -100,7 +108,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.item.findMany(),
         prisma.specialization.findMany(),
         prisma.spell.findMany(),
-        prisma.currency.findMany()
+        prisma.currency.findMany(),
+        prisma.config.findUnique({ where: { name: 'container' } }),
     ]);
 
     return {
@@ -117,7 +126,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             item: results[9],
             specialization: results[10],
             spell: results[11],
-            currency: results[12]
+            currency: results[12],
+            containerConfig: JSON.parse(results[13]?.value || '[]') as ContainerConfig
         }
     };
 }

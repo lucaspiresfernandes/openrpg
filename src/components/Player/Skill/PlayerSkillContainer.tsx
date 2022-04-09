@@ -27,6 +27,7 @@ type PlayerSkillContainerProps = {
         value: number;
         branched: boolean;
     };
+    title: string;
 }
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
@@ -79,7 +80,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Perícias' addButton={{ onAdd: () => setAddSkillShow(true) }}>
+            <DataContainer outline title={props.title} addButton={{ onAdd: () => setAddSkillShow(true) }}>
                 <Row className='mb-3'>
                     <Col>
                         <Form.Control className='theme-element' placeholder='Procurar'
@@ -96,7 +97,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
                     })}
                 </Row>
             </DataContainer>
-            <AddDataModal title='Adicionar Perícia' show={addSkillShow} onHide={() => setAddSkillShow(false)}
+            <AddDataModal title='Adicionar' show={addSkillShow} onHide={() => setAddSkillShow(false)}
                 data={skills} onAddData={onAddSkill} />
         </>
     );

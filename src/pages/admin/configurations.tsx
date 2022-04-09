@@ -20,9 +20,10 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useExtendedState from '../../hooks/useExtendedState';
 import useToast from '../../hooks/useToast';
 import api from '../../utils/api';
-import { DiceConfig, PortraitConfig, PortraitOrientation } from '../../utils/config';
+import { ContainerConfig, DiceConfig, PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
+import { containerConfigInsertData } from '../api/init';
 
 export default function Configurations(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
@@ -41,6 +42,9 @@ export default function Configurations(props: InferGetServerSidePropsType<typeof
                 <Row className='mt-3'>
                     <DiceContainer successTypeEnabled={props.enableSuccessTypes} diceConfig={props.dice} logError={addToast} />
                     <PortraitContainer portrait={props.portrait} attributes={props.attributes} logError={addToast} />
+                </Row>
+                <Row className='mt-3'>
+                    <ContainerEditor containerConfig={props.containerConfig} logError={addToast} />
                 </Row>
             </Container>
             <ErrorToastContainer toasts={toasts} />
@@ -87,7 +91,7 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     branched: attributeDiceBranched
                 }
             }
-        }).then(() => alert('Configurações de dado aplicados com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+        }).then(() => alert('Configurações de dado aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
     }
 
     return (
@@ -185,7 +189,7 @@ function PortraitContainer(props: PortraitContainerProps) {
                 side_attribute: sideAttribute?.id || 0,
                 orientation
             }
-        }).then(() => alert('Configurações de retrato aplicados com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+        }).then(() => alert('Configurações de retrato aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
     }
 
     function addAttribute(attr: Attribute) {
@@ -264,6 +268,46 @@ function PortraitContainer(props: PortraitContainerProps) {
     );
 }
 
+function ContainerEditor(props: { containerConfig: ContainerConfig, logError(err: any): void }) {
+    const [names, setNames] = useState(props.containerConfig);
+    const [loading, setLoading] = useState(false);
+
+    function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
+        const newNames = [...names];
+        const index = newNames.findIndex(n => n.originalName === originalName);
+        newNames[index].name = ev.currentTarget.value;
+        setNames(newNames);
+    }
+
+    function onApply() {
+        setLoading(true);
+        api.post('/config/container', {
+            containerConfig: names
+        }).then(() => alert('Configurações de contêiner aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+    }
+
+    return (
+        <DataContainer title='Configurações de Contêiner' outline className='text-center'>
+            <>
+                {names.map(container =>
+                    <Row key={container.originalName}>
+                        <Col className='h5'>
+                            <label htmlFor={`containerField${container.originalName}`}>Contêiner de {container.originalName}:</label>
+                            <BottomTextInput id={`containerField${container.originalName}`} className='ms-2'
+                                value={container.name} onChange={ev => onNameChange(ev, container.originalName)} />
+                        </Col>
+                    </Row>
+                )}
+                <Row className='my-2'>
+                    <Col>
+                        <Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>Aplicar</Button>
+                    </Col>
+                </Row>
+            </>
+        </DataContainer>
+    );
+}
+
 async function getSSP(ctx: GetServerSidePropsContext) {
     const player = ctx.req.session.player;
     if (!player || !player.admin) {
@@ -277,7 +321,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 enableSuccessTypes: false,
                 dice: {} as DiceConfig,
                 portrait: { attributes: [] as Attribute[], side_attribute: null, orientation: 'center' as PortraitOrientation },
-                attributes: []
+                attributes: [],
+                containerConfig: {} as ContainerConfig
             }
         };
     }
@@ -293,7 +338,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
         prisma.attribute.findMany({ where: { id: { in: portraitConfig.attributes } } }),
         prisma.attribute.findUnique({ where: { id: portraitConfig.side_attribute } }),
         prisma.attribute.findMany(),
+        prisma.config.findUnique({ where: { name: 'container' }, select: { value: true } }),
     ]);
+
+    const containerConfigQuery = results[6] || await prisma.config.create({ data: containerConfigInsertData });
 
     return {
         props: {
@@ -305,7 +353,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
                 side_attribute: results[4],
                 orientation: portraitConfig.orientation || 'bottom'
             },
-            attributes: results[5]
+            attributes: results[5],
+            containerConfig: JSON.parse(containerConfigQuery.value || 'null') as ContainerConfig,
         }
     };
 }

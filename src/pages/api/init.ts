@@ -1,6 +1,36 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../utils/database';
 
+export const containerConfigInsertData = {
+    name: 'container',
+    value: JSON.stringify([
+        {
+            originalName: 'Detalhes Pessoais',
+            name: 'Detalhes Pessoais'
+        },
+        {
+            originalName: 'Características',
+            name: 'Características'
+        },
+        {
+            originalName: 'Combate',
+            name: 'Combate'
+        },
+        {
+            originalName: 'Perícias',
+            name: 'Perícias'
+        },
+        {
+            originalName: 'Itens',
+            name: 'Itens'
+        },
+        {
+            originalName: 'Magias',
+            name: 'Magias'
+        },
+    ])
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') return res.status(404).end();
 
@@ -67,7 +97,8 @@ const databaseData = {
                 attributes: [1, 2],
                 side_attribute: 3
             })
-        }
+        },
+        containerConfigInsertData
     ],
     attribute: [
         {

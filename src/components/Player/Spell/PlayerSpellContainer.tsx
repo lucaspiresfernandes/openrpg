@@ -14,6 +14,7 @@ type PlayerSpellContainerProps = {
     playerSpells: Spell[];
     availableSpells: Spell[];
     playerMaxSlots: number;
+    title: string;
 };
 
 export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
@@ -114,11 +115,11 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 
     return (
         <>
-            <DataContainer outline title='Magias' addButton={{ onAdd: () => setAddSpellShow(true) }}>
+            <DataContainer outline title={props.title} addButton={{ onAdd: () => setAddSpellShow(true) }}>
                 <Row className='justify-content-center'>
                     <Row className='mb-2'>
                         <Col className='text-center h5'>
-                            <span className='me-2'>Espaços de Magia: </span>
+                            <span className='me-2'>Espaços: </span>
                             <span style={colorStyle}> {slots} /</span>
                             <BottomTextInput value={maxSlots} onChange={ev => setMaxSlots(ev.currentTarget.value)}
                                 onBlur={onMaxSlotsBlur} className='text-center' style={{ ...colorStyle, maxWidth: '3rem' }} />
@@ -129,7 +130,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
                     )}
                 </Row>
             </DataContainer>
-            <AddDataModal title='Adicionar Magia' show={addSpellShow} onHide={() => setAddSpellShow(false)}
+            <AddDataModal title='Adicionar' show={addSpellShow} onHide={() => setAddSpellShow(false)}
                 data={spells} onAddData={onAddSpell} />
         </>
     );
