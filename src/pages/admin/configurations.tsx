@@ -58,7 +58,7 @@ function AdminKeyContainer(props: { adminKey: string, logError(err: any): void }
     function onBlur() {
         if (value === lastValue) return;
         setValue(value);
-        api.post('/config/adminkey', { key: value }).catch(props.logError);
+        api.post('/config', { name: 'admin_key', value }).catch(props.logError);
     }
 
     return (
@@ -81,23 +81,27 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
 
     function onApply() {
         setLoading(true);
-        api.post('/config/dice', {
-            enableSuccessType: successTypeEnabled,
-            diceConfigurations: {
-                characteristic: {
-                    value: characteristicDiceNum,
-                    branched: characteristicDiceBranched
-                },
-                skill: {
-                    value: skillDiceNum,
-                    branched: skillDiceBranched
-                },
-                attribute: {
-                    value: attributeDiceNum,
-                    branched: attributeDiceBranched
+        Promise.all([
+            api.post('/config', { name: 'enable_success_types', value: successTypeEnabled }),
+            api.post('/config', {
+                name: 'dice', value: {
+                    characteristic: {
+                        value: characteristicDiceNum,
+                        branched: characteristicDiceBranched
+                    },
+                    skill: {
+                        value: skillDiceNum,
+                        branched: skillDiceBranched
+                    },
+                    attribute: {
+                        value: attributeDiceNum,
+                        branched: attributeDiceBranched
+                    }
                 }
-            }
-        }).then(() => alert('Configurações de dado aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+            })
+        ]).then(() => alert('Configurações de dado aplicadas com sucesso.'))
+            .catch(props.logError)
+            .finally(() => setLoading(false));
     }
 
     return (
@@ -184,7 +188,7 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     </Row>
                     <Row className='mt-2'>
                         <Col>
-                            <FormGroup controlId='baseDiceBranched'>
+                            <FormGroup controlId='skillDiceBranched'>
                                 <FormCheck inline checked={skillDiceBranched}
                                     onChange={() => setSkillDiceBranched(b => !b)} />
                                 <FormLabel className='me-2'>Ativar Ramificações</FormLabel>
@@ -218,13 +222,16 @@ function PortraitContainer(props: PortraitContainerProps) {
 
     function onApply() {
         setLoading(true);
-        api.post('/config/portrait', {
-            portraitConfigurations: {
+        api.post('/config', {
+            name: 'portrait',
+            value: {
                 attributes: attributes.map(attr => attr.id),
                 side_attribute: sideAttribute?.id || 0,
                 orientation
             }
-        }).then(() => alert('Configurações de retrato aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+        }).then(() => alert('Configurações de retrato aplicadas com sucesso.'))
+            .catch(props.logError)
+            .finally(() => setLoading(false));
     }
 
     function addAttribute(attr: Attribute) {
@@ -316,9 +323,10 @@ function ContainerEditor(props: { containerConfig: ContainerConfig, logError(err
 
     function onApply() {
         setLoading(true);
-        api.post('/config/container', {
-            containerConfig: names
-        }).then(() => alert('Configurações de contêiner aplicadas com sucesso.')).catch(props.logError).finally(() => setLoading(false));
+        api.post('/config', { name: 'container', value: names })
+            .then(() => alert('Configurações de contêiner aplicadas com sucesso.'))
+            .catch(props.logError)
+            .finally(() => setLoading(false));
     }
 
     return (

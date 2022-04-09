@@ -11,7 +11,7 @@ export default function AdminEnvironmentConfigurations(props: { environment: Env
     function environmentChange() {
         const value = environment === 'combat' ? 'idle' : 'combat';
         setEnvironment(value);
-        api.post('/config/environment', { value }).catch(err => {
+        api.post('/config', { name: 'environment', value }).catch(err => {
             setEnvironment(environment);
             logError(err);
         });
