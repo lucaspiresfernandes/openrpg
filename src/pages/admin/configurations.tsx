@@ -111,17 +111,17 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                 </Col>
             </Row>
             <Row className='text-center'>
-                <DataContainer title='Rolagem de Perícia' outline className='mx-3' hidden={!successTypeEnabled}>
+                <DataContainer title='Rolagem de Atributo' outline className='mx-3' hidden={!successTypeEnabled}>
                     <Row>
                         <Col className='h5' style={{ color: 'gray' }}>
-                            Rolagem de Perícia é o tipo de rolagem aplicado a Perícias.
+                            Rolagem de atributo é o tipo de rolagem aplicado a barras de Atributo roláveis.
                         </Col>
                     </Row>
                     <Row>
                         <Col>
-                            <label htmlFor='skillDiceValue' className='me-2'>Valor:</label>
-                            <select id='skillDiceValue' className='theme-element' value={skillDiceNum}
-                                onChange={ev => setSkillDiceNum(parseInt(ev.currentTarget.value))}>
+                            <label className='me-2' htmlFor='attributeDiceValue'>Valor:</label>
+                            <select id='attributeDiceValue' className='theme-element' value={attributeDiceNum}
+                                onChange={ev => setAttributeDiceNum(parseInt(ev.currentTarget.value))}>
                                 <option value={20}>d20</option>
                                 <option value={100}>d100</option>
                             </select>
@@ -129,9 +129,8 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     </Row>
                     <Row className='mt-2'>
                         <Col>
-                            <FormGroup controlId='baseDiceBranched'>
-                                <FormCheck inline checked={skillDiceBranched}
-                                    onChange={() => setSkillDiceBranched(b => !b)} />
+                            <FormGroup controlId='attributeDiceBranched'>
+                                <FormCheck inline checked={attributeDiceBranched} onChange={() => setAttributeDiceBranched(b => !b)} />
                                 <FormLabel className='me-2'>Ativar Ramificações</FormLabel>
                             </FormGroup>
                         </Col>
@@ -166,18 +165,18 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     </Row>
                 </DataContainer>
             </Row>
-            <Row className='text-center mt-2 mb-2'>
-                <DataContainer title='Rolagem de Atributo' outline className='mx-3' hidden={!successTypeEnabled}>
+            <Row className='text-center mb-1'>
+                <DataContainer title='Rolagem de Perícia' outline className='mx-3' hidden={!successTypeEnabled}>
                     <Row>
                         <Col className='h5' style={{ color: 'gray' }}>
-                            Rolagem de atributo é o tipo de rolagem aplicado a barras de Atributo roláveis.
+                            Rolagem de Perícia é o tipo de rolagem aplicado a Perícias.
                         </Col>
                     </Row>
                     <Row>
                         <Col>
-                            <label className='me-2' htmlFor='attributeDiceValue'>Valor:</label>
-                            <select id='attributeDiceValue' className='theme-element' value={attributeDiceNum}
-                                onChange={ev => setAttributeDiceNum(parseInt(ev.currentTarget.value))}>
+                            <label htmlFor='skillDiceValue' className='me-2'>Valor:</label>
+                            <select id='skillDiceValue' className='theme-element' value={skillDiceNum}
+                                onChange={ev => setSkillDiceNum(parseInt(ev.currentTarget.value))}>
                                 <option value={20}>d20</option>
                                 <option value={100}>d100</option>
                             </select>
@@ -185,8 +184,9 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     </Row>
                     <Row className='mt-2'>
                         <Col>
-                            <FormGroup controlId='attributeDiceBranched'>
-                                <FormCheck inline checked={attributeDiceBranched} onChange={() => setAttributeDiceBranched(b => !b)} />
+                            <FormGroup controlId='baseDiceBranched'>
+                                <FormCheck inline checked={skillDiceBranched}
+                                    onChange={() => setSkillDiceBranched(b => !b)} />
                                 <FormLabel className='me-2'>Ativar Ramificações</FormLabel>
                             </FormGroup>
                         </Col>
