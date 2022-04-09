@@ -72,8 +72,10 @@ function AdminKeyContainer(props: { adminKey: string, logError(err: any): void }
 function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceConfig, logError(err: any): void }) {
     const [loading, setLoading] = useState(false);
     const [successTypeEnabled, setSuccessTypeEnabled] = useState(props.successTypeEnabled);
-    const [baseDiceNum, setBaseDiceNum] = useState(props.diceConfig.base.value);
-    const [baseDiceBranched, setBaseDiceBranched] = useState(props.diceConfig.base.branched);
+    const [characteristicDiceNum, setCharacteristicDiceNum] = useState(props.diceConfig.characteristic?.value || props.diceConfig.base.value);
+    const [characteristicDiceBranched, setCharacteristicDiceBranched] = useState(props.diceConfig.characteristic?.branched || props.diceConfig.base.branched);
+    const [skillDiceNum, setSkillDiceNum] = useState(props.diceConfig.skill?.value || props.diceConfig.base.value);
+    const [skillDiceBranched, setSkillDiceBranched] = useState(props.diceConfig.skill?.branched || props.diceConfig.base.branched);
     const [attributeDiceNum, setAttributeDiceNum] = useState(props.diceConfig.attribute.value);
     const [attributeDiceBranched, setAttributeDiceBranched] = useState(props.diceConfig.attribute.branched);
 
@@ -82,9 +84,13 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
         api.post('/config/dice', {
             enableSuccessType: successTypeEnabled,
             diceConfigurations: {
-                base: {
-                    value: baseDiceNum,
-                    branched: baseDiceBranched
+                characteristic: {
+                    value: characteristicDiceNum,
+                    branched: characteristicDiceBranched
+                },
+                skill: {
+                    value: skillDiceNum,
+                    branched: skillDiceBranched
                 },
                 attribute: {
                     value: attributeDiceNum,
@@ -105,17 +111,17 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                 </Col>
             </Row>
             <Row className='text-center'>
-                <DataContainer title='Rolagem Base' outline className='mx-3' hidden={!successTypeEnabled}>
+                <DataContainer title='Rolagem de Perícia' outline className='mx-3' hidden={!successTypeEnabled}>
                     <Row>
                         <Col className='h5' style={{ color: 'gray' }}>
-                            Rolagem base é o tipo de rolagem aplicado a Características e Perícias.
+                            Rolagem de Perícia é o tipo de rolagem aplicado a Perícias.
                         </Col>
                     </Row>
                     <Row>
                         <Col>
-                            <label htmlFor='baseeDiceValue' className='me-2'>Valor:</label>
-                            <select id='baseeDiceValue' className='theme-element' value={baseDiceNum}
-                                onChange={ev => setBaseDiceNum(parseInt(ev.currentTarget.value))}>
+                            <label htmlFor='skillDiceValue' className='me-2'>Valor:</label>
+                            <select id='skillDiceValue' className='theme-element' value={skillDiceNum}
+                                onChange={ev => setSkillDiceNum(parseInt(ev.currentTarget.value))}>
                                 <option value={20}>d20</option>
                                 <option value={100}>d100</option>
                             </select>
@@ -124,7 +130,36 @@ function DiceContainer(props: { successTypeEnabled: boolean, diceConfig: DiceCon
                     <Row className='mt-2'>
                         <Col>
                             <FormGroup controlId='baseDiceBranched'>
-                                <FormCheck inline checked={baseDiceBranched} onChange={() => setBaseDiceBranched(b => !b)} />
+                                <FormCheck inline checked={skillDiceBranched}
+                                    onChange={() => setSkillDiceBranched(b => !b)} />
+                                <FormLabel className='me-2'>Ativar Ramificações</FormLabel>
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                </DataContainer>
+            </Row>
+            <Row className='text-center'>
+                <DataContainer title='Rolagem de Característica' outline className='mx-3' hidden={!successTypeEnabled}>
+                    <Row>
+                        <Col className='h5' style={{ color: 'gray' }}>
+                            Rolagem de Característica é o tipo de rolagem aplicado a Características.
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <label htmlFor='characteristicDiceValue' className='me-2'>Valor:</label>
+                            <select id='characteristicDiceValue' className='theme-element' value={characteristicDiceNum}
+                                onChange={ev => setCharacteristicDiceNum(parseInt(ev.currentTarget.value))}>
+                                <option value={20}>d20</option>
+                                <option value={100}>d100</option>
+                            </select>
+                        </Col>
+                    </Row>
+                    <Row className='mt-2'>
+                        <Col>
+                            <FormGroup controlId='baseDiceBranched'>
+                                <FormCheck inline checked={characteristicDiceBranched}
+                                    onChange={() => setCharacteristicDiceBranched(b => !b)} />
                                 <FormLabel className='me-2'>Ativar Ramificações</FormLabel>
                             </FormGroup>
                         </Col>

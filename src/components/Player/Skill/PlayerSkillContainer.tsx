@@ -23,7 +23,7 @@ type PlayerSkill = {
 type PlayerSkillContainerProps = {
     playerSkills: PlayerSkill[];
     availableSkills: Skill[];
-    baseDice: {
+    skillDiceConfig: {
         value: number;
         branched: boolean;
     };
@@ -91,7 +91,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
                     {playerSkills.map(skill => {
                         if (skill.Skill.name.toLowerCase().includes(search.toLowerCase())) return (
                             <PlayerSkillField key={skill.Skill.id} value={skill.value}
-                                skill={skill.Skill} baseDice={props.baseDice} />
+                                skill={skill.Skill} baseDice={props.skillDiceConfig} />
                         );
                         return null;
                     })}

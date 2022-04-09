@@ -81,7 +81,11 @@ const databaseData = {
         {
             name: 'dice',
             value: JSON.stringify({
-                base: {
+                characteristic: {
+                    value: 20,
+                    branched: false
+                },
+                skill: {
                     value: 20,
                     branched: false
                 },

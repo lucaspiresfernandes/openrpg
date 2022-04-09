@@ -91,7 +91,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                 </DataContainer>
                                 <Col>
                                     <PlayerAttributeContainer playerAttributes={props.playerAttributes}
-                                        attributeDice={props.diceConfig.attribute}
+                                        attributeDiceConfig={props.diceConfig.attribute}
                                         playerAttributeStatus={props.playerAttributeStatus} playerAvatars={props.playerAvatars} />
                                 </Col>
                             </Row>
@@ -102,7 +102,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                                         {props.playerCharacteristics.map(char =>
                                             <PlayerCharacteristicField key={char.Characteristic.id} modifier={char.modifier}
                                                 characteristic={char.Characteristic} value={char.value}
-                                                baseDice={props.diceConfig.base} />
+                                                characteristicDiceConfig={props.diceConfig.characteristic || props.diceConfig.base} />
                                         )}
                                     </Row>
                                 </DataContainer>
@@ -114,7 +114,7 @@ export default function Sheet1(props: InferGetServerSidePropsType<typeof getServ
                             </Row>
                             <Row>
                                 <PlayerSkillContainer playerSkills={props.playerSkills} availableSkills={props.availableSkills}
-                                    baseDice={props.diceConfig.base}
+                                    skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
                                     title={props.containerConfig.find(c => c.originalName === 'Perícias')?.name || 'Perícias'} />
                             </Row>
                             <Row>

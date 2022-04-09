@@ -9,7 +9,7 @@ import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 
 type PlayerCharacteristicFieldProps = {
-    baseDice: {
+    characteristicDiceConfig: {
         value: number;
         branched: boolean;
     };
@@ -59,8 +59,8 @@ export default function PlayerCharacteristicField(props: PlayerCharacteristicFie
     }
 
     function rollDice() {
-        const roll = props.baseDice['value'] as number;
-        const branched = props.baseDice['branched'] as boolean;
+        const roll = props.characteristicDiceConfig['value'] as number;
+        const branched = props.characteristicDiceConfig['branched'] as boolean;
         showDiceRollResult([{ num: 1, roll, ref: Math.max(1, value + parseInt(modifier)) }], `${roll}${branched ? 'b' : ''}`);
     }
 

@@ -26,7 +26,7 @@ type PlayerAttributeContainerProps = {
             name: string;
         } | null;
     }[];
-    attributeDice: {
+    attributeDiceConfig: {
         value: number;
         branched: boolean;
     };
@@ -59,7 +59,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
             {props.playerAttributes.map(attr => {
                 const status = playerAttributeStatus.filter(stat =>
                     stat.AttributeStatus.attribute_id === attr.Attribute.id);
-                return <PlayerAttributeField key={attr.Attribute.id} attributeDice={props.attributeDice}
+                return <PlayerAttributeField key={attr.Attribute.id} attributeDiceConfig={props.attributeDiceConfig}
                     playerAttribute={attr} playerStatus={status} onStatusChanged={onStatusChanged} />;
             })}
             <EditAvatarModal playerAvatars={props.playerAvatars} show={avatarModalShow}

@@ -1,5 +1,16 @@
 export type DiceConfig = {
+    //Legacy object
     base: {
+        value: number;
+        branched: boolean;
+    };
+
+    
+    characteristic: {
+        value: number;
+        branched: boolean;
+    };
+    skill: {
         value: number;
         branched: boolean;
     };
