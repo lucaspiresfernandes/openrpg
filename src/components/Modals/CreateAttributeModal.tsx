@@ -7,34 +7,44 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import SheetModal from './SheetModal';
 
 type CreateAttributeModalProps = {
-    onCreate(name: string, rollable: boolean): void;
-    show: boolean;
-    onHide(): void;
-}
+	onCreate(name: string, rollable: boolean): void;
+	show: boolean;
+	onHide(): void;
+};
 
 export default function CreateAttributeModal(props: CreateAttributeModalProps) {
-    const [name, setName] = useState('');
-    const [rollable, setRollable] = useState(false);
+	const [name, setName] = useState('');
+	const [rollable, setRollable] = useState(false);
 
-    function reset() {
-        setName('');
-        setRollable(false);
-    }
+	function reset() {
+		setName('');
+		setRollable(false);
+	}
 
-    return (
-        <SheetModal title='Novo Atributo' onExited={reset} show={props.show} onHide={props.onHide}
-            applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}>
-            <Container fluid>
-                <FormGroup className='mb-3' controlId='createAttributeName'>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                </FormGroup>
-                <FormGroup controlId='createAttributeRollable'>
-                    <FormCheck inline
-                        checked={rollable} onChange={() => setRollable(r => !r)} />
-                    <FormLabel>Testável?</FormLabel>
-                </FormGroup>
-            </Container>
-        </SheetModal>
-    );
+	return (
+		<SheetModal
+			title='Novo Atributo'
+			onExited={reset}
+			show={props.show}
+			onHide={props.onHide}
+			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}>
+			<Container fluid>
+				<FormGroup className='mb-3' controlId='createAttributeName'>
+					<FormLabel>Nome</FormLabel>
+					<FormControl
+						className='theme-element'
+						value={name}
+						onChange={(ev) => setName(ev.currentTarget.value)}
+					/>
+				</FormGroup>
+				<FormCheck
+					inline
+					checked={rollable}
+					onChange={() => setRollable((r) => !r)}
+					id='createAttributeRollable'
+					label='Testável?'
+				/>
+			</Container>
+		</SheetModal>
+	);
 }

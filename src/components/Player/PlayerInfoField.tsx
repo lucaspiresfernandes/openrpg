@@ -3,59 +3,65 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import FormGroup from 'react-bootstrap/FormGroup';
-import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerInfoFieldProps = {
-    info: Info,
-    value: string
-}
+	info: Info;
+	value: string;
+};
 
 export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
-    const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
-    const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
-    const fieldRef = useRef<HTMLInputElement>(null);
-    const firstUpdate = useRef(true);
+	const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
+	const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
+	const fieldRef = useRef<HTMLInputElement>(null);
+	const firstUpdate = useRef(true);
 
-    const logError = useContext(ErrorLogger);
-    const infoID = playerInfo.info.id;
+	const logError = useContext(ErrorLogger);
+	const infoID = playerInfo.info.id;
 
-    useEffect(() => {
-        if (firstUpdate.current) {
-            firstUpdate.current = false;
-            return;
-        }
-        if (!isDefined && fieldRef.current) fieldRef.current.focus();
-    }, [isDefined]);
+	useEffect(() => {
+		if (firstUpdate.current) {
+			firstUpdate.current = false;
+			return;
+		}
+		if (!isDefined && fieldRef.current) fieldRef.current.focus();
+	}, [isDefined]);
 
-    function onValueBlur() {
-        if (value.length > 0) setDefined(true);
-        if (lastValue === value) return;
-        setValue(value);
-        api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
-    }
+	function onValueBlur() {
+		if (value.length > 0) setDefined(true);
+		if (lastValue === value) return;
+		setValue(value);
+		api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
+	}
 
-    return (
-        <Row className='mb-4'>
-            <Col className='mx-2'>
-                <Row>
-                    <FormGroup controlId={`info${infoID}`}>
-                        <FormLabel className='h5'>{playerInfo.info.name}</FormLabel>
-                        {isDefined ?
-                            <>
-                                <br />
-                                <label onDoubleClick={() => setDefined(false)}>{value}</label>
-                            </> :
-                            <input className='theme-element bottom-text w-100' id={`info${infoID}`} autoComplete='off' value={value}
-                                onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} ref={fieldRef} />
-                        }
-                    </FormGroup>
-                </Row>
-            </Col>
-        </Row>
-    );
+	return (
+		<Row className='mb-4'>
+			<Col className='mx-2'>
+				<Row>
+					<label className='h5' htmlFor={`info${infoID}`}>
+						{playerInfo.info.name}
+					</label>
+					{isDefined ? (
+						<>
+							<br />
+							<label onDoubleClick={() => setDefined(false)}>{value}</label>
+						</>
+					) : (
+						<BottomTextInput
+							id={`info${infoID}`}
+							autoComplete='off'
+							value={value}
+							onChange={(ev) => setValue(ev.currentTarget.value)}
+							onBlur={onValueBlur}
+							ref={fieldRef}
+						/>
+					)}
+				</Row>
+			</Col>
+		</Row>
+	);
 }

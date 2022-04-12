@@ -27,7 +27,7 @@ type EditAvatarModalProps = {
     playerAvatars: PlayerAvatar[];
     show?: boolean;
     onHide?(): void;
-    onUpdate(): void;
+    onUpdate?(): void;
 };
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {

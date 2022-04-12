@@ -111,7 +111,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 									key={skill.Skill.id}
 									value={skill.value}
 									skill={skill.Skill}
-									baseDice={props.skillDiceConfig}
+									skillDice={props.skillDiceConfig}
 								/>
 							);
 						return null;
@@ -138,7 +138,7 @@ type PlayerSkillFieldProps = {
 			name: string;
 		} | null;
 	};
-	baseDice: {
+	skillDice: {
 		value: number;
 		branched: boolean;
 	};
@@ -169,8 +169,8 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	}
 
 	function rollDice() {
-		const roll = props.baseDice['value'];
-		const branched = props.baseDice['branched'];
+		const roll = props.skillDice['value'];
+		const branched = props.skillDice['branched'];
 		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
 	}
 

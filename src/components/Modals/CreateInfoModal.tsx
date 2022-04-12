@@ -19,7 +19,7 @@ export default function CreateInfoModal(props: CreateInfoModalProps) {
     }
 
     return (
-        <SheetModal title='Nova Informação Pessoal (Geral)' onExited={reset}
+        <SheetModal title='Criar' onExited={reset}
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
             show={props.show} onHide={props.onHide} >
             <Container fluid>
