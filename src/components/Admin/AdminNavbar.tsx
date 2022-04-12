@@ -30,9 +30,6 @@ export default function AdminNavbar() {
 								Configurações
 							</Nav.Link>
 						</Link>
-						<Link href='/admin/about' passHref>
-							<Nav.Link active={isActive('/admin/about')}>Sobre</Nav.Link>
-						</Link>
 					</Nav>
 					<Nav>
 						<Nav.Link

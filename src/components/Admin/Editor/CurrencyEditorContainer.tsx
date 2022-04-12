@@ -1,13 +1,16 @@
-import DataContainer from '../../../DataContainer';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import AdminTable from '../../AdminTable';
-import CurrencyEditorField from './CurrencyEditorField';
-import { useContext, useState } from 'react';
 import { Currency } from '@prisma/client';
-import api from '../../../../utils/api';
-import { ErrorLogger } from '../../../../contexts';
-import CreateCurrencyModal from '../../../Modals/CreateCurrencyModal';
+import { useContext, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { BsTrash } from 'react-icons/bs';
+import { ErrorLogger } from '../../../contexts';
+import useExtendedState from '../../../hooks/useExtendedState';
+import api from '../../../utils/api';
+import BottomTextInput from '../../BottomTextInput';
+import DataContainer from '../../DataContainer';
+import CreateCurrencyModal from '../../Modals/CreateCurrencyModal';
+import AdminTable from '../AdminTable';
 
 type CurrencyEditorContainerProps = {
     currencies: Currency[];
@@ -64,5 +67,37 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
             <CreateCurrencyModal show={showCurrencyModal} onHide={() => setShowCurrencyModal(false)}
                 onCreate={createCurrency} />
         </>
+    );
+}
+
+type CurrencyEditorFieldProps = {
+    currency: Currency;
+    deleteDisabled?: boolean;
+    onDelete(id: number): void;
+}
+
+function CurrencyEditorField(props: CurrencyEditorFieldProps) {
+    const [lastName, name, setName] = useExtendedState(props.currency.name);
+    const logError = useContext(ErrorLogger);
+
+    function onBlur() {
+        if (name === lastName) return;
+        setName(name);
+        api.post('/sheet/currency', { id: props.currency.id, name }).catch(logError);
+    }
+
+    return (
+        <tr>
+            <td>
+                <Button onClick={() => props.onDelete(props.currency.id)} size='sm'
+                    variant='secondary' disabled={props.deleteDisabled}>
+                    <BsTrash color='white' size={24} />
+                </Button>
+            </td>
+            <td>
+                <BottomTextInput value={name} onChange={ev => setName(ev.currentTarget.value)}
+                    onBlur={onBlur} />
+            </td>
+        </tr>
     );
 }
