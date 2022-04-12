@@ -13,7 +13,6 @@ export default function AdminEnvironmentConfigurations(props: {
 	function environmentChange(ev: ChangeEvent<HTMLInputElement>) {
 		const value = ev.target.checked ? 'combat' : 'idle';
 		setEnvironment(value);
-		console.log(value);
 		api.post('/config', { name: 'environment', value }).catch((err) => {
 			setEnvironment(environment);
 			logError(err);
