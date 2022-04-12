@@ -6,27 +6,35 @@ import Navbar from 'react-bootstrap/Navbar';
 import api from '../utils/api';
 
 export default function SheetNavbar() {
-    const router = useRouter();
+	const router = useRouter();
 
-    function logout() {
-        api.delete('/player').then(() => router.replace('/'));
-    }
+	function isActive(path: string) {
+		return router.pathname === path;
+	}
 
-    return (
-        <Navbar sticky='top' expand='sm' className='mb-3'>
-            <Container fluid>
-                <Navbar.Brand>Open RPG</Navbar.Brand>
-                <Navbar.Toggle />
-                <Navbar.Collapse>
-                    <Nav className='me-auto' navbarScroll>
-                        <Link href='/sheet/1' passHref><Nav.Link>Página 1</Nav.Link></Link>
-                        <Link href='/sheet/2' passHref><Nav.Link>Página 2</Nav.Link></Link>
-                    </Nav>
-                    <Nav>
-                        <Nav.Link href='#' onClick={logout}>Sair</Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    );
+	return (
+		<Navbar sticky='top' expand='sm' className='mb-3' variant='dark'>
+			<Container fluid>
+				<Navbar.Brand>Open RPG</Navbar.Brand>
+				<Navbar.Toggle />
+				<Navbar.Collapse>
+					<Nav className='me-auto' navbarScroll>
+						<Link href='/sheet/1' passHref>
+							<Nav.Link active={isActive('/sheet/1')}>Página 1</Nav.Link>
+						</Link>
+						<Link href='/sheet/2' passHref>
+							<Nav.Link active={isActive('/sheet/2')}>Página 2</Nav.Link>
+						</Link>
+					</Nav>
+					<Nav>
+						<Nav.Link
+							href='#'
+							onClick={() => api.delete('/player').then(() => router.replace('/'))}>
+							Sair
+						</Nav.Link>
+					</Nav>
+				</Navbar.Collapse>
+			</Container>
+		</Navbar>
+	);
 }

@@ -1,208 +1,198 @@
-@import "./palette";
+@import './palette';
 $secondary: $secondary-buttons !default;
 $primary: $primary-buttons !default;
-@import "bootstrap";
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap");
+@import 'bootstrap';
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap');
 
 body {
-  padding: 0;
-  margin: 0;
-  background-color: $background-color;
-  color: $text-color;
-  font-family: "Cinzel", serif;
+	padding: 0;
+	margin: 0;
+	background-color: $background-color;
+	color: $text-color;
+	font-family: 'Cinzel', serif;
 }
 
 .data-container {
-  border-style: solid;
-  border-width: 1px;
-  border-color: gray;
-  border-radius: 20px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: gray;
+	border-radius: 20px;
 }
 
 .bottom-text {
-  background-color: $background-color;
-  outline: 0;
-  border-width: 0 0 1px;
-  color: $text-color;
-  &:focus {
-    background-color: $background-color;
-  }
+	background-color: $background-color;
+	outline: 0;
+	border-width: 0 0 1px;
+	color: $text-color;
+	&:focus {
+		background-color: $background-color;
+	}
 }
 
 .form-control,
 .form-select {
-  border-color: lighten($primary-color, 25%);
-  &:focus {
-    border-color: $primary-color;
-    box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $outline-color;
-  }
+	border-color: lighten($primary-color, 25%);
+	&:focus {
+		border-color: $primary-color;
+		box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px $outline-color;
+	}
 }
 
 .clickable {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .modal-content {
-  background-color: $modal-background-color;
-  color: $modal-text-color;
+	background-color: $modal-background-color;
+	color: $modal-text-color;
 }
 
 .modal-header {
-  background-color: $modal-background-color;
-  color: $modal-text-color;
-  border-color: lighten($modal-background-color, 20%);
+	background-color: $modal-background-color;
+	color: $modal-text-color;
+	border-color: lighten($modal-background-color, 20%);
 }
 
 .modal-body {
-  background-color: $modal-background-color;
-  color: $modal-text-color;
-  border-color: lighten($modal-background-color, 20%);
+	background-color: $modal-background-color;
+	color: $modal-text-color;
+	border-color: lighten($modal-background-color, 20%);
 }
 
 .modal-footer {
-  background-color: $modal-background-color;
-  color: $modal-text-color;
-  border-color: lighten($modal-background-color, 20%);
+	background-color: $modal-background-color;
+	color: $modal-text-color;
+	border-color: lighten($modal-background-color, 20%);
 }
 
 .navbar {
-  background-color: $navbar-background-color;
-  .nav-link {
-    color: $navbar-text-color !important;
-    &:hover {
-      color: darken($navbar-text-color, 20%) !important;
-    }
-  }
-
-  .navbar-brand {
-    color: $navbar-text-color !important;
-  }
+	background-color: $navbar-background-color;
 }
 
 .table {
-  color: $text-color;
-  tr {
-    border-color: gray;
-  }
+	color: $text-color;
+	tr {
+		border-color: gray;
+	}
 }
 
 $list-group-color: #222222;
 
 .wrapper {
-  @extend .data-container;
-  overflow-y: auto;
-  max-height: 260px;
+	@extend .data-container;
+	overflow-y: auto;
+	max-height: 260px;
 
-  .list-group {
-    min-height: 200px;
-  }
+	.list-group {
+		min-height: 200px;
+	}
 }
 
 .list-group {
-  background-color: $list-group-color;
-  border-radius: 0;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+	background-color: $list-group-color;
+	border-radius: 0;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
 
-  .list-group-item {
-    padding: 0.5rem 1rem;
-  }
+	.list-group-item {
+		padding: 0.5rem 1rem;
+	}
 
-  input.bottom-text {
-    background-color: $list-group-color;
-  }
+	input.bottom-text {
+		background-color: $list-group-color;
+	}
 }
 
 .list-group-item {
-  background-color: $list-group-color;
-  color: $text-color;
+	background-color: $list-group-color;
+	color: $text-color;
 
-  &.selected {
-    background-color: lighten($list-group-color, 10%);
-    input {
-      background-color: lighten($list-group-color, 10%) !important;
-    }
-  }
+	&.selected {
+		background-color: lighten($list-group-color, 10%);
+		input {
+			background-color: lighten($list-group-color, 10%) !important;
+		}
+	}
 }
 
 .wrapper::-webkit-scrollbar {
-  width: 0;
+	width: 0;
 }
 
 .dice-list > li:nth-child(odd) {
-  background-color: lighten($list-group-color, 50%);
+	background-color: lighten($list-group-color, 50%);
 }
 
 .player-container {
-  @extend .data-container;
-  background-color: $player-container-color;
+	@extend .data-container;
+	background-color: $player-container-color;
 }
 
 .skill-container {
-  $text-color-hover: invert($text-color);
+	$text-color-hover: invert($text-color);
 
-  background-color: $background-color;
-  border-radius: 20px;
+	background-color: $background-color;
+	border-radius: 20px;
 
-  &:hover {
-    background-color: $skill-container-outline-color;
-    .text {
-      background-color: $skill-container-outline-color;
-      color: $text-color-hover;
-    }
-    .label {
-      color: $text-color-hover;
-    }
-  }
+	&:hover {
+		background-color: $skill-container-outline-color;
+		.text {
+			background-color: $skill-container-outline-color;
+			color: $text-color-hover;
+		}
+		.label {
+			color: $text-color-hover;
+		}
+	}
 }
 
 .shadow {
-  transition: all 0.25s ease;
-  &.show {
-    filter: brightness(30%);
-    transition: all 0.5s ease-out;
-  }
+	transition: all 0.25s ease;
+	&.show {
+		filter: brightness(30%);
+		transition: all 0.5s ease-out;
+	}
 }
 
 .popout {
-  transform: scale(0);
-  transition: all 0.6s ease-in;
+	transform: scale(0);
+	transition: all 0.6s ease-in;
 
-  &.show {
-    transform: scale(1);
-    transition: all 0.5s ease-out;
-  }
+	&.show {
+		transform: scale(1);
+		transition: all 0.5s ease-out;
+	}
 }
 
 $proggress-bar-height: 40px;
 
 .progress {
-  height: $proggress-bar-height;
+	height: $proggress-bar-height;
 }
 
 .attribute-dice {
-  max-height: $proggress-bar-height;
+	max-height: $proggress-bar-height;
 }
 
 .progress {
-  background-color: #2b2b2b;
+	background-color: #2b2b2b;
 }
 
 .theme-element {
-  background-color: $background-color;
-  color: $text-color;
+	background-color: $background-color;
+	color: $text-color;
 
-  &:focus {
-    background-color: $background-color;
-    color: $text-color;
-  }
+	&:focus {
+		background-color: $background-color;
+		color: $text-color;
+	}
 
-  &:disabled {
-    color: darken($text-color, 20%);
-  }
+	&:disabled {
+		color: darken($text-color, 20%);
+	}
 
-  &::-webkit-input-placeholder {
-    color: darken($text-color, 25%);
-  }
+	&::-webkit-input-placeholder {
+		color: darken($text-color, 25%);
+	}
 }

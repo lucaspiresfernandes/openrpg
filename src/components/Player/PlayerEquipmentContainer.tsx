@@ -1,14 +1,17 @@
 import { Equipment } from '@prisma/client';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
 import Table from 'react-bootstrap/Table';
-import { ErrorLogger, Socket } from '../../../contexts';
-import { ResolvedDice } from '../../../utils';
-import api from '../../../utils/api';
-import DataContainer from '../../DataContainer';
-import AddDataModal from '../../Modals/AddDataModal';
-import PlayerEquipmentField from './PlayerEquipmentField';
+import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
+import api from '../../utils/api';
+import DataContainer from '../DataContainer';
+import AddDataModal from '../Modals/AddDataModal';
+import useExtendedState from '../../hooks/useExtendedState';
+import { BsTrash } from 'react-icons/bs';
+import BottomTextInput from '../BottomTextInput';
 
 type PlayerEquipmentContainerProps = {
     playerEquipments: {
@@ -148,5 +151,86 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
             <AddDataModal title='Adicionar' show={addEquipmentShow} onHide={() => setAddEquipmentShow(false)}
                 data={equipments} onAddData={onAddEquipment} />
         </>
+    );
+}
+
+type PlayerEquipmentFieldProps = {
+    currentAmmo: number;
+    equipment: {
+        id: number;
+        ammo: number | null;
+        attacks: string;
+        damage: string;
+        name: string;
+        range: string;
+        type: string;
+    };
+    onDelete(id: number): void;
+};
+
+function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
+    const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
+    const [loading, setLoading] = useState(false);
+
+    const logError = useContext(ErrorLogger);
+    const showDiceRollResult = useContext(ShowDiceResult);
+    const equipmentID = props.equipment.id;
+
+    function onAmmoChange(ev: FormEvent<HTMLInputElement>) {
+        const aux = ev.currentTarget.value;
+        let newAmmo = parseInt(aux);
+
+        if (aux.length === 0) newAmmo = 0;
+        else if (isNaN(newAmmo)) return;
+
+        setCurrentAmmo(newAmmo);
+    }
+
+    function onAmmoBlur() {
+        if (currentAmmo === lastAmmo) return;
+        setCurrentAmmo(currentAmmo);
+        api.post('/sheet/player/equipment', { id: equipmentID, currentAmmo }).catch(err => {
+            logError(err);
+            setCurrentAmmo(lastAmmo);
+        });
+    }
+
+    function diceRoll() {
+        if (props.equipment.ammo && currentAmmo === 0)
+            return alert('Você não tem munição suficiente.');
+        setCurrentAmmo(currentAmmo - 1);
+        showDiceRollResult(props.equipment.damage);
+    }
+
+    function deleteEquipment() {
+        if (!confirm('Você realmente deseja excluir esse equipamento?')) return;
+        setLoading(true);
+        api.delete('/sheet/player/equipment', {
+            data: { id: equipmentID }
+        }).then(() => props.onDelete(equipmentID)).catch(logError).finally(() => setLoading(false));
+    }
+
+    return (
+        <tr>
+            <td>
+                <Button onClick={deleteEquipment} size='sm' variant='secondary' disabled={loading}>
+                    <BsTrash color='white' size={24} />
+                </Button>
+            </td>
+            <td>{props.equipment.name}</td>
+            <td>{props.equipment.type}</td>
+            <td>{props.equipment.damage}</td>
+            <td>
+                <Image alt='Dado' src='/dice20.png' className='clickable' onClick={diceRoll}
+                    style={{ maxHeight: '2rem' }} />
+            </td>
+            <td>{props.equipment.range}</td>
+            <td>{props.equipment.attacks}</td>
+            <td>{props.equipment.ammo ?
+                <BottomTextInput className='text-center' value={currentAmmo}
+                    onChange={onAmmoChange} onBlur={onAmmoBlur} style={{ maxWidth: '3rem' }} /> :
+                '-'}</td>
+            <td>{props.equipment.ammo || '-'}</td>
+        </tr>
     );
 }

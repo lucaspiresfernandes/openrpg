@@ -6,29 +6,43 @@ import Navbar from 'react-bootstrap/Navbar';
 import api from '../../utils/api';
 
 export default function AdminNavbar() {
-    const router = useRouter();
+	const router = useRouter();
 
-    function logout() {
-        api.delete('/player').then(() => router.replace('/'));
-    }
+	function isActive(path: string) {
+		return router.pathname === path;
+	}
 
-    return (
-        <Navbar sticky='top' expand='sm' className='mb-3'>
-            <Container fluid>
-                <Navbar.Brand>Open RPG</Navbar.Brand>
-                <Navbar.Toggle />
-                <Navbar.Collapse>
-                    <Nav className='me-auto' navbarScroll>
-                        <Link href='/admin/main' passHref><Nav.Link>Painel</Nav.Link></Link>
-                        <Link href='/admin/editor' passHref><Nav.Link>Editor</Nav.Link></Link>
-                        <Link href='/admin/configurations' passHref><Nav.Link>Configurações</Nav.Link></Link>
-                        <Link href='/admin/about' passHref><Nav.Link>Sobre</Nav.Link></Link>
-                    </Nav>
-                    <Nav>
-                        <Nav.Link href='#' onClick={logout}>Sair</Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    );
+	return (
+		<Navbar sticky='top' expand='sm' className='mb-3' variant='dark'>
+			<Container fluid>
+				<Navbar.Brand>Open RPG</Navbar.Brand>
+				<Navbar.Toggle />
+				<Navbar.Collapse>
+					<Nav className='me-auto' navbarScroll>
+						<Link href='/admin/main' passHref>
+							<Nav.Link active={isActive('/admin/main')}>Painel</Nav.Link>
+						</Link>
+						<Link href='/admin/editor' passHref>
+							<Nav.Link active={isActive('/admin/editor')}>Editor</Nav.Link>
+						</Link>
+						<Link href='/admin/configurations' passHref>
+							<Nav.Link active={isActive('/admin/configurations')}>
+								Configurações
+							</Nav.Link>
+						</Link>
+						<Link href='/admin/about' passHref>
+							<Nav.Link active={isActive('/admin/about')}>Sobre</Nav.Link>
+						</Link>
+					</Nav>
+					<Nav>
+						<Nav.Link
+							href='#'
+							onClick={() => api.delete('/player').then(() => router.replace('/'))}>
+							Sair
+						</Nav.Link>
+					</Nav>
+				</Navbar.Collapse>
+			</Container>
+		</Navbar>
+	);
 }
