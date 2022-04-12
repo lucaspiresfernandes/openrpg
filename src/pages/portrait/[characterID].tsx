@@ -59,7 +59,11 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('environmentChange', setEnvironment);
+        socket.on('configChange', (name, newValue) => {
+            if (name === 'environment') {
+                setEnvironment(newValue as Environment);
+            }
+        });
 
         socket.on('attributeChange', (playerId, attributeId, value, maxValue) => {
             if (playerId !== props.playerId) return;
@@ -162,7 +166,7 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
         socket.on('diceResult', onDiceResult);
 
         return () => {
-            socket.off('environmentChange');
+            socket.off('configChange');
             socket.off('attributeChange');
             socket.off('attributeStatusChange');
             socket.off('infoChange');

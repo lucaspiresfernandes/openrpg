@@ -63,7 +63,7 @@ export interface ServerToClientEvents {
     diceRoll: () => void;
 
     //Portrait Events
-    environmentChange: (newValue: Environment) => void;
+    configChange: (name: string, newValue: string) => void;
 }
 
 export interface ClientToServerEvents {

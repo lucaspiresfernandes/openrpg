@@ -1,7 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest } from 'next';
 import prisma from '../../utils/database';
+import { NextApiResponseServerIO } from '../../utils/socket';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
     const name = req.body.name;
     let value = req.body.value;
     
@@ -15,4 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await prisma.config.update({ where: { name }, data: { value } });
 
     res.end();
+
+    res.socket.server.io?.emit('configChange', name, value);
 }
