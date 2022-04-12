@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
 import SheetModal from './SheetModal';
 
 type CreateCharacteristicModalProps = {
@@ -21,10 +23,10 @@ export default function CreateCharacteristicModal(props: CreateCharacteristicMod
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
             show={props.show} onHide={props.onHide} onExited={reset} >
             <Container fluid>
-                <Form.Group className='mb-3' controlId='createCharacteristicName'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup className='mb-3' controlId='createCharacteristicName'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </FormGroup>
             </Container>
         </SheetModal>
     );

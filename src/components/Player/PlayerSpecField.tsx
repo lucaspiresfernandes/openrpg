@@ -1,7 +1,8 @@
 import { Spec } from '@prisma/client';
 import { useContext } from 'react';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
@@ -28,12 +29,12 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
 
     return (
         <Col xs={12} sm={6} lg={4} className='text-center mb-2'>
-            <Form.Group controlId={`spec${specID}`}>
+            <FormGroup controlId={`spec${specID}`}>
                 <BottomTextInput className='w-100 text-center h5' onBlur={onValueBlur}
                     id={`spec${specID}`} autoComplete='off' value={value}
                     onChange={ev => setValue(ev.currentTarget.value)} />
-                <Form.Label>{playerSpec.Spec.name}</Form.Label>
-            </Form.Group>
+                <FormLabel>{playerSpec.Spec.name}</FormLabel>
+            </FormGroup>
         </Col>
     );
 }

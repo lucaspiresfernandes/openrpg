@@ -2,7 +2,8 @@ import { FormEvent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import { SortableContainer, SortableElement, SortEnd } from 'react-sortable-hoc';
@@ -116,11 +117,11 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
         <DataContainer xs={12} lg title='Combate' addButton={{ type: 'dropdown', children: dropdown }} >
             <Row className='my-2'>
                 <Col>
-                    <Form.Group controlId='combatRound'>
-                        <Form.Label className='h5'>Rodada:</Form.Label>
+                    <FormGroup controlId='combatRound'>
+                        <FormLabel className='h5'>Rodada:</FormLabel>
                         <BottomTextInput id='combatRound' type='number' className='ms-2 h4' value={round}
                             onChange={roundUpdate} style={{ maxWidth: '4rem' }} />
-                    </Form.Group>
+                    </FormGroup>
                 </Col>
             </Row>
             <Row>

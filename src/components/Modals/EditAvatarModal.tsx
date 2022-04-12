@@ -2,7 +2,9 @@ import { ChangeEvent, useContext, useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import SheetModal from './SheetModal';
@@ -62,11 +64,11 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
                     </Col>
                 </Row>
                 {avatars.map(avatar =>
-                    <Form.Group className='mb-3' key={avatar.id || null}>
-                        <Form.Label>Avatar ({avatar.name || 'Padrão'})</Form.Label>
-                        <Form.Control className='theme-element' value={avatar.link || ''}
+                    <FormGroup className='mb-3' key={avatar.id || null}>
+                        <FormLabel>Avatar ({avatar.name || 'Padrão'})</FormLabel>
+                        <FormControl className='theme-element' value={avatar.link || ''}
                             onChange={ev => onAvatarChange(avatar.id || null, ev as ChangeEvent<HTMLInputElement>)} />
-                    </Form.Group>
+                    </FormGroup>
                 )}
             </Container>
         </SheetModal>

@@ -1,7 +1,10 @@
 import { Attribute } from '@prisma/client';
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
+import FormSelect from 'react-bootstrap/FormSelect';
 import SheetModal from './SheetModal';
 
 type CreateAttributeStatusModalProps = {
@@ -28,19 +31,19 @@ export default function CreateAttributeStatusModal(props: CreateAttributeStatusM
                 disabled: props.attributes.length === 0
             }}>
             <Container fluid>
-                <Form.Group controlId='createStatusName' className='mb-3'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
-                <Form.Group controlId='createStatusAttribute' className='mb-3'>
-                    <Form.Label>Atributo</Form.Label>
-                    <Form.Select value={attributeID} className='theme-element'
+                <FormGroup controlId='createStatusName' className='mb-3'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </FormGroup>
+                <FormGroup controlId='createStatusAttribute' className='mb-3'>
+                    <FormLabel>Atributo</FormLabel>
+                    <FormSelect value={attributeID} className='theme-element'
                         onChange={ev => setAttributeID(parseInt(ev.currentTarget.value))} >
                         {props.attributes.map(attr =>
                             <option key={attr.id} value={attr.id}>{attr.name}</option>
                         )}
-                    </Form.Select>
-                </Form.Group>
+                    </FormSelect>
+                </FormGroup>
             </Container>
         </SheetModal >
     );

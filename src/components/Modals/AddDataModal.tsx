@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormSelect from 'react-bootstrap/FormSelect';
 import SheetModal from './SheetModal';
 
 type AddDataModalProps = {
@@ -23,12 +23,12 @@ export default function AddDataModal(props: AddDataModalProps) {
         <SheetModal title={props.title} show={props.show} onHide={props.onHide}
             applyButton={{ name: 'Adicionar', onApply: () => props.onAddData(value), disabled: props.data.length === 0 }}>
             <Container fluid>
-                <Form.Select className='theme-element' value={value} onChange={ev => setValue(parseInt(ev.currentTarget.value))}
+                <FormSelect className='theme-element' value={value} onChange={ev => setValue(parseInt(ev.currentTarget.value))}
                     disabled={props.data.length === 0}>
                     {props.data.map(eq =>
                         <option key={eq.id} value={`${eq.id}`}>{eq.name}</option>
                     )}
-                </Form.Select>
+                </FormSelect>
             </Container>
         </SheetModal>
     );

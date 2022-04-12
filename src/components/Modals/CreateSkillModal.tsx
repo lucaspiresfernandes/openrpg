@@ -1,7 +1,11 @@
 import { Specialization } from '@prisma/client';
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
+import FormSelect from 'react-bootstrap/FormSelect';
+import FormCheck from 'react-bootstrap/FormCheck';
 import SheetModal from './SheetModal';
 
 type CreateSkillModalProps = {
@@ -26,25 +30,25 @@ export default function CreateSkillModal(props: CreateSkillModalProps) {
         <SheetModal title='Nova Perícia' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, mandatory, specializationID) }}>
             <Container fluid>
-                <Form.Group controlId='createSkillName' className='mb-3'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name}
+                <FormGroup controlId='createSkillName' className='mb-3'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name}
                         onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
-                <Form.Group controlId='createSkillSpecialization' className='mb-3'>
-                    <Form.Label>Especialização</Form.Label>
-                    <Form.Select value={specializationID || 0} className='theme-element'
+                </FormGroup>
+                <FormGroup controlId='createSkillSpecialization' className='mb-3'>
+                    <FormLabel>Especialização</FormLabel>
+                    <FormSelect value={specializationID || 0} className='theme-element'
                         onChange={ev => setSpecializationID(parseInt(ev.currentTarget.value))} >
                         <option value='0'>Nenhuma</option>
                         {props.specialization.map(spec =>
                             <option key={spec.id} value={spec.id}>{spec.name}</option>
                         )}
-                    </Form.Select>
-                </Form.Group>
-                <Form.Group controlId='createSkillMandatory'>
-                    <Form.Check inline checked={mandatory} onChange={() => setMandatory(r => !r)} />
-                    <Form.Label>Obrigatório?</Form.Label>
-                </Form.Group>
+                    </FormSelect>
+                </FormGroup>
+                <FormGroup controlId='createSkillMandatory'>
+                    <FormCheck inline checked={mandatory} onChange={() => setMandatory(r => !r)} />
+                    <FormLabel>Obrigatório?</FormLabel>
+                </FormGroup>
             </Container>
         </SheetModal>
     );

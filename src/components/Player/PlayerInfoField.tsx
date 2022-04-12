@@ -3,7 +3,8 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
@@ -42,8 +43,8 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
         <Row className='mb-4'>
             <Col className='mx-2'>
                 <Row>
-                    <Form.Group controlId={`info${infoID}`}>
-                        <Form.Label className='h5'>{playerInfo.info.name}</Form.Label>
+                    <FormGroup controlId={`info${infoID}`}>
+                        <FormLabel className='h5'>{playerInfo.info.name}</FormLabel>
                         {isDefined ?
                             <>
                                 <br />
@@ -52,7 +53,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
                             <input className='theme-element bottom-text w-100' id={`info${infoID}`} autoComplete='off' value={value}
                                 onChange={ev => setValue(ev.currentTarget.value)} onBlur={onValueBlur} ref={fieldRef} />
                         }
-                    </Form.Group>
+                    </FormGroup>
                 </Row>
             </Col>
         </Row>

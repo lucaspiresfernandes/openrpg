@@ -1,7 +1,9 @@
-import { Skill } from '@prisma/client';
 import { ChangeEvent, useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
+import FormCheck from 'react-bootstrap/FormCheck';
 import SheetModal from './SheetModal';
 
 type CreateEquipmentModalProps = {
@@ -46,45 +48,45 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
                 onApply: () => props.onCreate(name, type, damage, range, attacks, ammo)
             }} scrollable>
             <Container fluid>
-                <Form.Group controlId='createEquipmentName' className='mb-3'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createEquipmentName' className='mb-3'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </FormGroup>
 
-                <Form.Group controlId='createEquipmentType' className='mb-3'>
-                    <Form.Label>Tipo</Form.Label>
-                    <Form.Control className='theme-element' value={type} onChange={ev => setType(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createEquipmentType' className='mb-3'>
+                    <FormLabel>Tipo</FormLabel>
+                    <FormControl className='theme-element' value={type} onChange={ev => setType(ev.currentTarget.value)} />
+                </FormGroup>
 
-                <Form.Group controlId='createEquipmentDamage' className='mb-3'>
-                    <Form.Label>Dano</Form.Label>
-                    <Form.Control className='theme-element' value={damage} onChange={ev => setDamage(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createEquipmentDamage' className='mb-3'>
+                    <FormLabel>Dano</FormLabel>
+                    <FormControl className='theme-element' value={damage} onChange={ev => setDamage(ev.currentTarget.value)} />
+                </FormGroup>
 
-                <Form.Group controlId='createEquipmentRange' className='mb-3'>
-                    <Form.Label>Alcance</Form.Label>
-                    <Form.Control className='theme-element' value={range} onChange={ev => setRange(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createEquipmentRange' className='mb-3'>
+                    <FormLabel>Alcance</FormLabel>
+                    <FormControl className='theme-element' value={range} onChange={ev => setRange(ev.currentTarget.value)} />
+                </FormGroup>
 
-                <Form.Group controlId='createEquipmentAttacks' className='mb-3'>
-                    <Form.Label>Ataques</Form.Label>
-                    <Form.Control className='theme-element' value={attacks} onChange={ev => setAttacks(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createEquipmentAttacks' className='mb-3'>
+                    <FormLabel>Ataques</FormLabel>
+                    <FormControl className='theme-element' value={attacks} onChange={ev => setAttacks(ev.currentTarget.value)} />
+                </FormGroup>
 
-                <Form.Group controlId='createCharacteristicRollable'>
-                    <Form.Check inline
+                <FormGroup controlId='createCharacteristicRollable'>
+                    <FormCheck inline
                         checked={ammo !== null} onChange={() => setAmmo(ammo => {
                             if (ammo === null) ammo = 0;
                             else ammo = null;
                             return ammo;
                         })} />
-                    <Form.Label>Possui munição?</Form.Label>
-                </Form.Group>
+                    <FormLabel>Possui munição?</FormLabel>
+                </FormGroup>
                 {ammo != null &&
-                    <Form.Group controlId='createEquipmentAmmo' className='mb-3'>
-                        <Form.Label>Munição</Form.Label>
-                        <Form.Control className='theme-element' value={ammo || ''} onChange={onAmmoChange} />
-                    </Form.Group>
+                    <FormGroup controlId='createEquipmentAmmo' className='mb-3'>
+                        <FormLabel>Munição</FormLabel>
+                        <FormControl className='theme-element' value={ammo || ''} onChange={onAmmoChange} />
+                    </FormGroup>
                 }
             </Container>
         </SheetModal>

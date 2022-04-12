@@ -1,7 +1,7 @@
 import { Skill, Specialization } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -63,7 +63,7 @@ export default function SkillEditorField(props: SkillEditorFieldProps) {
                 </select>
             </td>
             <td>
-                <Form.Check checked={mandatory} onChange={mandatoryChange} />
+                <FormCheck checked={mandatory} onChange={mandatoryChange} />
             </td>
         </tr>
     );

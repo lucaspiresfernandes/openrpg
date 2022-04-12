@@ -1,7 +1,7 @@
 import { Spell } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -154,7 +154,7 @@ export default function SpellEditorField({ spell, onDelete }: SpellEditorFieldPr
                     onBlur={onSlotsBlur} style={{ maxWidth: '6rem' }} className='text-center' />
             </td>
             <td>
-                <Form.Check checked={visible} onChange={onVisibleChange} style={{ maxWidth: '3rem' }} />
+                <FormCheck checked={visible} onChange={onVisibleChange} style={{ maxWidth: '3rem' }} />
             </td>
         </tr>
     );

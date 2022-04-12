@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
 import ApplicationHead from '../../components/ApplicationHead';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
@@ -74,19 +74,19 @@ export default function Register(): JSX.Element {
       <form onSubmit={onFormSubmit}>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <Form.Control className='text-center theme-element' placeholder='Login' id='username' name='username'
+            <FormControl className='text-center theme-element' placeholder='Login' id='username' name='username'
               value={username} onChange={e => setUsername(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <Form.Control type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
+            <FormControl type='password' className='text-center theme-element' placeholder='Senha' id='password' name='password'
               value={password} onChange={e => setPassword(e.currentTarget.value)} />
           </Col>
         </Row>
         <Row className='my-3 justify-content-center'>
           <Col md={6}>
-            <Form.Control type='password' className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
+            <FormControl type='password' className='text-center theme-element' placeholder='Confirmar Senha' id='confirmPassword'
               name='confirmPassword' value={confirmPassword} onChange={e => setConfirmPassword(e.currentTarget.value)} />
           </Col>
         </Row>

@@ -1,7 +1,7 @@
 import { Skill } from '@prisma/client';
 import { FormEvent, useContext, useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
@@ -95,7 +95,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				addButton={{ onAdd: () => setAddSkillShow(true) }}>
 				<Row className='mb-3'>
 					<Col>
-						<Form.Control
+						<FormControl
 							className='theme-element'
 							placeholder='Procurar'
 							value={search}

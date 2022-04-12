@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
 import SheetModal from './SheetModal';
 
 type CreateItemModalProps = {
@@ -22,16 +24,16 @@ export default function CreateItemModal(props: CreateItemModalProps) {
         <SheetModal title='Novo Item' show={props.show} onHide={props.onHide} onExited={reset}
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, description) }}>
             <Container fluid>
-                <Form.Group controlId='createItemName' className='mb-3'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name}
+                <FormGroup controlId='createItemName' className='mb-3'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name}
                         onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
-                <Form.Group controlId='createItemName' className='mb-3'>
-                    <Form.Label>Descrição</Form.Label>
-                    <Form.Control className='theme-element' value={description}
+                </FormGroup>
+                <FormGroup controlId='createItemName' className='mb-3'>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl className='theme-element' value={description}
                         onChange={ev => setDescription(ev.currentTarget.value)} />
-                </Form.Group>
+                </FormGroup>
             </Container>
         </SheetModal>
     );

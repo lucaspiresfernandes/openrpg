@@ -1,7 +1,7 @@
 import { Item } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -72,7 +72,7 @@ export default function ItemEditorField(props: ItemEditorFieldProps) {
                     onBlur={onWeightBlur} style={{ maxWidth: '4rem' }} className='text-center' />
             </td>
             <td>
-                <Form.Check checked={visible} onChange={onVisibleChange} />
+                <FormCheck checked={visible} onChange={onVisibleChange} />
             </td>
         </tr>
     );

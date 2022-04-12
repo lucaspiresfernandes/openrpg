@@ -1,5 +1,7 @@
 import { useContext, useState } from 'react';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormCheck from 'react-bootstrap/FormCheck';
+import FormLabel from 'react-bootstrap/FormLabel';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
 import { Environment } from '../../utils/config';
@@ -18,10 +20,10 @@ export default function AdminEnvironmentConfigurations(props: { environment: Env
     }
 
     return (
-        <Form.Group>
-            <Form.Check inline onChange={environmentChange}
+        <FormGroup>
+            <FormCheck inline onChange={environmentChange}
                 checked={environment === 'combat'} id='changeEnvironment' />
-            <Form.Label htmlFor='changeEnvironment'>Retrato em Ambiente de Combate? (Extensão OBS)</Form.Label>
-        </Form.Group>
+            <FormLabel htmlFor='changeEnvironment'>Retrato em Ambiente de Combate? (Extensão OBS)</FormLabel>
+        </FormGroup>
     );
 }

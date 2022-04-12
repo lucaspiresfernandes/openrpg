@@ -1,7 +1,7 @@
 import { Equipment } from '@prisma/client';
 import { ChangeEvent, useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../../contexts';
 import useExtendedState from '../../../../hooks/useExtendedState';
@@ -112,7 +112,7 @@ export default function EquipmentEditorField(props: EquipmentEditorFieldProps) {
                         onBlur={onAmmoBlur} style={{ maxWidth: '3rem' }} className='text-center' />}
             </td>
             <td>
-                <Form.Check checked={visible} onChange={onVisibleChange} />
+                <FormCheck checked={visible} onChange={onVisibleChange} />
             </td>
         </tr>
     );

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
 import SheetModal from './SheetModal';
 
 type CreateExtraInfoModalProps = {
@@ -21,10 +23,10 @@ export default function CreateExtraInfoModal(props: CreateExtraInfoModalProps) {
             applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
             show={props.show} onHide={props.onHide} >
             <Container fluid>
-                <Form.Group controlId='createExtraInfoName'>
-                    <Form.Label>Nome</Form.Label>
-                    <Form.Control className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
-                </Form.Group>
+                <FormGroup controlId='createExtraInfoName'>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl className='theme-element' value={name} onChange={ev => setName(ev.currentTarget.value)} />
+                </FormGroup>
             </Container>
         </SheetModal>
     );
