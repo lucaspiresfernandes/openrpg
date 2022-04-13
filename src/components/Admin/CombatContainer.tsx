@@ -92,7 +92,7 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
 	}
 
 	function movePointer(coeff: number) {
-		if (coeff === 0) return;
+		if (coeff === 0 || entities.length < 2) return;
 
 		let currentIndex = pointer + coeff;
 		if (currentIndex < 0) currentIndex = entities.length - 1;
