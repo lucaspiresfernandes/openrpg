@@ -92,9 +92,17 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
 	}
 
 	function movePointer(coeff: number) {
+		if (coeff === 0) return;
+
 		let currentIndex = pointer + coeff;
 		if (currentIndex < 0) currentIndex = entities.length - 1;
 		else if (currentIndex >= entities.length) currentIndex = 0;
+
+		if (coeff > 0) {
+			if (currentIndex === 0 && pointer === entities.length - 1) setRound(round + 1);
+		} else if (currentIndex === entities.length - 1 && pointer === 0 && round > 1)
+			setRound(round - 1);
+
 		setPointer(currentIndex);
 	}
 
