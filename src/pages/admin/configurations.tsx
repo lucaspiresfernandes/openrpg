@@ -98,16 +98,16 @@ function DiceContainer(props: {
 	const [loading, setLoading] = useState(false);
 	const [successTypeEnabled, setSuccessTypeEnabled] = useState(props.successTypeEnabled);
 	const [characteristicDiceNum, setCharacteristicDiceNum] = useState(
-		props.diceConfig.characteristic?.value || props.diceConfig.base.value
+		props.diceConfig.characteristic?.value || props.diceConfig.base?.value
 	);
 	const [characteristicDiceBranched, setCharacteristicDiceBranched] = useState(
-		props.diceConfig.characteristic?.branched || props.diceConfig.base.branched
+		props.diceConfig.characteristic?.branched || props.diceConfig.base?.branched
 	);
 	const [skillDiceNum, setSkillDiceNum] = useState(
-		props.diceConfig.skill?.value || props.diceConfig.base.value
+		props.diceConfig.skill?.value || props.diceConfig.base?.value
 	);
 	const [skillDiceBranched, setSkillDiceBranched] = useState(
-		props.diceConfig.skill?.branched || props.diceConfig.base.branched
+		props.diceConfig.skill?.branched || props.diceConfig.base?.branched
 	);
 	const [attributeDiceNum, setAttributeDiceNum] = useState(
 		props.diceConfig.attribute.value

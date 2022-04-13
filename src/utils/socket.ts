@@ -3,7 +3,6 @@ import { Server as NetServer, Socket as NetSocket } from 'net';
 import { NextApiResponse } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
 import { DiceResult, ResolvedDice } from '.';
-import { Environment } from './config';
 
 type SocketPlayerEquipment = {
     Equipment: Equipment;
