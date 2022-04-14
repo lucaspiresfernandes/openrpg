@@ -7,8 +7,6 @@ import Container from 'react-bootstrap/Container';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 import FormCheck from 'react-bootstrap/FormCheck';
-import FormGroup from 'react-bootstrap/FormGroup';
-import FormLabel from 'react-bootstrap/FormLabel';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import AdminNavbar from '../../components/Admin/AdminNavbar';
@@ -33,32 +31,53 @@ export default function Configurations(
 	props: InferGetServerSidePropsType<typeof getSSP>
 ) {
 	const [toasts, addToast] = useToast();
+	const [index, setIndex] = useState(0);
 
 	return (
 		<>
 			<ApplicationHead title='Configurações' />
 			<AdminNavbar />
 			<Container>
-				<Row className='display-5 text-center'>
-					<Col>Configurações do Sistema</Col>
-				</Row>
-				<Row className='mt-3 text-center'>
-					<AdminKeyContainer adminKey={props.adminKey} logError={addToast} />
-				</Row>
-				<Row className='mt-3'>
-					<DiceContainer
-						successTypeEnabled={props.enableSuccessTypes}
-						diceConfig={props.dice}
-						logError={addToast}
-					/>
-					<PortraitContainer
-						portrait={props.portrait}
-						attributes={props.attributes}
-						logError={addToast}
-					/>
-				</Row>
-				<Row className='mt-3'>
-					<ContainerEditor containerConfig={props.containerConfig} logError={addToast} />
+				<Row>
+					<Col xs={2} className='me-5'>
+						<ListGroup>
+							<ListGroup.Item action active={index === 0} onClick={() => setIndex(0)}>
+								Geral
+							</ListGroup.Item>
+							<ListGroup.Item action active={index === 1} onClick={() => setIndex(1)}>
+								Dado
+							</ListGroup.Item>
+							<ListGroup.Item action active={index === 2} onClick={() => setIndex(2)}>
+								Retrato
+							</ListGroup.Item>
+						</ListGroup>
+					</Col>
+					<Col className='ps-5 border-start border-secondary'>
+						<Row className='display-5 text-center mb-4'>
+							<Col>Configurações do Sistema</Col>
+						</Row>
+						{index === 0 && (
+							<GeneralEditor
+								containerConfig={props.containerConfig}
+								adminKey={props.adminKey}
+								logError={addToast}
+							/>
+						)}
+						{index === 1 && (
+							<DiceEditor
+								successTypeEnabled={props.enableSuccessTypes}
+								diceConfig={props.dice}
+								logError={addToast}
+							/>
+						)}
+						{index === 2 && (
+							<PortraitEditor
+								portrait={props.portrait}
+								attributes={props.attributes}
+								logError={addToast}
+							/>
+						)}
+					</Col>
 				</Row>
 			</Container>
 			<ErrorToastContainer toasts={toasts} />
@@ -66,31 +85,7 @@ export default function Configurations(
 	);
 }
 
-function AdminKeyContainer(props: { adminKey: string; logError(err: any): void }) {
-	const [lastValue, value, setValue] = useExtendedState(props.adminKey);
-
-	function onBlur() {
-		if (value === lastValue) return;
-		setValue(value);
-		api.post('/config', { name: 'admin_key', value }).catch(props.logError);
-	}
-
-	return (
-		<Col className='h5'>
-			<label htmlFor='adminKeyField' className='me-2'>
-				Chave do Mestre:
-			</label>
-			<BottomTextInput
-				id='adminKeyField'
-				value={value}
-				onChange={(ev) => setValue(ev.currentTarget.value)}
-				onBlur={onBlur}
-			/>
-		</Col>
-	);
-}
-
-function DiceContainer(props: {
+function DiceEditor(props: {
 	successTypeEnabled: boolean;
 	diceConfig: DiceConfig;
 	logError(err: any): void;
@@ -144,8 +139,8 @@ function DiceContainer(props: {
 	}
 
 	return (
-		<DataContainer title='Dados' outline className='me-3'>
-			<Row className='text-center mt-2'>
+		<>
+			<Row className='text-center'>
 				<Col className='h5'>
 					<FormCheck
 						inline
@@ -276,14 +271,85 @@ function DiceContainer(props: {
 					</Row>
 				</DataContainer>
 			</Row>
-			<Row className='mb-2'>
+			<Row className='mb-3'>
 				<Col className='text-center'>
 					<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
 						Aplicar
 					</Button>
 				</Col>
 			</Row>
-		</DataContainer>
+		</>
+	);
+}
+
+function GeneralEditor(props: {
+	containerConfig: ContainerConfig;
+	adminKey: string;
+	logError(err: any): void;
+}) {
+	const [names, setNames] = useState(props.containerConfig);
+	const [loading, setLoading] = useState(false);
+	const [value, setValue] = useState(props.adminKey);
+
+	function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
+		const newNames = [...names];
+		const index = newNames.findIndex((n) => n.originalName === originalName);
+		newNames[index].name = ev.currentTarget.value;
+		setNames(newNames);
+	}
+
+	function onApply() {
+		setLoading(true);
+		Promise.all([
+			api.post('/config', { name: 'container', value: names }),
+			api.post('/config', { name: 'admin_key', value }),
+		])
+			.then(() => alert('Configurações gerais aplicadas com sucesso.'))
+			.catch(props.logError)
+			.finally(() => setLoading(false));
+	}
+
+	return (
+		<>
+			<Row className='mb-3'>
+				<Col className='h5'>
+					<label htmlFor='adminKeyField' className='me-2'>
+						Chave do Mestre:
+					</label>
+					<BottomTextInput
+						id='adminKeyField'
+						value={value}
+						onChange={(ev) => setValue(ev.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row>
+				<Col>
+					{names.map((container) => (
+						<Row key={container.originalName}>
+							<Col className='h5'>
+								<label htmlFor={`containerField${container.originalName}`}>
+									Nome do contêiner de {container.originalName}:
+								</label>
+								<BottomTextInput
+									id={`containerField${container.originalName}`}
+									className='ms-2'
+									value={container.name}
+									onChange={(ev) => onNameChange(ev, container.originalName)}
+								/>
+							</Col>
+						</Row>
+					))}
+					<Row className='my-2 text-center'>
+						<Col>
+							<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
+								Aplicar
+							</Button>
+						</Col>
+					</Row>
+				</Col>
+			</Row>
+		</>
 	);
 }
 
@@ -297,7 +363,7 @@ type PortraitContainerProps = {
 	logError(err: any): void;
 };
 
-function PortraitContainer(props: PortraitContainerProps) {
+function PortraitEditor(props: PortraitContainerProps) {
 	const [loading, setLoading] = useState(false);
 	const [attributes, setAttributes] = useState<Attribute[]>(props.portrait.attributes);
 	const [sideAttribute, setSideAttribute] = useState(props.portrait.side_attribute);
@@ -341,11 +407,11 @@ function PortraitContainer(props: PortraitContainerProps) {
 	}
 
 	return (
-		<DataContainer title='Retrato (Extensão OBS)' outline className='ms-3 text-center'>
-			<Row className='mt-2'>
+		<>
+			<Row className='text-center'>
 				<Col className='h5'>
 					<label htmlFor='portraitOrientation' className='me-2'>
-						Orientação:
+						Orientação do Retrato:
 					</label>
 					<select
 						id='portraitOrientation'
@@ -358,11 +424,12 @@ function PortraitContainer(props: PortraitContainerProps) {
 					</select>
 				</Col>
 			</Row>
-			<Row className='mt-2'>
-				<Col xs={{ offset: 3, span: 6 }} className='h5 align-self-center'>
-					Atributos Principais:
+			<hr />
+			<Row className='mt-2 justify-content-center align-items-center'>
+				<Col xs='auto' className='h5' style={{ margin: 0 }}>
+					Atributos Primários
 				</Col>
-				<Col xs={3}>
+				<Col xs={1}>
 					<DropdownButton
 						title='+'
 						variant='secondary'
@@ -377,11 +444,11 @@ function PortraitContainer(props: PortraitContainerProps) {
 					</DropdownButton>
 				</Col>
 			</Row>
-			<Row>
-				<Col>
-					<ListGroup variant='flush' className='theme-element'>
+			<Row className='text-center justify-content-center'>
+				<Col xs={8}>
+					<ListGroup variant='flush' className='rounded my-3'>
 						{attributes.map((attr) => (
-							<ListGroup.Item key={attr.id} className='theme-element'>
+							<ListGroup.Item key={attr.id}>
 								{attr.name}
 								<Button
 									size='sm'
@@ -395,7 +462,8 @@ function PortraitContainer(props: PortraitContainerProps) {
 					</ListGroup>
 				</Col>
 			</Row>
-			<Row className='my-2'>
+			<hr />
+			<Row className='my-2 text-center justify-content-center'>
 				<Col className='h5'>
 					<label htmlFor='portraitSideAttribute' className='me-2'>
 						Atributo Secundário:
@@ -419,67 +487,14 @@ function PortraitContainer(props: PortraitContainerProps) {
 					</select>
 				</Col>
 			</Row>
-			<Row className='mb-2'>
+			<Row className='mt-5 mb-3 text-center'>
 				<Col>
 					<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
 						Aplicar
 					</Button>
 				</Col>
 			</Row>
-		</DataContainer>
-	);
-}
-
-function ContainerEditor(props: {
-	containerConfig: ContainerConfig;
-	logError(err: any): void;
-}) {
-	const [names, setNames] = useState(props.containerConfig);
-	const [loading, setLoading] = useState(false);
-
-	function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
-		const newNames = [...names];
-		const index = newNames.findIndex((n) => n.originalName === originalName);
-		newNames[index].name = ev.currentTarget.value;
-		setNames(newNames);
-	}
-
-	function onApply() {
-		setLoading(true);
-		api
-			.post('/config', { name: 'container', value: names })
-			.then(() => alert('Configurações de contêiner aplicadas com sucesso.'))
-			.catch(props.logError)
-			.finally(() => setLoading(false));
-	}
-
-	return (
-		<DataContainer title='Configurações de Contêiner' outline className='text-center'>
-			<>
-				{names.map((container) => (
-					<Row key={container.originalName}>
-						<Col className='h5'>
-							<label htmlFor={`containerField${container.originalName}`}>
-								Contêiner de {container.originalName}:
-							</label>
-							<BottomTextInput
-								id={`containerField${container.originalName}`}
-								className='ms-2'
-								value={container.name}
-								onChange={(ev) => onNameChange(ev, container.originalName)}
-							/>
-						</Col>
-					</Row>
-				))}
-				<Row className='my-2'>
-					<Col>
-						<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
-							Aplicar
-						</Button>
-					</Col>
-				</Row>
-			</>
-		</DataContainer>
+		</>
 	);
 }
 
