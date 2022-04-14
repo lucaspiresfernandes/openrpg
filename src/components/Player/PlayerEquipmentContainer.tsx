@@ -12,6 +12,7 @@ import AddDataModal from '../Modals/AddDataModal';
 import useExtendedState from '../../hooks/useExtendedState';
 import { BsTrash } from 'react-icons/bs';
 import BottomTextInput from '../BottomTextInput';
+import { resolveDices } from '../../utils';
 
 type PlayerEquipmentContainerProps = {
 	playerEquipments: {
@@ -28,6 +29,7 @@ type PlayerEquipmentContainerProps = {
 	}[];
 	availableEquipments: Equipment[];
 	title: string;
+	bonusDamage?: string;
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
@@ -158,6 +160,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 										equipment={eq.Equipment}
 										currentAmmo={eq.currentAmmo}
 										onDelete={onDeleteEquipment}
+										bonusDamage={props.bonusDamage}
 									/>
 								))}
 							</tbody>
@@ -188,6 +191,7 @@ type PlayerEquipmentFieldProps = {
 		type: string;
 	};
 	onDelete(id: number): void;
+	bonusDamage?: string;
 };
 
 function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
@@ -211,17 +215,23 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	function onAmmoBlur() {
 		if (currentAmmo === lastAmmo) return;
 		setCurrentAmmo(currentAmmo);
-		api.post('/sheet/player/equipment', { id: equipmentID, currentAmmo }).catch((err) => {
-			logError(err);
-			setCurrentAmmo(lastAmmo);
-		});
+		api.post('/sheet/player/equipment', { id: equipmentID, currentAmmo }).catch(logError);
 	}
 
 	function diceRoll() {
 		if (props.equipment.ammo && currentAmmo === 0)
 			return alert('Você não tem munição suficiente.');
-		setCurrentAmmo(currentAmmo - 1);
-		showDiceRollResult(props.equipment.damage);
+		const aux = resolveDices(props.equipment.damage, { bonusDamage: props.bonusDamage });
+		if (!aux) return;
+		showDiceRollResult(aux);
+		const ammo = currentAmmo - 1;
+		setCurrentAmmo(ammo);
+		api
+			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: ammo })
+			.catch((err) => {
+				logError(err);
+				setCurrentAmmo(currentAmmo);
+			});
 	}
 
 	function deleteEquipment() {

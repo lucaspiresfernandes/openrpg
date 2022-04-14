@@ -11,9 +11,8 @@ import { ErrorLogger } from '../../contexts';
 
 type DiceRollResultModalProps = {
     onHide(): void;
-    dices: string | ResolvedDice[];
+    dices: ResolvedDice[];
     resolverKey?: string;
-    bonusDamage?: string;
     onRollAgain(): void;
 }
 
@@ -28,14 +27,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
     useEffect(() => {
         if (props.dices.length === 0) return;
         setLoadingDice(true);
-
-        let resolved = props.dices;
-        if (typeof props.dices === 'string') {
-            const aux = resolveDices(props.dices as string, { bonusDamage: props.bonusDamage });
-            if (!aux) return;
-            resolved = aux;
-        }
-        api.post('/dice', { dices: resolved, resolverKey: props.resolverKey }, { timeout: 5000 }).then(res => {
+        api.post('/dice', { dices: props.dices, resolverKey: props.resolverKey }, { timeout: 5000 }).then(res => {
             setResultDices(res.data.results);
             setResultFade(true);
             setTimeout(() => setDescriptionFade(true), 750);

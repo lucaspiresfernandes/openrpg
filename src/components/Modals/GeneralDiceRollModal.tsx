@@ -16,7 +16,7 @@ type Dice = {
 type GeneralDiceRollModalProps = {
     show: boolean
     onHide(): void,
-    showDiceRollResult(dices: string | ResolvedDice[], resolverKey?: string): void;
+    showDiceRollResult(dices: ResolvedDice[], resolverKey?: string): void;
 }
 
 export default function GeneralDiceRollModal({ show, onHide, showDiceRollResult }: GeneralDiceRollModalProps) {

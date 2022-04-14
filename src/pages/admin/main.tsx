@@ -27,9 +27,9 @@ import { Environment } from '../../utils/config';
 export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
     const [toasts, addToast] = useToast();
     const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
-    const [diceRoll, setDiceRoll] = useState<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: '' });
+    const [diceRoll, setDiceRoll] = useState<{ dices: ResolvedDice[], resolverKey?: string }>({ dices: [] });
     const [socket, setSocket] = useState<SocketIO | null>(null);
-    const lastRoll = useRef<{ dices: string | ResolvedDice[], resolverKey?: string }>({ dices: [] });
+    const lastRoll = useRef<{ dices: ResolvedDice[], resolverKey?: string }>({ dices: [] });
 
     useSocket(socket => {
         socket.emit('roomJoin', 'admin');
@@ -42,7 +42,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
         };
     });
 
-    function onDiceRoll(dices: string | ResolvedDice[], resolverKey?: string) {
+    function onDiceRoll(dices: ResolvedDice[], resolverKey?: string) {
         const roll = { dices, resolverKey };
         lastRoll.current = roll;
         setDiceRoll(roll);
@@ -96,7 +96,7 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
                 <GeneralDiceRollModal show={generalDiceRollShow} onHide={() => setGeneralDiceRollShow(false)}
                     showDiceRollResult={onDiceRoll} />
                 <DiceRollResultModal dices={diceRoll.dices} resolverKey={diceRoll.resolverKey}
-                    onHide={() => setDiceRoll({ dices: '', resolverKey: '' })}
+                    onHide={() => setDiceRoll({ dices: [], resolverKey: '' })}
                     onRollAgain={() => setDiceRoll(lastRoll.current)} />
             </ErrorLogger.Provider>
             <ErrorToastContainer toasts={toasts} />
