@@ -17,7 +17,7 @@ type PlayerInfoFieldProps = {
 export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
 	const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
 	const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
-	const fieldRef = useRef<HTMLInputElement>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 	const firstUpdate = useRef(true);
 
 	const logError = useContext(ErrorLogger);
@@ -28,7 +28,7 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
 			firstUpdate.current = false;
 			return;
 		}
-		if (!isDefined && fieldRef.current) fieldRef.current.focus();
+		if (!isDefined && inputRef.current) inputRef.current.focus();
 	}, [isDefined]);
 
 	function onValueBlur() {
@@ -51,13 +51,14 @@ export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
 							<label onDoubleClick={() => setDefined(false)}>{value}</label>
 						</>
 					) : (
-						<BottomTextInput
+						<input
+							className='theme-element bottom-text'
 							id={`info${infoID}`}
 							autoComplete='off'
 							value={value}
 							onChange={(ev) => setValue(ev.currentTarget.value)}
 							onBlur={onValueBlur}
-							ref={fieldRef}
+							ref={inputRef}
 						/>
 					)}
 				</Row>
