@@ -49,13 +49,13 @@ export default function DiceList(props: DiceListProps) {
             };
 
             setValues(values => {
-                if (values.length > 5) {
+                if (values.length > 10) {
                     const newValues = [...values];
                     newValues.unshift(message);
                     newValues.splice(newValues.length - 1, 1);
                     return newValues;
                 }
-                return [...values, message];
+                return [message, ...values];
             });
         });
 
