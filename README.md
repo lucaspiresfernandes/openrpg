@@ -12,12 +12,12 @@ Gostou do meu trabalho? Considere fazer uma doação para mim no meu [Ko-fi](htt
 
 - [Criando seu próprio site com o Open RPG](./docs/installing.md)
 - [Utilizando a ficha eletrônica do jogador](./docs/sheet.md)
-- [Utilizando o painel do mestre](.docs/admin.md)
-- [Integrando o Open RPG com o OBS](.docs/obs.md)
-- [Modificando a ficha eletrônica](.docs/editor.md)
-- [Acessando as configurações de sistema](.docs/settings.md)
-- [Mantendo seu Open RPG atualizado](.docs/update.md)
-- [Sobre](.docs/about.md)
+- [Utilizando o painel do mestre](./docs/admin.md)
+- [Integrando o Open RPG com o OBS](./docs/obs.md)
+- [Modificando a ficha eletrônica](./docs/editor.md)
+- [Acessando as configurações de sistema](./docs/settings.md)
+- [Mantendo seu Open RPG atualizado](./docs/update.md)
+- [Sobre](./docs/about.md)
 
 ## Introdução
 
