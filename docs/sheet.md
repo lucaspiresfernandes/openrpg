@@ -74,7 +74,7 @@ A cada rolagem de equipamento, se a arma possuir munição, uma unidade de muni�
 
 A coluna de dano é um texto determinado pelo mestre, que pode ser de várias formas. Caso o mestre opte por usar o Dano Bônus como um dano da arma, você verá "DB" no dano. Na resolução do dano, esse DB será substituído pelo Dano Bônus do jogador e assim a rolagem do equipamento irá iniciar. Caso o sistema não encontre uma especificação de jogador chamada "Dano Bônus", o DB é substituído por 0.
 
-A resolução do dano usa um algoritmo com várias nuances e exclusividades que só são explicadas na seção [Modificando a ficha eletrônica](.editor.md#combate).
+A resolução do dano usa um algoritmo com várias nuances e exclusividades que só são explicadas na seção [Modificando a ficha eletrônica](./editor.md#combate).
 
 ## Perícias
 
@@ -108,4 +108,4 @@ Na segunda página, pode-se encontrar as anotações, uma grande caixa de texto 
 
 # Visão Geral da Ficha de Jogador
 
-![sheet page 1](https://user-images.githubusercontent.com/71353674/160726319-da5e76fc-6f73-4a5d-873a-80b62904ab06.png)
+![localhost_3000_sheet_1](https://user-images.githubusercontent.com/71353674/163498056-c7870da1-36a1-40bd-ac3b-3f7b63e86679.png)
