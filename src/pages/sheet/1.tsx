@@ -288,7 +288,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 				Skill: {
 					select: { id: true, name: true, Specialization: { select: { name: true } } },
 				},
-				value: true,
+				value: true, checked: true
 			},
 		}),
 

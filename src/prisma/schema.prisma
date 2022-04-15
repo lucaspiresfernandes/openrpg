@@ -186,11 +186,12 @@ model PlayerCharacteristic {
 }
 
 model PlayerSkill {
-  Player    Player @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Player    Player  @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   player_id Int
-  Skill     Skill  @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Skill     Skill   @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   skill_id  Int
   value     Int
+  checked   Boolean @default(false)
 
   @@id([player_id, skill_id])
 }

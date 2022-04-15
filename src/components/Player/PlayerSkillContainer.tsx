@@ -1,7 +1,8 @@
 import { Skill } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
@@ -12,6 +13,7 @@ import AddDataModal from '../Modals/AddDataModal';
 
 type PlayerSkill = {
 	value: number;
+	checked: boolean;
 	Skill: {
 		id: number;
 		name: string;
@@ -87,6 +89,18 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 		};
 	}, [socket]);
 
+	function clearChecks() {
+		setPlayerSkills((skills) =>
+			skills.map((skill) => {
+				return {
+					Skill: { ...skill.Skill },
+					checked: false,
+					value: skill.value,
+				};
+			})
+		);
+	}
+
 	return (
 		<>
 			<DataContainer
@@ -102,6 +116,11 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 							onChange={(ev) => setSearch(ev.currentTarget.value)}
 						/>
 					</Col>
+					<Col xs='auto' className='me-2'>
+						<Button variant='secondary' onClick={clearChecks}>
+							Limpar Marcadores
+						</Button>
+					</Col>
 				</Row>
 				<Row className='mb-3 mx-1 text-center justify-content-center'>
 					{playerSkills.map((skill) => {
@@ -109,8 +128,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 							return (
 								<PlayerSkillField
 									key={skill.Skill.id}
-									value={skill.value}
-									skill={skill.Skill}
+									skill={skill}
 									skillDice={props.skillDiceConfig}
 								/>
 							);
@@ -130,26 +148,46 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 }
 
 type PlayerSkillFieldProps = {
-	value: number;
-	skill: {
-		id: number;
-		name: string;
-		Specialization: {
-			name: string;
-		} | null;
-	};
+	skill: PlayerSkill;
 	skillDice: {
 		value: number;
 		branched: boolean;
 	};
 };
 
-function PlayerSkillField(props: PlayerSkillFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
+	const [lastValue, value, setValue] = useExtendedState(skill.value);
+	const [checked, setChecked] = useState(skill.checked);
 	const logError = useContext(ErrorLogger);
 	const showDiceRollResult = useContext(ShowDiceResult);
+	const firstUpdate = useRef(true);
 
-	function valueChange(ev: FormEvent<HTMLInputElement>) {
+	useEffect(() => {
+		if (firstUpdate.current) {
+			firstUpdate.current = false;
+			return;
+		}
+
+		if (skill.checked === checked) return;
+		
+		setChecked(skill.checked);
+		api.post('/sheet/player/skill', { id: skill.Skill.id, checked: skill.checked }).catch((err) => {
+			logError(err);
+			setChecked(checked);
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [skill]);
+
+	function onCheckChange(ev: ChangeEvent<HTMLInputElement>) {
+		const c = ev.target.checked;
+		setChecked(c);
+		api.post('/sheet/player/skill', { id: skill.Skill.id, checked: c }).catch((err) => {
+			logError(err);
+			setChecked(checked);
+		});
+	}
+
+	function valueChange(ev: ChangeEvent<HTMLInputElement>) {
 		const aux = ev.currentTarget.value;
 		let newValue = parseInt(aux);
 
@@ -162,20 +200,20 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	function valueBlur() {
 		if (value === lastValue) return;
 		setValue(value);
-		api.post('/sheet/player/skill', { id: props.skill.id, value }).catch((err) => {
+		api.post('/sheet/player/skill', { id: skill.Skill.id, value }).catch((err) => {
 			logError(err);
 			setValue(lastValue);
 		});
 	}
 
 	function rollDice() {
-		const roll = props.skillDice['value'];
-		const branched = props.skillDice['branched'];
+		const roll = skillDice['value'];
+		const branched = skillDice['branched'];
 		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
 	}
 
-	let name = props.skill.name;
-	if (props.skill.Specialization) name = `${props.skill.Specialization.name} (${name})`;
+	let name = skill.Skill.name;
+	if (skill.Skill.Specialization) name = `${skill.Skill.Specialization.name} (${name})`;
 
 	return (
 		<Col
@@ -183,6 +221,11 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			md={3}
 			xl={2}
 			className='skill-container my-3 clickable d-flex flex-column'>
+			<Row className='mb-1'>
+				<Col>
+					<input type='checkbox' checked={checked} onChange={onCheckChange} />
+				</Col>
+			</Row>
 			<Row>
 				<Col>
 					<BottomTextInput
