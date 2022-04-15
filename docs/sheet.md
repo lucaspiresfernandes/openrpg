@@ -108,4 +108,4 @@ Na segunda página, pode-se encontrar as anotações, uma grande caixa de texto 
 
 # Visão Geral da Ficha de Jogador
 
-![localhost_3000_sheet_1](https://user-images.githubusercontent.com/71353674/163498056-c7870da1-36a1-40bd-ac3b-3f7b63e86679.png)
+![localhost_3000_sheet_1](https://user-images.githubusercontent.com/71353674/163498261-e053abad-01cd-45db-896e-e7a81de86a43.png)
