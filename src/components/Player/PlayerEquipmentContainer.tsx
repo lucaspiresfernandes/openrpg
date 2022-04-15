@@ -1,5 +1,5 @@
 import { Equipment } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
+import { FormEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
@@ -34,9 +34,9 @@ type PlayerEquipmentContainerProps = {
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
 	const [addEquipmentShow, setAddEquipmentShow] = useState(false);
-	const [equipments, setEquipments] = useState<{ id: number; name: string }[]>(
-		props.availableEquipments
-	);
+	const [availableEquipments, setAvailableEquipments] = useState<
+		{ id: number; name: string }[]
+	>(props.availableEquipments);
 	const [playerEquipments, setPlayerEquipments] = useState(props.playerEquipments);
 	const playerEquipmentsRef = useRef(playerEquipments);
 	playerEquipmentsRef.current = playerEquipments;
@@ -47,7 +47,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 		if (!socket) return;
 
 		socket.on('playerEquipmentAdd', (id, name) => {
-			setEquipments((equipments) => {
+			setAvailableEquipments((equipments) => {
 				if (
 					equipments.findIndex((eq) => eq.id === id) > -1 ||
 					playerEquipmentsRef.current.findIndex((eq) => eq.Equipment.id === id) > -1
@@ -67,7 +67,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 					return newEquipments;
 				});
 			}
-			setEquipments((equipments) => {
+			setAvailableEquipments((equipments) => {
 				const index = equipments.findIndex((eq) => eq.id === id);
 				if (index === -1) return equipments;
 				const newEquipments = [...equipments];
@@ -85,7 +85,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				return newEquipments;
 			});
 
-			setEquipments((equipments) => {
+			setAvailableEquipments((equipments) => {
 				const index = equipments.findIndex((eq) => eq.id === id);
 				if (index === -1) return equipments;
 				const newEquipments = [...equipments];
@@ -108,12 +108,12 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				const equipment = res.data.equipment;
 				setPlayerEquipments([...playerEquipments, equipment]);
 
-				const newEquipments = [...equipments];
+				const newEquipments = [...availableEquipments];
 				newEquipments.splice(
 					newEquipments.findIndex((eq) => eq.id === id),
 					1
 				);
-				setEquipments(newEquipments);
+				setAvailableEquipments(newEquipments);
 			})
 			.catch(logError);
 	}
@@ -128,8 +128,12 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 		setPlayerEquipments(newPlayerEquipments);
 
 		const modalEquipment = { id, name: playerEquipments[index].Equipment.name };
-		setEquipments([...equipments, modalEquipment]);
+		setAvailableEquipments([...availableEquipments, modalEquipment]);
 	}
+
+	const equipments = useMemo(() => {
+		return playerEquipments.sort((a, b) => a.Equipment.id - b.Equipment.id);
+	}, [playerEquipments]);
 
 	return (
 		<>
@@ -154,7 +158,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 								</tr>
 							</thead>
 							<tbody>
-								{playerEquipments.map((eq) => (
+								{equipments.map((eq) => (
 									<PlayerEquipmentField
 										key={eq.Equipment.id}
 										equipment={eq.Equipment}
@@ -172,7 +176,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				title={`Adicionar em ${props.title}`}
 				show={addEquipmentShow}
 				onHide={() => setAddEquipmentShow(false)}
-				data={equipments}
+				data={availableEquipments}
 				onAddData={onAddEquipment}
 			/>
 		</>
