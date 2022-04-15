@@ -126,3 +126,7 @@ O campo "visível" determina se esse item ficará visível para os players. Essa
 O contêiner que permite modificar as magias.
 
 O campo "visível" determina se essa magia ficará visível para os players. Essa funcionalidade serve para esconder certas magias criadas, e mostrar quando for a hora correta.
+
+# Visão Geral do Editor
+
+![localhost_3000_admin_main (1)](https://user-images.githubusercontent.com/71353674/163499077-c42fb070-abd8-47b1-b48d-a499b682fe70.png)
