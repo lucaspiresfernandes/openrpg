@@ -1,5 +1,5 @@
 import { Skill } from '@prisma/client';
-import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
@@ -35,7 +35,7 @@ type PlayerSkillContainerProps = {
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	const [addSkillShow, setAddSkillShow] = useState(false);
-	const [skills, setSkills] = useState<{ id: number; name: string }[]>(
+	const [availableSkills, setAvailableSkills] = useState<{ id: number; name: string }[]>(
 		props.availableSkills
 	);
 	const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
@@ -51,12 +51,12 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				const skill = res.data.skill;
 				setPlayerSkills([...playerSkills, skill]);
 
-				const newSkills = [...skills];
+				const newSkills = [...availableSkills];
 				newSkills.splice(
 					newSkills.findIndex((eq) => eq.id === id),
 					1
 				);
-				setSkills(newSkills);
+				setAvailableSkills(newSkills);
 			})
 			.catch(logError);
 	}
@@ -74,7 +74,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				return newSkills;
 			});
 
-			setSkills((skills) => {
+			setAvailableSkills((skills) => {
 				const index = skills.findIndex((skill) => skill.id === id);
 				if (index === -1) return skills;
 
@@ -101,6 +101,21 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 		);
 	}
 
+	const skillList = useMemo(() => {
+		return playerSkills
+			.map((skill) => {
+				let name = skill.Skill.name;
+				if (skill.Skill.Specialization)
+					name = `${skill.Skill.Specialization.name} (${name})`;
+				return {
+					Skill: { ...skill.Skill, name },
+					value: skill.value,
+					checked: skill.checked,
+				};
+			})
+			.sort((a, b) => a.Skill.name.localeCompare(b.Skill.name));
+	}, [playerSkills]);
+
 	return (
 		<>
 			<DataContainer
@@ -123,7 +138,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 					</Col>
 				</Row>
 				<Row className='mb-3 mx-1 text-center justify-content-center'>
-					{playerSkills.map((skill) => {
+					{skillList.map((skill) => {
 						if (skill.Skill.name.toLowerCase().includes(search.toLowerCase()))
 							return (
 								<PlayerSkillField
@@ -140,7 +155,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				title='Adicionar'
 				show={addSkillShow}
 				onHide={() => setAddSkillShow(false)}
-				data={skills}
+				data={availableSkills}
 				onAddData={onAddSkill}
 			/>
 		</>
@@ -169,12 +184,14 @@ function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
 		}
 
 		if (skill.checked === checked) return;
-		
+
 		setChecked(skill.checked);
-		api.post('/sheet/player/skill', { id: skill.Skill.id, checked: skill.checked }).catch((err) => {
-			logError(err);
-			setChecked(checked);
-		});
+		api
+			.post('/sheet/player/skill', { id: skill.Skill.id, checked: skill.checked })
+			.catch((err) => {
+				logError(err);
+				setChecked(checked);
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skill]);
 
@@ -212,9 +229,6 @@ function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
 		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
 	}
 
-	let name = skill.Skill.name;
-	if (skill.Skill.Specialization) name = `${skill.Skill.Specialization.name} (${name})`;
-
 	return (
 		<Col
 			xs={6}
@@ -237,7 +251,7 @@ function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
 				</Col>
 			</Row>
 			<Row className='label h-100' onClick={rollDice}>
-				<Col>{name}</Col>
+				<Col>{skill.Skill.name}</Col>
 			</Row>
 		</Col>
 	);
