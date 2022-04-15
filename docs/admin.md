@@ -46,6 +46,10 @@ Aqui, você pode monitorar o histórico de rolagens dos jogadores.
 
 O utilitário NPCs permite a criação de NPCs genéricos com nome e vida.
 
+### Anotações
+
+Aqui, você pode fazer anotações de qualquer tipo, como as anotações dos jogadores.
+
 # Visão Geral do Painel do Mestre
 
 ![localhost_3000_admin_main](https://user-images.githubusercontent.com/71353674/163498765-21e8be6b-ccb1-4eaf-850a-b473496b3913.png)
