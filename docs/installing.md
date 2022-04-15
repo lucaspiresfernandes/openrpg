@@ -1,8 +1,8 @@
-## Instalação
+# Criando seu próprio site com o Open RPG
 
-Nessa seção, ensinarei do processo de deployment do projeto na nuvem.
+Nessa seção, ensinarei como criar seu site com o Open RPG.
 
-### Importante!
+## Importante!
 
 Antes de começarmos, você deverá cumprir alguns passos preliminares.
 
@@ -11,7 +11,7 @@ Antes de começarmos, você deverá cumprir alguns passos preliminares.
 3. (Opcional) Você deverá criar uma conta na [Random.org](https://accounts.random.org/create). Caso não esteja interessado em criar uma conta no Random.org e usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
 4. Você deverá fazer o [fork](https://github.com/alyssapiresfernandescefet/openrpg/fork) desse repositório para a sua conta.
 
-### Sobre o Random.org (Opcional)
+## Sobre o Random.org (Opcional)
 
 Caso tenha optado por não usar os serviços do Random.org, pode pular essa seção.
 
@@ -24,7 +24,7 @@ Após criar uma conta no Random.org, você deverá criar um serviço de API. Sig
 5. Após criar, clique no novo item que foi criado na lista.
 6. Copie o primeiro item, "API Key", e salve em algum lugar do seu computador (em um bloco de notas). Você vai precisar dessa chave mais para frente.
 
-### Iniciando
+## Iniciando
 
 1. Primeiramente, você deve acessar o seu [Dashboard](https://dashboard.heroku.com/) na Heroku e criar um novo App. Você deverá preencher o nome do aplicativo e a região em que o aplicativo irá ser hospedado. Digite um nome simples mas que lembre o nome do seu RPG, porque esse nome também será o endereço do seu site. Selecione a região mais próxima e clique em Criar App.
 

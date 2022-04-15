@@ -2,11 +2,7 @@
 
 # Open RPG: Ficha eletrônica de RPG
 
-Open RPG é um projeto que visa auxiliar mestres de RPG a gerenciar as fichas dos personagens de sua campanha e agilizar processos comuns.
-
-Você pode acessar a demo [aqui](https://openrpgdemo.herokuapp.com/). Caso queira criar uma conta de mestre, use "123456" como chave do mestre.
-
-Os dados criados no site da demo são excluídos semanalmente, então se quiser gerir a sua própria instância do Open RPG, leia a seção [Instalação][].
+Open RPG é um aplicativo web gratuito que permite o uso de fichas eletrônicas automatizadas e customizáveis para qualquer campanha, bem como utilitários que ajudam o mestre a agilizar tarefas.
 
 ## Ko-fi
 
@@ -14,24 +10,25 @@ Gostou do meu trabalho? Considere fazer uma doação para mim no meu [Ko-fi](htt
 
 ## Documentação
 
-- [Instalação][]
-- [Visão da Ficha][]
-- [Edição do Sistema][]
-
-[Instalação]: ./docs/installing.md
-[Visão da Ficha]: ./docs/sheet.md
-[Edição do Sistema]: ./docs/admin_tutorial.md
+- [Criando seu próprio site com o Open RPG](./docs/installing.md)
+- [Utilizando a ficha eletrônica do jogador](./docs/sheet.md)
+- [Utilizando o painel do mestre](.docs/admin.md)
+- [Integrando o Open RPG com o OBS](.docs/obs.md)
+- [Modificando a ficha eletrônica](.docs/editor.md)
+- [Acessando as configurações de sistema](.docs/settings.md)
+- [Mantendo seu Open RPG atualizado](.docs/update.md)
+- [Sobre](.docs/about.md)
 
 ## Introdução
 
 Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres quanto para os jogadores, sendo elas:
 
-### Para os jogadores:
+### Ficha eletrônica do jogador:
 
 - Informações Pessoais
-- Atributos e Avatar
+- Atributos, Estados e Avatar
 - Características (ou atributos secundários)
-- Combate e equipamentos
+- Combate e Equipamentos
 - Perícias
 - Itens e capacidade de carga
 - Moeda
@@ -39,15 +36,16 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 - Anotações pessoais
 - Rolagem de dados automática
 
-### Para os mestres:
+### Painel do mestre:
 
-- Painel de personagens (com monitoramento de recursos importantes do personagem)
+- Painel de jogadores (com monitoramento de recursos dos personagens)
 - Rolagem Rápida
 - Combate e Iniciativa
 - Histórico de rolagem dos jogadores
 - Gerenciamento de NPCs genéricos
 - Anotações pessoais
-- Editor/Configurações do sistema
+- Editor da ficha eletrônica do jogador
+- Configurações do sistema
 
 ## Integração com OBS
 
@@ -64,8 +62,10 @@ O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar 
 
 ## Status do projeto
 
-Atualmente, o Open RPG se encontra em sua versão 1.0.0 Beta e já é considerado completo. No entanto, ainda há a possibilidade de adicionar novas funcionalidades de acordo a demanda dos jogadores.
+Atualmente, o Open RPG se encontra em sua versão 1.0.0 Beta e já é considerado completo. No entanto, ainda há a possibilidade de adicionar novas funcionalidades de acordo a demanda dos usuários.
 
 ## Comunidade
 
-Para perguntas, use as [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions).
+Para resolução de problemas e bugs, utilize os [Issues](https://github.com/alyssapiresfernandescefet/openrpg/issues).
+
+Para perguntas ou dúvidas, utilize as [Discussions](https://github.com/alyssapiresfernandescefet/openrpg/discussions).
