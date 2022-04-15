@@ -4,7 +4,7 @@ Open RPG é um aplicativo web gratuito que permite o uso de fichas eletrônicas 
 
 ## Como eu uso o Open RPG?
 
-O Open RPG é um aplicativo web, ou seja, precisa ser instalado em um provedor para ser usado. Para mais instruções de criar um site com o Open RPG, acesse [aqui](.installing.md).
+O Open RPG é um aplicativo web, ou seja, precisa ser instalado em um provedor para ser usado. Para mais instruções de criar um site com o Open RPG, acesse [aqui](./installing.md).
 
 ## Por que usar o Open RPG?
 
