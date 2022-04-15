@@ -6,6 +6,8 @@ Nessa seção, irei ensinar para você como realizar a integração do Open RPG 
 
 A integração do Open RPG com o OBS se chama um Retrato. Um Retrato basicamente representa a imagem de um jogador em tela, com atualização de atributos e rolagens em tempo real.
 
+![image](https://user-images.githubusercontent.com/71353674/163499503-10330b79-9836-4b90-889f-d6773462ae4e.png)
+
 ## Adicionando os Retratos ao OBS
 
 O OBS exibe os retratos através de uma fonte chamada Browser Source (ou Navegador). Essa fonte pede um link e uma altura e largura para ser exibida. Para achar o link, basta ir ao painel do mestre e clicar no botão "Retrato" em um jogador. Um link será copiado para sua área de transferência, e você deverá colar esse link no Browser Source.
