@@ -1,5 +1,5 @@
 import { Currency, Item } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
+import { FormEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
@@ -34,7 +34,7 @@ type PlayerItemContainerProps = {
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	const [addItemShow, setAddItemShow] = useState(false);
-	const [items, setItems] = useState<{ id: number; name: string }[]>(
+	const [availableItems, setAvailableItems] = useState<{ id: number; name: string }[]>(
 		props.availableItems
 	);
 	const [playerItems, setPlayerItems] = useState(props.playerItems);
@@ -53,7 +53,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		if (!socket) return;
 
 		socket.on('playerItemAdd', (id, name) => {
-			setItems((items) => {
+			setAvailableItems((items) => {
 				if (
 					items.findIndex((item) => item.id === id) > -1 ||
 					playerItemsRef.current.findIndex((eq) => eq.Item.id === id) > -1
@@ -64,7 +64,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		});
 
 		socket.on('playerItemRemove', (id) => {
-			setItems((items) => {
+			setAvailableItems((items) => {
 				const index = items.findIndex((item) => item.id === id);
 				if (index === -1) return items;
 
@@ -84,7 +84,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				return newItems;
 			});
 
-			setItems((items) => {
+			setAvailableItems((items) => {
 				const index = items.findIndex((eq) => eq.id === id);
 				if (index === -1) return items;
 
@@ -108,12 +108,12 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				const item = res.data.item;
 				setPlayerItems([...playerItems, item]);
 
-				const newItems = [...items];
+				const newItems = [...availableItems];
 				newItems.splice(
 					newItems.findIndex((eq) => eq.id === id),
 					1
 				);
-				setItems(newItems);
+				setAvailableItems(newItems);
 			})
 			.catch(logError);
 	}
@@ -126,7 +126,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		setPlayerItems(newPlayerItems);
 
 		const modalItem = { id, name: playerItems[index].Item.name };
-		setItems([...items, modalItem]);
+		setAvailableItems([...availableItems, modalItem]);
 	}
 
 	function onMaxLoadBlur() {
@@ -149,6 +149,10 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	}
 
 	const colorStyle = { color: load > parseFloat(maxLoad) ? 'red' : 'inherit' };
+
+	const items = useMemo(() => {
+		return playerItems.sort((a, b) => a.Item.id - b.Item.id);
+	}, [playerItems]);
 
 	return (
 		<>
@@ -188,7 +192,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 								</tr>
 							</thead>
 							<tbody>
-								{playerItems.map((item) => (
+								{items.map((item) => (
 									<PlayerItemField
 										key={item.Item.id}
 										description={item.currentDescription}
@@ -207,7 +211,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				title='Adicionar'
 				show={addItemShow}
 				onHide={() => setAddItemShow(false)}
-				data={items}
+				data={availableItems}
 				onAddData={onAddItem}
 			/>
 		</>
