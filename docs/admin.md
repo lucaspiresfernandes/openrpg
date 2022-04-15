@@ -10,7 +10,7 @@ Para criar, acesse o cadastro e clique em "Cadastrar-se como mestre".
 
 Ao preencher suas credenciais, irá perceber um campo especial chamado "chave do mestre". Esse campo pede uma chave secreta que permite a criação de uma conta de mestre. Se você é o primeiro mestre a criar uma conta, então a chave do mestre padrão é 123456.
 
-É possível mudar a chave do mestre, que é ensinado na seção [Acessando as configurações de sistema](.settings.md)
+É possível mudar a chave do mestre, que é ensinado na seção [Acessando as configurações de sistema](./settings.md).
 
 ## O Painel do Mestre
 
