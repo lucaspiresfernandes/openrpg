@@ -1,4 +1,4 @@
-# Acessando as Configurações
+# Acessando as Configurações de Sistema
 
 Nessa seção, ensinarei como acessar e modificar as configurações do sistema.
 
@@ -15,9 +15,12 @@ As configurações são dividas em 3 seções.
 Nas configurações gerais, temos:
 
 1. Chave do Mestre
-2. Título dos contêineres
+2. Marcação Automática de Perícia
+3. Título dos contêineres
 
 Aqui, é possível atualizar a chave do mestre e o título dos contêineres que aparecem na ficha eletrônica do jogador. Isso é interessante se você quer mudar contêineres como a Magia para um nome mais adequado para sua campanha, como "Rituais" ou "Habilidades".
+
+Além disso, é possível ativar a marcação automática de perícia, que orienta o sistema a marcar a perícia automaticamente caso o teste feito for um sucesso.
 
 ## Dado
 
