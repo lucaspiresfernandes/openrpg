@@ -20,7 +20,7 @@ import SheetNavbar from '../../components/SheetNavbar';
 import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
-import { ResolvedDice } from '../../utils';
+import { DiceResult, ResolvedDice } from '../../utils';
 import api from '../../utils/api';
 import { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
@@ -38,16 +38,21 @@ export default function Sheet1(
 	const [diceRoll, setDiceRoll] = useState<{
 		dices: ResolvedDice[];
 		resolverKey?: string;
+		onResult?: (result: DiceResult[]) => void;
 	}>({ dices: [] });
 
 	const [bonusDamage, setBonusDamage] = useState(
 		props.playerSpecs.find((spec) => spec.Spec.name === bonusDamageName)?.value
 	);
-	const lastRoll = useRef<{ dices: ResolvedDice[]; resolverKey?: string }>({ dices: [] });
+	const lastRoll = useRef<{
+		dices: ResolvedDice[];
+		resolverKey?: string;
+		onResult?: (result: DiceResult[]) => void;
+	}>({ dices: [] });
 
 	function onSpecChanged(name: string, value: string) {
 		if (name !== bonusDamageName) return;
-        setBonusDamage(value);
+		setBonusDamage(value);
 	}
 
 	useSocket((socket) => {
@@ -66,8 +71,12 @@ export default function Sheet1(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [socket]);
 
-	function onDiceRoll(dices: ResolvedDice[], resolverKey?: string) {
-		const roll = { dices, resolverKey };
+	function onDiceRoll(
+		dices: ResolvedDice[],
+		resolverKey?: string,
+		onResult?: (result: DiceResult[]) => void
+	) {
+		const roll = { dices, resolverKey, onResult };
 		lastRoll.current = roll;
 		setDiceRoll(roll);
 	}
@@ -152,7 +161,7 @@ export default function Sheet1(
 										props.containerConfig.find((c) => c.originalName === 'Combate')
 											?.name || 'Combate'
 									}
-                                    bonusDamage={bonusDamage}
+									bonusDamage={bonusDamage}
 								/>
 							</Row>
 							<Row>
@@ -164,6 +173,7 @@ export default function Sheet1(
 										props.containerConfig.find((c) => c.originalName === 'Perícias')
 											?.name || 'Perícias'
 									}
+									automaticMarking={props.automaticMarking}
 								/>
 							</Row>
 							<Row>
@@ -195,6 +205,7 @@ export default function Sheet1(
 				<DiceRollResultModal
 					dices={diceRoll.dices}
 					resolverKey={diceRoll.resolverKey}
+					onDiceResult={diceRoll.onResult}
 					onHide={() => setDiceRoll({ dices: [], resolverKey: undefined })}
 					onRollAgain={() => setDiceRoll(lastRoll.current)}
 				/>
@@ -232,6 +243,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 				availableSpells: [],
 				diceConfig: {} as DiceConfig,
 				containerConfig: {} as ContainerConfig,
+				automaticMarking: false,
 			},
 		};
 	}
@@ -288,7 +300,8 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 				Skill: {
 					select: { id: true, name: true, Specialization: { select: { name: true } } },
 				},
-				value: true, checked: true
+				value: true,
+				checked: true,
 			},
 		}),
 
@@ -341,6 +354,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' } }),
 		prisma.config.findUnique({ where: { name: 'container' } }),
+		prisma.config.findUnique({ where: { name: 'enable_automatic_markers' } }),
 	]);
 
 	return {
@@ -367,6 +381,7 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 			},
 			diceConfig: JSON.parse(results[16]?.value || 'null') as DiceConfig,
 			containerConfig: JSON.parse(results[17]?.value || '[]') as ContainerConfig,
+			automaticMarking: results[18]?.value === 'true' ? true : false,
 		},
 	};
 }

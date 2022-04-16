@@ -1,7 +1,13 @@
 import { createContext } from 'react';
 import { SocketIO } from '../hooks/useSocket';
-import { ResolvedDice } from '../utils';
+import { DiceResult, ResolvedDice } from '../utils';
 
-export const ErrorLogger = createContext<(err: any) => void>(() => { });
-export const ShowDiceResult = createContext<(dices: ResolvedDice[], resolverKey?: string) => void>(() => { });
+export const ErrorLogger = createContext<(err: any) => void>(() => {});
+export const ShowDiceResult = createContext<
+	(
+		dices: ResolvedDice[],
+		resolverKey?: string,
+		onResult?: (result: DiceResult[]) => void
+	) => void
+>(() => {});
 export const Socket = createContext<SocketIO | null>(null);

@@ -16,7 +16,10 @@ export type ResolvedDice = {
 
 export type DiceResult = {
 	roll: number;
-	description?: string;
+	resultType?: {
+		description: string;
+		isSuccess: boolean;
+	}
 };
 
 type ResolveDiceOptions = {

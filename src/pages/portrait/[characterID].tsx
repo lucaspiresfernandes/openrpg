@@ -150,9 +150,9 @@ export default function CharacterPortrait(props: InferGetServerSidePropsType<typ
             diceData.current = result;
             setDiceResult(result.roll);
             setDiceResultShow(true);
-            if (result.description) {
+            if (result.resultType) {
                 await sleep(750);
-                setDiceDescription(result.description);
+                setDiceDescription(result.resultType.description);
                 setDiceDescriptionShow(true);
             }
             await sleep(1500);

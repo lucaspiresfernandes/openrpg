@@ -14,7 +14,6 @@ import ApplicationHead from '../../components/ApplicationHead';
 import BottomTextInput from '../../components/BottomTextInput';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
-import useExtendedState from '../../hooks/useExtendedState';
 import useToast from '../../hooks/useToast';
 import api from '../../utils/api';
 import {
@@ -60,6 +59,7 @@ export default function Configurations(
 							<GeneralEditor
 								containerConfig={props.containerConfig}
 								adminKey={props.adminKey}
+								enableAutomaticMarking={props.automaticMarking}
 								logError={addToast}
 							/>
 						)}
@@ -285,11 +285,14 @@ function DiceEditor(props: {
 function GeneralEditor(props: {
 	containerConfig: ContainerConfig;
 	adminKey: string;
+	enableAutomaticMarking: boolean;
 	logError(err: any): void;
 }) {
+	console.log(props.enableAutomaticMarking);
 	const [names, setNames] = useState(props.containerConfig);
 	const [loading, setLoading] = useState(false);
-	const [value, setValue] = useState(props.adminKey);
+	const [adminKey, setAdminKey] = useState(props.adminKey);
+	const [automaticMarking, setAutomaticMarking] = useState(props.enableAutomaticMarking);
 
 	function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
 		const newNames = [...names];
@@ -302,7 +305,8 @@ function GeneralEditor(props: {
 		setLoading(true);
 		Promise.all([
 			api.post('/config', { name: 'container', value: names }),
-			api.post('/config', { name: 'admin_key', value }),
+			api.post('/config', { name: 'enable_automatic_markers', value: automaticMarking }),
+			api.post('/config', { name: 'admin_key', value: adminKey }),
 		])
 			.then(() => alert('Configurações gerais aplicadas com sucesso.'))
 			.catch(props.logError)
@@ -318,8 +322,17 @@ function GeneralEditor(props: {
 					</label>
 					<BottomTextInput
 						id='adminKeyField'
-						value={value}
-						onChange={(ev) => setValue(ev.currentTarget.value)}
+						value={adminKey}
+						onChange={(ev) => setAdminKey(ev.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='mb-3'>
+				<Col className='h5'>
+					<FormCheck
+						checked={automaticMarking}
+						onChange={(ev) => setAutomaticMarking(ev.target.checked)}
+						label='Ativar Marcação Automática de Perícia?'
 					/>
 				</Col>
 			</Row>
@@ -517,6 +530,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				},
 				attributes: [],
 				containerConfig: {} as ContainerConfig,
+				automaticMarking: false,
 			},
 		};
 	}
@@ -541,6 +555,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		prisma.attribute.findUnique({ where: { id: portraitConfig.side_attribute } }),
 		prisma.attribute.findMany(),
 		prisma.config.findUnique({ where: { name: 'container' }, select: { value: true } }),
+		prisma.config.findUnique({
+			where: { name: 'enable_automatic_markers' },
+			select: { value: true },
+		}),
 	]);
 
 	const containerConfigQuery =
@@ -560,6 +578,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			containerConfig: JSON.parse(
 				containerConfigQuery.value || 'null'
 			) as ContainerConfig,
+			automaticMarking: results[7]?.value === 'true' ? true : false,
 		},
 	};
 }

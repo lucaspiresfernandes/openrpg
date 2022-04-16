@@ -79,6 +79,10 @@ const databaseData = {
             value: 'false'
         },
         {
+            name: 'enable_automatic_markers',
+            value: 'true'
+        },
+        {
             name: 'dice',
             value: JSON.stringify({
                 characteristic: {

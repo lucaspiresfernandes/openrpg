@@ -31,6 +31,7 @@ type PlayerSkillContainerProps = {
 		branched: boolean;
 	};
 	title: string;
+	automaticMarking: boolean;
 };
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
@@ -145,6 +146,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 									key={skill.Skill.id}
 									skill={skill}
 									skillDice={props.skillDiceConfig}
+									automaticMarking={props.automaticMarking}
 								/>
 							);
 						return null;
@@ -168,9 +170,10 @@ type PlayerSkillFieldProps = {
 		value: number;
 		branched: boolean;
 	};
+	automaticMarking: boolean;
 };
 
-function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
+function PlayerSkillField({ skill, skillDice, automaticMarking }: PlayerSkillFieldProps) {
 	const [lastValue, value, setValue] = useExtendedState(skill.value);
 	const [checked, setChecked] = useState(skill.checked);
 	const logError = useContext(ErrorLogger);
@@ -226,7 +229,15 @@ function PlayerSkillField({ skill, skillDice }: PlayerSkillFieldProps) {
 	function rollDice() {
 		const roll = skillDice['value'];
 		const branched = skillDice['branched'];
-		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`);
+		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`, results => {
+			const result = results[0];
+			if (!automaticMarking || !result.resultType?.isSuccess || checked) return;
+			setChecked(true);
+			api.post('/sheet/player/skill', { id: skill.Skill.id, checked: true }).catch((err) => {
+				logError(err);
+				setChecked(false);
+			});
+		});
 	}
 
 	return (
