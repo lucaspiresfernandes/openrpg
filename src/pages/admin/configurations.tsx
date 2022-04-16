@@ -288,7 +288,6 @@ function GeneralEditor(props: {
 	enableAutomaticMarking: boolean;
 	logError(err: any): void;
 }) {
-	console.log(props.enableAutomaticMarking);
 	const [names, setNames] = useState(props.containerConfig);
 	const [loading, setLoading] = useState(false);
 	const [adminKey, setAdminKey] = useState(props.adminKey);
@@ -333,6 +332,7 @@ function GeneralEditor(props: {
 						checked={automaticMarking}
 						onChange={(ev) => setAutomaticMarking(ev.target.checked)}
 						label='Ativar Marcação Automática de Perícia?'
+						title='Marca a Perícia automaticamente ao tirar um Sucesso ou maior no teste.'
 					/>
 				</Col>
 			</Row>
