@@ -37,7 +37,7 @@ export default function DiceList(props: DiceListProps) {
 
             const results = _results.map(res => {
                 const roll = res.roll;
-                const description = res.description;
+                const description = res.resultType?.description;
                 if (description) return `${roll} (${description})`;
                 return roll;
             });
