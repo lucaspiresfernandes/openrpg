@@ -26,7 +26,7 @@ export default function DiceList(props: DiceListProps) {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('diceResult', (playerID, _dices, _results) => {
+        socket.on('diceResult', (playerID, _results, _dices) => {
             const playerName = props.players.find(p => p.id === playerID)?.name || 'Desconhecido';
 
             const dices = _dices.map(dice => {

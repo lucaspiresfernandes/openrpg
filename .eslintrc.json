@@ -1,10 +1,9 @@
 {
-  "extends": "next/core-web-vitals",
-  "rules": {
-    "semi": [
-      2,
-      "always"
-    ],
-    "quotes": [2, "single", "avoid-escape"]
-  }
+	"extends": "next/core-web-vitals",
+	"rules": {
+		"semi": [2, "always"],
+		"quotes": [2, "single", "avoid-escape"],
+		"unused-imports/no-unused-imports": "warn"
+	},
+	"plugins": ["unused-imports"]
 }

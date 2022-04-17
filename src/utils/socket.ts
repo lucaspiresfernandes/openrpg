@@ -58,7 +58,7 @@ export interface ServerToClientEvents {
     playerSpellChange: (id: number, spell: Spell) => void;
 
     //Dice Events
-    diceResult: (playerID: number, dices: ResolvedDice[], results: DiceResult[]) => void;
+    diceResult: (playerID: number, results: DiceResult[], dices: ResolvedDice[]) => void;
     diceRoll: () => void;
 
     //Portrait Events

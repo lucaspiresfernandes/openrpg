@@ -7,7 +7,6 @@ import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import BottomTextInput from '../BottomTextInput';
 
 type PlayerInfoFieldProps = {
 	info: Info;

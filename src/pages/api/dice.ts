@@ -85,26 +85,12 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 				});
 			})
 		);
+		
 		res.send({ results });
 
-		if (!player.admin) io?.to('admin').emit('diceResult', player.id, dices, results);
+		if (!player.admin) io?.to('admin').emit('diceResult', player.id, results, dices);
 
-		if (results.length === 1)
-			io?.to(`portrait${player.id}`).emit('diceResult', player.id, [], results);
-		else if (results.length > 1) {
-			const _results = results.reduce(
-				(prev, cur) => {
-					return { roll: prev.roll + cur.roll };
-				},
-				{ roll: 0 }
-			);
-			io?.to(`portrait${player.id}`).emit(
-				'diceResult',
-				player.id,
-				[],
-				[{ roll: _results.roll }]
-			);
-		}
+		io?.to(`portrait${player.id}`).emit('diceResult', player.id, results, []);
 	} catch (err) {
 		console.error(err);
 		res.status(400).end();

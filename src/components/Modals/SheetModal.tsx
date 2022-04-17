@@ -1,4 +1,4 @@
-import React, { FormEvent, FormEventHandler, MouseEvent, MouseEventHandler } from 'react';
+import React, { FormEvent, MouseEvent } from 'react';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -8,7 +8,7 @@ interface SheetModalProps extends ModalProps {
     children?: React.ReactElement;
     applyButton?: {
         name: string;
-        onApply(ev: MouseEvent | FormEvent | undefined): MouseEventHandler | FormEventHandler | void;
+        onApply(ev: MouseEvent | FormEvent | undefined): any;
         disabled?: boolean;
     };
     closeButton?: {

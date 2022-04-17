@@ -14,20 +14,35 @@ type DiceRollResultModalProps = {
 	dices: ResolvedDice[];
 	resolverKey?: string;
 	onRollAgain(): void;
-    onDiceResult?(results: DiceResult[]): void;
+	onDiceResult?(results: DiceResult[]): void;
 };
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
-	const [resultDices, setResultDices] = useState<DiceResult[]>([]);
-	const [resultFade, setResultFade] = useState(false);
+	const [diceResults, setDiceResults] = useState<DiceResult[]>([]);
 	const [descriptionFade, setDescriptionFade] = useState(false);
-	const [loadingDice, setLoadingDice] = useState(false);
+
 	const logError = useContext(ErrorLogger);
+	
 	const rollAgain = useRef(false);
+	const descriptionDelayTimeout = useRef<NodeJS.Timeout | null>(null);
+	
+	const result = useMemo(() => {
+		if (diceResults.length === 1) return diceResults[0];
+		else if (diceResults.length > 1) {
+			const dices = diceResults.map((d) => d.roll);
+			const sum = dices.reduce((a, b) => a + b, 0);
+			return {
+				roll: sum,
+				resultType: {
+					description: dices.join(' + '),
+					isSuccess: false,
+				},
+			};
+		}
+	}, [diceResults]);
 
 	useEffect(() => {
 		if (props.dices.length === 0) return;
-		setLoadingDice(true);
 		api
 			.post(
 				'/dice',
@@ -35,39 +50,30 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 				{ timeout: 5000 }
 			)
 			.then((res) => {
-                const results: DiceResult[] = res.data.results;
-				setResultDices(results);
-				setResultFade(true);
-                if (props.onDiceResult) props.onDiceResult(results);
-				setTimeout(() => setDescriptionFade(true), 750);
+				const results: DiceResult[] = res.data.results;
+				setDiceResults(results);
+				if (props.onDiceResult) props.onDiceResult(results);
 			})
-			.catch(logError)
-			.finally(() => setLoadingDice(false));
+			.catch(logError);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.dices]);
 
+	useEffect(() => {
+		if (result && (diceResults.length > 1 || diceResults[0].resultType))
+		descriptionDelayTimeout.current = setTimeout(() => setDescriptionFade(true), 750);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [diceResults]);
+
 	function reset() {
-		setResultDices([]);
-		setResultFade(false);
+		setDiceResults([]);
 		setDescriptionFade(false);
+		if (descriptionDelayTimeout.current) {
+			clearTimeout(descriptionDelayTimeout.current);
+			descriptionDelayTimeout.current = null;
+		}
 		if (rollAgain.current) props.onRollAgain();
 		rollAgain.current = false;
 	}
-
-	const result = useMemo(() => {
-        if (resultDices.length === 1) return resultDices[0];
-        else if (resultDices.length > 1) {
-            const dices = resultDices.map((d) => d.roll);
-            const sum = dices.reduce((a, b) => a + b, 0);
-            return {
-                roll: sum,
-                resultType: {
-                    description: dices.join(' + '),
-                    isSuccess: false
-                }
-            };
-        }
-    }, [resultDices]);
 
 	return (
 		<SheetModal
@@ -75,20 +81,18 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 			onExited={reset}
 			title='Resultado da Rolagem'
 			onHide={props.onHide}
-			closeButton={{ disabled: loadingDice }}
-			backdrop={loadingDice ? 'static' : true}
-			keyboard={loadingDice ? false : true}
+			closeButton={{ disabled: !result }}
+			backdrop={!result ? 'static' : true}
+			keyboard={!result ? false : true}
 			centered
 			applyButton={{
 				name: 'Rolar Novamente',
-				onApply: () => {
-					rollAgain.current = true;
-				},
-				disabled: loadingDice,
+				onApply: () => (rollAgain.current = true),
+				disabled: !result,
 			}}
 			bodyStyle={{ minHeight: 120, display: 'flex', alignItems: 'center' }}>
 			<Container fluid className='text-center'>
-				{resultDices.length === 0 && (
+				{!result && (
 					<Row>
 						<Col>
 							<Image src='/loading.svg' alt='Loading...' fluid />
@@ -96,14 +100,18 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 					</Row>
 				)}
 				<Row>
-					<Fade in={resultFade}>
-						<Col className={result?.roll ? 'h1 m-0' : ''}>{result?.roll}</Col>
-					</Fade>
+					{result && (
+						<Fade in appear>
+							<Col className={result.roll ? 'h1 m-0' : ''}>{result.roll}</Col>
+						</Fade>
+					)}
 				</Row>
 				<Row>
-					<Fade in={descriptionFade}>
-						<Col>{result?.resultType?.description}</Col>
-					</Fade>
+					{result && (
+						<Fade in={descriptionFade}>
+							<Col>{result.resultType?.description}</Col>
+						</Fade>
+					)}
 				</Row>
 			</Container>
 		</SheetModal>

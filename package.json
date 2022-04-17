@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "eslint": "8.9.0",
-    "eslint-config-next": "12.1.0"
+    "eslint-config-next": "12.1.0",
+    "eslint-plugin-unused-imports": "^2.0.0"
   }
 }
