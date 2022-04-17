@@ -79,13 +79,8 @@ export default function PortraitDice(props: {
 			if (playerId !== props.playerId) return;
 			if (results.length === 1) onDiceResult(results[0]);
 			else if (results.length > 1) {
-				const rolls = results.map((result) => result.roll);
 				onDiceResult({
-					roll: rolls.reduce((prev, cur) => prev + cur, 0),
-					resultType: {
-						description: rolls.join(' + '),
-						isSuccess: true,
-					},
+					roll: results.reduce((prev, cur) => prev + cur.roll, 0),
 				});
 			}
 		});
