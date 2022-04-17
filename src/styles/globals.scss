@@ -189,7 +189,8 @@ $proggress-bar-height: 40px;
 	}
 
 	&:disabled {
-		color: darken($text-color, 20%);
+		background-color: $background-color;
+		color: rgba($text-color, 0.7);
 	}
 
 	&::-webkit-input-placeholder {

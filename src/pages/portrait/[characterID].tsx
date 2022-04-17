@@ -72,6 +72,7 @@ export default function CharacterPortrait(
 			/>
 			<PortraitDice
 				playerId={props.playerId}
+				color={props.diceColor}
 				socket={socket}
 				showDice={showDice}
                 onShowDice={() => setShowDice(true)}
@@ -83,6 +84,7 @@ export default function CharacterPortrait(
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 	const player_id = parseInt(ctx.query.characterID as string);
+	const diceColor = ctx.query.dicecolor as string || 'ddaf0f';
 
 	const portraitConfig = JSON.parse(
 		(await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || 'null'
@@ -127,6 +129,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				sideAttribute: null,
 				playerName: { value: 'Desconhecido', info_id: 0 },
 				notFound: true,
+				diceColor
 			},
 		};
 
@@ -151,6 +154,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 			sideAttribute,
 			attributeStatus: results[1].PlayerAttributeStatus,
 			playerName: results[1].PlayerInfo[0],
+			diceColor
 		},
 	};
 }

@@ -7,6 +7,7 @@ import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
 import AvatarField from './AvatarField';
+import PlayerPortraitButton from './PlayerPortraitButton';
 
 type PlayerItem = {
     Item: {
@@ -225,14 +226,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
                                     </Button>
                                 </Col>
                                 <Col>
-                                    <Button size='sm' variant='secondary' onClick={async () => {
-                                        const url = `${window.location.host}/portrait/${player.id}`;
-                                        if ('clipboard' in navigator) await navigator.clipboard.writeText(url);
-                                        else document.execCommand('copy', true, url);
-                                        alert('Link copiado para sua área de transferência.');
-                                    }}>
-                                        Retrato
-                                    </Button>
+                                    <PlayerPortraitButton playerId={player.id}/>
                                 </Col>
                             </Row>
                             <AvatarField playerId={player.id}

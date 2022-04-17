@@ -3,6 +3,7 @@ import { SocketIO } from '../../hooks/useSocket';
 import { DiceResult, sleep } from '../../utils';
 import Fade from 'react-bootstrap/Fade';
 import styles from '../../styles/modules/Portrait.module.scss';
+import { getAttributeStyle } from '../../pages/portrait/[characterID]';
 
 export default function PortraitDice(props: {
 	socket: SocketIO | null;
@@ -10,6 +11,7 @@ export default function PortraitDice(props: {
 	showDice: boolean;
 	onShowDice(): void;
 	onHideDice(): void;
+	color: string;
 }) {
 	const diceQueue = useRef<DiceResult[]>([]);
 	const diceData = useRef<DiceResult>();
@@ -17,11 +19,28 @@ export default function PortraitDice(props: {
 	const showDiceRef = useRef(props.showDice);
 
 	const [diceResult, setDiceResult] = useState<number | null>(null);
+	const diceResultRef = useRef<HTMLDivElement | null>(null);
 	const lastDiceResult = useRef(0);
 	const [diceDescription, setDiceDescription] = useState<string | null>(null);
+	const diceDescriptionRef = useRef<HTMLDivElement | null>(null);
 	const lastDiceDescription = useRef('');
 
 	const diceVideo = useRef<HTMLVideoElement>(null);
+
+	useEffect(() => {
+		const style = getAttributeStyle(props.color);
+
+		if (diceResultRef.current) {
+			diceResultRef.current.style.color = style.color;
+			diceResultRef.current.style.textShadow = style.textShadow;
+		}
+
+		if (diceDescriptionRef.current) {
+			diceDescriptionRef.current.style.color = style.color;
+			diceDescriptionRef.current.style.textShadow = style.textShadow;
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		const socket = props.socket;
@@ -102,10 +121,12 @@ export default function PortraitDice(props: {
 				<source src='/dice_animation.webm' />
 			</video>
 			<Fade in={diceResult !== null}>
-				<div className={styles.result}>{diceResult || lastDiceResult.current}</div>
+				<div className={styles.result} ref={diceResultRef}>
+					{diceResult || lastDiceResult.current}
+				</div>
 			</Fade>
 			<Fade in={diceDescription !== null}>
-				<div className={styles.description}>
+				<div className={styles.description} ref={diceDescriptionRef}>
 					{diceDescription || lastDiceDescription.current}
 				</div>
 			</Fade>
