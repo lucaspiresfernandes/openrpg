@@ -1,13 +1,42 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useState } from 'react';
-import PortraitAvatar from '../../components/Portrait/PortraitAvatar';
-import PortraitDice from '../../components/Portrait/PortraitDice';
+import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
+import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
-import PortraitSideAttribute from '../../components/Portrait/PortraitSideAttribute';
+import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { Environment, PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
+
+export type PortraitPlayerName = {
+	value: string;
+	info_id: number;
+};
+
+export type PortraitAttributeStatus = {
+	value: boolean;
+	attribute_status_id: number;
+}[];
+
+export type PortraitAttributes = {
+	value: number;
+	Attribute: {
+		id: number;
+		name: string;
+		color: string;
+	};
+	maxValue: number;
+}[];
+
+export type PortraitSideAttribute = {
+	value: number;
+	Attribute: {
+		id: number;
+		name: string;
+		color: string;
+	};
+} | null;
 
 export function getAttributeStyle(color: string) {
 	return {
@@ -33,7 +62,6 @@ export default function CharacterPortrait(
 	props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
 	const [socket, setSocket] = useState<SocketIO | null>(null);
-	const [showDice, setShowDice] = useState(false);
 
 	useSocket((socket) => {
 		setSocket(socket);
@@ -50,18 +78,14 @@ export default function CharacterPortrait(
 
 	return (
 		<>
-			<div className={`${showDice ? 'show ' : ''}shadow`}>
-				<PortraitAvatar
-					playerId={props.playerId}
-					attributeStatus={props.attributeStatus}
-					socket={socket}
-				/>
-				<PortraitSideAttribute
-					sideAttribute={props.sideAttribute}
-					orientation={props.orientation}
-					socket={socket}
-				/>
-			</div>
+			<PortraitDiceRollContainer
+				playerId={props.playerId}
+				attributeStatus={props.attributeStatus}
+				sideAttribute={props.sideAttribute}
+				orientation={props.orientation}
+				diceColor={props.diceColor}
+				socket={socket}
+			/>
 			<PortraitEnvironmentalContainer
 				attributes={props.attributes}
 				environment={props.environment}
@@ -70,13 +94,41 @@ export default function CharacterPortrait(
 				playerName={props.playerName}
 				socket={socket}
 			/>
-			<PortraitDice
+		</>
+	);
+}
+
+function PortraitDiceRollContainer(props: {
+	playerId: number;
+	attributeStatus: PortraitAttributeStatus;
+	sideAttribute: PortraitSideAttribute;
+	orientation: PortraitOrientation;
+	diceColor: string;
+	socket: SocketIO | null;
+}) {
+	const [showDice, setShowDice] = useState(false);
+
+	return (
+		<>
+			<div className={`${showDice ? 'show ' : ''}shadow`}>
+				<PortraitAvatarContainer
+					playerId={props.playerId}
+					attributeStatus={props.attributeStatus}
+					socket={props.socket}
+				/>
+				<PortraitSideAttributeContainer
+					sideAttribute={props.sideAttribute}
+					orientation={props.orientation}
+					socket={props.socket}
+				/>
+			</div>
+			<PortraitDiceContainer
 				playerId={props.playerId}
 				color={props.diceColor}
-				socket={socket}
+				socket={props.socket}
 				showDice={showDice}
-                onShowDice={() => setShowDice(true)}
-                onHideDice={() => setShowDice(false)}
+				onShowDice={() => setShowDice(true)}
+				onHideDice={() => setShowDice(false)}
 			/>
 		</>
 	);
@@ -84,7 +136,7 @@ export default function CharacterPortrait(
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 	const player_id = parseInt(ctx.query.characterID as string);
-	const diceColor = ctx.query.dicecolor as string || 'ddaf0f';
+	const diceColor = (ctx.query.dicecolor as string) || 'ddaf0f';
 
 	const portraitConfig = JSON.parse(
 		(await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || 'null'
@@ -129,7 +181,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				sideAttribute: null,
 				playerName: { value: 'Desconhecido', info_id: 0 },
 				notFound: true,
-				diceColor
+				diceColor,
 			},
 		};
 
@@ -154,7 +206,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 			sideAttribute,
 			attributeStatus: results[1].PlayerAttributeStatus,
 			playerName: results[1].PlayerInfo[0],
-			diceColor
+			diceColor,
 		},
 	};
 }

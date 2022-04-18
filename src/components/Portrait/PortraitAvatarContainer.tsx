@@ -3,12 +3,10 @@ import { SocketIO } from '../../hooks/useSocket';
 import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
 import styles from '../../styles/modules/Portrait.module.scss';
+import { PortraitAttributeStatus } from '../../pages/portrait/[characterID]';
 
 export default function PortraitAvatar(props: {
-	attributeStatus: {
-		value: boolean;
-		attribute_status_id: number;
-	}[];
+	attributeStatus: PortraitAttributeStatus;
 	playerId: number;
 	socket: SocketIO | null;
 }) {

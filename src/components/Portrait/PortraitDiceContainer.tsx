@@ -5,7 +5,7 @@ import Fade from 'react-bootstrap/Fade';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { getAttributeStyle } from '../../pages/portrait/[characterID]';
 
-export default function PortraitDice(props: {
+export default function PortraitDiceContainer(props: {
 	socket: SocketIO | null;
 	playerId: number;
 	showDice: boolean;

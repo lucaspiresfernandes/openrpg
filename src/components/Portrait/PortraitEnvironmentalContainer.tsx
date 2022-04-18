@@ -3,25 +3,14 @@ import { SocketIO } from '../../hooks/useSocket';
 import Fade from 'react-bootstrap/Fade';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { Environment, PortraitOrientation } from '../../utils/config';
-import { getAttributeStyle, getOrientationStyle } from '../../pages/portrait/[characterID]';
+import { getAttributeStyle, getOrientationStyle, PortraitAttributes, PortraitPlayerName } from '../../pages/portrait/[characterID]';
 
 export default function PortraitEnvironmentalContainer(props: {
 	socket: SocketIO | null;
 	environment: Environment;
 	orientation: PortraitOrientation;
-	attributes: {
-		value: number;
-		Attribute: {
-			id: number;
-			name: string;
-			color: string;
-		};
-		maxValue: number;
-	}[];
-	playerName: {
-		value: string;
-		info_id: number;
-	};
+	attributes: PortraitAttributes;
+	playerName: PortraitPlayerName;
 	playerId: number;
 }) {
 	const [environment, setEnvironment] = useState(props.environment);
@@ -43,14 +32,14 @@ export default function PortraitEnvironmentalContainer(props: {
 
 	return (
 		<>
-			<PortraitAttributes
+			<PortraitAttributesContainer
 				environment={environment}
 				orientation={props.orientation}
 				attributes={props.attributes}
 				playerId={props.playerId}
 				socket={props.socket}
 			/>
-			<PortraitName
+			<PortraitNameContainer
 				environment={environment}
 				orientation={props.orientation}
 				playerName={props.playerName}
@@ -61,19 +50,11 @@ export default function PortraitEnvironmentalContainer(props: {
 	);
 }
 
-function PortraitAttributes(props: {
+function PortraitAttributesContainer(props: {
 	socket: SocketIO | null;
 	environment: Environment;
 	orientation: PortraitOrientation;
-	attributes: {
-		value: number;
-		Attribute: {
-			id: number;
-			name: string;
-			color: string;
-		};
-		maxValue: number;
-	}[];
+	attributes: PortraitAttributes;
 	playerId: number;
 }) {
 	const [attributes, setAttributes] = useState(props.attributes);
@@ -120,14 +101,11 @@ function PortraitAttributes(props: {
 	);
 }
 
-function PortraitName(props: {
+function PortraitNameContainer(props: {
 	socket: SocketIO | null;
 	environment: Environment;
 	orientation: PortraitOrientation;
-	playerName: {
-		value: string;
-		info_id: number;
-	};
+	playerName: PortraitPlayerName;
 	playerId: number;
 }) {
 	const [playerName, setPlayerName] = useState(props.playerName.value);
