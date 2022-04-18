@@ -5,85 +5,78 @@ import Row from 'react-bootstrap/Row';
 import { Socket } from '../../contexts';
 import DataContainer from '../DataContainer';
 
-type DiceListProps = {
-    players: PlayerName[]
-}
+export default function DiceList(props: { players: { id: number; name: string }[] }) {
+	const [values, setValues] = useState<
+		{ name: string; dices: string; results: string }[]
+	>([]);
+	const wrapper = useRef<HTMLDivElement | null>(null);
+	const socket = useContext(Socket);
 
-export type PlayerName = {
-    id: number;
-    name: string;
-}
+	useEffect(() => {
+		if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });
+	}, [values]);
 
-export default function DiceList(props: DiceListProps) {
-    const [values, setValues] = useState<{ name: string, dices: string, results: string }[]>([]);
-    const wrapper = useRef<HTMLDivElement | null>(null);
-    const socket = useContext(Socket);
+	useEffect(() => {
+		if (!socket) return;
 
-    useEffect(() => {
-        if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });
-    }, [values]);
+		socket.on('diceResult', (playerID, _results, _dices) => {
+			const playerName =
+				props.players.find((p) => p.id === playerID)?.name || 'Desconhecido';
 
-    useEffect(() => {
-        if (!socket) return;
+			const dices = _dices.map((dice) => {
+				const num = dice.num;
+				const roll = dice.roll;
+				return num > 0 ? `${num}d${roll}` : roll;
+			});
 
-        socket.on('diceResult', (playerID, _results, _dices) => {
-            const playerName = props.players.find(p => p.id === playerID)?.name || 'Desconhecido';
+			const results = _results.map((res) => {
+				const roll = res.roll;
+				const description = res.resultType?.description;
+				if (description) return `${roll} (${description})`;
+				return roll;
+			});
 
-            const dices = _dices.map(dice => {
-                const num = dice.num;
-                const roll = dice.roll;
-                return num > 0 ? `${num}d${roll}` : roll;
-            });
+			const message = {
+				name: playerName,
+				dices: dices.join(', '),
+				results: results.join(', '),
+			};
 
-            const results = _results.map(res => {
-                const roll = res.roll;
-                const description = res.resultType?.description;
-                if (description) return `${roll} (${description})`;
-                return roll;
-            });
+			setValues((values) => {
+				if (values.length > 10) {
+					const newValues = [...values];
+					newValues.unshift(message);
+					newValues.splice(newValues.length - 1, 1);
+					return newValues;
+				}
+				return [message, ...values];
+			});
+		});
 
-            const message = {
-                name: playerName,
-                dices: dices.join(', '),
-                results: results.join(', ')
-            };
+		return () => {
+			socket.off('diceResult');
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [socket]);
 
-            setValues(values => {
-                if (values.length > 10) {
-                    const newValues = [...values];
-                    newValues.unshift(message);
-                    newValues.splice(newValues.length - 1, 1);
-                    return newValues;
-                }
-                return [message, ...values];
-            });
-        });
-
-        return () => {
-            socket.off('diceResult');
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [socket]);
-
-    return (
-        <DataContainer xs={12} lg title='Histórico'>
-            <Row>
-                <Col>
-                    <div className='w-100 wrapper' ref={wrapper}>
-                        <ListGroup variant='flush' className='text-center'>
-                            {values.map((val, index) =>
-                                <ListGroup.Item key={index}>
-                                    <span style={{ color: 'lightgreen' }}>{val.name} </span>
-                                    rolou
-                                    <span style={{ color: 'lightgreen' }}> {val.dices} </span>
-                                    e tirou
-                                    <span style={{ color: 'lightgreen' }}> {val.results}</span>.
-                                </ListGroup.Item>
-                            )}
-                        </ListGroup>
-                    </div>
-                </Col>
-            </Row>
-        </DataContainer>
-    );
+	return (
+		<DataContainer xs={12} lg title='Histórico'>
+			<Row>
+				<Col>
+					<div className='w-100 wrapper' ref={wrapper}>
+						<ListGroup variant='flush' className='text-center'>
+							{values.map((val, index) => (
+								<ListGroup.Item key={index}>
+									<span style={{ color: 'lightgreen' }}>{val.name} </span>
+									rolou
+									<span style={{ color: 'lightgreen' }}> {val.dices} </span>e tirou
+									<span style={{ color: 'lightgreen' }}> {val.results}</span>.
+								</ListGroup.Item>
+							))}
+						</ListGroup>
+					</div>
+				</Col>
+			</Row>
+		</DataContainer>
+	);
 }

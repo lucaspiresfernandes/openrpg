@@ -10,7 +10,6 @@ import { SortableContainer, SortableElement, SortEnd } from 'react-sortable-hoc'
 import { clamp } from '../../utils';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
-import { PlayerName } from './DiceList';
 
 let __id = 0;
 function getId() {
@@ -65,7 +64,9 @@ const SortableItem = SortableElement((props: SortableElementProps) => {
 	);
 });
 
-export default function CombatContainer({ players }: { players: PlayerName[] }) {
+export default function CombatContainer(props: {
+	players: { id: number; name: string }[];
+}) {
 	const [round, setRound] = useState(1);
 	const [entities, setEntities] = useState<Entity[]>([]);
 	const [pointer, setPointer] = useState(0);
@@ -128,7 +129,7 @@ export default function CombatContainer({ players }: { players: PlayerName[] }) 
 
 	const dropdown = (
 		<>
-			{players.map((pl) => {
+			{props.players.map((pl) => {
 				if (entities.find((e) => e.name === pl.name)) return null;
 				return (
 					<Dropdown.Item
