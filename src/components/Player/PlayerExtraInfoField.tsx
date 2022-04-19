@@ -17,7 +17,7 @@ export default function PlayerExtraInfoField(props: {
 
 	const logError = useContext(ErrorLogger);
 
-	async function onValueBlur() {
+	function onValueBlur() {
 		if (lastValue === value) return;
 		setValue(value);
 		api

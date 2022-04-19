@@ -41,7 +41,7 @@ export default function Sheet1(
 		onResult?: (result: DiceResult[]) => void;
 	}>({ dices: [] });
 
-	const [bonusDamage, setBonusDamage] = useState(
+	const bonusDamage = useRef(
 		props.playerSpecs.find((spec) => spec.Spec.name === bonusDamageName)?.value
 	);
 	const lastRoll = useRef<{
@@ -52,7 +52,7 @@ export default function Sheet1(
 
 	function onSpecChanged(name: string, value: string) {
 		if (name !== bonusDamageName) return;
-		setBonusDamage(value);
+		bonusDamage.current = value;
 	}
 
 	useSocket((socket) => {

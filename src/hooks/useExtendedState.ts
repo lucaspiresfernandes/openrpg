@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-export default function useExtendedState<T>(initialState: T): [T, T, (newValue: T) => void] {
+export default function useExtendedState<T>(initialState: T): [T, T, Dispatch<SetStateAction<T>>] {
     const [value, setValue] = useState<T>(initialState);
     const [lastValue, setLastValue] = useState<T>(initialState);
 
-    function setValueInternal(newValue: T) {
+    function setValueInternal(newValue: SetStateAction<T>) {
         setLastValue(value);
         setValue(newValue);
     }

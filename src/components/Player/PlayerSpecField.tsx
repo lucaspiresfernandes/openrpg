@@ -18,7 +18,7 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
 	const logError = useContext(ErrorLogger);
 	const specID = playerSpec.Spec.id;
 
-	async function onValueBlur() {
+	function onValueBlur() {
 		if (lastValue === value) return;
 		if (playerSpec.onSpecChanged) playerSpec.onSpecChanged(playerSpec.Spec.name, value);
 		setValue(value);

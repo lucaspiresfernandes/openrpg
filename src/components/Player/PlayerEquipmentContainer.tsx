@@ -1,5 +1,5 @@
 import { Equipment } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
@@ -29,7 +29,7 @@ type PlayerEquipmentContainerProps = {
 	}[];
 	availableEquipments: Equipment[];
 	title: string;
-	bonusDamage?: string;
+	bonusDamage: MutableRefObject<string | undefined>;
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
@@ -195,7 +195,7 @@ type PlayerEquipmentFieldProps = {
 		type: string;
 	};
 	onDelete(id: number): void;
-	bonusDamage?: string;
+	bonusDamage: MutableRefObject<string | undefined>;
 };
 
 function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
@@ -225,7 +225,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	function diceRoll() {
 		if (props.equipment.ammo && currentAmmo === 0)
 			return alert('Você não tem munição suficiente.');
-		const aux = resolveDices(props.equipment.damage, { bonusDamage: props.bonusDamage });
+		const aux = resolveDices(props.equipment.damage, { bonusDamage: props.bonusDamage.current });
 		if (!aux) return;
 		showDiceRollResult(aux);
 		const ammo = currentAmmo - 1;

@@ -13,46 +13,42 @@ type PlayerInfoFieldProps = {
 	value: string;
 };
 
-export default function PlayerInfoField(playerInfo: PlayerInfoFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(playerInfo.value);
-	const [isDefined, setDefined] = useState(playerInfo.value.length > 0);
+export default function PlayerInfoField(props: PlayerInfoFieldProps) {
+	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [isDefined, setDefined] = useState(props.value.length > 0);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const firstUpdate = useRef(true);
+	const componentDidMount = useRef(false);
 
 	const logError = useContext(ErrorLogger);
-	const infoID = playerInfo.info.id;
 
 	useEffect(() => {
-		if (firstUpdate.current) {
-			firstUpdate.current = false;
+		if (componentDidMount.current) {
+			if (!isDefined && inputRef.current) inputRef.current.focus();
 			return;
 		}
-		if (!isDefined && inputRef.current) inputRef.current.focus();
+		componentDidMount.current = true;
 	}, [isDefined]);
 
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
 		if (lastValue === value) return;
 		setValue(value);
-		api.post('/sheet/player/info', { id: infoID, value }).catch(logError);
+		api.post('/sheet/player/info', { id: props.info.id, value }).catch(logError);
 	}
 
 	return (
 		<Row className='mb-4'>
 			<Col className='mx-2'>
 				<Row>
-					<label className='h5' htmlFor={`info${infoID}`}>
-						{playerInfo.info.name}
+					<label className='h5' htmlFor={`info${props.info.id}`}>
+						{props.info.name}
 					</label>
 					{isDefined ? (
-						<>
-							<br />
-							<label onDoubleClick={() => setDefined(false)}>{value}</label>
-						</>
+						<label onDoubleClick={() => setDefined(false)}>{value}</label>
 					) : (
 						<input
 							className='theme-element bottom-text'
-							id={`info${infoID}`}
+							id={`info${props.info.id}`}
 							autoComplete='off'
 							value={value}
 							onChange={(ev) => setValue(ev.currentTarget.value)}
