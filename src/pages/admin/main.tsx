@@ -39,6 +39,15 @@ export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>
 		};
 	});
 
+	if (!socket)
+		return (
+			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
+				<Col>
+					<h1>Carregando Painel...</h1>
+				</Col>
+			</Row>
+		);
+
 	return (
 		<>
 			<ApplicationHead title='Painel do Mestre' />

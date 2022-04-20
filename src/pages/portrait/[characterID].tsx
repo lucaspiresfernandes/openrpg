@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
 import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
@@ -75,6 +76,15 @@ export default function CharacterPortrait(
 	}, []);
 
 	if (props.notFound) return <h1>Personagem não existe.</h1>;
+
+	if (!socket)
+		return (
+			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
+				<Col>
+					<h1>Carregando Retrato...</h1>
+				</Col>
+			</Row>
+		);
 
 	return (
 		<>

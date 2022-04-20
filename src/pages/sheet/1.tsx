@@ -35,6 +35,9 @@ export default function Sheet1(
 
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
+	//TODO: Find a way to bring this diceRoll state down in the hierarchy. diceRoll state is
+	//only needed for PlayerAttributeContainer, PlayerCharacteristicField,
+	//PlayerEquipmentContainer and PlayerSkillContainer.
 	const [diceRoll, setDiceRoll] = useState<{
 		dices: ResolvedDice[];
 		resolverKey?: string;
@@ -80,6 +83,15 @@ export default function Sheet1(
 		lastRoll.current = roll;
 		setDiceRoll(roll);
 	}
+
+	if (!socket)
+		return (
+			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
+				<Col>
+					<h1>Carregando Ficha...</h1>
+				</Col>
+			</Row>
+		);
 
 	return (
 		<>
