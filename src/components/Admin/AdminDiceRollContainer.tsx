@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
-import { ResolvedDice } from '../../utils';
+import { ResolvedDice } from '../../utils/dice';
 import DataContainer from '../DataContainer';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';

@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -17,11 +17,12 @@ import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationFiel
 import { ErrorLogger, Socket } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
+import { InferSSRProps } from '../../utils';
 import { Environment } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
-export default function Admin1(props: InferGetServerSidePropsType<typeof getSSP>) {
+export default function Admin1(props: InferSSRProps<typeof getSSP>) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
@@ -93,15 +94,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				destination: '/',
 				permanent: false,
 			},
-			props: {
-				environment: 'idle' as Environment,
-				players: [],
-				notes: null,
-			},
 		};
 	}
 
-	const results = await Promise.all([
+	const results = await prisma.$transaction([
 		prisma.config.findUnique({ where: { name: 'environment' } }),
 		prisma.player.findMany({
 			where: { role: 'PLAYER' },
@@ -130,7 +126,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		props: {
 			environment: (results[0]?.value || 'idle') as Environment,
 			players: results[1],
-			notes: results[2],
+			notes: results[2] || { value: '' },
 		},
 	};
 }

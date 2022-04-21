@@ -12,14 +12,15 @@ import useToast from '../hooks/useToast';
 import styles from '../styles/modules/Home.module.scss';
 import Router from 'next/router';
 import WelcomePage from '../components/Admin/WelcomePage';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import prisma from '../utils/database';
 import { sessionSSR } from '../utils/session';
+import { InferSSRProps } from '../utils';
 
 export default function Home({
 	init,
 	error,
-}: InferGetServerSidePropsType<typeof getSSP>) {
+}: InferSSRProps<typeof getSSP>) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -144,20 +145,14 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				redirect: {
 					destination: '/admin/main',
 					permanent: false,
-				},
-				props: {
-					init: false,
-				},
+				}
 			};
 		}
 		return {
 			redirect: {
 				destination: '/sheet/1',
 				permanent: false,
-			},
-			props: {
-				init: false,
-			},
+			}
 		};
 	}
 

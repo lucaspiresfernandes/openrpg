@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { SocketIO } from '../../hooks/useSocket';
-import { DiceResult, sleep } from '../../utils';
 import Fade from 'react-bootstrap/Fade';
+import { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
+import { sleep } from '../../utils';
+import { DiceResult } from '../../utils/dice';
 import { getAttributeStyle } from '../../utils/style';
 
 export default function PortraitDiceContainer(props: {
@@ -39,7 +40,7 @@ export default function PortraitDiceContainer(props: {
 			diceDescriptionRef.current.style.color = style.color;
 			diceDescriptionRef.current.style.textShadow = style.textShadow;
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {

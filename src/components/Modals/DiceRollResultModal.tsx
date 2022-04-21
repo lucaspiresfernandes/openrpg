@@ -5,7 +5,7 @@ import Image from 'react-bootstrap/Image';
 import Fade from 'react-bootstrap/Fade';
 import SheetModal from './SheetModal';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { DiceResult, ResolvedDice } from '../../utils';
+import { DiceResult, ResolvedDice } from '../../utils/dice';
 import api from '../../utils/api';
 import { ErrorLogger } from '../../contexts';
 

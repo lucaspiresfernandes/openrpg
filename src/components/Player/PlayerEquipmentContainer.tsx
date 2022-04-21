@@ -12,7 +12,7 @@ import AddDataModal from '../Modals/AddDataModal';
 import useExtendedState from '../../hooks/useExtendedState';
 import { BsTrash } from 'react-icons/bs';
 import BottomTextInput from '../BottomTextInput';
-import { resolveDices } from '../../utils';
+import { resolveDices } from '../../utils/dice';
 
 type PlayerEquipmentContainerProps = {
 	playerEquipments: {

@@ -102,7 +102,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 		(await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || 'null'
 	) as PortraitConfig;
 
-	const results = await Promise.all([
+	const results = await prisma.$transaction([
 		prisma.config.findUnique({ where: { name: 'environment' } }),
 		prisma.player.findUnique({
 			where: { id: player_id },

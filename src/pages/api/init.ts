@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (config && config.value === 'true') return res.status(400).end();
 
-    await Promise.all([
+    await prisma.$transaction([
         prisma.config.createMany({ data: databaseData.config }),
         prisma.info.createMany({ data: databaseData.info }),
         prisma.extraInfo.createMany({ data: databaseData.extraInfo }),
@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         prisma.spell.createMany({ data: databaseData.spell }),
     ]);
 
-    await Promise.all([
+    await prisma.$transaction([
         prisma.attributeStatus.createMany({ data: databaseData.attribute_status }),
         prisma.skill.createMany({ data: databaseData.skill }),
     ]);

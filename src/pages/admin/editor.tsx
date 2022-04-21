@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -20,8 +20,9 @@ import useToast from '../../hooks/useToast';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 import { ContainerConfig } from '../../utils/config';
+import { InferSSRProps } from '../../utils';
 
-export default function Admin2(props: InferGetServerSidePropsType<typeof getSSP>) {
+export default function Admin2(props: InferSSRProps<typeof getSSP>) {
     const [toasts, addToast] = useToast();
 
     return (
@@ -74,27 +75,11 @@ async function getSSP(ctx: GetServerSidePropsContext) {
             redirect: {
                 destination: '/',
                 permanent: false
-            },
-            props: {
-                players: [],
-                info: [],
-                extraInfo: [],
-                attribute: [],
-                attributeStatus: [],
-                spec: [],
-                characteristic: [],
-                equipment: [],
-                skill: [],
-                item: [],
-                specialization: [],
-                spell: [],
-                currency: [],
-                containerConfig: [] as ContainerConfig
             }
         };
     }
 
-    const results = await Promise.all([
+    const results = await prisma.$transaction([
         prisma.player.findMany({ where: { role: 'PLAYER' } }),
         prisma.info.findMany(),
         prisma.extraInfo.findMany(),

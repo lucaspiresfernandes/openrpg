@@ -1,6 +1,6 @@
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
-import { DiceResult, ResolvedDice } from '../../utils';
+import { DiceResult, ResolvedDice } from '../../utils/dice';
 import prisma from '../../utils/database';
 import { sessionAPI } from '../../utils/session';
 import { NextApiResponseServerIO } from '../../utils/socket';

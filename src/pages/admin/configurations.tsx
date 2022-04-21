@@ -1,5 +1,5 @@
 import { Attribute } from '@prisma/client';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import { ChangeEvent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -15,6 +15,7 @@ import BottomTextInput from '../../components/BottomTextInput';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
+import { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
 import {
 	ContainerConfig,
@@ -27,7 +28,7 @@ import { sessionSSR } from '../../utils/session';
 import { containerConfigInsertData } from '../api/init';
 
 export default function Configurations(
-	props: InferGetServerSidePropsType<typeof getSSP>
+	props: InferSSRProps<typeof getSSP>
 ) {
 	const [toasts, addToast] = useToast();
 	const [index, setIndex] = useState(0);
@@ -513,25 +514,13 @@ function PortraitEditor(props: PortraitContainerProps) {
 
 async function getSSP(ctx: GetServerSidePropsContext) {
 	const player = ctx.req.session.player;
+
 	if (!player || !player.admin) {
 		return {
 			redirect: {
 				destination: '/',
 				permanent: false,
-			},
-			props: {
-				adminKey: '',
-				enableSuccessTypes: false,
-				dice: {} as DiceConfig,
-				portrait: {
-					attributes: [] as Attribute[],
-					side_attribute: null,
-					orientation: 'center' as PortraitOrientation,
-				},
-				attributes: [],
-				containerConfig: {} as ContainerConfig,
-				automaticMarking: false,
-			},
+			}
 		};
 	}
 
@@ -544,7 +533,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		)?.value || 'null'
 	) as PortraitConfig;
 
-	const results = await Promise.all([
+	const results = await prisma.$transaction([
 		prisma.config.findUnique({ where: { name: 'admin_key' }, select: { value: true } }),
 		prisma.config.findUnique({
 			where: { name: 'enable_success_types' },

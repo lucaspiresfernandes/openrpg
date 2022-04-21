@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -20,17 +20,17 @@ import SheetNavbar from '../../components/SheetNavbar';
 import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
-import { DiceResult, ResolvedDice } from '../../utils';
+import { DiceResult, ResolvedDice } from '../../utils/dice';
 import api from '../../utils/api';
 import { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
+import { InferSSRProps } from '../../utils';
 
-const bonusDamageName = 'Dano Bônus';
+const BONUS_DAMAGE_NAME = 'Dano Bônus';
 
-export default function Sheet1(
-	props: InferGetServerSidePropsType<typeof getServerSidePropsPage1>
-): JSX.Element {
+export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
+
 	const [toasts, addToast] = useToast();
 
 	const [socket, setSocket] = useState<SocketIO | null>(null);
@@ -45,7 +45,7 @@ export default function Sheet1(
 	}>({ dices: [] });
 
 	const bonusDamage = useRef(
-		props.playerSpecs.find((spec) => spec.Spec.name === bonusDamageName)?.value
+		props.player.PlayerSpec.find((spec) => spec.Spec.name === BONUS_DAMAGE_NAME)?.value
 	);
 	const lastRoll = useRef<{
 		dices: ResolvedDice[];
@@ -54,7 +54,7 @@ export default function Sheet1(
 	}>({ dices: [] });
 
 	function onSpecChanged(name: string, value: string) {
-		if (name !== bonusDamageName) return;
+		if (name !== BONUS_DAMAGE_NAME) return;
 		bonusDamage.current = value;
 	}
 
@@ -113,7 +113,7 @@ export default function Sheet1(
 										)?.name || 'Detalhes Pessoais'
 									}>
 									<>
-										{props.playerInfo.map((info) => (
+										{props.player.PlayerInfo.map((info) => (
 											<Row className='mb-4' key={info.Info.id}>
 												<Col className='mx-2'>
 													<Row>
@@ -127,7 +127,7 @@ export default function Sheet1(
 										))}
 										<hr />
 										<Row className='justify-content-center'>
-											{props.playerSpecs.map((spec) => (
+											{props.player.PlayerSpec.map((spec) => (
 												<Col
 													key={spec.Spec.id}
 													xs={12}
@@ -148,10 +148,10 @@ export default function Sheet1(
 								</DataContainer>
 								<Col>
 									<PlayerAttributeContainer
-										playerAttributes={props.playerAttributes}
+										playerAttributes={props.player.PlayerAttributes}
 										attributeDiceConfig={props.diceConfig.attribute}
-										playerAttributeStatus={props.playerAttributeStatus}
-										playerAvatars={props.playerAvatars}
+										playerAttributeStatus={props.player.PlayerAttributeStatus}
+										playerAvatars={props.player.PlayerAvatar}
 									/>
 								</Col>
 							</Row>
@@ -164,7 +164,7 @@ export default function Sheet1(
 										)?.name || 'Características'
 									}>
 									<Row className='mb-3 text-center align-items-end justify-content-center'>
-										{props.playerCharacteristics.map((char) => (
+										{props.player.PlayerCharacteristic.map((char) => (
 											<PlayerCharacteristicField
 												key={char.Characteristic.id}
 												modifier={char.modifier}
@@ -181,7 +181,7 @@ export default function Sheet1(
 							<Row>
 								<PlayerEquipmentContainer
 									availableEquipments={props.availableEquipments}
-									playerEquipments={props.playerEquipments}
+									playerEquipments={props.player.PlayerEquipment}
 									title={
 										props.containerConfig.find((c) => c.originalName === 'Combate')
 											?.name || 'Combate'
@@ -191,7 +191,7 @@ export default function Sheet1(
 							</Row>
 							<Row>
 								<PlayerSkillContainer
-									playerSkills={props.playerSkills}
+									playerSkills={props.player.PlayerSkill}
 									availableSkills={props.availableSkills}
 									skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
 									title={
@@ -204,10 +204,10 @@ export default function Sheet1(
 						</ShowDiceResult.Provider>
 						<Row>
 							<PlayerItemContainer
-								playerItems={props.playerItems}
+								playerItems={props.player.PlayerItem}
 								availableItems={props.availableItems}
 								playerMaxLoad={props.player.maxLoad}
-								playerCurrency={props.playerCurrency}
+								playerCurrency={props.player.PlayerCurrency}
 								title={
 									props.containerConfig.find((c) => c.originalName === 'Itens')?.name ||
 									'Itens'
@@ -216,9 +216,9 @@ export default function Sheet1(
 						</Row>
 						<Row>
 							<PlayerSpellContainer
-								playerSpells={props.playerSpells.map((sp) => sp.Spell)}
+								playerSpells={props.player.PlayerSpell.map((sp) => sp.Spell)}
 								availableSpells={props.availableSpells}
-								playerMaxSlots={props.player.maxSlots}
+								playerMaxSlots={props.player.spellSlots}
 								title={
 									props.containerConfig.find((c) => c.originalName === 'Magias')?.name ||
 									'Magias'
@@ -240,7 +240,7 @@ export default function Sheet1(
 	);
 }
 
-async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
+async function getSSP(ctx: GetServerSidePropsContext) {
 	const player = ctx.req.session.player;
 
 	if (!player) {
@@ -249,165 +249,81 @@ async function getServerSidePropsPage1(ctx: GetServerSidePropsContext) {
 				destination: '/',
 				permanent: false,
 			},
-			props: {
-				player: { id: 0, maxLoad: 0, maxSlots: 0 },
-				playerInfo: [],
-				playerAttributes: [],
-				playerAttributeStatus: [],
-				playerAvatars: [],
-				playerSpecs: [],
-				playerCharacteristics: [],
-				playerEquipments: [],
-				playerSkills: [],
-				playerCurrency: [],
-				playerItems: [],
-				playerSpells: [],
-				availableEquipments: [],
-				availableSkills: [],
-				availableItems: [],
-				availableSpells: [],
-				diceConfig: {} as DiceConfig,
-				containerConfig: {} as ContainerConfig,
-				automaticMarking: false,
-			},
 		};
 	}
 
-	const playerID = player.id;
-
 	const results = await prisma.$transaction([
-		prisma.playerInfo.findMany({
-			where: { player_id: playerID },
-			select: { Info: true, value: true },
-		}),
-
-		prisma.playerAttribute.findMany({
-			where: { player_id: playerID },
-			select: { Attribute: true, value: true, maxValue: true },
-		}),
-
-		prisma.playerAttributeStatus.findMany({
-			where: { player_id: playerID },
-			select: { AttributeStatus: true, value: true },
-		}),
-
-		prisma.playerSpec.findMany({
-			where: { player_id: playerID },
-			select: { Spec: true, value: true },
-		}),
-
-		prisma.playerCharacteristic.findMany({
-			where: { player_id: playerID },
-			select: { Characteristic: true, value: true, modifier: true },
-		}),
-
-		prisma.playerEquipment.findMany({
-			where: { player_id: playerID },
+		prisma.player.findUnique({
+			where: { id: player.id },
 			select: {
-				Equipment: {
+				id: true,
+				maxLoad: true,
+				spellSlots: true,
+				PlayerInfo: { select: { Info: true, value: true } },
+				PlayerAvatar: { select: { AttributeStatus: true, link: true } },
+				PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
+				PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
+				PlayerSpec: { select: { Spec: true, value: true } },
+				PlayerCharacteristic: {
+					select: { Characteristic: true, value: true, modifier: true },
+				},
+				PlayerEquipment: { select: { Equipment: true, currentAmmo: true } },
+				PlayerSkill: {
 					select: {
-						id: true,
-						ammo: true,
-						attacks: true,
-						damage: true,
-						name: true,
-						range: true,
-						type: true,
+						Skill: {
+							select: {
+								id: true,
+								name: true,
+								Specialization: { select: { name: true } },
+							},
+						},
+						value: true,
+						checked: true,
 					},
 				},
-				currentAmmo: true,
+				PlayerCurrency: { select: { value: true, Currency: true } },
+				PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } },
+				PlayerSpell: { select: { Spell: true } },
 			},
 		}),
-
-		prisma.playerSkill.findMany({
-			where: { player_id: playerID },
-			select: {
-				Skill: {
-					select: { id: true, name: true, Specialization: { select: { name: true } } },
-				},
-				value: true,
-				checked: true,
-			},
-		}),
-
-		prisma.playerItem.findMany({
-			where: { player_id: playerID },
-			select: {
-				Item: { select: { name: true, id: true, weight: true } },
-				currentDescription: true,
-				quantity: true,
-			},
-		}),
-
-		prisma.playerSpell.findMany({
-			where: { player_id: playerID },
-			select: { Spell: true },
-		}),
-
 		prisma.equipment.findMany({
-			where: { visible: true, PlayerEquipment: { none: { player_id: playerID } } },
+			where: { visible: true, PlayerEquipment: { none: { player_id: player.id } } },
 		}),
-
 		prisma.skill.findMany({
-			where: { PlayerSkill: { none: { player_id: playerID } } },
+			where: { PlayerSkill: { none: { player_id: player.id } } },
 		}),
-
 		prisma.item.findMany({
-			where: { visible: true, PlayerItem: { none: { player_id: playerID } } },
+			where: { visible: true, PlayerItem: { none: { player_id: player.id } } },
 		}),
-
 		prisma.spell.findMany({
-			where: { visible: true, PlayerSpell: { none: { player_id: playerID } } },
-		}),
-
-		prisma.playerCurrency.findMany({
-			where: { player_id: playerID },
-			select: { value: true, Currency: true },
-		}),
-
-		prisma.playerAvatar.findMany({
-			where: { player_id: playerID },
-			select: {
-				link: true,
-				AttributeStatus: { select: { id: true, name: true } },
-			},
-		}),
-
-		prisma.player.findUnique({
-			where: { id: playerID },
-			select: { maxLoad: true, spellSlots: true },
+			where: { visible: true, PlayerSpell: { none: { player_id: player.id } } },
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' } }),
 		prisma.config.findUnique({ where: { name: 'container' } }),
 		prisma.config.findUnique({ where: { name: 'enable_automatic_markers' } }),
 	]);
 
+	if (!results[0]) {
+		ctx.req.session.destroy();
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		};
+	}
+
 	return {
 		props: {
-			playerInfo: results[0],
-			playerAttributes: results[1],
-			playerAttributeStatus: results[2],
-			playerSpecs: results[3],
-			playerCharacteristics: results[4],
-			playerEquipments: results[5],
-			playerSkills: results[6],
-			playerItems: results[7],
-			playerSpells: results[8],
-			availableEquipments: results[9],
-			availableSkills: results[10],
-			availableItems: results[11],
-			availableSpells: results[12],
-			playerCurrency: results[13],
-			playerAvatars: results[14],
-			player: {
-				id: playerID,
-				maxLoad: results[15]?.maxLoad || 0,
-				maxSlots: results[15]?.spellSlots || 0,
-			},
-			diceConfig: JSON.parse(results[16]?.value || 'null') as DiceConfig,
-			containerConfig: JSON.parse(results[17]?.value || '[]') as ContainerConfig,
-			automaticMarking: results[18]?.value === 'true' ? true : false,
+			player: results[0],
+			availableEquipments: results[1],
+			availableSkills: results[2],
+			availableItems: results[3],
+			availableSpells: results[4],
+			diceConfig: JSON.parse(results[5]?.value || 'null') as DiceConfig,
+			containerConfig: JSON.parse(results[6]?.value || '[]') as ContainerConfig,
+			automaticMarking: results[7]?.value === 'true' ? true : false,
 		},
 	};
 }
-export const getServerSideProps = sessionSSR(getServerSidePropsPage1);
+export const getServerSideProps = sessionSSR(getSSP);

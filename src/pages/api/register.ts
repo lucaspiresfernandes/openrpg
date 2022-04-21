@@ -64,7 +64,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 }
 
 async function registerPlayerData(player: Player) {
-  const results = await Promise.all([
+  const results = await prisma.$transaction([
     database.info.findMany(),
     database.attribute.findMany(),
     database.attributeStatus.findMany(),
@@ -88,7 +88,7 @@ async function registerPlayerData(player: Player) {
   });
   playerAvatarData.push({ player_id: player.id, attribute_status_id: null, link: null });
 
-  await Promise.all([
+  await prisma.$transaction([
     database.playerInfo.createMany({
       data: results[0].map(info => {
         return {

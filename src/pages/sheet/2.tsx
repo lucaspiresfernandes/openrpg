@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -18,15 +18,14 @@ import api from '../../utils/api';
 import Router from 'next/router';
 import ApplicationHead from '../../components/ApplicationHead';
 import { ContainerConfig } from '../../utils/config';
+import { InferSSRProps } from '../../utils';
 
-export default function Sheet2(
-	props: InferGetServerSidePropsType<typeof getServerSidePropsPage2>
-) {
+export default function Sheet2(props: InferSSRProps<typeof getServerSidePropsPage2>) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
 	useSocket((socket) => {
-		socket.emit('roomJoin', `player${props.playerID}`);
+		socket.emit('roomJoin', `player${props.player.id}`);
 		setSocket(socket);
 	});
 
@@ -59,7 +58,7 @@ export default function Sheet2(
 				</Row>
 				<Row>
 					<DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
-						<PlayerAnnotationsField value={props.playerNotes} />
+						<PlayerAnnotationsField value={props.player.PlayerNote[0].value} />
 					</DataContainer>
 				</Row>
 				<Row>
@@ -69,7 +68,7 @@ export default function Sheet2(
 								?.name || 'Detalhes Pessoais'
 						}
 						outline>
-						{props.playerExtraInfo.map((extraInfo) => (
+						{props.player.PlayerExtraInfo.map((extraInfo) => (
 							<Row className='mb-4' key={extraInfo.ExtraInfo.id}>
 								<Col>
 									<FormGroup controlId={`extraInfo${extraInfo.ExtraInfo.id}`}>
@@ -108,33 +107,35 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
 				destination: '/',
 				permanent: false,
 			},
-			props: {
-				playerID: 0,
-				playerExtraInfo: [],
-				playerNotes: undefined,
-				containerConfig: [] as ContainerConfig,
-			},
 		};
 	}
 
 	const results = await prisma.$transaction([
-		prisma.playerExtraInfo.findMany({
-			where: { player_id: player.id },
-			select: { value: true, ExtraInfo: true },
-		}),
-		prisma.playerNote.findUnique({
-			where: { player_id: player.id },
-			select: { value: true },
+		prisma.player.findUnique({
+			where: { id: player.id },
+			select: {
+				id: true,
+				PlayerNote: { select: { value: true } },
+				PlayerExtraInfo: { select: { ExtraInfo: true, value: true } },
+			},
 		}),
 		prisma.config.findUnique({ where: { name: 'container' } }),
 	]);
 
+	if (!results[0]) {
+		ctx.req.session.destroy();
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		};
+	}
+
 	return {
 		props: {
-			playerID: player.id,
-			playerExtraInfo: results[0],
-			playerNotes: results[1]?.value || '',
-			containerConfig: JSON.parse(results[2]?.value || '[]') as ContainerConfig,
+			player: results[0],
+			containerConfig: JSON.parse(results[1]?.value || '[]') as ContainerConfig,
 		},
 	};
 }

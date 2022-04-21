@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { SocketIO } from '../hooks/useSocket';
-import { DiceResult, ResolvedDice } from '../utils';
+import { DiceResult, ResolvedDice } from '../utils/dice';
 
 export const ErrorLogger = createContext<(err: any) => void>(() => {});
 export const ShowDiceResult = createContext<
