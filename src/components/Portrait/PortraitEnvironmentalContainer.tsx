@@ -3,7 +3,22 @@ import { SocketIO } from '../../hooks/useSocket';
 import Fade from 'react-bootstrap/Fade';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { Environment, PortraitOrientation } from '../../utils/config';
-import { getAttributeStyle, getOrientationStyle, PortraitAttributes, PortraitPlayerName } from '../../pages/portrait/[characterID]';
+import { getAttributeStyle, getOrientationStyle } from '../../utils/style';
+
+type PortraitPlayerName = {
+	value: string;
+	info_id: number;
+};
+
+type PortraitAttributes = {
+	value: number;
+	Attribute: {
+		id: number;
+		name: string;
+		color: string;
+	};
+	maxValue: number;
+}[];
 
 export default function PortraitEnvironmentalContainer(props: {
 	socket: SocketIO | null;

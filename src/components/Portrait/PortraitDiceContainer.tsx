@@ -3,7 +3,7 @@ import { SocketIO } from '../../hooks/useSocket';
 import { DiceResult, sleep } from '../../utils';
 import Fade from 'react-bootstrap/Fade';
 import styles from '../../styles/modules/Portrait.module.scss';
-import { getAttributeStyle } from '../../pages/portrait/[characterID]';
+import { getAttributeStyle } from '../../utils/style';
 
 export default function PortraitDiceContainer(props: {
 	socket: SocketIO | null;

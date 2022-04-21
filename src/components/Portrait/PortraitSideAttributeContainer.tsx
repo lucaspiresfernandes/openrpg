@@ -2,7 +2,16 @@ import { useEffect, useState } from 'react';
 import { SocketIO } from '../../hooks/useSocket';
 import { PortraitOrientation } from '../../utils/config';
 import styles from '../../styles/modules/Portrait.module.scss';
-import { getAttributeStyle, getOrientationStyle, PortraitSideAttribute } from '../../pages/portrait/[characterID]';
+import { getAttributeStyle, getOrientationStyle } from '../../utils/style';
+
+export type PortraitSideAttribute = {
+	value: number;
+	Attribute: {
+		id: number;
+		name: string;
+		color: string;
+	};
+} | null;
 
 export default function PortraitSideAttributeContainer(props: {
 	socket: SocketIO | null;

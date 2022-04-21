@@ -1,63 +1,13 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
+import PortraitAvatarContainer, { PortraitAttributeStatus } from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
-import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
+import PortraitSideAttributeContainer, { PortraitSideAttribute } from '../../components/Portrait/PortraitSideAttributeContainer';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
-import styles from '../../styles/modules/Portrait.module.scss';
 import { Environment, PortraitConfig, PortraitOrientation } from '../../utils/config';
 import prisma from '../../utils/database';
-
-export type PortraitPlayerName = {
-	value: string;
-	info_id: number;
-};
-
-export type PortraitAttributeStatus = {
-	value: boolean;
-	attribute_status_id: number;
-}[];
-
-export type PortraitAttributes = {
-	value: number;
-	Attribute: {
-		id: number;
-		name: string;
-		color: string;
-	};
-	maxValue: number;
-}[];
-
-export type PortraitSideAttribute = {
-	value: number;
-	Attribute: {
-		id: number;
-		name: string;
-		color: string;
-	};
-} | null;
-
-export function getAttributeStyle(color: string) {
-	return {
-		color: 'white',
-		textShadow: `0 0 10px #${color}, 0 0 30px #${color}, 0 0 50px #${color}`,
-	};
-}
-
-export function getOrientationStyle(orientation: PortraitOrientation) {
-	switch (orientation) {
-		case 'center':
-			return styles.center;
-		case 'top':
-			return styles.top;
-		case 'bottom':
-			return styles.bottom;
-		default:
-			return styles.center;
-	}
-}
 
 export default function CharacterPortrait(
 	props: InferGetServerSidePropsType<typeof getServerSideProps>
