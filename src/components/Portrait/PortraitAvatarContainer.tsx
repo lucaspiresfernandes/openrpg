@@ -4,6 +4,7 @@ import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { PortraitAttributeStatus } from '../../pages/portrait/[characterID]';
+import api from '../../utils/api';
 
 export default function PortraitAvatar(props: {
 	attributeStatus: PortraitAttributeStatus;
@@ -17,7 +18,10 @@ export default function PortraitAvatar(props: {
 
 	useEffect(() => {
 		const id = attributeStatus.find((stat) => stat.value)?.value || 0;
-		setSrc(`/api/sheet/player/avatar/${id}?playerID=${props.playerId}&v=${Date.now()}`);
+		api
+			.get(`/sheet/player/avatar/${id}`, { params: { playerID: props.playerId } })
+			.then((res) => setSrc(`${res.data.link}?v=${Date.now()}`))
+			.catch(() => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -42,11 +46,10 @@ export default function PortraitAvatar(props: {
 				if (newStatusID !== previousStatusID.current) {
 					previousStatusID.current = newStatusID;
 					setShowAvatar(false);
-					setSrc(
-						`/api/sheet/player/avatar/${newStatusID}?playerID=${
-							props.playerId
-						}&v=${Date.now()}`
-					);
+					api
+						.get(`/sheet/player/avatar/${newStatusID}`, { params: { playerID: props.playerId } })
+						.then((res) => setSrc(`${res.data.link}?v=${Date.now()}`))
+						.catch(() => setSrc('/avatar404.png'));
 				}
 
 				return newAttrStatus;

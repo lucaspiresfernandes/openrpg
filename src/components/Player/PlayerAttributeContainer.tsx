@@ -301,14 +301,20 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 	const previousStatusID = useRef(statusID);
 
 	useEffect(() => {
-		setSrc(`/api/sheet/player/avatar/${statusID}?v=${Date.now()}`);
+		api
+			.get(`/sheet/player/avatar/${statusID}`)
+			.then((res) => setSrc(res.data.link))
+			.catch(() => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.rerender]);
 
 	useEffect(() => {
 		if (statusID === previousStatusID.current) return;
 		previousStatusID.current = statusID;
-		setSrc(`/api/sheet/player/avatar/${statusID}?v=${Date.now()}`);
+		api
+			.get(`/sheet/player/avatar/${statusID}`)
+			.then((res) => setSrc(res.data.link))
+			.catch(() => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.statusID]);
 
