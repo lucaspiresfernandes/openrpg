@@ -1,33 +1,24 @@
 export type DiceConfig = {
-    //Legacy object
-    base: {
-        value: number;
-        branched: boolean;
-    };
+	//Legacy object
+	base: DiceConfigCell;
+	characteristic: DiceConfigCell;
+	skill: DiceConfigCell;
+	attribute: DiceConfigCell;
+};
 
-    
-    characteristic: {
-        value: number;
-        branched: boolean;
-    };
-    skill: {
-        value: number;
-        branched: boolean;
-    };
-    attribute: {
-        value: number;
-        branched: boolean;
-    };
+export type DiceConfigCell = {
+	value: number;
+	branched: boolean;
 };
 
 export type PortraitOrientation = 'center' | 'top' | 'bottom';
 
 export type PortraitConfig = {
-    attributes: number[];
-    side_attribute: number;
-    orientation: PortraitOrientation;
-}
+	attributes: number[];
+	side_attribute: number;
+	orientation: PortraitOrientation;
+};
 
 export type Environment = 'idle' | 'combat';
 
-export type ContainerConfig = { originalName: string, name: string }[];
+export type ContainerConfig = { originalName: string; name: string }[];

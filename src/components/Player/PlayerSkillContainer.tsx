@@ -10,6 +10,7 @@ import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
+import { DiceConfigCell } from '../../utils/config';
 
 type PlayerSkill = {
 	value: number;
@@ -26,10 +27,7 @@ type PlayerSkill = {
 type PlayerSkillContainerProps = {
 	playerSkills: PlayerSkill[];
 	availableSkills: Skill[];
-	skillDiceConfig: {
-		value: number;
-		branched: boolean;
-	};
+	skillDiceConfig: DiceConfigCell;
 	title: string;
 	automaticMarking: boolean;
 };
@@ -166,10 +164,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 
 type PlayerSkillFieldProps = {
 	skill: PlayerSkill;
-	skillDice: {
-		value: number;
-		branched: boolean;
-	};
+	skillDice: DiceConfigCell;
 	automaticMarking: boolean;
 };
 

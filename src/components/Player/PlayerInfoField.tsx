@@ -1,15 +1,12 @@
-import { Info } from '@prisma/client';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useContext, useState } from 'react';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 
 type PlayerInfoFieldProps = {
-	info: Info;
+	infoId: number;
 	value: string;
 };
 
@@ -33,31 +30,20 @@ export default function PlayerInfoField(props: PlayerInfoFieldProps) {
 		if (value.length > 0) setDefined(true);
 		if (lastValue === value) return;
 		setValue(value);
-		api.post('/sheet/player/info', { id: props.info.id, value }).catch(logError);
+		api.post('/sheet/player/info', { id: props.infoId, value }).catch(logError);
 	}
 
+	if (isDefined) return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
+
 	return (
-		<Row className='mb-4'>
-			<Col className='mx-2'>
-				<Row>
-					<label className='h5' htmlFor={`info${props.info.id}`}>
-						{props.info.name}
-					</label>
-					{isDefined ? (
-						<label onDoubleClick={() => setDefined(false)}>{value}</label>
-					) : (
-						<input
-							className='theme-element bottom-text'
-							id={`info${props.info.id}`}
-							autoComplete='off'
-							value={value}
-							onChange={(ev) => setValue(ev.currentTarget.value)}
-							onBlur={onValueBlur}
-							ref={inputRef}
-						/>
-					)}
-				</Row>
-			</Col>
-		</Row>
+		<input
+			className='theme-element bottom-text'
+			id={`info${props.infoId}`}
+			autoComplete='off'
+			value={value}
+			onChange={(ev) => setValue(ev.currentTarget.value)}
+			onBlur={onValueBlur}
+			ref={inputRef}
+		/>
 	);
 }

@@ -11,6 +11,7 @@ import EditAvatarModal from '../Modals/EditAvatarModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import { clamp } from '../../utils';
 import api from '../../utils/api';
+import { DiceConfigCell } from '../../utils/config';
 
 type PlayerAttributeContainerProps = {
 	playerAttributes: {
@@ -29,10 +30,7 @@ type PlayerAttributeContainerProps = {
 			name: string;
 		} | null;
 	}[];
-	attributeDiceConfig: {
-		value: number;
-		branched: boolean;
-	};
+	attributeDiceConfig: DiceConfigCell;
 };
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
@@ -90,10 +88,7 @@ type PlayerAttributeFieldProps = {
 		};
 	}[];
 	onStatusChanged?(id: number, newValue: boolean): void;
-	attributeDiceConfig: {
-		value: number;
-		branched: boolean;
-	};
+	attributeDiceConfig: DiceConfigCell;
 };
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {

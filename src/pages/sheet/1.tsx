@@ -98,12 +98,12 @@ export default function Sheet1(
 			<ApplicationHead title='Ficha do Personagem' />
 			<SheetNavbar />
 			<ErrorLogger.Provider value={addToast}>
-				<ShowDiceResult.Provider value={onDiceRoll}>
-					<Socket.Provider value={socket}>
-						<Container>
-							<Row className='display-5 text-center'>
-								<Col>Ficha do Personagem</Col>
-							</Row>
+				<Socket.Provider value={socket}>
+					<Container>
+						<Row className='display-5 text-center'>
+							<Col>Ficha do Personagem</Col>
+						</Row>
+						<ShowDiceResult.Provider value={onDiceRoll}>
 							<Row className='mb-3'>
 								<DataContainer
 									outline
@@ -113,22 +113,35 @@ export default function Sheet1(
 										)?.name || 'Detalhes Pessoais'
 									}>
 									<>
-										{props.playerInfo.map((pinfo) => (
-											<PlayerInfoField
-												key={pinfo.Info.id}
-												info={pinfo.Info}
-												value={pinfo.value}
-											/>
+										{props.playerInfo.map((info) => (
+											<Row className='mb-4' key={info.Info.id}>
+												<Col className='mx-2'>
+													<Row>
+														<label className='h5' htmlFor={`info${info.Info.id}`}>
+															{info.Info.name}
+														</label>
+														<PlayerInfoField infoId={info.Info.id} value={info.value} />
+													</Row>
+												</Col>
+											</Row>
 										))}
 										<hr />
 										<Row className='justify-content-center'>
 											{props.playerSpecs.map((spec) => (
-												<PlayerSpecField
+												<Col
 													key={spec.Spec.id}
-													value={spec.value}
-													Spec={spec.Spec}
-													onSpecChanged={onSpecChanged}
-												/>
+													xs={12}
+													sm={6}
+													lg={4}
+													className='text-center mb-2'>
+													<PlayerSpecField
+														value={spec.value}
+														specId={spec.Spec.id}
+														name={spec.Spec.name}
+														onSpecChanged={onSpecChanged}
+													/>
+													<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
+												</Col>
 											))}
 										</Row>
 									</>
@@ -188,32 +201,32 @@ export default function Sheet1(
 									automaticMarking={props.automaticMarking}
 								/>
 							</Row>
-							<Row>
-								<PlayerItemContainer
-									playerItems={props.playerItems}
-									availableItems={props.availableItems}
-									playerMaxLoad={props.player.maxLoad}
-									playerCurrency={props.playerCurrency}
-									title={
-										props.containerConfig.find((c) => c.originalName === 'Itens')?.name ||
-										'Itens'
-									}
-								/>
-							</Row>
-							<Row>
-								<PlayerSpellContainer
-									playerSpells={props.playerSpells.map((sp) => sp.Spell)}
-									availableSpells={props.availableSpells}
-									playerMaxSlots={props.player.maxSlots}
-									title={
-										props.containerConfig.find((c) => c.originalName === 'Magias')
-											?.name || 'Magias'
-									}
-								/>
-							</Row>
-						</Container>
-					</Socket.Provider>
-				</ShowDiceResult.Provider>
+						</ShowDiceResult.Provider>
+						<Row>
+							<PlayerItemContainer
+								playerItems={props.playerItems}
+								availableItems={props.availableItems}
+								playerMaxLoad={props.player.maxLoad}
+								playerCurrency={props.playerCurrency}
+								title={
+									props.containerConfig.find((c) => c.originalName === 'Itens')?.name ||
+									'Itens'
+								}
+							/>
+						</Row>
+						<Row>
+							<PlayerSpellContainer
+								playerSpells={props.playerSpells.map((sp) => sp.Spell)}
+								availableSpells={props.availableSpells}
+								playerMaxSlots={props.player.maxSlots}
+								title={
+									props.containerConfig.find((c) => c.originalName === 'Magias')?.name ||
+									'Magias'
+								}
+							/>
+						</Row>
+					</Container>
+				</Socket.Provider>
 				<DiceRollResultModal
 					dices={diceRoll.dices}
 					resolverKey={diceRoll.resolverKey}
