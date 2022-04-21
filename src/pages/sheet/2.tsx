@@ -1,6 +1,8 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
 import Container from 'react-bootstrap/Container';
 import DataContainer from '../../components/DataContainer';
 import SheetNavbar from '../../components/SheetNavbar';
@@ -10,7 +12,6 @@ import prisma from '../../utils/database';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
-import { ErrorLogger } from '../../contexts';
 import { useEffect, useState } from 'react';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import api from '../../utils/api';
@@ -52,34 +53,47 @@ export default function Sheet2(
 		<>
 			<ApplicationHead title='Ficha do Personagem' />
 			<SheetNavbar />
-			<ErrorLogger.Provider value={addToast}>
-				<Container>
-					<Row className='display-5 text-center'>
-						<Col>Ficha do Personagem</Col>
-					</Row>
-					<Row>
-						<DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
-							<PlayerAnnotationsField value={props.playerNotes} />
-						</DataContainer>
-					</Row>
-					<Row>
-						<DataContainer
-							title={
-								props.containerConfig.find((c) => c.originalName === 'Detalhes Pessoais')
-									?.name || 'Detalhes Pessoais'
-							}
-							outline>
-							{props.playerExtraInfo.map((info) => (
-								<PlayerExtraInfoField
-									key={info.ExtraInfo.id}
-									value={info.value}
-									extraInfo={info.ExtraInfo}
-								/>
-							))}
-						</DataContainer>
-					</Row>
-				</Container>
-			</ErrorLogger.Provider>
+			<Container>
+				<Row className='display-5 text-center'>
+					<Col>Ficha do Personagem</Col>
+				</Row>
+				<Row>
+					<DataContainer title='Anotações' htmlFor='playerAnnotations' outline>
+						<PlayerAnnotationsField value={props.playerNotes} />
+					</DataContainer>
+				</Row>
+				<Row>
+					<DataContainer
+						title={
+							props.containerConfig.find((c) => c.originalName === 'Detalhes Pessoais')
+								?.name || 'Detalhes Pessoais'
+						}
+						outline>
+						{props.playerExtraInfo.map((extraInfo) => (
+							<Row className='mb-4' key={extraInfo.ExtraInfo.id}>
+								<Col>
+									<FormGroup controlId={`extraInfo${extraInfo.ExtraInfo.id}`}>
+										<Row>
+											<Col className='h4' style={{ margin: 0 }}>
+												<FormLabel>{extraInfo.ExtraInfo.name}</FormLabel>
+											</Col>
+										</Row>
+										<Row>
+											<Col>
+												<PlayerExtraInfoField
+													value={extraInfo.value}
+													extraInfoId={extraInfo.ExtraInfo.id}
+													logError={addToast}
+												/>
+											</Col>
+										</Row>
+									</FormGroup>
+								</Col>
+							</Row>
+						))}
+					</DataContainer>
+				</Row>
+			</Container>
 			<ErrorToastContainer toasts={toasts} />
 		</>
 	);

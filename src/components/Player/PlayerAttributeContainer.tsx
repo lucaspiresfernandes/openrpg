@@ -13,6 +13,8 @@ import { clamp } from '../../utils';
 import api from '../../utils/api';
 import { DiceConfigCell } from '../../utils/config';
 
+const MAX_AVATAR_HEIGHT = 450;
+
 type PlayerAttributeContainerProps = {
 	playerAttributes: {
 		value: number;
@@ -326,7 +328,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 					src={src}
 					alt='Avatar'
 					className='clickable'
-					style={{ maxHeight: 450 }}
+					style={{ maxHeight: MAX_AVATAR_HEIGHT }}
 					onError={() => setSrc('/avatar404.png')}
 					onClick={() => setAvatarModalShow(true)}
 				/>

@@ -45,10 +45,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		avatar = defaultAvatar;
 	}
-
-	if (avatar.link) return res.send({ link: avatar.link });
 	
-	res.status(404).end();
+	res.send({ link: avatar.link });
 }
 
 export default sessionAPI(handler);

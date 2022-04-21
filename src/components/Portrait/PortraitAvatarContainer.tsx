@@ -14,10 +14,11 @@ export default function PortraitAvatar(props: {
 	const [src, setSrc] = useState('#');
 	const [showAvatar, setShowAvatar] = useState(false);
 	const [attributeStatus, setAttributeStatus] = useState(props.attributeStatus);
-	const previousStatusID = useRef(0);
+	const previousStatusID = useRef(Number.MAX_SAFE_INTEGER);
 
 	useEffect(() => {
-		const id = attributeStatus.find((stat) => stat.value)?.value || 0;
+		const id = attributeStatus.find((stat) => stat.value)?.attribute_status_id || 0;
+		previousStatusID.current = id;
 		api
 			.get(`/sheet/player/avatar/${id}`, { params: { playerID: props.playerId } })
 			.then((res) => setSrc(`${res.data.link}?v=${Date.now()}`))
@@ -45,10 +46,17 @@ export default function PortraitAvatar(props: {
 
 				if (newStatusID !== previousStatusID.current) {
 					previousStatusID.current = newStatusID;
-					setShowAvatar(false);
 					api
-						.get(`/sheet/player/avatar/${newStatusID}`, { params: { playerID: props.playerId } })
-						.then((res) => setSrc(`${res.data.link}?v=${Date.now()}`))
+						.get(`/sheet/player/avatar/${newStatusID}`, {
+							params: { playerID: props.playerId },
+						})
+						.then((res) => {
+							setSrc(src => {
+								if (res.data.link === src.split('?')[0]) return src;
+								setShowAvatar(false);
+								return `${res.data.link}?v=${Date.now()}`;
+							});
+						})
 						.catch(() => setSrc('/avatar404.png'));
 				}
 
@@ -67,8 +75,8 @@ export default function PortraitAvatar(props: {
 			<div>
 				<Image
 					src={src}
-					onError={() => setSrc('/avatar404.png')}
 					alt='Avatar'
+					onError={() => setSrc('/avatar404.png')}
 					onLoad={() => setShowAvatar(true)}
 					width={420}
 					height={600}
