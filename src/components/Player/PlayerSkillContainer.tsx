@@ -1,5 +1,12 @@
 import { Skill } from '@prisma/client';
-import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+	ChangeEvent,
+	memo,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
@@ -12,20 +19,18 @@ import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
 import { DiceConfigCell } from '../../utils/config';
 
-type PlayerSkill = {
-	value: number;
-	checked: boolean;
-	Skill: {
-		id: number;
-		name: string;
-		Specialization: {
-			name: string;
-		} | null;
-	};
-};
-
 type PlayerSkillContainerProps = {
-	playerSkills: PlayerSkill[];
+	playerSkills: {
+		value: number;
+		checked: boolean;
+		Skill: {
+			id: number;
+			name: string;
+			Specialization: {
+				name: string;
+			} | null;
+		};
+	}[];
 	availableSkills: Skill[];
 	skillDiceConfig: DiceConfigCell;
 	title: string;
@@ -39,6 +44,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	);
 	const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
 	const [search, setSearch] = useState('');
+	const [notify, setNotify] = useState(false);
 
 	const socket = useContext(Socket);
 	const logError = useContext(ErrorLogger);
@@ -89,6 +95,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	}, [socket]);
 
 	function clearChecks() {
+		setNotify(n => !n);
 		setPlayerSkills((skills) =>
 			skills.map((skill) => {
 				return {
@@ -137,18 +144,19 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 					</Col>
 				</Row>
 				<Row className='mb-3 mx-1 text-center justify-content-center'>
-					{skillList.map((skill) => {
-						if (skill.Skill.name.toLowerCase().includes(search.toLowerCase()))
-							return (
-								<PlayerSkillField
-									key={skill.Skill.id}
-									skill={skill}
-									skillDice={props.skillDiceConfig}
-									automaticMarking={props.automaticMarking}
-								/>
-							);
-						return null;
-					})}
+					{skillList.map((skill) => (
+						<MemoPlayerSkillField
+							key={skill.Skill.id}
+							skillId={skill.Skill.id}
+							name={skill.Skill.name}
+							value={skill.value}
+							checked={skill.checked}
+							hidden={!skill.Skill.name.toLowerCase().includes(search.toLowerCase())}
+							skillDice={props.skillDiceConfig}
+							automaticMarking={props.automaticMarking}
+							notifyChecked={notify}
+						/>
+					))}
 				</Row>
 			</DataContainer>
 			<AddDataModal
@@ -163,40 +171,39 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 }
 
 type PlayerSkillFieldProps = {
-	skill: PlayerSkill;
+	skillId: number;
+	name: string;
+	value: number;
+	checked: boolean;
+	hidden: boolean;
 	skillDice: DiceConfigCell;
 	automaticMarking: boolean;
+	notifyChecked: boolean;
 };
 
-function PlayerSkillField({ skill, skillDice, automaticMarking }: PlayerSkillFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(skill.value);
-	const [checked, setChecked] = useState(skill.checked);
+function PlayerSkillField(props: PlayerSkillFieldProps) {
+	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [checked, setChecked] = useState(props.checked);
 	const logError = useContext(ErrorLogger);
 	const showDiceRollResult = useContext(ShowDiceResult);
-	const firstUpdate = useRef(true);
 
 	useEffect(() => {
-		if (firstUpdate.current) {
-			firstUpdate.current = false;
-			return;
-		}
-
-		if (skill.checked === checked) return;
-
-		setChecked(skill.checked);
+		if (props.checked === checked) return;
+		console.log('a');
+		setChecked(props.checked);
 		api
-			.post('/sheet/player/skill', { id: skill.Skill.id, checked: skill.checked })
+			.post('/sheet/player/skill', { id: props.skillId, checked: props.checked })
 			.catch((err) => {
 				logError(err);
 				setChecked(checked);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [skill]);
+	}, [props.notifyChecked]);
 
 	function onCheckChange(ev: ChangeEvent<HTMLInputElement>) {
 		const c = ev.target.checked;
 		setChecked(c);
-		api.post('/sheet/player/skill', { id: skill.Skill.id, checked: c }).catch((err) => {
+		api.post('/sheet/player/skill', { id: props.skillId, checked: c }).catch((err) => {
 			logError(err);
 			setChecked(checked);
 		});
@@ -215,25 +222,33 @@ function PlayerSkillField({ skill, skillDice, automaticMarking }: PlayerSkillFie
 	function valueBlur() {
 		if (value === lastValue) return;
 		setValue(value);
-		api.post('/sheet/player/skill', { id: skill.Skill.id, value }).catch((err) => {
+		api.post('/sheet/player/skill', { id: props.skillId, value }).catch((err) => {
 			logError(err);
 			setValue(lastValue);
 		});
 	}
 
 	function rollDice() {
-		const roll = skillDice['value'];
-		const branched = skillDice['branched'];
-		showDiceRollResult([{ num: 1, roll, ref: value }], `${roll}${branched ? 'b' : ''}`, results => {
-			const result = results[0];
-			if (!automaticMarking || !result.resultType?.isSuccess || checked) return;
-			setChecked(true);
-			api.post('/sheet/player/skill', { id: skill.Skill.id, checked: true }).catch((err) => {
-				logError(err);
-				setChecked(false);
-			});
-		});
+		const roll = props.skillDice.value;
+		const branched = props.skillDice.branched;
+		showDiceRollResult(
+			[{ num: 1, roll, ref: value }],
+			`${roll}${branched ? 'b' : ''}`,
+			(results) => {
+				const result = results[0];
+				if (!props.automaticMarking || !result.resultType?.isSuccess || checked) return;
+				setChecked(true);
+				api
+					.post('/sheet/player/skill', { id: props.skillId, checked: true })
+					.catch((err) => {
+						logError(err);
+						setChecked(false);
+					});
+			}
+		);
 	}
+
+	if (props.hidden) return null;
 
 	return (
 		<Col
@@ -257,8 +272,10 @@ function PlayerSkillField({ skill, skillDice, automaticMarking }: PlayerSkillFie
 				</Col>
 			</Row>
 			<Row className='label h-100' onClick={rollDice}>
-				<Col>{skill.Skill.name}</Col>
+				<Col>{props.name}</Col>
 			</Row>
 		</Col>
 	);
 }
+
+const MemoPlayerSkillField = memo(PlayerSkillField);
