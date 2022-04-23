@@ -9,12 +9,15 @@ import { DiceResult, ResolvedDice } from '../../utils/dice';
 import api from '../../utils/api';
 import { ErrorLogger } from '../../contexts';
 
-type DiceRollResultModalProps = {
-	onHide(): void;
+export type DiceRoll = {
 	dices: ResolvedDice[];
 	resolverKey?: string;
+	onResult?: (result: DiceResult[]) => void;
+};
+
+export type DiceRollResultModalProps = DiceRoll & {
+	onHide(): void;
 	onRollAgain(): void;
-	onDiceResult?(results: DiceResult[]): void;
 };
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
@@ -22,10 +25,10 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 	const [descriptionFade, setDescriptionFade] = useState(false);
 
 	const logError = useContext(ErrorLogger);
-	
+
 	const rollAgain = useRef(false);
 	const descriptionDelayTimeout = useRef<NodeJS.Timeout | null>(null);
-	
+
 	const result = useMemo(() => {
 		if (diceResults.length === 1) return diceResults[0];
 		else if (diceResults.length > 1) {
@@ -52,7 +55,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 			.then((res) => {
 				const results: DiceResult[] = res.data.results;
 				setDiceResults(results);
-				if (props.onDiceResult) props.onDiceResult(results);
+				if (props.onResult) props.onResult(results);
 			})
 			.catch(logError);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,17 +63,21 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 
 	useEffect(() => {
 		if (result && (diceResults.length > 1 || diceResults[0].resultType))
-		descriptionDelayTimeout.current = setTimeout(() => setDescriptionFade(true), 750);
+			descriptionDelayTimeout.current = setTimeout(() => setDescriptionFade(true), 750);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [diceResults]);
 
-	function reset() {
-		setDiceResults([]);
-		setDescriptionFade(false);
+	function onHide() {
 		if (descriptionDelayTimeout.current) {
 			clearTimeout(descriptionDelayTimeout.current);
 			descriptionDelayTimeout.current = null;
 		}
+		props.onHide();
+	}
+
+	function onExited() {
+		setDiceResults([]);
+		setDescriptionFade(false);
 		if (rollAgain.current) props.onRollAgain();
 		rollAgain.current = false;
 	}
@@ -78,9 +85,9 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 	return (
 		<SheetModal
 			show={props.dices.length != 0}
-			onExited={reset}
+			onExited={onExited}
 			title='Resultado da Rolagem'
-			onHide={props.onHide}
+			onHide={onHide}
 			closeButton={{ disabled: !result }}
 			backdrop={!result ? 'static' : true}
 			keyboard={!result ? false : true}

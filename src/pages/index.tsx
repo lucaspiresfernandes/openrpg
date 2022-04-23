@@ -5,7 +5,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import api from '../utils/api';
 import ErrorToastContainer from '../components/ErrorToastContainer';
 import useToast from '../hooks/useToast';
@@ -17,69 +17,68 @@ import prisma from '../utils/database';
 import { sessionSSR } from '../utils/session';
 import { InferSSRProps } from '../utils';
 
-export default function Home({
-	init,
-	error,
-}: InferSSRProps<typeof getSSP>) {
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [loading, setLoading] = useState(false);
-	const [toasts, addToast] = useToast();
+type PageProps = InferSSRProps<typeof getSSP>;
 
-	function onFormSubmit(ev: FormEvent<HTMLFormElement>) {
-		ev.preventDefault();
-		setLoading(true);
-		setPassword('');
-
-		if (username.length === 0 || password.length === 0) {
-			addToast(new Error('Você deve preencher tanto o usuário como a senha.'));
-			setLoading(false);
-			return;
-		}
-
-		api
-			.post('/login', { username, password })
-			.then((res) => {
-				if (res.data.admin) return Router.replace('/admin/main');
-				Router.replace('/sheet/1');
-			})
-			.catch((err) => {
-				setLoading(false);
-				addToast(err);
-			});
-	}
-
+export default function Page({ init, error }: PageProps) {
 	if (error)
 		return (
-			<Container className='text-center'>
-				<Row>
-					<Col className='h1 mt-3' style={{ color: 'red' }}>
-						O banco de dados não foi inicializado corretamente.
-					</Col>
-				</Row>
-				<Row>
-					<Col className='h3 mt-2'>
-						Certifique-se de ter integrado um banco de dados ao aplicativo, criado a
-						variável de ambiente <b>CLEARDB_DATABASE_URL</b> e preenchido seu valor
-						corretamente.
-					</Col>
-				</Row>
-			</Container>
+			<>
+				<ApplicationHead title='Erro de Execução' />
+				<Container className='text-center'>
+					<Row>
+						<Col className='h1 mt-3' style={{ color: 'red' }}>
+							O banco de dados não foi inicializado corretamente.
+						</Col>
+					</Row>
+					<Row>
+						<Col className='h3 mt-2'>
+							Certifique-se de ter integrado um banco de dados ao aplicativo, criado a
+							variável de ambiente <b>CLEARDB_DATABASE_URL</b> e preenchido seu valor
+							corretamente.
+						</Col>
+					</Row>
+				</Container>
+			</>
 		);
 
 	if (!init)
 		return (
 			<>
-				<WelcomePage logError={addToast} />
-				<ErrorToastContainer toasts={toasts} />
+				<ApplicationHead title='Inicialização' />
+				<WelcomePage />
 			</>
 		);
-
-	if (loading) return <></>;
 
 	return (
 		<>
 			<ApplicationHead title='Entrar' />
+			<HomePage />
+		</>
+	);
+}
+
+function HomePage() {
+	const [loading, setLoading] = useState(false);
+	const [toasts, addToast] = useToast();
+
+	function onFormSubmit(username: string, password: string) {
+		setLoading(true);
+
+		try {
+			if (username.length === 0 || password.length === 0)
+				throw new Error('Você deve preencher tanto o usuário como a senha.');
+			api.post('/login', { username, password }).then((res) => {
+				if (res.data.admin) return Router.replace('/admin/main');
+				Router.replace('/sheet/1');
+			});
+		} catch (err) {
+			addToast(err);
+			setLoading(false);
+		}
+	}
+
+	return (
+		<>
 			<Container className='text-center mt-2'>
 				<Row>
 					<Col>
@@ -88,51 +87,69 @@ export default function Home({
 						</h1>
 					</Col>
 				</Row>
-				<form onSubmit={onFormSubmit}>
-					<Row className='my-3 justify-content-center'>
-						<Col md={6}>
-							<FormControl
-								className='text-center theme-element'
-								placeholder='Login'
-								id='username'
-								name='username'
-								value={username}
-								onChange={(e) => setUsername(e.currentTarget.value)}
-							/>
-						</Col>
-					</Row>
-					<Row className='my-3 justify-content-center'>
-						<Col md={6}>
-							<FormControl
-								type='password'
-								className='text-center theme-element'
-								placeholder='Senha'
-								id='password'
-								name='password'
-								value={password}
-								onChange={(e) => setPassword(e.currentTarget.value)}
-							/>
-						</Col>
-					</Row>
-					<Row className='my-3 justify-content-center'>
-						<Col md={6}>
-							<Button type='submit' variant='secondary'>
-								Entrar
-							</Button>
-						</Col>
-					</Row>
-				</form>
-				<Row>
-					<Col>
-						<span className='me-2'>Não possui cadastro?</span>
-						<Link href='/register' passHref>
-							<a className={styles.link}>Cadastrar-se</a>
-						</Link>
-					</Col>
-				</Row>
+				{!loading && (
+					<>
+						<LoginForm onSubmit={onFormSubmit} />
+						<Row>
+							<Col>
+								<span className='me-2'>Não possui cadastro?</span>
+								<Link href='/register' passHref>
+									<a className={styles.link}>Cadastrar-se</a>
+								</Link>
+							</Col>
+						</Row>
+					</>
+				)}
 			</Container>
 			<ErrorToastContainer toasts={toasts} />
 		</>
+	);
+}
+
+function LoginForm(props: { onSubmit(username: string, password: string): void }) {
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+
+	return (
+		<form
+			onSubmit={(ev) => {
+				ev.preventDefault();
+				setPassword('');
+				props.onSubmit(username, password);
+			}}>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						className='text-center theme-element'
+						placeholder='Login'
+						id='username'
+						name='username'
+						value={username}
+						onChange={(e) => setUsername(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						type='password'
+						className='text-center theme-element'
+						placeholder='Senha'
+						id='password'
+						name='password'
+						value={password}
+						onChange={(e) => setPassword(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<Button type='submit' variant='secondary'>
+						Entrar
+					</Button>
+				</Col>
+			</Row>
+		</form>
 	);
 }
 
@@ -145,14 +162,14 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				redirect: {
 					destination: '/admin/main',
 					permanent: false,
-				}
+				},
 			};
 		}
 		return {
 			redirect: {
 				destination: '/sheet/1',
 				permanent: false,
-			}
+			},
 		};
 	}
 

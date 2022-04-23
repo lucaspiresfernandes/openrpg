@@ -22,7 +22,18 @@ import { Environment } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
-export default function Admin1(props: InferSSRProps<typeof getSSP>) {
+type PageProps = InferSSRProps<typeof getSSP>;
+
+export default function Page(props: PageProps) {
+	return (
+		<>
+			<ApplicationHead title='Painel do Mestre' />
+			<AdminPanel {...props} />
+		</>
+	);
+}
+
+function AdminPanel(props: PageProps) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
@@ -51,7 +62,6 @@ export default function Admin1(props: InferSSRProps<typeof getSSP>) {
 
 	return (
 		<>
-			<ApplicationHead title='Painel do Mestre' />
 			<AdminNavbar />
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>

@@ -7,55 +7,47 @@ import Row from 'react-bootstrap/Row';
 import ApplicationHead from '../../components/ApplicationHead';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
-import DiceRollResultModal from '../../components/Modals/DiceRollResultModal';
 import PlayerAttributeContainer from '../../components/Player/PlayerAttributeContainer';
+import PlayerCharacteristicContainer from '../../components/Player/PlayerCharacteristicContainer';
 import PlayerEquipmentContainer from '../../components/Player/PlayerEquipmentContainer';
-import PlayerItemContainer from '../../components/Player/PlayerItemContainer';
-import PlayerCharacteristicField from '../../components/Player/PlayerCharacteristicField';
 import PlayerInfoField from '../../components/Player/PlayerInfoField';
-import PlayerSpecField from '../../components/Player/PlayerSpecField';
+import PlayerItemContainer from '../../components/Player/PlayerItemContainer';
 import PlayerSkillContainer from '../../components/Player/PlayerSkillContainer';
+import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../components/Player/PlayerSpellContainer';
 import SheetNavbar from '../../components/SheetNavbar';
-import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
+import { ErrorLogger, Socket } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
-import { DiceResult, ResolvedDice } from '../../utils/dice';
+import { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
 import { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
-import { InferSSRProps } from '../../utils';
 
 const BONUS_DAMAGE_NAME = 'Dano Bônus';
 
-export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
+type PageProps = InferSSRProps<typeof getSSP>;
 
+export default function Page(props: PageProps) {
+	return (
+		<>
+			<ApplicationHead title='Ficha do Personagem' />
+			<PlayerSheet {...props} />
+		</>
+	);
+}
+
+function PlayerSheet(props: PageProps) {
 	const [toasts, addToast] = useToast();
-
 	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	//TODO: Find a way to bring this diceRoll state down in the hierarchy. diceRoll state is
-	//only needed for PlayerAttributeContainer, PlayerCharacteristicField,
-	//PlayerEquipmentContainer and PlayerSkillContainer.
-	const [diceRoll, setDiceRoll] = useState<{
-		dices: ResolvedDice[];
-		resolverKey?: string;
-		onResult?: (result: DiceResult[]) => void;
-	}>({ dices: [] });
 
 	const bonusDamage = useRef(
 		props.player.PlayerSpec.find((spec) => spec.Spec.name === BONUS_DAMAGE_NAME)?.value
 	);
-	const lastRoll = useRef<{
-		dices: ResolvedDice[];
-		resolverKey?: string;
-		onResult?: (result: DiceResult[]) => void;
-	}>({ dices: [] });
 
 	function onSpecChanged(name: string, value: string) {
-		if (name !== BONUS_DAMAGE_NAME) return;
-		bonusDamage.current = value;
+		if (name === BONUS_DAMAGE_NAME) bonusDamage.current = value;
 	}
 
 	useSocket((socket) => {
@@ -74,16 +66,6 @@ export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [socket]);
 
-	function onDiceRoll(
-		dices: ResolvedDice[],
-		resolverKey?: string,
-		onResult?: (result: DiceResult[]) => void
-	) {
-		const roll = { dices, resolverKey, onResult };
-		lastRoll.current = roll;
-		setDiceRoll(roll);
-	}
-
 	if (!socket)
 		return (
 			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
@@ -95,7 +77,6 @@ export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
 
 	return (
 		<>
-			<ApplicationHead title='Ficha do Personagem' />
 			<SheetNavbar />
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
@@ -103,105 +84,95 @@ export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
 						<Row className='display-5 text-center'>
 							<Col>Ficha do Personagem</Col>
 						</Row>
-						<ShowDiceResult.Provider value={onDiceRoll}>
-							<Row className='mb-3'>
-								<DataContainer
-									outline
-									title={
-										props.containerConfig.find(
-											(c) => c.originalName === 'Detalhes Pessoais'
-										)?.name || 'Detalhes Pessoais'
-									}>
-									<>
-										{props.player.PlayerInfo.map((info) => (
-											<Row className='mb-4' key={info.Info.id}>
-												<Col className='mx-2'>
-													<Row>
-														<label className='h5' htmlFor={`info${info.Info.id}`}>
-															{info.Info.name}
-														</label>
-														<PlayerInfoField infoId={info.Info.id} value={info.value} />
-													</Row>
-												</Col>
-											</Row>
-										))}
-										<hr />
-										<Row className='justify-content-center'>
-											{props.player.PlayerSpec.map((spec) => (
-												<Col
-													key={spec.Spec.id}
-													xs={12}
-													sm={6}
-													lg={4}
-													className='text-center mb-2'>
-													<PlayerSpecField
-														value={spec.value}
-														specId={spec.Spec.id}
-														name={spec.Spec.name}
-														onSpecChanged={onSpecChanged}
-													/>
-													<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
-												</Col>
-											))}
+						<Row className='mb-3'>
+							<DataContainer
+								outline
+								title={
+									props.containerConfig.find(
+										(c) => c.originalName === 'Detalhes Pessoais'
+									)?.name || 'Detalhes Pessoais'
+								}>
+								<>
+									{props.player.PlayerInfo.map((info) => (
+										<Row className='mb-4' key={info.Info.id}>
+											<Col className='mx-2'>
+												<Row>
+													<label className='h5' htmlFor={`info${info.Info.id}`}>
+														{info.Info.name}
+													</label>
+													<PlayerInfoField infoId={info.Info.id} value={info.value} />
+												</Row>
+											</Col>
 										</Row>
-									</>
-								</DataContainer>
-								<Col>
-									<PlayerAttributeContainer
-										playerAttributes={props.player.PlayerAttributes}
-										attributeDiceConfig={props.diceConfig.attribute}
-										playerAttributeStatus={props.player.PlayerAttributeStatus}
-										playerAvatars={props.player.PlayerAvatar}
-									/>
-								</Col>
-							</Row>
-							<Row>
-								<DataContainer
-									outline
-									title={
-										props.containerConfig.find(
-											(c) => c.originalName === 'Características'
-										)?.name || 'Características'
-									}>
-									<Row className='mb-3 text-center align-items-end justify-content-center'>
-										{props.player.PlayerCharacteristic.map((char) => (
-											<PlayerCharacteristicField
-												key={char.Characteristic.id}
-												modifier={char.modifier}
-												characteristic={char.Characteristic}
-												value={char.value}
-												characteristicDiceConfig={
-													props.diceConfig.characteristic || props.diceConfig.base
-												}
-											/>
+									))}
+									<hr />
+									<Row className='justify-content-center'>
+										{props.player.PlayerSpec.map((spec) => (
+											<Col
+												key={spec.Spec.id}
+												xs={12}
+												sm={6}
+												lg={4}
+												className='text-center mb-2'>
+												<PlayerSpecField
+													value={spec.value}
+													specId={spec.Spec.id}
+													name={spec.Spec.name}
+													onSpecChanged={onSpecChanged}
+												/>
+												<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
+											</Col>
 										))}
 									</Row>
-								</DataContainer>
-							</Row>
-							<Row>
-								<PlayerEquipmentContainer
-									availableEquipments={props.availableEquipments}
-									playerEquipments={props.player.PlayerEquipment}
-									title={
-										props.containerConfig.find((c) => c.originalName === 'Combate')
-											?.name || 'Combate'
-									}
-									bonusDamage={bonusDamage}
+								</>
+							</DataContainer>
+							<Col>
+								<PlayerAttributeContainer
+									playerAttributes={props.player.PlayerAttributes}
+									attributeDiceConfig={props.diceConfig.attribute}
+									playerAttributeStatus={props.player.PlayerAttributeStatus}
+									playerAvatars={props.player.PlayerAvatar}
 								/>
-							</Row>
-							<Row>
-								<PlayerSkillContainer
-									playerSkills={props.player.PlayerSkill}
-									availableSkills={props.availableSkills}
-									skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
-									title={
-										props.containerConfig.find((c) => c.originalName === 'Perícias')
-											?.name || 'Perícias'
+							</Col>
+						</Row>
+						<Row>
+							<DataContainer
+								outline
+								title={
+									props.containerConfig.find((c) => c.originalName === 'Características')
+										?.name || 'Características'
+								}>
+								<PlayerCharacteristicContainer
+									playerCharacteristics={props.player.PlayerCharacteristic}
+									characteristicDiceConfig={
+										props.diceConfig.characteristic || props.diceConfig.base
 									}
-									automaticMarking={props.automaticMarking}
 								/>
-							</Row>
-						</ShowDiceResult.Provider>
+							</DataContainer>
+						</Row>
+						<Row>
+							<PlayerEquipmentContainer
+								availableEquipments={props.availableEquipments}
+								playerEquipments={props.player.PlayerEquipment}
+								title={
+									props.containerConfig.find((c) => c.originalName === 'Combate')?.name ||
+									'Combate'
+								}
+								bonusDamage={bonusDamage}
+							/>
+						</Row>
+						<Row>
+							<PlayerSkillContainer
+								playerSkills={props.player.PlayerSkill}
+								availableSkills={props.availableSkills}
+								skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
+								title={
+									props.containerConfig.find((c) => c.originalName === 'Perícias')
+										?.name || 'Perícias'
+								}
+								automaticMarking={props.automaticMarking}
+							/>
+						</Row>
 						<Row>
 							<PlayerItemContainer
 								playerItems={props.player.PlayerItem}
@@ -227,13 +198,6 @@ export default function Sheet1(props: InferSSRProps<typeof getSSP>) {
 						</Row>
 					</Container>
 				</Socket.Provider>
-				<DiceRollResultModal
-					dices={diceRoll.dices}
-					resolverKey={diceRoll.resolverKey}
-					onDiceResult={diceRoll.onResult}
-					onHide={() => setDiceRoll({ dices: [], resolverKey: undefined })}
-					onRollAgain={() => setDiceRoll(lastRoll.current)}
-				/>
 			</ErrorLogger.Provider>
 			<ErrorToastContainer toasts={toasts} />
 		</>

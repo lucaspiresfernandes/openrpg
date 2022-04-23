@@ -7,8 +7,9 @@ import Button from 'react-bootstrap/Button';
 import { ResolvedDice } from '../../utils/dice';
 import SheetModal from './SheetModal';
 import { clamp } from '../../utils';
+import { DiceRollEvent } from '../../hooks/useDiceRoll';
 
-type Dice = {
+type DiceOption = {
 	name: string;
 	num: number;
 	roll: number;
@@ -17,7 +18,7 @@ type Dice = {
 type GeneralDiceRollModalProps = {
 	show: boolean;
 	onHide(): void;
-	showDiceRollResult(dices: ResolvedDice[], resolverKey?: string): void;
+	showDiceRollResult: DiceRollEvent;
 };
 
 export default function GeneralDiceRollModal({
@@ -25,7 +26,7 @@ export default function GeneralDiceRollModal({
 	onHide,
 	showDiceRollResult,
 }: GeneralDiceRollModalProps) {
-	const [dices, setDices] = useState<Dice[]>([
+	const [dices, setDices] = useState<DiceOption[]>([
 		{
 			name: '1D4',
 			num: 0,

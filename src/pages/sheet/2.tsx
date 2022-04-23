@@ -1,26 +1,37 @@
 import { GetServerSidePropsContext } from 'next';
-import Row from 'react-bootstrap/Row';
+import Router from 'next/router';
+import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
-import Container from 'react-bootstrap/Container';
-import DataContainer from '../../components/DataContainer';
-import SheetNavbar from '../../components/SheetNavbar';
-import useToast from '../../hooks/useToast';
-import { sessionSSR } from '../../utils/session';
-import prisma from '../../utils/database';
-import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
-import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
-import ErrorToastContainer from '../../components/ErrorToastContainer';
-import { useEffect, useState } from 'react';
-import useSocket, { SocketIO } from '../../hooks/useSocket';
-import api from '../../utils/api';
-import Router from 'next/router';
+import Row from 'react-bootstrap/Row';
 import ApplicationHead from '../../components/ApplicationHead';
-import { ContainerConfig } from '../../utils/config';
+import DataContainer from '../../components/DataContainer';
+import ErrorToastContainer from '../../components/ErrorToastContainer';
+import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
+import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
+import SheetNavbar from '../../components/SheetNavbar';
+import useSocket, { SocketIO } from '../../hooks/useSocket';
+import useToast from '../../hooks/useToast';
 import { InferSSRProps } from '../../utils';
+import api from '../../utils/api';
+import { ContainerConfig } from '../../utils/config';
+import prisma from '../../utils/database';
+import { sessionSSR } from '../../utils/session';
 
-export default function Sheet2(props: InferSSRProps<typeof getServerSidePropsPage2>) {
+type PageProps = InferSSRProps<typeof getSSP>;
+
+export default function Page(props: PageProps) {
+	return (
+		<>
+			<ApplicationHead title='Ficha do Personagem' />
+			<PlayerSheet {...props} />
+		</>
+	);
+}
+
+function PlayerSheet(props: PageProps) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
@@ -50,7 +61,6 @@ export default function Sheet2(props: InferSSRProps<typeof getServerSidePropsPag
 
 	return (
 		<>
-			<ApplicationHead title='Ficha do Personagem' />
 			<SheetNavbar />
 			<Container>
 				<Row className='display-5 text-center'>
@@ -98,7 +108,7 @@ export default function Sheet2(props: InferSSRProps<typeof getServerSidePropsPag
 	);
 }
 
-async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
+async function getSSP(ctx: GetServerSidePropsContext) {
 	const player = ctx.req.session.player;
 
 	if (!player) {
@@ -139,4 +149,4 @@ async function getServerSidePropsPage2(ctx: GetServerSidePropsContext) {
 		},
 	};
 }
-export const getServerSideProps = sessionSSR(getServerSidePropsPage2);
+export const getServerSideProps = sessionSSR(getSSP);

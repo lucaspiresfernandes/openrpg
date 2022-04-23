@@ -5,49 +5,61 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
+import useToast from '../../hooks/useToast';
 import api from '../../utils/api';
+import ErrorToastContainer from '../ErrorToastContainer';
 
-export default function WelcomePage({ logError }: { logError: (err: any) => void }) {
-    const [loading, setLoading] = useState(false);
+export default function WelcomePage() {
+	const [loading, setLoading] = useState(false);
+	const [toasts, addToast] = useToast();
 
-    function init() {
-        setLoading(true);
-        api.post('/init').then(() => {
-            Router.reload();
-        }).catch(err => {
-            logError(err);
-            setLoading(false);
-        });
-    }
+	function init() {
+		setLoading(true);
+		api
+			.post('/init')
+			.then(() => {
+				Router.reload();
+			})
+			.catch((err) => {
+				setLoading(false);
+				addToast(err);
+			});
+	}
 
-    if (loading) return (
-        <Container className='text-center'>
-            <Row>
-                <Col className='mt-3'>
-                    <Image src='/loading.svg' alt='Loading...' fluid />
-                </Col>
-            </Row>
-        </Container>
-    );
+	if (loading)
+		return (
+			<>
+				<Container className='text-center'>
+					<Row>
+						<Col className='mt-3'>
+							<Image src='/loading.svg' alt='Loading...' fluid />
+						</Col>
+					</Row>
+				</Container>
+				<ErrorToastContainer toasts={toasts} />
+			</>
+		);
 
-    return (
-        <Container className='text-center'>
-            <Row>
-                <Col className='h1 mt-3'>
-                    Seja bem-vindo ao Open RPG!
-                </Col>
-            </Row>
-            <Row>
-                <Col className='h3 mt-3'>
-                    Antes de começar, você precisa realizar a configuração inicial do sistema.
-                </Col>
-            </Row>
-            <Row>
-                <Col className='mt-3'>
-                    <Button variant='secondary' size='lg' onClick={init}>Configurar</Button>
-                </Col>
-            </Row>
-        </Container>
-
-    );
+	return (
+		<>
+			<Container className='text-center'>
+				<Row>
+					<Col className='h1 mt-3'>Seja bem-vindo ao Open RPG!</Col>
+				</Row>
+				<Row>
+					<Col className='h3 mt-3'>
+						Antes de começar, você precisa realizar a configuração inicial do sistema.
+					</Col>
+				</Row>
+				<Row>
+					<Col className='mt-3'>
+						<Button variant='secondary' size='lg' onClick={init}>
+							Configurar
+						</Button>
+					</Col>
+				</Row>
+			</Container>
+			<ErrorToastContainer toasts={toasts} />
+		</>
+	);
 }

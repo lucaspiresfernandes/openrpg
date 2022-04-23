@@ -1,23 +1,18 @@
 import { Skill } from '@prisma/client';
-import {
-	ChangeEvent,
-	memo,
-	useContext,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+import { ChangeEvent, memo, useContext, useEffect, useMemo, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
+import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
 import { DiceConfigCell } from '../../utils/config';
+import useDiceRoll, { DiceRollEvent } from '../../hooks/useDiceRoll';
+import DiceRollResultModal from '../Modals/DiceRollResultModal';
 
 type PlayerSkillContainerProps = {
 	playerSkills: {
@@ -38,6 +33,7 @@ type PlayerSkillContainerProps = {
 };
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	const [addSkillShow, setAddSkillShow] = useState(false);
 	const [availableSkills, setAvailableSkills] = useState<{ id: number; name: string }[]>(
 		props.availableSkills
@@ -95,7 +91,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	}, [socket]);
 
 	function clearChecks() {
-		setNotify(n => !n);
+		setNotify((n) => !n);
 		setPlayerSkills((skills) =>
 			skills.map((skill) => {
 				return {
@@ -154,6 +150,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 							hidden={!skill.Skill.name.toLowerCase().includes(search.toLowerCase())}
 							skillDice={props.skillDiceConfig}
 							automaticMarking={props.automaticMarking}
+							showDiceRollResult={onDiceRoll}
 							notifyChecked={notify}
 						/>
 					))}
@@ -166,6 +163,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				data={availableSkills}
 				onAddData={onAddSkill}
 			/>
+			<DiceRollResultModal {...diceRollResultModalProps} />
 		</>
 	);
 }
@@ -179,13 +177,13 @@ type PlayerSkillFieldProps = {
 	skillDice: DiceConfigCell;
 	automaticMarking: boolean;
 	notifyChecked: boolean;
+	showDiceRollResult: DiceRollEvent;
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
 	const [lastValue, value, setValue] = useExtendedState(props.value);
 	const [checked, setChecked] = useState(props.checked);
 	const logError = useContext(ErrorLogger);
-	const showDiceRollResult = useContext(ShowDiceResult);
 
 	useEffect(() => {
 		if (props.checked === checked) return;
@@ -231,7 +229,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	function rollDice() {
 		const roll = props.skillDice.value;
 		const branched = props.skillDice.branched;
-		showDiceRollResult(
+		props.showDiceRollResult(
 			[{ num: 1, roll, ref: value }],
 			`${roll}${branched ? 'b' : ''}`,
 			(results) => {

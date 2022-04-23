@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import Table from 'react-bootstrap/Table';
-import { ErrorLogger, ShowDiceResult, Socket } from '../../contexts';
+import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
@@ -13,6 +13,8 @@ import useExtendedState from '../../hooks/useExtendedState';
 import { BsTrash } from 'react-icons/bs';
 import BottomTextInput from '../BottomTextInput';
 import { resolveDices } from '../../utils/dice';
+import DiceRollResultModal from '../Modals/DiceRollResultModal';
+import useDiceRoll, { DiceRollEvent } from '../../hooks/useDiceRoll';
 
 type PlayerEquipmentContainerProps = {
 	playerEquipments: {
@@ -33,6 +35,7 @@ type PlayerEquipmentContainerProps = {
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	const [addEquipmentShow, setAddEquipmentShow] = useState(false);
 	const [availableEquipments, setAvailableEquipments] = useState<
 		{ id: number; name: string }[]
@@ -165,6 +168,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 										currentAmmo={eq.currentAmmo}
 										onDelete={onDeleteEquipment}
 										bonusDamage={props.bonusDamage}
+										showDiceRollResult={onDiceRoll}
 									/>
 								))}
 							</tbody>
@@ -179,6 +183,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				data={availableEquipments}
 				onAddData={onAddEquipment}
 			/>
+			<DiceRollResultModal {...diceRollResultModalProps} />
 		</>
 	);
 }
@@ -196,6 +201,7 @@ type PlayerEquipmentFieldProps = {
 	};
 	onDelete(id: number): void;
 	bonusDamage: MutableRefObject<string | undefined>;
+	showDiceRollResult: DiceRollEvent;
 };
 
 function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
@@ -203,7 +209,6 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	const [loading, setLoading] = useState(false);
 
 	const logError = useContext(ErrorLogger);
-	const showDiceRollResult = useContext(ShowDiceResult);
 	const equipmentID = props.equipment.id;
 
 	function onAmmoChange(ev: FormEvent<HTMLInputElement>) {
@@ -227,7 +232,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 			return alert('Você não tem munição suficiente.');
 		const aux = resolveDices(props.equipment.damage, { bonusDamage: props.bonusDamage.current });
 		if (!aux) return;
-		showDiceRollResult(aux);
+		props.showDiceRollResult(aux);
 		const ammo = currentAmmo - 1;
 		setCurrentAmmo(ammo);
 		api

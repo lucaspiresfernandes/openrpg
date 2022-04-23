@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Router from 'next/router';
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -14,10 +14,6 @@ import homeStyles from '../../styles/modules/Home.module.scss';
 import api from '../../utils/api';
 
 export default function Register() {
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
-	const [adminKey, setAdminKey] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [toasts, addToast] = useToast();
 
@@ -31,8 +27,12 @@ export default function Register() {
 		setLoading(false);
 	});
 
-	function onFormSubmit(ev: FormEvent<HTMLFormElement>) {
-		ev.preventDefault();
+	function onFormSubmit(
+		username: string,
+		password: string,
+		confirmPassword: string,
+		adminKey: string
+	) {
 		setLoading(true);
 
 		try {
@@ -41,27 +41,22 @@ export default function Register() {
 				password.length === 0 ||
 				confirmPassword.length === 0 ||
 				adminKey.length === 0
-			) {
+			)
 				throw new Error('Todos os campos devem ser preenchidos.');
-			} else if (password !== confirmPassword) {
-				throw new Error('As senhas não coincidem.');
-			} else {
+			else if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
+			else
 				api
 					.post('/register', { username, password, adminKey })
 					.then(() => Router.replace('/admin/main'));
-			}
 		} catch (err) {
 			addToast(err);
-			setPassword('');
-			setConfirmPassword('');
-			setAdminKey('');
 			setLoading(false);
 		}
 	}
 
 	return (
 		<div>
-			<ApplicationHead title='Cadastrar' />
+			<ApplicationHead title='Cadastro de Mestre' />
 			<Container className='text-center mt-2'>
 				<Row>
 					<Col>
@@ -70,92 +65,116 @@ export default function Register() {
 						</h1>
 					</Col>
 				</Row>
-				{loading ? (
-					<></>
-				) : (
-					<form onSubmit={onFormSubmit}>
-						<Row className='my-3 justify-content-center'>
-							<Col md={6}>
-								<FormControl
-									className='text-center theme-element'
-									placeholder='Login'
-									id='username'
-									name='username'
-									value={username}
-									onChange={(e) => setUsername(e.currentTarget.value)}
-								/>
+				{!loading && (
+					<>
+						<RegisterForm onSubmit={onFormSubmit} />
+						<Row>
+							<Col>
+								<Row className='my-3'>
+									<Col>
+										Já possui cadastro?{' '}
+										<Link href='/'>
+											<a className={homeStyles.link}>Entrar</a>
+										</Link>
+									</Col>
+								</Row>
+								<Row className='my-3'>
+									<Col>
+										É um jogador?{' '}
+										<Link href='/register'>
+											<a className={homeStyles.link}>Cadastrar-se como jogador</a>
+										</Link>
+									</Col>
+								</Row>
 							</Col>
 						</Row>
-						<Row className='my-3 justify-content-center'>
-							<Col md={6}>
-								<FormControl
-									type='password'
-									className='text-center theme-element'
-									placeholder='Senha'
-									id='password'
-									name='password'
-									value={password}
-									onChange={(e) => setPassword(e.currentTarget.value)}
-								/>
-							</Col>
-						</Row>
-						<Row className='my-3 justify-content-center'>
-							<Col md={6}>
-								<FormControl
-									type='password'
-									className='text-center theme-element'
-									placeholder='Confirmar Senha'
-									id='confirmPassword'
-									name='confirmPassword'
-									value={confirmPassword}
-									onChange={(e) => setConfirmPassword(e.currentTarget.value)}
-								/>
-							</Col>
-						</Row>
-						<Row className='my-3 justify-content-center'>
-							<Col md={6}>
-								<FormControl
-									type='password'
-									className='text-center theme-element'
-									placeholder='Chave do Mestre'
-									id='adminKey'
-									name='adminKey'
-									value={adminKey}
-									onChange={(e) => setAdminKey(e.currentTarget.value)}
-								/>
-							</Col>
-						</Row>
-						<Row className='my-3 justify-content-center'>
-							<Col md={6}>
-								<Button type='submit' variant='secondary'>
-									Cadastrar-se
-								</Button>
-							</Col>
-						</Row>
-					</form>
+					</>
 				)}
-				<Row>
-					<Col>
-						<Row className='my-3'>
-							<Col>
-								Já possui cadastro?{' '}
-								<Link href='/'>
-									<a className={homeStyles.link}>Entrar</a>
-								</Link>
-							</Col>
-						</Row>
-						<Row className='my-3'>
-							<Col>
-								É um jogador?{' '}
-								<Link href='/register'>
-									<a className={homeStyles.link}>Cadastrar-se como jogador</a>
-								</Link>
-							</Col>
-						</Row>
-					</Col>
-				</Row>
 			</Container>
 			<ErrorToastContainer toasts={toasts} />
 		</div>
+	);
+}
+
+function RegisterForm(props: {
+	onSubmit(
+		username: string,
+		password: string,
+		confirmPassword: string,
+		adminKey: string
+	): void;
+}) {
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [adminKey, setAdminKey] = useState('');
+
+	return (
+		<form onSubmit={ev => {
+			ev.preventDefault();
+			setPassword('');
+			setConfirmPassword('');
+			setAdminKey('');
+			props.onSubmit(username, password, confirmPassword, adminKey);
+		}}>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						className='text-center theme-element'
+						placeholder='Login'
+						id='username'
+						name='username'
+						value={username}
+						onChange={(e) => setUsername(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						type='password'
+						className='text-center theme-element'
+						placeholder='Senha'
+						id='password'
+						name='password'
+						value={password}
+						onChange={(e) => setPassword(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						type='password'
+						className='text-center theme-element'
+						placeholder='Confirmar Senha'
+						id='confirmPassword'
+						name='confirmPassword'
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<FormControl
+						type='password'
+						className='text-center theme-element'
+						placeholder='Chave do Mestre'
+						id='adminKey'
+						name='adminKey'
+						value={adminKey}
+						onChange={(e) => setAdminKey(e.currentTarget.value)}
+					/>
+				</Col>
+			</Row>
+			<Row className='my-3 justify-content-center'>
+				<Col md={6}>
+					<Button type='submit' variant='secondary'>
+						Cadastrar-se
+					</Button>
+				</Col>
+			</Row>
+		</form>
 	);
 }
