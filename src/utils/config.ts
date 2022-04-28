@@ -1,3 +1,5 @@
+import { Config } from '@prisma/client';
+
 export type DiceConfig = {
 	//Legacy object
 	base: DiceConfigCell;
@@ -22,3 +24,20 @@ export type PortraitConfig = {
 export type Environment = 'idle' | 'combat';
 
 export type ContainerConfig = { originalName: string; name: string }[];
+
+let successTypeEnabledDirty: boolean = true;
+let successTypeEnabled: Config | null = null;
+
+export function setSuccessTypeConfigDirty() {
+	successTypeEnabledDirty = true;
+}
+
+export async function isSuccessTypeEnabled() {
+	if (successTypeEnabledDirty) {
+		successTypeEnabledDirty = false;
+		successTypeEnabled = await prisma.config.findUnique({
+			where: { name: 'enable_success_types' },
+		});
+	}
+	return successTypeEnabled?.value || 'false';
+}

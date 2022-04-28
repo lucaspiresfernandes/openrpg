@@ -1,6 +1,11 @@
 import { NextApiRequest } from 'next';
+import { setSuccessTypeConfigDirty } from '../../utils/config';
 import prisma from '../../utils/database';
 import { NextApiResponseServerIO } from '../../utils/socket';
+
+const customBehaviours = new Map<string, () => void>([
+	['enable_success_types', setSuccessTypeConfigDirty]
+]);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const name = req.body.name;
@@ -13,10 +18,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 
 	if (typeof value !== 'string') value = JSON.stringify(value);
 
-	const config = await prisma.config.findUnique({ where: { name } });
+	let config = await prisma.config.findUnique({ where: { name } });
 
-	if (!config) await prisma.config.create({ data: { name, value } });
+	if (!config) config = await prisma.config.create({ data: { name, value } });
 	else await prisma.config.update({ where: { name }, data: { value } });
+
+	const behaviour = customBehaviours.get(config.name);
+	if (behaviour) behaviour();
 
 	res.end();
 

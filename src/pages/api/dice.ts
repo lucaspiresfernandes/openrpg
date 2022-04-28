@@ -1,7 +1,7 @@
 import { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
+import { isSuccessTypeEnabled } from '../../utils/config';
 import { DiceResult, ResolvedDice } from '../../utils/dice';
-import prisma from '../../utils/database';
 import { sessionAPI } from '../../utils/session';
 import { NextApiResponseServerIO } from '../../utils/socket';
 
@@ -27,9 +27,6 @@ async function nextInt(min: number, max: number, n: number) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-	const enabledSuccessTypes =
-		(await prisma.config.findUnique({ where: { name: 'enable_success_types' } }))
-			?.value === 'true';
 
 	if (req.method !== 'POST') {
 		res.status(404).end();
@@ -80,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 					const roll = result.data.reduce((a, b) => a + b, 0);
 					results[index] = { roll };
 
-					if (!enabledSuccessTypes || !resolverKey || reference === undefined) return;
+					if (!isSuccessTypeEnabled() || !resolverKey || reference === undefined) return;
 					results[index].resultType = resolveSuccessType(resolverKey, reference, roll);
 				});
 			})
