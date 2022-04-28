@@ -61,16 +61,15 @@ function HomePage() {
 	const [loading, setLoading] = useState(false);
 	const [toasts, addToast] = useToast();
 
-	function onFormSubmit(username: string, password: string) {
+	async function onFormSubmit(username: string, password: string) {
 		setLoading(true);
 
 		try {
 			if (username.length === 0 || password.length === 0)
 				throw new Error('Você deve preencher tanto o usuário como a senha.');
-			api.post('/login', { username, password }).then((res) => {
-				if (res.data.admin) return Router.replace('/admin/main');
-				Router.replace('/sheet/1');
-			});
+			const res = await api.post('/login', { username, password });
+			if (res.data.admin) return Router.replace('/admin/main');
+			Router.replace('/sheet/1');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);

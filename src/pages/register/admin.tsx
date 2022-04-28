@@ -27,7 +27,7 @@ export default function Register() {
 		setLoading(false);
 	});
 
-	function onFormSubmit(
+	async function onFormSubmit(
 		username: string,
 		password: string,
 		confirmPassword: string,
@@ -43,11 +43,9 @@ export default function Register() {
 				adminKey.length === 0
 			)
 				throw new Error('Todos os campos devem ser preenchidos.');
-			else if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
-			else
-				api
-					.post('/register', { username, password, adminKey })
-					.then(() => Router.replace('/admin/main'));
+			if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
+			await api.post('/register', { username, password, adminKey });
+			Router.replace('/admin/main');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);
@@ -110,13 +108,14 @@ function RegisterForm(props: {
 	const [adminKey, setAdminKey] = useState('');
 
 	return (
-		<form onSubmit={ev => {
-			ev.preventDefault();
-			setPassword('');
-			setConfirmPassword('');
-			setAdminKey('');
-			props.onSubmit(username, password, confirmPassword, adminKey);
-		}}>
+		<form
+			onSubmit={(ev) => {
+				ev.preventDefault();
+				setPassword('');
+				setConfirmPassword('');
+				setAdminKey('');
+				props.onSubmit(username, password, confirmPassword, adminKey);
+			}}>
 			<Row className='my-3 justify-content-center'>
 				<Col md={6}>
 					<FormControl

@@ -24,17 +24,15 @@ export default function Register() {
 		} else setLoading(false);
 	});
 
-	function onFormSubmit(username: string, password: string, confirmPassword: string) {
+	async function onFormSubmit(username: string, password: string, confirmPassword: string) {
 		setLoading(true);
 
 		try {
 			if (username.length === 0 || password.length === 0 || confirmPassword.length === 0)
 				throw new Error('Todos os campos devem ser preenchidos.');
-			else if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
-			else
-				api
-					.post('/register', { username, password })
-					.then(() => Router.replace('/sheet/1'));
+			if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
+			await api.post('/register', { username, password });
+			Router.replace('/sheet/1');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);
