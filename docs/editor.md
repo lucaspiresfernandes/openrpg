@@ -18,9 +18,9 @@ O primeiro contêiner do Editor, Detalhes Pessoais (Geral), refere-se aos Detalh
 
 Os Detalhes Pessoais (Extra) referem-se aos Detalhes Pessoais presentes na segunda página da ficha eletrônica do jogador.
 
-## Atributos
+## Barras de Atributo
 
-Os Atributos referem-se às barras de Atributo. Você pode modificar a cor e seus estados de "testáveis".
+As Barras de Atributo referem-se às barras coloridas que a ficha mostra abaixo do avatar. Você pode modificar a cor e seus estados de "testáveis".
 
 Atributos testáveis são atributos que podem ser testados, ou seja, se permitem a rolagem de um dado. Atributos testáveis exibirão um pequeno dado ao lado de sua barra.
 

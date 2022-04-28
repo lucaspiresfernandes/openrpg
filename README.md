@@ -26,7 +26,7 @@ Atualmente, o Open RPG possui várias funções e recursos tanto para os mestres
 ### Ficha eletrônica do jogador:
 
 - Informações Pessoais
-- Atributos, Estados e Avatar
+- Barras de Atributos, Estados e Avatar
 - Características (ou atributos secundários)
 - Combate e Equipamentos
 - Perícias

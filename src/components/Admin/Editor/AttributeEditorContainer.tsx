@@ -91,7 +91,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 			<Row>
 				<DataContainer
 					outline
-					title='Atributos'
+					title='Barras de Atributo'
 					addButton={{ onAdd: () => setShowAttributeModal(true) }}>
 					<Row>
 						<Col>
