@@ -1,9 +1,9 @@
 import Router from 'next/router';
 import { useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import useToast from '../../hooks/useToast';
 import api from '../../utils/api';
@@ -32,7 +32,7 @@ export default function WelcomePage() {
 				<Container className='text-center'>
 					<Row>
 						<Col className='mt-3'>
-							<Image src='/loading.svg' alt='Loading...' fluid />
+							<Spinner animation='border' variant='secondary' />
 						</Col>
 					</Row>
 				</Container>

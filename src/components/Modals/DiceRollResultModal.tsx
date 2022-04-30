@@ -1,13 +1,13 @@
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
-import Fade from 'react-bootstrap/Fade';
-import SheetModal from './SheetModal';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { DiceResult, ResolvedDice } from '../../utils/dice';
-import api from '../../utils/api';
+import { Spinner } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Fade from 'react-bootstrap/Fade';
+import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
+import api from '../../utils/api';
+import { DiceResult, ResolvedDice } from '../../utils/dice';
+import SheetModal from './SheetModal';
 
 export type DiceRoll = {
 	dices: ResolvedDice[];
@@ -102,7 +102,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 				{!result && (
 					<Row>
 						<Col>
-							<Image src='/loading.svg' alt='Loading...' fluid />
+							<Spinner animation='border' variant='secondary' />
 						</Col>
 					</Row>
 				)}
