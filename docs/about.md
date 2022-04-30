@@ -18,6 +18,10 @@ Você pode usar o Open RPG com qualquer outro aplicativo para aumentar ainda mai
 
 Eu sou Alyssa Fernandes, uma técnica de Informática e desenvolvedora do Open RPG. Sou apaixonada por jogos no geral e sempre estou produzindo novos conteúdos gratuitos para a comunidade.
 
+## Gostei do Open RPG, mas ele não atende a minha demanda.
+
+Eu também faço comissões de fichas eletrônicas de RPG. Para mais informações, me mande um e-mail com o título "Ficha Eletrônica de RPG - Comissão".
+
 ## Eu gostaria de entrar em contato com você.
 
 Sinta-se à vontade para abrir um post nas [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions) ou me enviar um e-mail para [alyssapiresfernandes@gmail.com](mailto:alyssapiresfernandes@gmail.com).
