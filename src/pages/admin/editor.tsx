@@ -12,15 +12,14 @@ import ItemEditorContainer from '../../components/Admin/Editor/ItemEditorContain
 import SkillEditorContainer from '../../components/Admin/Editor/SkillEditorContainer';
 import SpecEditorContainer from '../../components/Admin/Editor/SpecEditorContainer';
 import SpellEditorContainer from '../../components/Admin/Editor/SpellEditorContainer';
-import AdminNavbar from '../../components/Admin/AdminNavbar';
 import ApplicationHead from '../../components/ApplicationHead';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import { ErrorLogger } from '../../contexts';
 import useToast from '../../hooks/useToast';
+import { InferSSRProps } from '../../utils';
+import { ContainerConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
-import { ContainerConfig } from '../../utils/config';
-import { InferSSRProps } from '../../utils';
 
 export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 	const [toasts, addToast] = useToast();
@@ -28,7 +27,6 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 	return (
 		<>
 			<ApplicationHead title='Editor' />
-			<AdminNavbar />
 			<Container>
 				<ErrorLogger.Provider value={addToast}>
 					<Row>

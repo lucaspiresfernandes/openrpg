@@ -5,7 +5,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import AdminDiceRollContainer from '../../components/Admin/AdminDiceRollContainer';
 import AdminEnvironmentConfigurations from '../../components/Admin/AdminEnvironmentConfigurations';
-import AdminNavbar from '../../components/Admin/AdminNavbar';
 import CombatContainer from '../../components/Admin/CombatContainer';
 import DiceList from '../../components/Admin/DiceList';
 import NPCContainer from '../../components/Admin/NPCContainer';
@@ -62,7 +61,6 @@ function AdminPanel(props: PageProps) {
 
 	return (
 		<>
-			<AdminNavbar />
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
 					<Container>

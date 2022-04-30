@@ -15,7 +15,6 @@ import PlayerItemContainer from '../../components/Player/PlayerItemContainer';
 import PlayerSkillContainer from '../../components/Player/PlayerSkillContainer';
 import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../components/Player/PlayerSpellContainer';
-import SheetNavbar from '../../components/SheetNavbar';
 import { ErrorLogger, Socket } from '../../contexts';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
@@ -77,7 +76,6 @@ function PlayerSheet(props: PageProps) {
 
 	return (
 		<>
-			<SheetNavbar />
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
 					<Container>

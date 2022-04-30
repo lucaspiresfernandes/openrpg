@@ -11,7 +11,6 @@ import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
-import SheetNavbar from '../../components/SheetNavbar';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import { InferSSRProps } from '../../utils';
@@ -61,7 +60,6 @@ function PlayerSheet(props: PageProps) {
 
 	return (
 		<>
-			<SheetNavbar />
 			<Container>
 				<Row className='display-5 text-center'>
 					<Col>Ficha do Personagem</Col>

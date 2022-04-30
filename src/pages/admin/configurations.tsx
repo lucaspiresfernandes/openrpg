@@ -9,7 +9,6 @@ import DropdownItem from 'react-bootstrap/DropdownItem';
 import FormCheck from 'react-bootstrap/FormCheck';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
-import AdminNavbar from '../../components/Admin/AdminNavbar';
 import ApplicationHead from '../../components/ApplicationHead';
 import BottomTextInput from '../../components/BottomTextInput';
 import DataContainer from '../../components/DataContainer';
@@ -21,7 +20,7 @@ import {
 	ContainerConfig,
 	DiceConfig,
 	PortraitConfig,
-	PortraitOrientation,
+	PortraitOrientation
 } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
@@ -36,7 +35,6 @@ export default function Configurations(
 	return (
 		<>
 			<ApplicationHead title='Configurações' />
-			<AdminNavbar />
 			<Container>
 				<Row>
 					<Col xs={2} className='me-5'>

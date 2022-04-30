@@ -1,25 +1,23 @@
-import ApplicationHead from '../components/ApplicationHead';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
+import { GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useState } from 'react';
-import api from '../utils/api';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import FormControl from 'react-bootstrap/FormControl';
+import Row from 'react-bootstrap/Row';
+import WelcomePage from '../components/Admin/WelcomePage';
+import ApplicationHead from '../components/ApplicationHead';
 import ErrorToastContainer from '../components/ErrorToastContainer';
 import useToast from '../hooks/useToast';
 import styles from '../styles/modules/Home.module.scss';
-import Router from 'next/router';
-import WelcomePage from '../components/Admin/WelcomePage';
-import { GetServerSidePropsContext } from 'next';
+import { InferSSRProps } from '../utils';
+import api from '../utils/api';
 import prisma from '../utils/database';
 import { sessionSSR } from '../utils/session';
-import { InferSSRProps } from '../utils';
 
-type PageProps = InferSSRProps<typeof getSSP>;
-
-export default function Page({ init, error }: PageProps) {
+export default function Page({ init, error }: InferSSRProps<typeof getSSP>) {
 	if (error)
 		return (
 			<>
