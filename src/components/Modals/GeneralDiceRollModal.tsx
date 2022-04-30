@@ -1,59 +1,48 @@
 import { useRef, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
-import { ResolvedDice } from '../../utils/dice';
-import SheetModal from './SheetModal';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
+import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import { clamp } from '../../utils';
-import { DiceRollEvent } from '../../hooks/useDiceRoll';
+import type { ResolvedDice } from '../../utils/dice';
+import SheetModal from './SheetModal';
 
 type DiceOption = {
-	name: string;
 	num: number;
 	roll: number;
 };
 
 type GeneralDiceRollModalProps = {
 	show: boolean;
-	onHide(): void;
+	onHide: () => void;
 	showDiceRollResult: DiceRollEvent;
 };
 
-export default function GeneralDiceRollModal({
-	show,
-	onHide,
-	showDiceRollResult,
-}: GeneralDiceRollModalProps) {
+export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
 	const [dices, setDices] = useState<DiceOption[]>([
 		{
-			name: '1D4',
 			num: 0,
 			roll: 4,
 		},
 		{
-			name: '1D6',
 			num: 0,
 			roll: 6,
 		},
 		{
-			name: '1D8',
 			num: 0,
 			roll: 8,
 		},
 		{
-			name: '1D10',
 			num: 0,
 			roll: 10,
 		},
 		{
-			name: '1D12',
 			num: 0,
 			roll: 12,
 		},
 		{
-			name: '1D20',
 			num: 0,
 			roll: 20,
 		},
@@ -66,7 +55,7 @@ export default function GeneralDiceRollModal({
 			if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
 		});
 		if (rollDices.length > 0 && applyRef.current) {
-			showDiceRollResult(rollDices);
+			props.showDiceRollResult(rollDices);
 			applyRef.current = false;
 		}
 		setDices(
@@ -88,17 +77,17 @@ export default function GeneralDiceRollModal({
 
 	return (
 		<SheetModal
-			show={show}
+			show={props.show}
 			onExited={reset}
 			title='Rolagem Geral de Dados'
 			applyButton={{
 				name: 'Rolar',
 				onApply: () => {
 					applyRef.current = true;
-					onHide();
+					props.onHide();
 				},
 			}}
-			onHide={onHide}
+			onHide={props.onHide}
 			centered>
 			<Container fluid>
 				<Row className='text-center'>
@@ -108,8 +97,8 @@ export default function GeneralDiceRollModal({
 								<Col>
 									<Image
 										src={`/dice${dice.roll}.png`}
-										alt={dice.name}
-										title={dice.name}
+										alt={`${dice.num || ''}D${dice.roll}`}
+										title={`${dice.num || ''}D${dice.roll}`}
 										style={{ maxHeight: 75 }}
 									/>
 								</Col>
