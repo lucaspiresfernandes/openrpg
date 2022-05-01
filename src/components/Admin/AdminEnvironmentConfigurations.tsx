@@ -1,9 +1,10 @@
-import { ChangeEvent, useContext, useState } from 'react';
-import FormCheck from 'react-bootstrap/FormCheck';
+import type { ChangeEvent } from 'react';
+import { useContext, useState } from 'react';
 import Col from 'react-bootstrap/Col';
+import FormCheck from 'react-bootstrap/FormCheck';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
-import { Environment } from '../../utils/config';
+import type { Environment } from '../../utils/config';
 
 export default function AdminEnvironmentConfigurations(props: {
 	environment: Environment;

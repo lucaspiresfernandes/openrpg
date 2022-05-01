@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { SocketIO } from '../../hooks/useSocket';
-import { PortraitOrientation } from '../../utils/config';
+import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
+import type { PortraitOrientation } from '../../utils/config';
 import { getAttributeStyle, getOrientationStyle } from '../../utils/style';
 
 export type PortraitSideAttribute = {

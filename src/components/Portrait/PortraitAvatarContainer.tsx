@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { SocketIO } from '../../hooks/useSocket';
 import Fade from 'react-bootstrap/Fade';
 import Image from 'react-bootstrap/Image';
+import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import api from '../../utils/api';
 
@@ -55,7 +55,7 @@ export default function PortraitAvatar(props: {
 							params: { playerID: props.playerId },
 						})
 						.then((res) => {
-							setSrc(src => {
+							setSrc((src) => {
 								if (res.data.link === src.split('?')[0]) return src;
 								setShowAvatar(false);
 								return `${res.data.link}?v=${Date.now()}`;

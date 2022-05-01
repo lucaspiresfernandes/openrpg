@@ -9,7 +9,7 @@ export type DiceResult = {
 	resultType?: {
 		description: string;
 		isSuccess: boolean;
-	}
+	};
 };
 
 type ResolveDiceOptions = {

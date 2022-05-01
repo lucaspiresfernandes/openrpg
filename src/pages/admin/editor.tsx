@@ -1,5 +1,4 @@
-import { GetServerSidePropsContext } from 'next';
-import React from 'react';
+import type { GetServerSidePropsContext } from 'next';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import AttributeEditorContainer from '../../components/Admin/Editor/AttributeEditorContainer';
@@ -16,8 +15,8 @@ import ApplicationHead from '../../components/ApplicationHead';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import { ErrorLogger } from '../../contexts';
 import useToast from '../../hooks/useToast';
-import { InferSSRProps } from '../../utils';
-import { ContainerConfig } from '../../utils/config';
+import type { InferSSRProps } from '../../utils';
+import type { ContainerConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 

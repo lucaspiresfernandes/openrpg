@@ -1,20 +1,22 @@
-import { Equipment } from '@prisma/client';
-import { FormEvent, MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import type { Equipment } from '@prisma/client';
+import type { FormEvent, MutableRefObject } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
+import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger, Socket } from '../../contexts';
+import type { DiceRollEvent } from '../../hooks/useDiceRoll';
+import useDiceRoll from '../../hooks/useDiceRoll';
+import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
+import { resolveDices } from '../../utils/dice';
+import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
-import useExtendedState from '../../hooks/useExtendedState';
-import { BsTrash } from 'react-icons/bs';
-import BottomTextInput from '../BottomTextInput';
-import { resolveDices } from '../../utils/dice';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
-import useDiceRoll, { DiceRollEvent } from '../../hooks/useDiceRoll';
 
 type PlayerEquipmentContainerProps = {
 	playerEquipments: {
@@ -230,7 +232,9 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	function diceRoll() {
 		if (props.equipment.ammo && currentAmmo === 0)
 			return alert('Você não tem munição suficiente.');
-		const aux = resolveDices(props.equipment.damage, { bonusDamage: props.bonusDamage.current });
+		const aux = resolveDices(props.equipment.damage, {
+			bonusDamage: props.bonusDamage.current,
+		});
 		if (!aux) return;
 		props.showDiceRollResult(aux);
 		const ammo = currentAmmo - 1;

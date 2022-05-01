@@ -1,19 +1,20 @@
-import DataContainer from '../../DataContainer';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
+import type { Attribute, AttributeStatus } from '@prisma/client';
+import type { ChangeEvent } from 'react';
+import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import FormControl from 'react-bootstrap/FormControl';
+import Col from 'react-bootstrap/Col';
 import FormCheck from 'react-bootstrap/FormCheck';
-import { ChangeEvent, useContext, useState } from 'react';
-import { Attribute, AttributeStatus } from '@prisma/client';
-import api from '../../../utils/api';
+import FormControl from 'react-bootstrap/FormControl';
+import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
+import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
+import useExtendedState from '../../../hooks/useExtendedState';
+import api from '../../../utils/api';
+import BottomTextInput from '../../BottomTextInput';
+import DataContainer from '../../DataContainer';
 import CreateAttributeModal from '../../Modals/CreateAttributeModal';
 import CreateAttributeStatusModal from '../../Modals/CreateAttributeStatusModal';
-import useExtendedState from '../../../hooks/useExtendedState';
-import BottomTextInput from '../../BottomTextInput';
-import { BsTrash } from 'react-icons/bs';
 
 type AttributeEditorContainerProps = {
 	attributes: Attribute[];

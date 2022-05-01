@@ -1,6 +1,7 @@
-import { Attribute } from '@prisma/client';
-import { GetServerSidePropsContext } from 'next';
-import { ChangeEvent, useState } from 'react';
+import type { Attribute } from '@prisma/client';
+import type { GetServerSidePropsContext } from 'next';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -14,9 +15,9 @@ import BottomTextInput from '../../components/BottomTextInput';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
-import { InferSSRProps } from '../../utils';
+import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import {
+import type {
 	ContainerConfig,
 	DiceConfig,
 	PortraitConfig,
@@ -26,9 +27,7 @@ import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 import { containerConfigInsertData } from '../api/init';
 
-export default function Configurations(
-	props: InferSSRProps<typeof getSSP>
-) {
+export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 	const [toasts, addToast] = useToast();
 	const [index, setIndex] = useState(0);
 
@@ -518,7 +517,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			redirect: {
 				destination: '/',
 				permanent: false,
-			}
+			},
 		};
 	}
 

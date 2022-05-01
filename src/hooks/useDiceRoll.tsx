@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
-import { useRef, useState } from 'react';
-import { DiceRoll, DiceRollResultModalProps } from '../components/Modals/DiceRollResultModal';
-import { DiceResult, ResolvedDice } from '../utils/dice';
+import { useMemo, useRef, useState } from 'react';
+import type {
+	DiceRoll,
+	DiceRollResultModalProps,
+} from '../components/Modals/DiceRollResultModal';
+import type { DiceResult, ResolvedDice } from '../utils/dice';
 
 export type DiceRollEvent = (
 	dices: ResolvedDice[],

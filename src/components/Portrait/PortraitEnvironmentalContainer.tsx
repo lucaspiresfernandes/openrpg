@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { SocketIO } from '../../hooks/useSocket';
 import Fade from 'react-bootstrap/Fade';
+import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
-import { Environment, PortraitOrientation } from '../../utils/config';
+import type { Environment, PortraitOrientation } from '../../utils/config';
 import { getAttributeStyle, getOrientationStyle } from '../../utils/style';
 
 type PortraitPlayerName = {

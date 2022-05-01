@@ -1,17 +1,19 @@
-import { Skill } from '@prisma/client';
-import { ChangeEvent, memo, useContext, useEffect, useMemo, useState } from 'react';
+import type { Skill } from '@prisma/client';
+import type { ChangeEvent } from 'react';
+import { memo, useContext, useEffect, useMemo, useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger, Socket } from '../../contexts';
+import type { DiceRollEvent } from '../../hooks/useDiceRoll';
+import useDiceRoll from '../../hooks/useDiceRoll';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
+import type { DiceConfigCell } from '../../utils/config';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
-import { DiceConfigCell } from '../../utils/config';
-import useDiceRoll, { DiceRollEvent } from '../../hooks/useDiceRoll';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
 
 type PlayerSkillContainerProps = {

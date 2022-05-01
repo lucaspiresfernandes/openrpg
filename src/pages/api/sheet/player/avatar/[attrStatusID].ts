@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 
@@ -45,7 +45,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 		avatar = defaultAvatar;
 	}
-	
+
 	res.send({ link: avatar.link });
 }
 

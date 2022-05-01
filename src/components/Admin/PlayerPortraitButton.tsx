@@ -14,7 +14,11 @@ export default function PlayerPortraitButton(props: PlayerPortraitButtonProps) {
 			<Button size='sm' variant='secondary' onClick={() => setShow(true)}>
 				Retrato
 			</Button>
-			<GetPortraitModal show={show} onHide={() => setShow(false)} playerId={props.playerId} />
+			<GetPortraitModal
+				show={show}
+				onHide={() => setShow(false)}
+				playerId={props.playerId}
+			/>
 		</>
 	);
 }

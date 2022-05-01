@@ -1,4 +1,4 @@
-import { Config } from '@prisma/client';
+import type { Config } from '@prisma/client';
 
 export type DiceConfig = {
 	//Legacy object

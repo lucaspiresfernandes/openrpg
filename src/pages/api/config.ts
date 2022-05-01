@@ -1,10 +1,10 @@
-import { NextApiRequest } from 'next';
+import type { NextApiRequest } from 'next';
 import { setSuccessTypeConfigDirty } from '../../utils/config';
 import prisma from '../../utils/database';
-import { NextApiResponseServerIO } from '../../utils/socket';
+import type { NextApiResponseServerIO } from '../../utils/socket';
 
 const customBehaviours = new Map<string, () => void>([
-	['enable_success_types', setSuccessTypeConfigDirty]
+	['enable_success_types', setSuccessTypeConfigDirty],
 ]);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {

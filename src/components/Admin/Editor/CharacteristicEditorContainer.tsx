@@ -1,16 +1,16 @@
-import DataContainer from '../../DataContainer';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import AdminTable from '../AdminTable';
+import type { Characteristic } from '@prisma/client';
 import { useContext, useState } from 'react';
-import { Characteristic } from '@prisma/client';
-import api from '../../../utils/api';
-import { ErrorLogger } from '../../../contexts';
-import CreateCharacteristicModal from '../../Modals/CreateCharacteristicModal';
-import BottomTextInput from '../../BottomTextInput';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { BsTrash } from 'react-icons/bs';
+import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
+import api from '../../../utils/api';
+import BottomTextInput from '../../BottomTextInput';
+import DataContainer from '../../DataContainer';
+import CreateCharacteristicModal from '../../Modals/CreateCharacteristicModal';
+import AdminTable from '../AdminTable';
 
 type CharacteristicEditorContainerProps = {
 	characteristics: Characteristic[];

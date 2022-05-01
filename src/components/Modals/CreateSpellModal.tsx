@@ -1,9 +1,10 @@
-import SheetModal from './SheetModal';
-import { ChangeEvent, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
-import FormControl from 'react-bootstrap/FormControl';
+import SheetModal from './SheetModal';
 
 type CreateSpellModalProps = {
 	onCreate(

@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
@@ -12,7 +12,7 @@ import ApplicationHead from '../components/ApplicationHead';
 import ErrorToastContainer from '../components/ErrorToastContainer';
 import useToast from '../hooks/useToast';
 import styles from '../styles/modules/Home.module.scss';
-import { InferSSRProps } from '../utils';
+import type { InferSSRProps } from '../utils';
 import api from '../utils/api';
 import prisma from '../utils/database';
 import { sessionSSR } from '../utils/session';

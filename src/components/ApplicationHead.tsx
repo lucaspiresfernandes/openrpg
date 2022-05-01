@@ -12,7 +12,7 @@ export default function ApplicationHead({ title, children }: ApplicationHeadProp
 				name='description'
 				content='Site criado pelo aplicativo Open RPG. Para saber mais: https://github.com/alyssapiresfernandescefet/openrpg'
 			/>
-			<meta name="author" content="Alyssa Fernandes" />
+			<meta name='author' content='Alyssa Fernandes' />
 			<title>{`${title || ''} - Open RPG`}</title>
 			{children}
 		</Head>

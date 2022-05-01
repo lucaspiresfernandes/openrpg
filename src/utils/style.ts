@@ -1,4 +1,4 @@
-import { PortraitOrientation } from './config';
+import type { PortraitOrientation } from './config';
 import PortraitStyles from '../styles/modules/Portrait.module.scss';
 
 export function getAttributeStyle(color: string) {

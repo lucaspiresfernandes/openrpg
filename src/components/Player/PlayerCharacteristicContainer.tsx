@@ -1,45 +1,47 @@
-import { Characteristic } from '@prisma/client';
-import { ChangeEvent, useContext, useRef, useState } from 'react';
+import type { Characteristic } from '@prisma/client';
+import type { ChangeEvent } from 'react';
+import { useContext, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger } from '../../contexts';
-import useDiceRoll, { DiceRollEvent } from '../../hooks/useDiceRoll';
+import type { DiceRollEvent } from '../../hooks/useDiceRoll';
+import useDiceRoll from '../../hooks/useDiceRoll';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import { DiceConfigCell } from '../../utils/config';
+import type { DiceConfigCell } from '../../utils/config';
 import BottomTextInput from '../BottomTextInput';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
 
 type PlayerCharacteristicContainerProps = {
-    playerCharacteristics: {
-        value: number;
-        Characteristic: Characteristic;
-        modifier: string;
-    }[];
-    characteristicDiceConfig: DiceConfigCell;
+	playerCharacteristics: {
+		value: number;
+		Characteristic: Characteristic;
+		modifier: string;
+	}[];
+	characteristicDiceConfig: DiceConfigCell;
 };
 
 export default function PlayerCharacteristicContainer(
 	props: PlayerCharacteristicContainerProps
 ) {
-    const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	return (
 		<>
-        <Row className='mb-3 text-center align-items-end justify-content-center'>
-			{props.playerCharacteristics.map((char) => (
-				<PlayerCharacteristicField
-					key={char.Characteristic.id}
-					modifier={char.modifier}
-					characteristic={char.Characteristic}
-					value={char.value}
-					characteristicDiceConfig={props.characteristicDiceConfig}
-                    showDiceRollResult={onDiceRoll}
-				/>
-			))}
-		</Row>
-        <DiceRollResultModal {...diceRollResultModalProps} />
-        </>
+			<Row className='mb-3 text-center align-items-end justify-content-center'>
+				{props.playerCharacteristics.map((char) => (
+					<PlayerCharacteristicField
+						key={char.Characteristic.id}
+						modifier={char.modifier}
+						characteristic={char.Characteristic}
+						value={char.value}
+						characteristicDiceConfig={props.characteristicDiceConfig}
+						showDiceRollResult={onDiceRoll}
+					/>
+				))}
+			</Row>
+			<DiceRollResultModal {...diceRollResultModalProps} />
+		</>
 	);
 }
 

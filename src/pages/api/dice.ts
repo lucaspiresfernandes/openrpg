@@ -1,9 +1,9 @@
-import { NextApiRequest } from 'next';
+import type { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
 import { isSuccessTypeEnabled } from '../../utils/config';
-import { DiceResult, ResolvedDice } from '../../utils/dice';
+import type { DiceResult, ResolvedDice } from '../../utils/dice';
 import { sessionAPI } from '../../utils/session';
-import { NextApiResponseServerIO } from '../../utils/socket';
+import type { NextApiResponseServerIO } from '../../utils/socket';
 
 const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
 type ResolverKey = '20' | '20b' | '100' | '100b';
@@ -27,7 +27,6 @@ async function nextInt(min: number, max: number, n: number) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-
 	if (req.method !== 'POST') {
 		res.status(404).end();
 		return;
@@ -82,7 +81,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 				});
 			})
 		);
-		
+
 		res.send({ results });
 
 		if (!player.admin) io?.to('admin').emit('diceResult', player.id, results, dices);

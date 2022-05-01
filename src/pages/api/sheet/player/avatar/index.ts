@@ -1,46 +1,48 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 
 export type AvatarData = {
-    id: number | null;
-    link: string | null;
-}
+	id: number | null;
+	link: string | null;
+};
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') return;
+	if (req.method !== 'POST') return;
 
-    const player = req.session.player;
-    const avatarData: AvatarData[] = req.body.avatarData;
+	const player = req.session.player;
+	const avatarData: AvatarData[] = req.body.avatarData;
 
-    if (!player || !avatarData) {
-        res.status(401).end();
-        return;
-    }
+	if (!player || !avatarData) {
+		res.status(401).end();
+		return;
+	}
 
-    const avatars = await prisma.playerAvatar.findMany({
-        where: { player_id: player.id },
-        select: { id: true, attribute_status_id: true, link: true }
-    });
+	const avatars = await prisma.playerAvatar.findMany({
+		where: { player_id: player.id },
+		select: { id: true, attribute_status_id: true, link: true },
+	});
 
-    if (avatars.length !== avatarData.length) {
-        res.status(401).end();
-        return;
-    }
+	if (avatars.length !== avatarData.length) {
+		res.status(401).end();
+		return;
+	}
 
-    await Promise.all(avatars.map(avatar => {
-        const statusID = avatar.attribute_status_id;
-        const newAvatar = avatarData.find(av => av.id === statusID);
+	await Promise.all(
+		avatars.map((avatar) => {
+			const statusID = avatar.attribute_status_id;
+			const newAvatar = avatarData.find((av) => av.id === statusID);
 
-        if (!newAvatar || newAvatar.link === avatar.link) return;
+			if (!newAvatar || newAvatar.link === avatar.link) return;
 
-        return prisma.playerAvatar.update({
-            where: { id: avatar.id },
-            data: { link: newAvatar.link }
-        });
-    }));
+			return prisma.playerAvatar.update({
+				where: { id: avatar.id },
+				data: { link: newAvatar.link },
+			});
+		})
+	);
 
-    res.end();
+	res.end();
 }
 
 export default sessionAPI(handler);

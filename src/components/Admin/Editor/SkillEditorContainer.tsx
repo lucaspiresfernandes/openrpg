@@ -1,5 +1,6 @@
-import { Skill, Specialization } from '@prisma/client';
-import { ChangeEvent, useContext, useState } from 'react';
+import type { Skill, Specialization } from '@prisma/client';
+import type { ChangeEvent } from 'react';
+import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormCheck from 'react-bootstrap/FormCheck';

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
-import { SocketIO } from '../../hooks/useSocket';
+import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { sleep } from '../../utils';
-import { DiceResult } from '../../utils/dice';
+import type { DiceResult } from '../../utils/dice';
 import { getAttributeStyle } from '../../utils/style';
 
 export default function PortraitDiceContainer(props: {

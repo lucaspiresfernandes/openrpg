@@ -1,4 +1,4 @@
-import { Spec } from '@prisma/client';
+import type { Spec } from '@prisma/client';
 import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';

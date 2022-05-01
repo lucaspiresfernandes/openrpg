@@ -1,11 +1,11 @@
-import { Specialization } from '@prisma/client';
+import type { Specialization } from '@prisma/client';
 import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import FormCheck from 'react-bootstrap/FormCheck';
+import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
-import FormControl from 'react-bootstrap/FormControl';
 import FormSelect from 'react-bootstrap/FormSelect';
-import FormCheck from 'react-bootstrap/FormCheck';
 import SheetModal from './SheetModal';
 
 type CreateSkillModalProps = {

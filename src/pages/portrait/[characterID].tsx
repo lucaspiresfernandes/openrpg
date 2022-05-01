@@ -1,12 +1,19 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useState } from 'react';
-import { Col, Row } from 'react-bootstrap';
-import PortraitAvatarContainer, { PortraitAttributeStatus } from '../../components/Portrait/PortraitAvatarContainer';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import type { PortraitAttributeStatus } from '../../components/Portrait/PortraitAvatarContainer';
+import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
-import PortraitSideAttributeContainer, { PortraitSideAttribute } from '../../components/Portrait/PortraitSideAttributeContainer';
+import type { PortraitSideAttribute } from '../../components/Portrait/PortraitSideAttributeContainer';
+import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
 import useSocket, { SocketIO } from '../../hooks/useSocket';
-import { Environment, PortraitConfig, PortraitOrientation } from '../../utils/config';
+import type {
+	Environment,
+	PortraitConfig,
+	PortraitOrientation,
+} from '../../utils/config';
 import prisma from '../../utils/database';
 
 export default function CharacterPortrait(

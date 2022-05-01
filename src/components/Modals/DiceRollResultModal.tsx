@@ -1,12 +1,12 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Spinner } from 'react-bootstrap';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Fade from 'react-bootstrap/Fade';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
-import { DiceResult, ResolvedDice } from '../../utils/dice';
+import type { DiceResult, ResolvedDice } from '../../utils/dice';
 import SheetModal from './SheetModal';
 
 export type DiceRoll = {

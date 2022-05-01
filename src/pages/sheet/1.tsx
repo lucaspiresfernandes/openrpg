@@ -1,6 +1,6 @@
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -16,11 +16,12 @@ import PlayerSkillContainer from '../../components/Player/PlayerSkillContainer';
 import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../components/Player/PlayerSpellContainer';
 import { ErrorLogger, Socket } from '../../contexts';
-import useSocket, { SocketIO } from '../../hooks/useSocket';
+import type { SocketIO } from '../../hooks/useSocket';
+import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
-import { InferSSRProps } from '../../utils';
+import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import { ContainerConfig, DiceConfig } from '../../utils/config';
+import type { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 

@@ -1,17 +1,18 @@
-import { Currency, Item } from '@prisma/client';
-import { FormEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { Currency, Item } from '@prisma/client';
+import type { FormEvent } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-import FormLabel from 'react-bootstrap/FormLabel';
+import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
-import { BsTrash } from 'react-icons/bs';
 
 type PlayerItemContainerProps = {
 	playerItems: {

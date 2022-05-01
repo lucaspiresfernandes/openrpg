@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
 import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -11,11 +11,12 @@ import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
-import useSocket, { SocketIO } from '../../hooks/useSocket';
+import type { SocketIO } from '../../hooks/useSocket';
+import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
-import { InferSSRProps } from '../../utils';
+import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import { ContainerConfig } from '../../utils/config';
+import type { ContainerConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
