@@ -1,18 +1,15 @@
-@import "../palette";
-
 .link {
     text-decoration: none;
-    color: $text-color;
-    border-width: 0px 0px 2px 0px;
+    color: inherit !important;
+    border-width: 0px 0px 1px 0px;
     border-style: solid;
-    border-color: gray;
+    border-color: #ff000070;
     &:hover,
     &:active {
-        color: invert($text-color);
         padding: 5px;
         border-width: 0;
         border-radius: 5px;
-        background-color: $text-color;
+        background-color: #ff000070;
     }
     transition: all 250ms;
 }

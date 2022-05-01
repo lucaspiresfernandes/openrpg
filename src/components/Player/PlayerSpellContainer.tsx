@@ -166,7 +166,7 @@ function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
                         </Col>
                     </Row>
                     <Row>
-                        <Col className='h5' style={{ color: 'darkgray' }}>
+                        <Col className='h5 spell-description'>
                             {spell.description}
                         </Col>
                     </Row>

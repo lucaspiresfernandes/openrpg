@@ -5,6 +5,8 @@ import Row from 'react-bootstrap/Row';
 import { Socket } from '../../contexts';
 import DataContainer from '../DataContainer';
 
+const highlightStyle = { color: '#00a000', fontWeight: 'bold' };
+
 export default function DiceList(props: { players: { id: number; name: string }[] }) {
 	const [values, setValues] = useState<
 		{ name: string; dices: string; results: string }[]
@@ -67,10 +69,10 @@ export default function DiceList(props: { players: { id: number; name: string }[
 						<ListGroup variant='flush' className='text-center'>
 							{values.map((val, index) => (
 								<ListGroup.Item key={index}>
-									<span style={{ color: 'lightgreen' }}>{val.name} </span>
+									<span style={highlightStyle}>{val.name} </span>
 									rolou
-									<span style={{ color: 'lightgreen' }}> {val.dices} </span>e tirou
-									<span style={{ color: 'lightgreen' }}> {val.results}</span>.
+									<span style={highlightStyle}> {val.dices} </span>e tirou
+									<span style={highlightStyle}> {val.results}</span>.
 								</ListGroup.Item>
 							))}
 						</ListGroup>

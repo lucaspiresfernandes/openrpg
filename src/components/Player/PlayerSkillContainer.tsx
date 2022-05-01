@@ -187,7 +187,6 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 
 	useEffect(() => {
 		if (props.checked === checked) return;
-		console.log('a');
 		setChecked(props.checked);
 		api
 			.post('/sheet/player/skill', { id: props.skillId, checked: props.checked })
