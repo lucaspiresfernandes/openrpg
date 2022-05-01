@@ -3,11 +3,6 @@ $secondary: #6c757d !default;
 @import 'bootstrap';
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap');
 
-body {
-	padding: 0;
-	font-family: 'Cinzel', serif;
-}
-
 .data-container {
 	border-style: solid;
 	border-width: 1px;
@@ -22,10 +17,9 @@ body {
 
 .form-control,
 .form-select {
-	$primary-color: #303030;
-	border-color: lighten($primary-color, 25%);
+	border-color: lighten(#303030, 25%);
 	&:focus {
-		border-color: $primary-color;
+		border-color: #303030;
 		box-shadow: inset 0 0.25rem 0.25rem rgb(0 0 0 / 8%), 0 0 8px #ff0000;
 	}
 }
@@ -46,26 +40,25 @@ body {
 	.list-group {
 		min-height: 200px;
 	}
-}
-
-.wrapper::-webkit-scrollbar {
-	width: 0;
+	&::-webkit-scrollbar {
+		width: 0;
+	}
 }
 
 .shadow {
-	transition: all 0.25s ease;
+	transition: filter 0.25s ease;
 	&.show {
 		filter: brightness(30%);
-		transition: all 0.5s ease-out;
+		transition: filter 0.5s ease-out;
 	}
 }
 
 .popout {
 	transform: scale(0);
-	transition: all 0.6s ease-in;
+	transition: transform 0.6s ease-in;
 	&.show {
 		transform: scale(1);
-		transition: all 0.5s ease-out;
+		transition: transform 0.5s ease-out;
 	}
 }
 
@@ -74,243 +67,160 @@ $proggress-bar-height: 40px;
 .progress {
 	height: $proggress-bar-height;
 }
-
 .attribute-dice {
 	max-height: $proggress-bar-height;
 }
 
+@mixin theme-components(
+	$dark-theme: false,
+	$background-color,
+	$text-color,
+	$skill-container-outline-color,
+	$player-container-background-color,
+	$attribute-bar-background-color
+) {
+	.progress {
+		background-color: $attribute-bar-background-color;
+	}
+
+	.table {
+		color: $text-color;
+		tr {
+			border-color: gray;
+		}
+	}
+
+	.skill-container {
+		$text-color-hover: invert($text-color);
+
+		background-color: $background-color;
+		border-radius: 20px;
+
+		&:hover {
+			background-color: $skill-container-outline-color;
+			.text {
+				background-color: $skill-container-outline-color;
+				color: $text-color-hover;
+			}
+			.label {
+				color: $text-color-hover;
+			}
+		}
+	}
+
+	.theme-element {
+		background-color: $background-color;
+		color: $text-color;
+
+		&:focus {
+			background-color: $background-color;
+			color: $text-color;
+		}
+		&:disabled {
+			background-color: $background-color;
+			color: rgba($text-color, 0.7);
+		}
+		&::-webkit-input-placeholder {
+			color: darken($text-color, 25%);
+		}
+	}
+
+	.modal-content {
+		background-color: $background-color;
+		color: $text-color;
+	}
+
+	.modal-header {
+		background-color: $background-color;
+		color: $text-color;
+		border-color: gray;
+	}
+
+	.modal-body {
+		background-color: $background-color;
+		color: $text-color;
+		border-color: gray;
+	}
+
+	.modal-footer {
+		background-color: $background-color;
+		color: $text-color;
+		border-color: gray;
+	}
+
+	.list-group-item {
+		background-color: $player-container-background-color;
+		color: $text-color;
+
+		&.selected {
+			@if $dark-theme {
+				background-color: lighten($player-container-background-color, 10%);
+			} @else {
+				background-color: darken($player-container-background-color, 10%);
+			}
+		}
+	}
+
+	.spell-description {
+		color: rgba($text-color, 0.75);
+	}
+
+	.player-container {
+		@extend .data-container;
+		background-color: $player-container-background-color;
+	}
+
+	.list-group {
+		background-color: $player-container-background-color;
+		border-radius: 0;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+
+		.list-group-item {
+			padding: 0.5rem 1rem;
+		}
+		input.bottom-text {
+			background-color: $player-container-background-color;
+		}
+	}
+}
+
 body {
+	padding: 0;
+	font-family: 'Cinzel', serif;
+
 	&.dark {
 		$background-color: #111111;
 		$text-color: #ffffff;
-		
-		$skill-container-outline-color: #ffffff;
-		
-		$player-container-background-color: #252525;
 
 		background-color: $background-color;
-		color: #ffffff;
+		color: $text-color;
 
-		.progress {
-			background-color: #2b2b2b;
-		}
-
-		.table {
-			color: $text-color;
-			tr {
-				border-color: gray;
-			}
-		}
-
-		.skill-container {
-			$text-color-hover: invert($text-color);
-
-			background-color: $background-color;
-			border-radius: 20px;
-
-			&:hover {
-				background-color: $skill-container-outline-color;
-				.text {
-					background-color: $skill-container-outline-color;
-					color: $text-color-hover;
-				}
-				.label {
-					color: $text-color-hover;
-				}
-			}
-		}
-
-		.theme-element {
-			background-color: $background-color;
-			color: $text-color;
-
-			&:focus {
-				background-color: $background-color;
-				color: $text-color;
-			}
-
-			&:disabled {
-				background-color: $background-color;
-				color: rgba($text-color, 0.7);
-			}
-
-			&::-webkit-input-placeholder {
-				color: darken($text-color, 25%);
-			}
-		}
-
-		.modal-content {
-			background-color: $background-color;
-			color: $text-color;
-		}
-
-		.modal-header {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.modal-body {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.modal-footer {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.list-group-item {
-			background-color: $player-container-background-color;
-			color: $text-color;
-
-			&.selected {
-				background-color: lighten($player-container-background-color, 10%);
-			}
-		}
-
-		.spell-description {
-			color: rgba($text-color, 0.75);
-		}
-
-		.player-container {
-			@extend .data-container;
-			background-color: $player-container-background-color;
-		}
-
-		.list-group {
-			background-color: $player-container-background-color;
-			border-radius: 0;
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-
-			.list-group-item {
-				padding: 0.5rem 1rem;
-			}
-
-			input.bottom-text {
-				background-color: $player-container-background-color;
-			}
-		}
+		@include theme-components(
+			true,
+			$background-color,
+			$text-color,
+			#ffffff,
+			#252525,
+			#2b2b2b
+		);
 	}
 
 	&.light {
 		$background-color: #ededed;
 		$text-color: #000000;
 
-		$skill-container-outline-color: #111111;
-
-		$player-container-background-color: #cecece;
-
 		background-color: $background-color;
 		color: $text-color;
 
-		.progress {
-			background-color: darkgray;
-		}
-
-		.table {
-			color: $text-color;
-			tr {
-				border-color: gray;
-			}
-		}
-
-		.skill-container {
-			$text-color-hover: invert($text-color);
-
-			background-color: $background-color;
-			border-radius: 20px;
-
-			&:hover {
-				background-color: $skill-container-outline-color;
-				.text {
-					background-color: $skill-container-outline-color;
-					color: $text-color-hover;
-				}
-				.label {
-					color: $text-color-hover;
-				}
-			}
-		}
-
-		.theme-element {
-			background-color: $background-color;
-			color: $text-color;
-
-			&:focus {
-				background-color: $background-color;
-				color: $text-color;
-			}
-
-			&:disabled {
-				background-color: $background-color;
-				color: rgba($text-color, 0.7);
-			}
-
-			&::-webkit-input-placeholder {
-				color: darken($text-color, 25%);
-			}
-		}
-
-		.modal-content {
-			background-color: $background-color;
-			color: $text-color;
-		}
-
-		.modal-header {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.modal-body {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.modal-footer {
-			background-color: $background-color;
-			color: $text-color;
-			border-color: gray;
-		}
-
-		.list-group-item {
-			background-color: $player-container-background-color;
-			color: $text-color;
-
-			&.selected {
-				background-color: darken($player-container-background-color, 10%);
-			}
-		}
-
-		.spell-description {
-			color: rgba($text-color, 0.75);
-		}
-
-		.player-container {
-			@extend .data-container;
-			background-color: $player-container-background-color;
-		}
-
-		.list-group {
-			background-color: $player-container-background-color;
-			border-radius: 0;
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-
-			.list-group-item {
-				padding: 0.5rem 1rem;
-			}
-
-			input.bottom-text {
-				background-color: $player-container-background-color;
-			}
-		}
+		@include theme-components(
+			false,
+			$background-color,
+			$text-color,
+			#111111,
+			#cecece,
+			gray
+		);
 	}
 }
