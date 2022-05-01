@@ -24,8 +24,8 @@ export default function Navbar() {
 
 	if (router.pathname.includes('/portrait')) return null;
 
-	const onPlayerSheet = router.pathname.includes('/sheet');
-	const onAdminPanel = router.pathname.includes('/admin');
+	const onPlayerSheet = router.pathname.includes('/sheet/');
+	const onAdminPanel = router.pathname.includes('/admin/');
 
 	return (
 		<BootstrapNavbar sticky='top' expand='sm' className='mb-3' variant='dark'>
