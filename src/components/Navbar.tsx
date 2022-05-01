@@ -1,29 +1,40 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import FormCheck from 'react-bootstrap/FormCheck';
 import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
-import { ThemeManager } from '../contexts/theme';
 import api from '../utils/api';
+
+type ApplicationTheme = 'light' | 'dark';
 
 export default function Navbar() {
 	const router = useRouter();
-	const themeManager = useContext(ThemeManager);
-	const [darkMode, setDarkMode] = useState(false);
+	const [theme, setTheme] = useState<ApplicationTheme>('dark');
 
 	useEffect(() => {
-		setDarkMode(themeManager.currentTheme === 'dark');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		setTheme((localStorage.getItem('application_theme') || 'dark') as ApplicationTheme);
 	}, []);
 
-	function isActive(path: string) {
-		return router.pathname === path;
-	}
+	useEffect(() => {
+		switch (theme) {
+			case 'light':
+				localStorage.setItem('application_theme', 'light');
+				document.body.classList.remove('dark');
+				document.body.classList.add('light');
+				break;
+			case 'dark':
+				localStorage.setItem('application_theme', 'dark');
+				document.body.classList.remove('light');
+				document.body.classList.add('dark');
+				break;
+		}
+	}, [theme]);
 
 	if (router.pathname.includes('/portrait')) return null;
 
+	const isActive = (path: string) => router.pathname === path;
 	const onPlayerSheet = router.pathname.includes('/sheet/');
 	const onAdminPanel = router.pathname.includes('/admin/');
 
@@ -66,12 +77,8 @@ export default function Navbar() {
 								type='switch'
 								style={{ marginBottom: 0 }}
 								title='Modo Escuro'
-								checked={darkMode}
-								onChange={(ev) => {
-									const dark = ev.target.checked;
-									setDarkMode(dark);
-									themeManager.changeTheme(dark ? 'dark' : 'light');
-								}}
+								checked={theme === 'dark'}
+								onChange={(ev) => setTheme(ev.target.checked ? 'dark' : 'light')}
 							/>
 						</Nav.Item>
 						{(onPlayerSheet || onAdminPanel) && (
