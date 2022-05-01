@@ -167,7 +167,7 @@ body {
 			color: $text-color;
 
 			&.selected {
-				background-color: rgba($player-container-background-color, 0.75);
+				background-color: lighten($player-container-background-color, 10%);
 			}
 		}
 
@@ -284,7 +284,7 @@ body {
 			color: $text-color;
 
 			&.selected {
-				background-color: rgba($player-container-background-color, 0.75);
+				background-color: darken($player-container-background-color, 10%);
 			}
 		}
 
