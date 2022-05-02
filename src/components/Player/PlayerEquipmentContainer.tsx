@@ -1,5 +1,5 @@
 import type { Equipment } from '@prisma/client';
-import type { FormEvent, MutableRefObject } from 'react';
+import type { FormEvent } from 'react';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -33,7 +33,6 @@ type PlayerEquipmentContainerProps = {
 	}[];
 	availableEquipments: Equipment[];
 	title: string;
-	bonusDamage: MutableRefObject<string | undefined>;
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
@@ -136,9 +135,10 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 		setAvailableEquipments([...availableEquipments, modalEquipment]);
 	}
 
-	const equipments = useMemo(() => {
-		return playerEquipments.sort((a, b) => a.Equipment.id - b.Equipment.id);
-	}, [playerEquipments]);
+	const equipments = useMemo(
+		() => playerEquipments.sort((a, b) => a.Equipment.id - b.Equipment.id),
+		[playerEquipments]
+	);
 
 	return (
 		<>
@@ -169,7 +169,6 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 										equipment={eq.Equipment}
 										currentAmmo={eq.currentAmmo}
 										onDelete={onDeleteEquipment}
-										bonusDamage={props.bonusDamage}
 										showDiceRollResult={onDiceRoll}
 									/>
 								))}
@@ -202,7 +201,6 @@ type PlayerEquipmentFieldProps = {
 		type: string;
 	};
 	onDelete(id: number): void;
-	bonusDamage: MutableRefObject<string | undefined>;
 	showDiceRollResult: DiceRollEvent;
 };
 
@@ -232,9 +230,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	function diceRoll() {
 		if (props.equipment.ammo && currentAmmo === 0)
 			return alert('Você não tem munição suficiente.');
-		const aux = resolveDices(props.equipment.damage, {
-			bonusDamage: props.bonusDamage.current,
-		});
+		const aux = resolveDices(props.equipment.damage);
 		if (!aux) return;
 		props.showDiceRollResult(aux);
 		const ammo = currentAmmo - 1;

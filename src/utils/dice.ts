@@ -12,14 +12,7 @@ export type DiceResult = {
 	};
 };
 
-type ResolveDiceOptions = {
-	bonusDamage?: string;
-};
-
-export function resolveDices(
-	dices: string,
-	diceOptions?: ResolveDiceOptions
-): ResolvedDice[] | undefined {
+export function resolveDices(dices: string): ResolvedDice[] | undefined {
 	let formattedDiceString = dices.replace(/\s/g, '').toLowerCase();
 
 	const options = formattedDiceString.split('/');
@@ -48,13 +41,16 @@ export function resolveDices(
 	const resolvedDices: ResolvedDice[] = [];
 
 	for (let i = 0; i < diceArray.length; i++)
-		resolvedDices.push(resolveDice(diceArray[i], diceOptions?.bonusDamage));
+		resolvedDices.push(resolveDice(diceArray[i]));
 
 	return resolvedDices;
 }
 
-function resolveDice(dice: string, bonusDamage: string = '0'): ResolvedDice {
+function resolveDice(dice: string): ResolvedDice {
 	if (dice.includes('db/')) {
+		const bonusDamage = (document.getElementsByName('Dano Bônus')[0] as HTMLInputElement)
+			.value;
+
 		const divider = parseInt(dice.split('/')[1]) || 1;
 
 		const split = bonusDamage.split('d');
@@ -65,7 +61,12 @@ function resolveDice(dice: string, bonusDamage: string = '0'): ResolvedDice {
 
 		return resolveDice(_dice);
 	}
-	if (dice.includes('db')) return resolveDice(bonusDamage);
+	if (dice.includes('db')) {
+		const bonusDamage = (document.getElementsByName('Dano Bônus')[0] as HTMLInputElement)
+			.value;
+		console.log(bonusDamage);
+		return resolveDice(bonusDamage);
+	}
 
 	const split = dice.split('d');
 	if (split.length === 1) return { num: 0, roll: parseInt(dice) };

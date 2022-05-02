@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -25,8 +25,6 @@ import type { ContainerConfig, DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
-const BONUS_DAMAGE_NAME = 'Dano Bônus';
-
 type PageProps = InferSSRProps<typeof getSSP>;
 
 export default function Page(props: PageProps) {
@@ -41,14 +39,6 @@ export default function Page(props: PageProps) {
 function PlayerSheet(props: PageProps) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	const bonusDamage = useRef(
-		props.player.PlayerSpec.find((spec) => spec.Spec.name === BONUS_DAMAGE_NAME)?.value
-	);
-
-	function onSpecChanged(name: string, value: string) {
-		if (name === BONUS_DAMAGE_NAME) bonusDamage.current = value;
-	}
 
 	useSocket((socket) => {
 		socket.emit('roomJoin', `player${props.player.id}`);
@@ -117,7 +107,6 @@ function PlayerSheet(props: PageProps) {
 													value={spec.value}
 													specId={spec.Spec.id}
 													name={spec.Spec.name}
-													onSpecChanged={onSpecChanged}
 												/>
 												<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
 											</Col>
@@ -157,7 +146,6 @@ function PlayerSheet(props: PageProps) {
 									props.containerConfig.find((c) => c.originalName === 'Combate')?.name ||
 									'Combate'
 								}
-								bonusDamage={bonusDamage}
 							/>
 						</Row>
 						<Row>

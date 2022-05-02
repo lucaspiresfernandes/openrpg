@@ -8,7 +8,6 @@ type PlayerSpecFieldProps = {
 	value: string;
 	name: string;
 	specId: number;
-	onSpecChanged?(name: string, newValue: string): void;
 };
 
 export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
@@ -19,7 +18,6 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
 
 	function onValueBlur() {
 		if (lastValue === value) return;
-		if (playerSpec.onSpecChanged) playerSpec.onSpecChanged(playerSpec.name, value);
 		setValue(value);
 		api.post('/sheet/player/spec', { id: specID, value }).catch(logError);
 	}
@@ -28,6 +26,7 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
 		<BottomTextInput
 			className='w-100 text-center h5'
 			onBlur={onValueBlur}
+			name={playerSpec.name}
 			id={`spec${specID}`}
 			autoComplete='off'
 			value={value}
