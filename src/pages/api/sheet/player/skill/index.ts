@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../../../utils/database';
-import { sessionAPI } from '../../../../utils/session';
+import prisma from '../../../../../utils/database';
+import { sessionAPI } from '../../../../../utils/session';
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'POST') return handlePost(req, res);

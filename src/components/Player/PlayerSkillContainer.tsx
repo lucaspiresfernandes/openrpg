@@ -93,16 +93,21 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	}, [socket]);
 
 	function clearChecks() {
-		setNotify((n) => !n);
-		setPlayerSkills((skills) =>
-			skills.map((skill) => {
-				return {
-					Skill: { ...skill.Skill },
-					checked: false,
-					value: skill.value,
-				};
+		api
+			.post('/sheet/player/skill/clearchecks')
+			.then(() => {
+				setPlayerSkills((skills) =>
+					skills.map((skill) => {
+						return {
+							Skill: { ...skill.Skill },
+							checked: false,
+							value: skill.value,
+						};
+					})
+				);
+				setNotify((n) => !n);
 			})
-		);
+			.catch(logError);
 	}
 
 	const skillList = useMemo(() => {
@@ -190,12 +195,6 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	useEffect(() => {
 		if (props.checked === checked) return;
 		setChecked(props.checked);
-		api
-			.post('/sheet/player/skill', { id: props.skillId, checked: props.checked })
-			.catch((err) => {
-				logError(err);
-				setChecked(checked);
-			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.notifyChecked]);
 
