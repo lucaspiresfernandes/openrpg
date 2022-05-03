@@ -24,7 +24,7 @@ Esse botão serve para controlar o estado dos retratos no OBS. Caso esse botão 
 
 ## Painel dos Jogadores
 
-O painel dos jogadores é o painel de monitoramento de todos os jogadores cadastrados no seu site. Aqui, você pode apagar jogadores ou copiar o link de seus retratos (extensão OBS). Para cada jogador, é possível monitorar em tempo real atributos, especificações de jogador, moeda, equipamentos e itens.
+O painel dos jogadores é o painel de monitoramento de todos os jogadores cadastrados no seu site. Aqui, você pode apagar jogadores ou copiar o link de seus retratos (extensão OBS). Para cada jogador, é possível monitorar em tempo real atributos, especificações de personagem, moeda, equipamentos e itens.
 
 ## Utilitários
 

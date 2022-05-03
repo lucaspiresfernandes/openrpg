@@ -26,7 +26,7 @@ export default function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
 		<BottomTextInput
 			className='w-100 text-center h5'
 			onBlur={onValueBlur}
-			name={playerSpec.name}
+			name={`spec${playerSpec.name}`}
 			id={`spec${specID}`}
 			autoComplete='off'
 			value={value}

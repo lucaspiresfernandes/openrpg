@@ -142,6 +142,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 					<BottomTextInput
 						className='h5 w-75 text-center'
 						id={`char${props.characteristic.id}`}
+						name={`char${props.characteristic.name.substring(0, 3).toUpperCase()}`}
 						value={value}
 						onChange={onChange}
 						onBlur={onValueBlur}

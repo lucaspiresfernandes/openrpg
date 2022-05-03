@@ -24,25 +24,27 @@ As Barras de Atributo referem-se às barras coloridas que a ficha mostra abaixo 
 
 Atributos testáveis são atributos que podem ser testados, ou seja, se permitem a rolagem de um dado. Atributos testáveis exibirão um pequeno dado ao lado de sua barra.
 
+Além disso, Atributos testáveis usarão o valor atual de sua barra para fazer o teste.
+
 ## Status de Atributos
 
-Os Status de Atributo referem-se aos estados do personagem. Para cada estado existe uma variação de Avatar diferente.
+Os Status de Atributo referem-se aos estados do personagem. Para cada estado existe uma variação de Avatar diferente disponível.
 
-Cada Status de Atributo possui uma ligação com um Atributo. Isso significa que o Status de Atributo será exibido embaixo da barra de Atributo ligada a ele.
+Cada Status de Atributo possui uma ligação com uma Barra de Atributo. Isso significa que o Status de Atributo será exibido embaixo da Barra de Atributo ligada a ele.
 
 ## Especificações de Personagem
 
-As especificações de personagem podem ser modificadas aqui. As especificações de personagem referem-se aos campos de texto bem abaixo dos Detalhes Pessoais (Gerais).
+As especificações de personagem podem ser modificadas nesse contêiner. As especificações de personagem referem-se aos campos de texto bem abaixo dos Detalhes Pessoais (Gerais).
 
 Aqui é onde a especificação de personagem especial "Dano Bônus" pode ser adicionada.
 
 ## Características
 
-As Características podem ser modificadas aqui.
+As Características podem ser modificadas nesse contêiner.
 
 ## Moedas
 
-As Moedas podem ser modificadas aqui.
+As Moedas podem ser modificadas nesse contêiner.
 
 ## Especializações
 
@@ -50,7 +52,7 @@ As Especializações são dados especiais usados somente para agrupar Perícias.
 
 ## Perícias
 
-As Perícias podem ser modificadas aqui.
+As Perícias podem ser modificadas nesse contêiner.
 
 O campo Especialização pode ser usado para agrupar perícias a uma só especialização. No entanto, esse campo não é obrigatório e pode ser desativado ao ser selecionado o item "Nenhum".
 
@@ -70,52 +72,69 @@ ndr+ndr+ndr+...
 
 Por exemplo:
 
-1d4+1d6+1d8
-
-3d4+2d6+1d8
-
-4d4+2d6+4d8+2d12
+1d4
+1d4+1d6
+1d4+2d6
+2d4+2d6+1d8
+4d4+2d6+3d8+2d12
 ```
 
 É possível também usar valores brutos, como:
 
 ```
-1d4+2+1d6+1d8+3
+1d4+2
+2d6+4
+1d12+2+1d4
 ```
 
-Também é possível usar o Dano Bônus do personagem, presente em especificações de jogador, assim:
+Também é possível acessar o Dano Bônus do personagem, presente em Especificações de Personagem, assim:
 
 ```
-1d4+1d6+1d8+DB
-```
-
-Além disso, também é possível usar frações do Dano Bônus, como:
-
-```
-1d4+1d6+1d8+DB/2
-
-Caso o personagem tenha 1d4 de Dano Bônus, o DB será substituído por 1d2.
-```
-
-Por último, também é possível usar variações de um mesmo dano, como:
-
-```
-4d6/2d6/1d6
+1d4+1d6+DB
 ou
-3d4+2/2d4+1/1d4
+1d4+DB/2+1d6
+
+O sistema suporta frações do Dano Bônus. Nesse exemplo, caso o personagem tenha 1d4 de Dano Bônus, o DB será substituído por 1d2.
+
+Caso o personagem tenha 4 de Dano Bônus, o DB será substituído por 2.
+
+Caso o sistema não encontre o Dano Bônus em Especificações de Personagem, o DB não será incluído na rolagem final.
+```
+
+Também é possível acessar as Características do seu personagem usando as 3 iniciais de seu nome, assim:
+
+```
+1d6+FOR
+ou
+1d6+FOR/2
+
+O sistema irá procurar pela Característica que comece com o nome "For" (nesse caso, claramente estamos procurando a Característica Força).
+
+Assim como o acesso ao Dano Bônus, também é possível usar frações do valor da Característica.
+
+Caso o sistema não encontre a Característica na ficha do jogador, a Característica não será incluída na rolagem final.
+```
+
+Por último, também é possível usar variações de um mesmo dano com o caracter "|", como:
+
+```
+4d6|2d6|1d6
+ou
+3d4+2|2d4+1|1d4
 
 Ao rolar o dado, o jogador deverá escolher qual das variações irá usar para rolar o dano.
-```
+
+É possível contatenar o caracter "|" com qualquer outro tipo de dano já exibido acima.
 
 Essas variações são importantes para armas como escopetas, que variam conforme a distância.
+```
 
-Caso o sistema detecte o argumento DB, ele irá automaticamente procurar pelo Dano Bônus na seção de especificações de jogador. Caso não encontre, irá substituir DB por 0.
 
 O campo "visível" determina se esse equipamento ficará visível para os players. Essa funcionalidade serve para esconder certos equipamentos criados, e mostrar quando for a hora correta.
 
 ## Itens
 
-Aqui, é possível modificar os itens.
+Nesse contêiner, é possível modificar os itens.
 
 A descrição do item não é a descrição final: o jogador pode editá-la. Essa funcionalidade serve para criar itens genéricos que poderão ser usados por múltiplas pessoas, em vez de criar vários itens.
 

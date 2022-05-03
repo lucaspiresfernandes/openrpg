@@ -16,9 +16,9 @@ Na página 1, o primeiro contêiner que pode-se notar são os Detalhes Pessoais.
 
 Ao digitar, a caixa de texto vai desaparecer. Caso queira editar um Detalhe Pessoal, clique duas vezes no valor guardado que a caixa de texto irá reaparecer, permitindo a edição.
 
-Logo abaixo dos detalhes pessoais, encontra-se as especificações de jogador. As especificações de jogador são informações especiais visíveis ao painel do mestre que fazem um papel importante no gerenciamento da narrativa pelo mestre.
+Logo abaixo dos detalhes pessoais, encontra-se as especificações de personagem. As especificações de personagem são informações especiais visíveis ao painel do mestre que fazem um papel importante no gerenciamento da narrativa pelo mestre.
 
-Informações como Movimento, Nível, Corpo, Dano Bônus e afins devem estar nas especificações de jogador.
+Informações como Movimento, Nível, Corpo, Dano Bônus e afins devem estar nas especificações de personagem.
 
 #### O Dano Bônus
 
