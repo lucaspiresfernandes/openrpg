@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import AdminDiceRollContainer from '../../components/Admin/AdminDiceRollContainer';
 import AdminEnvironmentConfigurations from '../../components/Admin/AdminEnvironmentConfigurations';
 import CombatContainer from '../../components/Admin/CombatContainer';
@@ -53,11 +54,13 @@ function AdminPanel(props: PageProps) {
 
 	if (!socket)
 		return (
-			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
-				<Col>
-					<h1>Carregando Painel...</h1>
-				</Col>
-			</Row>
+			<Container className='text-center'>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
+					<Col>
+						<Spinner animation='border' variant='secondary' />
+					</Col>
+				</Row>
+			</Container>
 		);
 
 	return (

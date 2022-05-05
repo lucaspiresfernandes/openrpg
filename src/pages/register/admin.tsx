@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import ApplicationHead from '../../components/ApplicationHead';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useAuthentication from '../../hooks/useAuthentication';
@@ -52,6 +53,17 @@ export default function Register() {
 		}
 	}
 
+	if (loading)
+		return (
+			<Container className='text-center'>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
+					<Col>
+						<Spinner animation='border' variant='secondary' />
+					</Col>
+				</Row>
+			</Container>
+		);
+
 	return (
 		<div>
 			<ApplicationHead title='Cadastro de Mestre' />
@@ -63,31 +75,27 @@ export default function Register() {
 						</h1>
 					</Col>
 				</Row>
-				{!loading && (
-					<>
-						<RegisterForm onSubmit={onFormSubmit} />
-						<Row>
+				<RegisterForm onSubmit={onFormSubmit} />
+				<Row>
+					<Col>
+						<Row className='my-3'>
 							<Col>
-								<Row className='my-3'>
-									<Col>
-										Já possui cadastro?{' '}
-										<Link href='/'>
-											<a className={homeStyles.link}>Entrar</a>
-										</Link>
-									</Col>
-								</Row>
-								<Row className='my-3'>
-									<Col>
-										É um jogador?{' '}
-										<Link href='/register'>
-											<a className={homeStyles.link}>Cadastrar-se como jogador</a>
-										</Link>
-									</Col>
-								</Row>
+								Já possui cadastro?{' '}
+								<Link href='/'>
+									<a className={homeStyles.link}>Entrar</a>
+								</Link>
 							</Col>
 						</Row>
-					</>
-				)}
+						<Row className='my-3'>
+							<Col>
+								É um jogador?{' '}
+								<Link href='/register'>
+									<a className={homeStyles.link}>Cadastrar-se como jogador</a>
+								</Link>
+							</Col>
+						</Row>
+					</Col>
+				</Row>
 			</Container>
 			<ErrorToastContainer toasts={toasts} />
 		</div>

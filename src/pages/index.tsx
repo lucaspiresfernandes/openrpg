@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import WelcomePage from '../components/Admin/WelcomePage';
 import ApplicationHead from '../components/ApplicationHead';
 import ErrorToastContainer from '../components/ErrorToastContainer';
@@ -74,6 +75,17 @@ function HomePage() {
 		}
 	}
 
+	if (loading)
+		return (
+			<Container className='text-center'>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
+					<Col>
+						<Spinner animation='border' variant='secondary' />
+					</Col>
+				</Row>
+			</Container>
+		);
+
 	return (
 		<>
 			<Container className='text-center mt-2'>
@@ -84,19 +96,15 @@ function HomePage() {
 						</h1>
 					</Col>
 				</Row>
-				{!loading && (
-					<>
-						<LoginForm onSubmit={onFormSubmit} />
-						<Row>
-							<Col>
-								<span className='me-2'>Não possui cadastro?</span>
-								<Link href='/register' passHref>
-									<a className={styles.link}>Cadastrar-se</a>
-								</Link>
-							</Col>
-						</Row>
-					</>
-				)}
+				<LoginForm onSubmit={onFormSubmit} />
+				<Row>
+					<Col>
+						<span className='me-2'>Não possui cadastro?</span>
+						<Link href='/register' passHref>
+							<a className={styles.link}>Cadastrar-se</a>
+						</Link>
+					</Col>
+				</Row>
 			</Container>
 			<ErrorToastContainer toasts={toasts} />
 		</>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import ApplicationHead from '../../components/ApplicationHead';
 import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
@@ -58,11 +59,13 @@ function PlayerSheet(props: PageProps) {
 
 	if (!socket)
 		return (
-			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
-				<Col>
-					<h1>Carregando Ficha...</h1>
-				</Col>
-			</Row>
+			<Container className='text-center'>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
+					<Col>
+						<Spinner animation='border' variant='secondary' />
+					</Col>
+				</Row>
+			</Container>
 		);
 
 	return (

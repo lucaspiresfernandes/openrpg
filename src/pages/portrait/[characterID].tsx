@@ -1,7 +1,9 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import type { PortraitAttributeStatus } from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
@@ -12,7 +14,7 @@ import useSocket, { SocketIO } from '../../hooks/useSocket';
 import type {
 	Environment,
 	PortraitConfig,
-	PortraitOrientation,
+	PortraitOrientation
 } from '../../utils/config';
 import prisma from '../../utils/database';
 
@@ -36,11 +38,13 @@ export default function CharacterPortrait(
 
 	if (!socket)
 		return (
-			<Row className='text-center align-items-center w-100' style={{ height: '100vh' }}>
-				<Col>
-					<h1>Carregando Retrato...</h1>
-				</Col>
-			</Row>
+			<Container className='text-center'>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
+					<Col>
+						<Spinner animation='border' variant='secondary' />
+					</Col>
+				</Row>
+			</Container>
 		);
 
 	return (

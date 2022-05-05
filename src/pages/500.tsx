@@ -10,7 +10,7 @@ export default function internalServerError() {
 		<>
 			<ApplicationHead title='Internal Server Error' />
 			<Container className='text-center'>
-				<Row className='align-items-center' style={{ height: '100vh' }}>
+				<Row className='align-items-center' style={{ height: '90vh' }}>
 					<Col>
 						<div
 							className='d-inline-block px-4 h1'
