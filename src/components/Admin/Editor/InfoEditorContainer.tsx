@@ -86,7 +86,7 @@ type InfoEditorFieldProps = {
 	id: number;
 	name: string;
 	default: boolean;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function InfoEditorField(props: InfoEditorFieldProps) {

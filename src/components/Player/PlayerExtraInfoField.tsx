@@ -5,7 +5,7 @@ import api from '../../utils/api';
 export default function PlayerExtraInfoField(props: {
 	extraInfoId: number;
 	value: string;
-	logError(err: any): void;
+	logError: (err: any) => void;
 }) {
 	const [lastValue, value, setValue] = useExtendedState(props.value);
 

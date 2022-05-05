@@ -9,10 +9,10 @@ import FormSelect from 'react-bootstrap/FormSelect';
 import SheetModal from './SheetModal';
 
 type CreateSkillModalProps = {
-	onCreate(name: string, mandatory: boolean, specializationID: number | null): void;
+	onCreate: (name: string, mandatory: boolean, specializationID: number | null) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 	specialization: Specialization[];
 };
 

@@ -7,16 +7,16 @@ type PlayerPortraitButtonProps = {
 };
 
 export default function PlayerPortraitButton(props: PlayerPortraitButtonProps) {
-	const [show, setShow] = useState(false);
+	const [getPortraitModalShow, setGetPortraitModalShow] = useState(false);
 
 	return (
 		<>
-			<Button size='sm' variant='secondary' onClick={() => setShow(true)}>
+			<Button size='sm' variant='secondary' onClick={() => setGetPortraitModalShow(true)}>
 				Retrato
 			</Button>
 			<GetPortraitModal
-				show={show}
-				onHide={() => setShow(false)}
+				show={getPortraitModalShow}
+				onHide={() => setGetPortraitModalShow(false)}
 				playerId={props.playerId}
 			/>
 		</>

@@ -16,7 +16,7 @@ interface SheetModalProps extends ModalProps {
 		disabled?: boolean;
 	};
 	bodyStyle?: React.CSSProperties;
-	onCancel?(): void;
+	onCancel?: () => void;
 }
 
 export default function SheetModal(props: SheetModalProps) {

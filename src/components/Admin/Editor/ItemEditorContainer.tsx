@@ -88,7 +88,7 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
 
 type ItemEditorFieldProps = {
 	item: Item;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function ItemEditorField(props: ItemEditorFieldProps) {

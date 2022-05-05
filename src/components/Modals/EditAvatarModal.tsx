@@ -25,8 +25,8 @@ type EditAvatarModalProps = {
 		} | null;
 	}[];
 	show?: boolean;
-	onHide?(): void;
-	onUpdate?(): void;
+	onHide?: () => void;
+	onUpdate?: () => void;
 };
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {

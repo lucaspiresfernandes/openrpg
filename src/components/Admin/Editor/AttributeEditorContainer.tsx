@@ -176,8 +176,8 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 
 type AttributeEditorFieldProps = {
 	attribute: Attribute;
-	onDelete(id: number): void;
-	onNameChange?(id: number, newName: string): void;
+	onDelete: (id: number) => void;
+	onNameChange?: (id: number, newName: string) => void;
 };
 
 function AttributeEditorField(props: AttributeEditorFieldProps) {
@@ -258,7 +258,7 @@ function AttributeEditorField(props: AttributeEditorFieldProps) {
 type AttributeStatusEditorFieldProps = {
 	attributeStatus: AttributeStatus;
 	attributes: Attribute[];
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function AttributeStatusEditorField(props: AttributeStatusEditorFieldProps) {

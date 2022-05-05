@@ -5,8 +5,8 @@ import SheetModal from './SheetModal';
 
 type AddDataModalProps = {
 	show: boolean;
-	onHide(): void;
-	onAddData(id: number): void;
+	onHide: () => void;
+	onAddData: (id: number) => void;
 	data: { id: number; name: string }[];
 	title: string;
 	disabled?: boolean;

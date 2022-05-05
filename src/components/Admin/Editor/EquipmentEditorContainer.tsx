@@ -108,7 +108,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 
 type EquipmentEditorFieldProps = {
 	equipment: Equipment;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function EquipmentEditorField(props: EquipmentEditorFieldProps) {

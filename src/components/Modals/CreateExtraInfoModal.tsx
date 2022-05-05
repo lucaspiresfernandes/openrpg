@@ -6,10 +6,10 @@ import FormControl from 'react-bootstrap/FormControl';
 import SheetModal from './SheetModal';
 
 type CreateExtraInfoModalProps = {
-	onCreate(name: string): void;
+	onCreate: (name: string) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 };
 
 export default function CreateExtraInfoModal(props: CreateExtraInfoModalProps) {

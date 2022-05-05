@@ -95,7 +95,7 @@ type PlayerAttributeFieldProps = {
 			attribute_id: number;
 		};
 	}[];
-	onStatusChanged?(id: number, newValue: boolean): void;
+	onStatusChanged?: (id: number, newValue: boolean) => void;
 	attributeDiceConfig: DiceConfigCell;
 	showDiceRollResult: DiceRollEvent;
 };
@@ -252,7 +252,7 @@ type PlayerAttributeStatusFieldProps = {
 			attribute_id: number;
 		};
 	};
-	onStatusChanged?(id: number, newValue: boolean): void;
+	onStatusChanged?: (id: number, newValue: boolean) => void;
 };
 
 function PlayerAttributeStatusField({
@@ -293,7 +293,7 @@ function PlayerAttributeStatusField({
 type PlayerAvatarImageProps = {
 	statusID?: number;
 	rerender: boolean;
-	onAvatarUpdate?(): void;
+	onAvatarUpdate?: () => void;
 	playerAvatars: {
 		link: string | null;
 		AttributeStatus: {

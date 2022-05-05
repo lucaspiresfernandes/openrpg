@@ -6,10 +6,10 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
 type CreateItemModalProps = {
-	onCreate(name: string, description: string): void;
+	onCreate: (name: string, description: string) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 };
 
 export default function CreateItemModal(props: CreateItemModalProps) {

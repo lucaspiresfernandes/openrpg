@@ -8,10 +8,10 @@ import FormSelect from 'react-bootstrap/FormSelect';
 import SheetModal from './SheetModal';
 
 type CreateAttributeStatusModalProps = {
-	onCreate(name: string, attributeID: number): void;
+	onCreate: (name: string, attributeID: number) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 	attributes: Attribute[];
 };
 

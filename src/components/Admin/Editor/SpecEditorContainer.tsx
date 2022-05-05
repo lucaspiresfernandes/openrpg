@@ -83,7 +83,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 
 type SpecEditorFieldProps = {
 	spec: Spec;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function SpecEditorField(props: SpecEditorFieldProps) {

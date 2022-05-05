@@ -88,7 +88,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
 
 type ExtraInfoEditorFieldProps = {
 	extraInfo: ExtraInfo;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function ExtraInfoEditorField(props: ExtraInfoEditorFieldProps) {

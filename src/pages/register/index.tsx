@@ -24,7 +24,11 @@ export default function Register() {
 		} else setLoading(false);
 	});
 
-	async function onFormSubmit(username: string, password: string, confirmPassword: string) {
+	async function onFormSubmit(
+		username: string,
+		password: string,
+		confirmPassword: string
+	) {
 		setLoading(true);
 
 		try {
@@ -82,7 +86,7 @@ export default function Register() {
 }
 
 function RegisterForm(props: {
-	onSubmit(username: string, password: string, confirmPassword: string): void;
+	onSubmit: (username: string, password: string, confirmPassword: string) => void;
 }) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');

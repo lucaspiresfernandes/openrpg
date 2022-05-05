@@ -171,7 +171,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 
 type PlayerSpellFieldProps = {
 	spell: Spell;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {

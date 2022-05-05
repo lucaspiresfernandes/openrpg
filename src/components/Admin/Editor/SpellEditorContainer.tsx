@@ -136,7 +136,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 
 type SpellEditorFieldProps = {
 	spell: Spell;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function SpellEditorField(props: SpellEditorFieldProps) {

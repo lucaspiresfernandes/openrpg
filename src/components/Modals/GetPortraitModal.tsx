@@ -10,7 +10,7 @@ import copyToClipboard from 'copy-to-clipboard';
 
 type GetPortraitModalProps = {
 	show: boolean;
-	onHide(): void;
+	onHide: () => void;
 	playerId: number;
 };
 

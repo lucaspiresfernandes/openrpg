@@ -21,7 +21,7 @@ import type {
 	ContainerConfig,
 	DiceConfig,
 	PortraitConfig,
-	PortraitOrientation
+	PortraitOrientation,
 } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
@@ -36,7 +36,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 			<ApplicationHead title='Configurações' />
 			<Container>
 				<Row>
-					<Col xs={2} className='me-5'>
+					<Col xs={12} sm={4} lg={2} className='me-1'>
 						<ListGroup>
 							<ListGroup.Item action active={index === 0} onClick={() => setIndex(0)}>
 								Geral
@@ -49,7 +49,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 							</ListGroup.Item>
 						</ListGroup>
 					</Col>
-					<Col className='ps-5 border-start border-secondary'>
+					<Col className='mt-5 mt-sm-0'>
 						<Row className='display-5 text-center mb-4'>
 							<Col>Configurações do Sistema</Col>
 						</Row>
@@ -86,7 +86,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 function DiceEditor(props: {
 	successTypeEnabled: boolean;
 	diceConfig: DiceConfig;
-	logError(err: any): void;
+	logError: (err: any) => void;
 }) {
 	const [loading, setLoading] = useState(false);
 	const [successTypeEnabled, setSuccessTypeEnabled] = useState(props.successTypeEnabled);
@@ -284,7 +284,7 @@ function GeneralEditor(props: {
 	containerConfig: ContainerConfig;
 	adminKey: string;
 	enableAutomaticMarking: boolean;
-	logError(err: any): void;
+	logError: (err: any) => void;
 }) {
 	const [names, setNames] = useState(props.containerConfig);
 	const [loading, setLoading] = useState(false);
@@ -371,7 +371,7 @@ type PortraitContainerProps = {
 		orientation: PortraitOrientation;
 	};
 	attributes: Attribute[];
-	logError(err: any): void;
+	logError: (err: any) => void;
 };
 
 function PortraitEditor(props: PortraitContainerProps) {

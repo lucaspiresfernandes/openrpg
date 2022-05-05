@@ -7,10 +7,10 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
 type CreateAttributeModalProps = {
-	onCreate(name: string, rollable: boolean): void;
+	onCreate: (name: string, rollable: boolean) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 };
 
 export default function CreateAttributeModal(props: CreateAttributeModalProps) {

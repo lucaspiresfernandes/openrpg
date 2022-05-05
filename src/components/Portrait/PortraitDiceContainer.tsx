@@ -10,8 +10,8 @@ export default function PortraitDiceContainer(props: {
 	socket: SocketIO | null;
 	playerId: number;
 	showDice: boolean;
-	onShowDice(): void;
-	onHideDice(): void;
+	onShowDice: () => void;
+	onHideDice: () => void;
 	color: string;
 }) {
 	const diceQueue = useRef<DiceResult[]>([]);

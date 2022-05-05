@@ -87,7 +87,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
 
 type CurrencyEditorFieldProps = {
 	currency: Currency;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function CurrencyEditorField(props: CurrencyEditorFieldProps) {

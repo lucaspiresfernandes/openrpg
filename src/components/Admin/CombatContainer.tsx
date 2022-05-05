@@ -25,7 +25,7 @@ type Entity = {
 type SortableContainerProps = {
 	entities: Entity[];
 	pointer: number;
-	removeEntity(id: number): void;
+	removeEntity: (id: number) => void;
 };
 
 const SortableList = SortableContainer((props: SortableContainerProps) => {
@@ -47,7 +47,7 @@ const SortableList = SortableContainer((props: SortableContainerProps) => {
 type SortableElementProps = {
 	entity: Entity;
 	selected?: boolean;
-	removeEntity(id: number): void;
+	removeEntity: (id: number) => void;
 };
 
 const SortableItem = SortableElement((props: SortableElementProps) => {

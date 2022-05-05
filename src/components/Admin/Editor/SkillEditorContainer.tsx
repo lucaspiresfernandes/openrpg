@@ -179,7 +179,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 type SkillEditorFieldProps = {
 	skill: Skill;
 	specializations: Specialization[];
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function SkillEditorField(props: SkillEditorFieldProps) {
@@ -265,8 +265,8 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 
 type SpecializationEditorFieldProps = {
 	specialization: Specialization;
-	onDelete(id: number): void;
-	onNameChange?(id: number, newName: string): void;
+	onDelete: (id: number) => void;
+	onNameChange?: (id: number, newName: string) => void;
 };
 
 function SpecializationEditorField(props: SpecializationEditorFieldProps) {

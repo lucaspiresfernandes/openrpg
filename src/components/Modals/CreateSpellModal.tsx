@@ -7,7 +7,7 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
 type CreateSpellModalProps = {
-	onCreate(
+	onCreate: (
 		name: string,
 		description: string,
 		cost: string,
@@ -18,10 +18,10 @@ type CreateSpellModalProps = {
 		duration: string,
 		slots: number,
 		target: string
-	): void;
+	) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 };
 
 export default function CreateSpellModal(props: CreateSpellModalProps) {

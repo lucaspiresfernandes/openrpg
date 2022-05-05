@@ -95,12 +95,12 @@ export default function Register() {
 }
 
 function RegisterForm(props: {
-	onSubmit(
+	onSubmit: (
 		username: string,
 		password: string,
 		confirmPassword: string,
 		adminKey: string
-	): void;
+	) => void;
 }) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');

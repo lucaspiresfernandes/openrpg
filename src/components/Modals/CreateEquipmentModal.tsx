@@ -8,17 +8,17 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
 type CreateEquipmentModalProps = {
-	onCreate(
+	onCreate: (
 		name: string,
 		type: string,
 		damage: string,
 		range: string,
 		attacks: string,
 		ammo: number | null
-	): void;
+	) => void;
 	show: boolean;
 	disabled?: boolean;
-	onHide(): void;
+	onHide: () => void;
 };
 
 export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {

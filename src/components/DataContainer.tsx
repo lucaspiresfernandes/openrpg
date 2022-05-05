@@ -9,7 +9,7 @@ interface DataContainerProps extends ColProps {
 	children?: React.ReactNode;
 	addButton?: {
 		type?: 'button' | 'dropdown';
-		onAdd?(): void;
+		onAdd?: () => void;
 		children?: React.ReactNode;
 		disabled?: boolean;
 	};

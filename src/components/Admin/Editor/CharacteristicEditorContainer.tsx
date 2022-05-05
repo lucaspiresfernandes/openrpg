@@ -93,7 +93,7 @@ export default function CharacteristicEditorContainer(
 
 type CharacteristicEditorFieldProps = {
 	characteristic: Characteristic;
-	onDelete(id: number): void;
+	onDelete: (id: number) => void;
 };
 
 function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {

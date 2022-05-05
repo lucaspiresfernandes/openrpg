@@ -272,8 +272,8 @@ type PlayerItemFieldProps = {
 		name: string;
 		weight: number;
 	};
-	onDelete(id: number): void;
-	onQuantityChange(id: number, value: number): void;
+	onDelete: (id: number) => void;
+	onQuantityChange: (id: number, value: number) => void;
 };
 
 function PlayerItemField(props: PlayerItemFieldProps) {

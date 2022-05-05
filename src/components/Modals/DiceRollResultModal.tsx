@@ -16,8 +16,8 @@ export type DiceRoll = {
 };
 
 export type DiceRollResultModalProps = DiceRoll & {
-	onHide(): void;
-	onRollAgain(): void;
+	onHide: () => void;
+	onRollAgain: () => void;
 };
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
