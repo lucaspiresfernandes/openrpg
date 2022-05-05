@@ -30,25 +30,41 @@ type EditAvatarModalProps = {
 };
 
 export default function EditAvatarModal(props: EditAvatarModalProps) {
-	const logError = useContext(ErrorLogger);
 	const [avatars, setAvatars] = useState<AvatarData[]>(
 		props.playerAvatars.map((avatar) => {
-			return {
-				id: avatar.AttributeStatus?.id || null,
-				name: avatar.AttributeStatus?.name || 'Padrão',
-				link: avatar.link,
-			};
+			if (avatar.AttributeStatus)
+				return {
+					id: avatar.AttributeStatus.id,
+					name: avatar.AttributeStatus.name,
+					link: avatar.link,
+				};
+			else
+				return {
+					id: null,
+					name: 'Padrão',
+					link: avatar.link,
+				};
 		})
 	);
+	const [loading, setLoading] = useState(false);
+	const logError = useContext(ErrorLogger);
 
 	function onUpdateAvatar() {
+		setLoading(true);
 		api
 			.post('/sheet/player/avatar', { avatarData: avatars })
 			.then(props.onUpdate)
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setLoading(false);
+				props.onHide?.();
+			});
 	}
 
-	function onAvatarChange(id: number | null, ev: ChangeEvent<HTMLInputElement>) {
+	function onAvatarChange(
+		id: number | null,
+		ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) {
 		setAvatars((avatars) => {
 			const newAvatars = [...avatars];
 			const av = newAvatars.find((avatar) => avatar.id === id);
@@ -60,7 +76,7 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
 	return (
 		<SheetModal
 			title='Editar Avatar'
-			applyButton={{ name: 'Atualizar', onApply: onUpdateAvatar }}
+			applyButton={{ name: 'Atualizar', onApply: onUpdateAvatar, disabled: loading }}
 			show={props.show}
 			onHide={props.onHide}
 			scrollable>
@@ -72,14 +88,16 @@ export default function EditAvatarModal(props: EditAvatarModalProps) {
 					</Col>
 				</Row>
 				{avatars.map((avatar) => (
-					<FormGroup className='mb-3' key={avatar.id || null}>
-						<FormLabel>Avatar ({avatar.name || 'Padrão'})</FormLabel>
+					<FormGroup
+						className='mb-3'
+						controlId={`editAvatar${avatar.id}`}
+						key={avatar.id}>
+						<FormLabel>Avatar ({avatar.name})</FormLabel>
 						<FormControl
 							className='theme-element'
 							value={avatar.link || ''}
-							onChange={(ev) =>
-								onAvatarChange(avatar.id || null, ev as ChangeEvent<HTMLInputElement>)
-							}
+							onChange={(ev) => onAvatarChange(avatar.id, ev)}
+							disabled={loading}
 						/>
 					</FormGroup>
 				))}

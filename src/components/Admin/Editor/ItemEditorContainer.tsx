@@ -9,6 +9,7 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateItemModal from '../../Modals/CreateItemModal';
 import AdminTable from '../AdminTable';
@@ -19,33 +20,33 @@ type ItemEditorContainerProps = {
 };
 
 export default function ItemEditorContainer(props: ItemEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showItemModal, setShowItemModal] = useState(false);
 	const [item, setItem] = useState(props.items);
+	const logError = useContext(ErrorLogger);
 
 	function createItem(name: string, description: string) {
+		setLoading(true);
 		api
 			.put('/sheet/item', { name, description })
 			.then((res) => {
 				const id = res.data.id;
 				setItem([...item, { id, name, description, weight: 0, visible: true }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setLoading(false);
+				setShowItemModal(false);
+			});
 	}
 
 	function deleteItem(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/item', { data: { id } })
-			.then(() => {
-				const newItem = [...item];
-				const index = newItem.findIndex((item) => item.id === id);
-				if (index > -1) {
-					newItem.splice(index, 1);
-					setItem(newItem);
-				}
-			})
-			.catch(logError);
+		const newItem = [...item];
+		const index = newItem.findIndex((item) => item.id === id);
+		if (index > -1) {
+			newItem.splice(index, 1);
+			setItem(newItem);
+		}
 	}
 
 	return (
@@ -53,7 +54,7 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setShowItemModal(true) }}>
+				addButton={{ onAdd: () => setShowItemModal(true), disabled: loading }}>
 				<Row>
 					<Col>
 						<AdminTable>
@@ -79,6 +80,7 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
 				show={showItemModal}
 				onHide={() => setShowItemModal(false)}
 				onCreate={createItem}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -90,6 +92,7 @@ type ItemEditorFieldProps = {
 };
 
 function ItemEditorField(props: ItemEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.item.name);
 	const [lastDescription, description, setDescription] = useExtendedState(
 		props.item.description
@@ -129,18 +132,26 @@ function ItemEditorField(props: ItemEditorFieldProps) {
 		});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/item', { data: { id: props.item.id } })
+			.then(() => props.onDelete(props.item.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.item.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onNameBlur}
@@ -149,6 +160,7 @@ function ItemEditorField(props: ItemEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={description}
 					onChange={(ev) => setDescription(ev.currentTarget.value)}
 					onBlur={onDescriptionBlur}
@@ -157,6 +169,7 @@ function ItemEditorField(props: ItemEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={weight}
 					onChange={(ev) => setWeight(ev.currentTarget.value)}
 					onBlur={onWeightBlur}
@@ -165,7 +178,7 @@ function ItemEditorField(props: ItemEditorFieldProps) {
 				/>
 			</td>
 			<td>
-				<FormCheck checked={visible} onChange={onVisibleChange} />
+				<FormCheck disabled={loading} checked={visible} onChange={onVisibleChange} />
 			</td>
 		</tr>
 	);

@@ -7,30 +7,8 @@ import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import api from '../utils/api';
 
-type ApplicationTheme = 'light' | 'dark';
-
 export default function Navbar() {
 	const router = useRouter();
-	const [theme, setTheme] = useState<ApplicationTheme>('dark');
-
-	useEffect(() => {
-		setTheme((localStorage.getItem('application_theme') || 'dark') as ApplicationTheme);
-	}, []);
-
-	useEffect(() => {
-		switch (theme) {
-			case 'light':
-				localStorage.setItem('application_theme', 'light');
-				document.body.classList.remove('dark');
-				document.body.classList.add('light');
-				break;
-			case 'dark':
-				localStorage.setItem('application_theme', 'dark');
-				document.body.classList.remove('light');
-				document.body.classList.add('dark');
-				break;
-		}
-	}, [theme]);
 
 	if (router.pathname.includes('/portrait')) return null;
 
@@ -73,13 +51,7 @@ export default function Navbar() {
 					</Nav>
 					<Nav>
 						<Nav.Item className='me-3 align-self-center'>
-							<FormCheck
-								type='switch'
-								style={{ marginBottom: 0 }}
-								title='Modo Escuro'
-								checked={theme === 'dark'}
-								onChange={(ev) => setTheme(ev.target.checked ? 'dark' : 'light')}
-							/>
+							<ThemeManager />
 						</Nav.Item>
 						{(onPlayerSheet || onAdminPanel) && (
 							<Nav.Link
@@ -93,5 +65,34 @@ export default function Navbar() {
 				</BootstrapNavbar.Collapse>
 			</Container>
 		</BootstrapNavbar>
+	);
+}
+
+function ThemeManager() {
+	const [darkMode, setDarkMode] = useState(true);
+
+	useEffect(() => {
+		setDarkMode(localStorage.getItem('application_theme') === 'dark');
+	}, []);
+
+	useEffect(() => {
+		if (darkMode) {
+			localStorage.setItem('application_theme', 'dark');
+			document.body.classList.remove('light');
+			document.body.classList.add('dark');
+			return;
+		}
+		localStorage.setItem('application_theme', 'light');
+		document.body.classList.remove('dark');
+		document.body.classList.add('light');
+	}, [darkMode]);
+
+	return (
+		<FormCheck
+			type='switch'
+			title='Modo Escuro'
+			checked={darkMode}
+			onChange={(ev) => setDarkMode(ev.target.checked)} 
+		/>
 	);
 }

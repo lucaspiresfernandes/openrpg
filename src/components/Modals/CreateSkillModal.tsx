@@ -11,6 +11,7 @@ import SheetModal from './SheetModal';
 type CreateSkillModalProps = {
 	onCreate(name: string, mandatory: boolean, specializationID: number | null): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 	specialization: Specialization[];
 };
@@ -37,6 +38,7 @@ export default function CreateSkillModal(props: CreateSkillModalProps) {
 			applyButton={{
 				name: 'Criar',
 				onApply: () => props.onCreate(name, mandatory, specializationID),
+				disabled: props.disabled,
 			}}>
 			<Container fluid>
 				<FormGroup controlId='createSkillName' className='mb-3'>

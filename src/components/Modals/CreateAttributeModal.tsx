@@ -9,6 +9,7 @@ import SheetModal from './SheetModal';
 type CreateAttributeModalProps = {
 	onCreate(name: string, rollable: boolean): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -27,7 +28,11 @@ export default function CreateAttributeModal(props: CreateAttributeModalProps) {
 			onExited={reset}
 			show={props.show}
 			onHide={props.onHide}
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, rollable) }}>
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name, rollable),
+				disabled: props.disabled,
+			}}>
 			<Container fluid>
 				<FormGroup className='mb-3' controlId='createAttributeName'>
 					<FormLabel>Nome</FormLabel>

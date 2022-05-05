@@ -8,6 +8,7 @@ import SheetModal from './SheetModal';
 type CreateCharacteristicModalProps = {
 	onCreate(name: string): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -21,7 +22,11 @@ export default function CreateCharacteristicModal(props: CreateCharacteristicMod
 	return (
 		<SheetModal
 			title='Nova Característica'
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name),
+				disabled: props.disabled,
+			}}
 			show={props.show}
 			onHide={props.onHide}
 			onExited={reset}>

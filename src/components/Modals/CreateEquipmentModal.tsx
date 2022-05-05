@@ -17,6 +17,7 @@ type CreateEquipmentModalProps = {
 		ammo: number | null
 	): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -58,6 +59,7 @@ export default function CreateEquipmentModal(props: CreateEquipmentModalProps) {
 			applyButton={{
 				name: 'Criar',
 				onApply: () => props.onCreate(name, type, damage, range, attacks, ammo),
+				disabled: props.disabled,
 			}}
 			scrollable>
 			<Container fluid>

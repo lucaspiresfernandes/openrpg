@@ -8,43 +8,43 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateSpecModal from '../../Modals/CreateSpecModal';
 import AdminTable from '../AdminTable';
 
 type SpecEditorContainerProps = {
 	specs: Spec[];
-	disabled?: boolean;
 };
 
 export default function SpecEditorContainer(props: SpecEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showSpecModal, setShowSpecModal] = useState(false);
 	const [spec, setSpec] = useState(props.specs);
+	const logError = useContext(ErrorLogger);
 
 	function createSpec(name: string) {
+		setLoading(true);
 		api
 			.put('/sheet/spec', { name })
 			.then((res) => {
 				const id = res.data.id;
 				setSpec([...spec, { id, name }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowSpecModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteSpec(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/spec', { data: { id } })
-			.then(() => {
-				const newSpec = [...spec];
-				const index = newSpec.findIndex((spec) => spec.id === id);
-				if (index > -1) {
-					newSpec.splice(index, 1);
-					setSpec(newSpec);
-				}
-			})
-			.catch(logError);
+		const newSpec = [...spec];
+		const index = newSpec.findIndex((spec) => spec.id === id);
+		if (index > -1) {
+			newSpec.splice(index, 1);
+			setSpec(newSpec);
+		}
 	}
 
 	return (
@@ -52,7 +52,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 			<DataContainer
 				outline
 				title='Especificações de Personagem'
-				addButton={{ onAdd: () => setShowSpecModal(true), disabled: props.disabled }}>
+				addButton={{ onAdd: () => setShowSpecModal(true), disabled: loading }}>
 				<Row>
 					<Col>
 						<AdminTable>
@@ -64,12 +64,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 							</thead>
 							<tbody>
 								{spec.map((spec) => (
-									<SpecEditorField
-										key={spec.id}
-										deleteDisabled={props.disabled}
-										spec={spec}
-										onDelete={deleteSpec}
-									/>
+									<SpecEditorField key={spec.id} spec={spec} onDelete={deleteSpec} />
 								))}
 							</tbody>
 						</AdminTable>
@@ -80,6 +75,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 				show={showSpecModal}
 				onHide={() => setShowSpecModal(false)}
 				onCreate={createSpec}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -87,11 +83,11 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 
 type SpecEditorFieldProps = {
 	spec: Spec;
-	deleteDisabled?: boolean;
 	onDelete(id: number): void;
 };
 
 function SpecEditorField(props: SpecEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.spec.name);
 	const logError = useContext(ErrorLogger);
 
@@ -101,15 +97,21 @@ function SpecEditorField(props: SpecEditorFieldProps) {
 		api.post('/sheet/spec', { id: props.spec.id, name }).catch(logError);
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/spec', { data: { id: props.spec.id } })
+			.then(() => props.onDelete(props.spec.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.spec.id)}
-					size='sm'
-					variant='secondary'
-					disabled={props.deleteDisabled}>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -117,6 +119,7 @@ function SpecEditorField(props: SpecEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
+					disabled={loading}
 				/>
 			</td>
 		</tr>

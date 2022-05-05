@@ -21,7 +21,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const name = req.body.name;
 
 	if (!infoID || !name) {
-		res.status(401).send({ message: 'Info ID or name is undefined.' });
+		res.status(401).send({ message: 'Info ID or Name is empty.' });
 		return;
 	}
 

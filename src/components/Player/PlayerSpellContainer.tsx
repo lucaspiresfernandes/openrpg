@@ -7,6 +7,7 @@ import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
+import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
 
@@ -26,6 +27,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 	const [lastMaxSlots, maxSlots, setMaxSlots] = useExtendedState(
 		props.playerMaxSlots.toString()
 	);
+	const [loading, setLoading] = useState(false);
 	const playerSpellsRef = useRef(playerSpells);
 	playerSpellsRef.current = playerSpells;
 	const logError = useContext(ErrorLogger);
@@ -84,6 +86,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 	});
 
 	function onAddSpell(id: number) {
+		setLoading(true);
 		api
 			.put('/sheet/player/spell', { id })
 			.then((res) => {
@@ -97,7 +100,11 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				);
 				setSpells(newSpells);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setAddSpellShow(false);
+				setLoading(false);
+			});
 	}
 
 	function onDeleteSpell(id: number) {
@@ -129,21 +136,22 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setAddSpellShow(true) }}>
-				<Row className='justify-content-center'>
-					<Row className='mb-2'>
-						<Col className='text-center h5'>
-							<span className='me-2'>Espaços: </span>
-							<span style={colorStyle}> {slots} /</span>
-							<BottomTextInput
-								value={maxSlots}
-								onChange={(ev) => setMaxSlots(ev.currentTarget.value)}
-								onBlur={onMaxSlotsBlur}
-								className='text-center'
-								style={{ ...colorStyle, maxWidth: '3rem' }}
-							/>
-						</Col>
-					</Row>
+				addButton={{ onAdd: () => setAddSpellShow(true), disabled: loading }}>
+				<Row className='mb-2'>
+					<Col className='text-center h5'>
+						<span className='me-2'>Espaços: </span>
+						<span style={colorStyle}> {slots} /</span>
+						<BottomTextInput
+							value={maxSlots}
+							onChange={(ev) => setMaxSlots(ev.currentTarget.value)}
+							onBlur={onMaxSlotsBlur}
+							className='text-center'
+							style={{ ...colorStyle, maxWidth: '3rem' }}
+							disabled={loading}
+						/>
+					</Col>
+				</Row>
+				<Row>
 					{playerSpells.map((spell) => (
 						<PlayerSpellField key={spell.id} spell={spell} onDelete={onDeleteSpell} />
 					))}
@@ -155,6 +163,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				onHide={() => setAddSpellShow(false)}
 				data={spells}
 				onAddData={onAddSpell}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -194,7 +203,7 @@ function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
 								size='sm'
 								onClick={deleteSpell}
 								disabled={loading}>
-								Apagar
+								{loading ? <CustomSpinner /> : 'Apagar'}
 							</Button>
 						</Col>
 					</Row>

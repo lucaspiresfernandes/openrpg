@@ -8,6 +8,7 @@ import SheetModal from './SheetModal';
 type CreateItemModalProps = {
 	onCreate(name: string, description: string): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -26,7 +27,11 @@ export default function CreateItemModal(props: CreateItemModalProps) {
 			show={props.show}
 			onHide={props.onHide}
 			onExited={reset}
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name, description) }}>
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name, description),
+				disabled: props.disabled,
+			}}>
 			<Container fluid>
 				<FormGroup controlId='createItemName' className='mb-3'>
 					<FormLabel>Nome</FormLabel>

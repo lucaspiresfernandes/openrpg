@@ -14,6 +14,7 @@ import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import { resolveDices } from '../../utils/dice';
 import BottomTextInput from '../BottomTextInput';
+import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
@@ -38,6 +39,7 @@ type PlayerEquipmentContainerProps = {
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	const [addEquipmentShow, setAddEquipmentShow] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [availableEquipments, setAvailableEquipments] = useState<
 		{ id: number; name: string }[]
 	>(props.availableEquipments);
@@ -106,6 +108,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 	}, [socket]);
 
 	function onAddEquipment(id: number) {
+		setLoading(true);
 		api
 			.put('/sheet/player/equipment', { id })
 			.then((res) => {
@@ -119,7 +122,11 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				);
 				setAvailableEquipments(newEquipments);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setAddEquipmentShow(false);
+				setLoading(false);
+			});
 	}
 
 	function onDeleteEquipment(id: number) {
@@ -145,7 +152,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setAddEquipmentShow(true) }}>
+				addButton={{ onAdd: () => setAddEquipmentShow(true), disabled: loading }}>
 				<Row className='mb-3 text-center'>
 					<Col>
 						<Table responsive className='align-middle'>
@@ -183,6 +190,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				onHide={() => setAddEquipmentShow(false)}
 				data={availableEquipments}
 				onAddData={onAddEquipment}
+				disabled={loading}
 			/>
 			<DiceRollResultModal {...diceRollResultModalProps} />
 		</>
@@ -223,8 +231,16 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 
 	function onAmmoBlur() {
 		if (currentAmmo === lastAmmo) return;
-		setCurrentAmmo(currentAmmo);
-		api.post('/sheet/player/equipment', { id: equipmentID, currentAmmo }).catch(logError);
+		let newAmmo = currentAmmo;
+
+		if (props.equipment.ammo && currentAmmo > props.equipment.ammo)
+			newAmmo = props.equipment.ammo;
+
+		setCurrentAmmo(newAmmo);
+
+		api
+			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: newAmmo })
+			.catch(logError);
 	}
 
 	function diceRoll() {
@@ -251,8 +267,10 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 				data: { id: equipmentID },
 			})
 			.then(() => props.onDelete(equipmentID))
-			.catch(logError)
-			.finally(() => setLoading(false));
+			.catch((err) => {
+				logError(err);
+				setLoading(false);
+			});
 	}
 
 	return (
@@ -263,7 +281,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 					size='sm'
 					variant='secondary'
 					disabled={loading}>
-					<BsTrash color='white' size={24} />
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>{props.equipment.name}</td>
@@ -283,6 +301,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 			<td>
 				{props.equipment.ammo ? (
 					<BottomTextInput
+						disabled={loading}
 						className='text-center'
 						value={currentAmmo}
 						onChange={onAmmoChange}

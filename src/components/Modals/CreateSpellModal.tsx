@@ -20,6 +20,7 @@ type CreateSpellModalProps = {
 		target: string
 	): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -78,6 +79,7 @@ export default function CreateSpellModal(props: CreateSpellModalProps) {
 						slots,
 						target
 					),
+				disabled: props.disabled,
 			}}
 			scrollable>
 			<Container fluid>

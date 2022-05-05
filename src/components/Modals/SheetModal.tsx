@@ -20,14 +20,9 @@ interface SheetModalProps extends ModalProps {
 }
 
 export default function SheetModal(props: SheetModalProps) {
-	function apply(ev: MouseEvent | FormEvent) {
-		if (props.onHide) props.onHide();
-		props.applyButton?.onApply(ev);
-	}
-
 	function submit(ev: FormEvent<HTMLFormElement>) {
 		ev.preventDefault();
-		apply(ev);
+		props.applyButton?.onApply(ev);
 	}
 
 	return (

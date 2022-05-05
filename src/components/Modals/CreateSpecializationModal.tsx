@@ -8,6 +8,7 @@ import SheetModal from './SheetModal';
 type CreateSpecializationModalProps = {
 	onCreate(name: string): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -24,7 +25,11 @@ export default function CreateSpecializationModal(props: CreateSpecializationMod
 			onExited={reset}
 			show={props.show}
 			onHide={props.onHide}
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}>
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name),
+				disabled: props.disabled,
+			}}>
 			<Container fluid>
 				<FormGroup controlId='createSpecializationName'>
 					<FormLabel>Nome</FormLabel>

@@ -10,6 +10,7 @@ import SheetModal from './SheetModal';
 type CreateAttributeStatusModalProps = {
 	onCreate(name: string, attributeID: number): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 	attributes: Attribute[];
 };
@@ -34,7 +35,7 @@ export default function CreateAttributeStatusModal(
 			applyButton={{
 				name: 'Criar',
 				onApply: () => props.onCreate(name, attributeID),
-				disabled: props.attributes.length === 0,
+				disabled: props.attributes.length === 0 || props.disabled,
 			}}>
 			<Container fluid>
 				<FormGroup controlId='createStatusName' className='mb-3'>

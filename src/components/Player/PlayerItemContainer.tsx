@@ -11,6 +11,7 @@ import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import BottomTextInput from '../BottomTextInput';
+import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
 
@@ -34,7 +35,7 @@ type PlayerItemContainerProps = {
 };
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
-	const [addItemShow, setAddItemShow] = useState(false);
+	const [addItemModalShow, setAddItemModalShow] = useState(false);
 	const [availableItems, setAvailableItems] = useState<{ id: number; name: string }[]>(
 		props.availableItems
 	);
@@ -49,6 +50,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	const [load, setLoad] = useState(
 		playerItems.reduce((prev, cur) => prev + cur.Item.weight * cur.quantity, 0)
 	);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		if (!socket) return;
@@ -103,6 +105,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	}, [socket]);
 
 	function onAddItem(id: number) {
+		setLoading(true);
 		api
 			.put('/sheet/player/item', { id })
 			.then((res) => {
@@ -116,7 +119,11 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				);
 				setAvailableItems(newItems);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setAddItemModalShow(false);
+				setLoading(false);
+			});
 	}
 
 	function onDeleteItem(id: number) {
@@ -160,7 +167,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setAddItemShow(true) }}>
+				addButton={{ onAdd: () => setAddItemModalShow(true), disabled: loading }}>
 				<Row className='text-center justify-content-center'>
 					{props.playerCurrency.map((curr) => (
 						<PlayerCurrencyField key={curr.Currency.id} currency={curr} />
@@ -210,10 +217,11 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 			</DataContainer>
 			<AddDataModal
 				title='Adicionar'
-				show={addItemShow}
-				onHide={() => setAddItemShow(false)}
+				show={addItemModalShow}
+				onHide={() => setAddItemModalShow(false)}
 				data={availableItems}
 				onAddData={onAddItem}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -323,12 +331,13 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 		<tr>
 			<td>
 				<Button onClick={deleteItem} disabled={loading} size='sm' variant='secondary'>
-					<BsTrash color='white' size={24} />
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td style={{ maxWidth: '7.5rem' }}>{props.item.name}</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={currentDescription}
 					style={{ minWidth: '20rem' }}
 					onChange={(ev) => setCurrentDescription(ev.currentTarget.value)}
@@ -338,6 +347,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 			<td style={{ maxWidth: '5rem' }}>{props.item.weight}</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					style={{ maxWidth: '3rem' }}
 					maxLength={3}
 					value={currentQuantity}

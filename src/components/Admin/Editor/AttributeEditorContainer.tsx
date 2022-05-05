@@ -12,6 +12,7 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateAttributeModal from '../../Modals/CreateAttributeModal';
 import CreateAttributeStatusModal from '../../Modals/CreateAttributeStatusModal';
@@ -22,11 +23,12 @@ type AttributeEditorContainerProps = {
 };
 
 export default function AttributeEditorContainer(props: AttributeEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showAttributeModal, setShowAttributeModal] = useState(false);
 	const [attributes, setAttributes] = useState(props.attributes);
 	const [showAttributeStatusModal, setShowAttributeStatusModal] = useState(false);
 	const [attributeStatus, setAttributeStatus] = useState(props.attributeStatus);
+	const logError = useContext(ErrorLogger);
 
 	function onAttributeNameChange(id: number, name: string) {
 		const newAttributes = [...attributes];
@@ -38,53 +40,51 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 	}
 
 	function createAttribute(name: string, rollable: boolean) {
+		setLoading(true);
 		api
 			.put('/sheet/attribute', { name, rollable })
 			.then((res) => {
 				const id = res.data.id;
 				setAttributes([...attributes, { id, name, rollable, color: res.data.color }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowAttributeModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteAttribute(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/attribute', { data: { id } })
-			.then(() => {
-				const newAttribute = [...attributes];
-				const index = newAttribute.findIndex((attr) => attr.id === id);
-				if (index > -1) {
-					newAttribute.splice(index, 1);
-					setAttributes(newAttribute);
-				}
-			})
-			.catch(logError);
+		const newAttribute = [...attributes];
+		const index = newAttribute.findIndex((attr) => attr.id === id);
+		if (index > -1) {
+			newAttribute.splice(index, 1);
+			setAttributes(newAttribute);
+		}
 	}
 
 	function createAttributeStatus(name: string, attributeID: number) {
+		setLoading(true);
 		api
 			.put('/sheet/attribute/status', { name, attributeID })
 			.then((res) => {
 				const id = res.data.id;
 				setAttributeStatus([...attributeStatus, { id, name, attribute_id: attributeID }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowAttributeStatusModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteAttributeStatus(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/attribute/status', { data: { id } })
-			.then(() => {
-				const newAttributeStatus = [...attributeStatus];
-				const index = newAttributeStatus.findIndex((status) => status.id === id);
-				if (index > -1) {
-					newAttributeStatus.splice(index, 1);
-					setAttributeStatus(newAttributeStatus);
-				}
-			})
-			.catch(logError);
+		const newAttributeStatus = [...attributeStatus];
+		const index = newAttributeStatus.findIndex((status) => status.id === id);
+		if (index > -1) {
+			newAttributeStatus.splice(index, 1);
+			setAttributeStatus(newAttributeStatus);
+		}
 	}
 
 	return (
@@ -93,7 +93,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 				<DataContainer
 					outline
 					title='Barras de Atributo'
-					addButton={{ onAdd: () => setShowAttributeModal(true) }}>
+					addButton={{ onAdd: () => setShowAttributeModal(true), disabled: loading }}>
 					<Row>
 						<Col>
 							<Table responsive className='align-middle'>
@@ -126,7 +126,10 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 				<DataContainer
 					outline
 					title='Status de Atributos'
-					addButton={{ onAdd: () => setShowAttributeStatusModal(true) }}>
+					addButton={{
+						onAdd: () => setShowAttributeStatusModal(true),
+						disabled: loading,
+					}}>
 					<Row>
 						<Col>
 							<Table responsive className='align-middle'>
@@ -158,12 +161,14 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 				show={showAttributeModal}
 				onHide={() => setShowAttributeModal(false)}
 				onCreate={createAttribute}
+				disabled={loading}
 			/>
 			<CreateAttributeStatusModal
 				show={showAttributeStatusModal}
 				onHide={() => setShowAttributeStatusModal(false)}
 				onCreate={createAttributeStatus}
 				attributes={attributes}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -176,6 +181,7 @@ type AttributeEditorFieldProps = {
 };
 
 function AttributeEditorField(props: AttributeEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.attribute.name);
 	const [lastColor, color, setColor] = useExtendedState(`#${props.attribute.color}`);
 	const [rollable, setRollable] = useState(props.attribute.rollable);
@@ -207,14 +213,21 @@ function AttributeEditorField(props: AttributeEditorFieldProps) {
 			});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/attribute', { data: { id: props.attribute.id } })
+			.then(() => props.onDelete(props.attribute.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.attribute.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -222,6 +235,7 @@ function AttributeEditorField(props: AttributeEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onNameBlur}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -231,10 +245,11 @@ function AttributeEditorField(props: AttributeEditorFieldProps) {
 					onChange={(ev) => setColor(ev.currentTarget.value)}
 					onBlur={onColorBlur}
 					className='theme-element'
+					disabled={loading}
 				/>
 			</td>
 			<td>
-				<FormCheck checked={rollable} onChange={changeRollable} />
+				<FormCheck checked={rollable} onChange={changeRollable} disabled={loading} />
 			</td>
 		</tr>
 	);
@@ -247,6 +262,7 @@ type AttributeStatusEditorFieldProps = {
 };
 
 function AttributeStatusEditorField(props: AttributeStatusEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.attributeStatus.name);
 	const [attributeID, setAttributeID] = useState(props.attributeStatus.attribute_id);
 	const logError = useContext(ErrorLogger);
@@ -273,14 +289,21 @@ function AttributeStatusEditorField(props: AttributeStatusEditorFieldProps) {
 			});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/attribute/status', { data: { id: props.attributeStatus.id } })
+			.then(() => props.onDelete(props.attributeStatus.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.attributeStatus.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -288,10 +311,15 @@ function AttributeStatusEditorField(props: AttributeStatusEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
+					disabled={loading}
 				/>
 			</td>
 			<td>
-				<select className='theme-element' value={attributeID} onChange={attributeChange}>
+				<select
+					className='theme-element'
+					value={attributeID}
+					onChange={attributeChange}
+					disabled={loading}>
 					{props.attributes.map((attr) => (
 						<option key={attr.id} value={attr.id}>
 							{attr.name}

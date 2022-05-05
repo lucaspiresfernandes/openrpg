@@ -8,44 +8,44 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateInfoModal from '../../Modals/CreateInfoModal';
 import AdminTable from '../AdminTable';
 
 type InfoEditorContainerProps = {
 	info: Info[];
-	disabled?: boolean;
 	title: string;
 };
 
 export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showInfoModal, setShowInfoModal] = useState(false);
 	const [info, setInfo] = useState(props.info);
 
 	function createInfo(name: string) {
+		setLoading(true);
 		api
 			.put('/sheet/info', { name })
 			.then((res) => {
 				const id = res.data.id;
 				setInfo([...info, { id, name, default: false }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowInfoModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteInfo(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/info', { data: { id } })
-			.then(() => {
-				const newInfo = [...info];
-				const index = newInfo.findIndex((info) => info.id === id);
-				if (index > -1) {
-					newInfo.splice(index, 1);
-					setInfo(newInfo);
-				}
-			})
-			.catch(logError);
+		const newInfo = [...info];
+		const index = newInfo.findIndex((info) => info.id === id);
+		if (index > -1) {
+			newInfo.splice(index, 1);
+			setInfo(newInfo);
+		}
 	}
 
 	return (
@@ -53,7 +53,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 			<DataContainer
 				outline
 				title={`${props.title} (Geral)`}
-				addButton={{ onAdd: () => setShowInfoModal(true), disabled: props.disabled }}>
+				addButton={{ onAdd: () => setShowInfoModal(true), disabled: loading }}>
 				<Row>
 					<Col>
 						<AdminTable>
@@ -65,12 +65,7 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 							</thead>
 							<tbody>
 								{info.map((info) => (
-									<InfoEditorField
-										key={info.id}
-										deleteDisabled={props.disabled}
-										info={info}
-										onDelete={deleteInfo}
-									/>
+									<InfoEditorField key={info.id} {...info} onDelete={deleteInfo} />
 								))}
 							</tbody>
 						</AdminTable>
@@ -81,37 +76,46 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 				show={showInfoModal}
 				onHide={() => setShowInfoModal(false)}
 				onCreate={createInfo}
+				disabled={loading}
 			/>
 		</>
 	);
 }
 
 type InfoEditorFieldProps = {
-	info: Info;
-	deleteDisabled?: boolean;
+	id: number;
+	name: string;
+	default: boolean;
 	onDelete(id: number): void;
 };
 
 function InfoEditorField(props: InfoEditorFieldProps) {
-	const [lastName, name, setName] = useExtendedState(props.info.name);
+	const [loading, setLoading] = useState(false);
+	const [lastName, name, setName] = useExtendedState(props.name);
 	const logError = useContext(ErrorLogger);
 
 	function onBlur() {
 		if (name === lastName) return;
 		setName(name);
-		api.post('/sheet/info', { id: props.info.id, name }).catch(logError);
+		api.post('/sheet/info', { id: props.id, name }).catch(logError);
+	}
+
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/info', { data: { id: props.id } })
+			.then(() => props.onDelete(props.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
 	}
 
 	return (
 		<tr>
 			<td>
-				{!props.info.default && (
-					<Button
-						onClick={() => props.onDelete(props.info.id)}
-						size='sm'
-						variant='secondary'
-						disabled={props.deleteDisabled}>
-						<BsTrash color='white' size={24} />
+				{!props.default && (
+					<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+						{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 					</Button>
 				)}
 			</td>
@@ -120,8 +124,8 @@ function InfoEditorField(props: InfoEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
-					readOnly={props.info.default}
-					disabled={props.info.default}
+					readOnly={props.default}
+					disabled={props.default || loading}
 				/>
 			</td>
 		</tr>

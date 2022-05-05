@@ -17,64 +17,54 @@ interface DataContainerProps extends ColProps {
 	outline?: boolean;
 }
 
-export default function DataContainer(props: DataContainerProps) {
-	const _title = props.htmlFor ? (
-		<label htmlFor={props.htmlFor}>{props.title}</label>
-	) : (
-		props.title
-	);
+export default function DataContainer({
+	title,
+	children,
+	addButton,
+	htmlFor,
+	outline,
+	...props
+}: DataContainerProps) {
+	const _title = htmlFor ? <label htmlFor={htmlFor}>{title}</label> : <>{title}</>;
 
-	function Head() {
-		if (props.addButton) {
-			return (
-				<Row className='mx-1'>
-					<Col xs={{ offset: 3 }} className='mt-2 h2 text-center'>
+	return (
+		<Col
+			{...props}
+			className={`${outline ? 'data-container ' : ''}${
+				props.className ? props.className + ' ' : ''
+			}h-100 my-2`}>
+			{addButton ? (
+				<Row className='mx-1 text-center'>
+					<Col xs={{ offset: 2 }} className='mt-2 h2'>
 						{_title}
 					</Col>
-					<Col xs={3} className='align-self-center'>
-						{props.addButton.type === 'dropdown' ? (
+					<Col xs={2} className='align-self-center'>
+						{addButton.type === 'dropdown' ? (
 							<DropdownButton
 								title='+'
 								variant='secondary'
 								menuVariant='dark'
-								disabled={props.addButton.disabled}>
-								{props.addButton.children}
+								disabled={addButton.disabled}>
+								{addButton.children}
 							</DropdownButton>
 						) : (
 							<Button
 								variant='secondary'
-								onClick={props.addButton.onAdd}
-								disabled={props.addButton.disabled}>
+								onClick={addButton.onAdd}
+								disabled={addButton.disabled}>
 								+
 							</Button>
 						)}
 					</Col>
 					<hr />
 				</Row>
-			);
-		}
-		return (
-			<Row className='mx-1'>
-				<Col className='mt-2 h2 text-center'>{_title}</Col>
-				<hr />
-			</Row>
-		);
-	}
-
-	return (
-		<Col
-			hidden={props.hidden}
-			xs={props.xs}
-			sm={props.sm}
-			md={props.md}
-			lg={props.lg}
-			xl={props.xl}
-			xxl={props.xxl}
-			className={`${props.outline ? 'data-container ' : ''}${
-				props.className ? props.className + ' ' : ''
-			}h-100 my-2`}>
-			<Head />
-			{props.children}
+			) : (
+				<Row className='mx-1'>
+					<Col className='mt-2 h2 text-center'>{_title}</Col>
+					<hr />
+				</Row>
+			)}
+			{children}
 		</Col>
 	);
 }

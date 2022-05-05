@@ -10,6 +10,7 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateSkillModal from '../../Modals/CreateSkillModal';
 import CreateSpecializationModal from '../../Modals/CreateSpecializationModal';
@@ -21,17 +22,19 @@ type SkillEditorContainerProps = {
 };
 
 export default function SkillEditorContainer(props: SkillEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showSkillModal, setShowSkillModal] = useState(false);
 	const [skills, setSkills] = useState(props.skills);
 	const [showSpecModal, setShowSpecModal] = useState(false);
 	const [specializations, setSpecializations] = useState(props.specializations);
+	const logError = useContext(ErrorLogger);
 
 	function createSkill(
 		name: string,
 		mandatory: boolean,
 		specializationID: number | null
 	) {
+		setLoading(true);
 		api
 			.put('/sheet/skill', { name, specializationID, mandatory })
 			.then((res) => {
@@ -41,22 +44,20 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 					{ id, name, specialization_id: specializationID, mandatory },
 				]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setLoading(false);
+				setShowSkillModal(false);
+			});
 	}
 
 	function deleteSkill(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/skill', { data: { id } })
-			.then(() => {
-				const newSkill = [...skills];
-				const index = newSkill.findIndex((skill) => skill.id === id);
-				if (index > -1) {
-					newSkill.splice(index, 1);
-					setSkills(newSkill);
-				}
-			})
-			.catch(logError);
+		const newSkill = [...skills];
+		const index = newSkill.findIndex((skill) => skill.id === id);
+		if (index > -1) {
+			newSkill.splice(index, 1);
+			setSkills(newSkill);
+		}
 	}
 
 	function onSpecializationNameChange(id: number, name: string) {
@@ -69,28 +70,27 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 	}
 
 	function createSpecialization(name: string) {
+		setLoading(true);
 		api
 			.put('/sheet/specialization', { name })
 			.then((res) => {
 				const id = res.data.id;
 				setSpecializations([...specializations, { id, name }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setLoading(false);
+				setShowSpecModal(false);
+			});
 	}
 
 	function deleteSpecialization(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/specialization', { data: { id } })
-			.then(() => {
-				const newSpec = [...specializations];
-				const index = newSpec.findIndex((specialization) => specialization.id === id);
-				if (index > -1) {
-					newSpec.splice(index, 1);
-					setSpecializations(newSpec);
-				}
-			})
-			.catch(logError);
+		const newSpec = [...specializations];
+		const index = newSpec.findIndex((specialization) => specialization.id === id);
+		if (index > -1) {
+			newSpec.splice(index, 1);
+			setSpecializations(newSpec);
+		}
 	}
 
 	return (
@@ -99,7 +99,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 				<DataContainer
 					outline
 					title='Especializações'
-					addButton={{ onAdd: () => setShowSpecModal(true) }}>
+					addButton={{ onAdd: () => setShowSpecModal(true), disabled: loading }}>
 					<Row>
 						<Col>
 							<AdminTable>
@@ -128,7 +128,7 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 				<DataContainer
 					outline
 					title='Perícias'
-					addButton={{ onAdd: () => setShowSkillModal(true) }}>
+					addButton={{ onAdd: () => setShowSkillModal(true), disabled: loading }}>
 					<Row>
 						<Col>
 							<AdminTable>
@@ -163,12 +163,14 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 				show={showSpecModal}
 				onHide={() => setShowSpecModal(false)}
 				onCreate={createSpecialization}
+				disabled={loading}
 			/>
 			<CreateSkillModal
 				show={showSkillModal}
 				onHide={() => setShowSkillModal(false)}
 				onCreate={createSkill}
 				specialization={specializations}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -181,6 +183,7 @@ type SkillEditorFieldProps = {
 };
 
 function SkillEditorField(props: SkillEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.skill.name);
 	const [specializationID, setSpecializationID] = useState(props.skill.specialization_id);
 	const [mandatory, setMandatory] = useState(props.skill.mandatory);
@@ -214,14 +217,21 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 			});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/skill', { data: { id: props.skill.id } })
+			.then(() => props.onDelete(props.skill.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.skill.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -229,13 +239,15 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
+					disabled={loading}
 				/>
 			</td>
 			<td>
 				<select
 					className='theme-element'
 					value={specializationID || 0}
-					onChange={specializationChange}>
+					onChange={specializationChange}
+					disabled={loading}>
 					<option value={0}>Nenhuma</option>
 					{props.specializations.map((attr) => (
 						<option key={attr.id} value={attr.id}>
@@ -245,7 +257,7 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 				</select>
 			</td>
 			<td>
-				<FormCheck checked={mandatory} onChange={mandatoryChange} />
+				<FormCheck checked={mandatory} onChange={mandatoryChange} disabled={loading} />
 			</td>
 		</tr>
 	);
@@ -258,6 +270,7 @@ type SpecializationEditorFieldProps = {
 };
 
 function SpecializationEditorField(props: SpecializationEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.specialization.name);
 	const logError = useContext(ErrorLogger);
 
@@ -270,14 +283,21 @@ function SpecializationEditorField(props: SpecializationEditorFieldProps) {
 			.catch(logError);
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/specialization', { data: { id: props.specialization.id } })
+			.then(() => props.onDelete(props.specialization.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.specialization.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary'>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -285,6 +305,7 @@ function SpecializationEditorField(props: SpecializationEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
+					disabled={loading}
 				/>
 			</td>
 		</tr>

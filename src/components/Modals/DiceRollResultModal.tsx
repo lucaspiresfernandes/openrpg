@@ -94,7 +94,10 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 			centered
 			applyButton={{
 				name: 'Rolar Novamente',
-				onApply: () => (rollAgain.current = true),
+				onApply: () => {
+					rollAgain.current = true;
+					onHide();
+				},
 				disabled: !result,
 			}}
 			bodyStyle={{ minHeight: 120, display: 'flex', alignItems: 'center' }}>

@@ -10,6 +10,7 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateEquipmentModal from '../../Modals/CreateEquipmentModal';
 import AdminTable from '../AdminTable';
@@ -20,9 +21,10 @@ type EquipmentEditorContainerProps = {
 };
 
 export default function EquipmentEditorContainer(props: EquipmentEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showEquipmentModal, setShowEquipmentModal] = useState(false);
 	const [equipment, setEquipment] = useState(props.equipments);
+	const logError = useContext(ErrorLogger);
 
 	function createEquipment(
 		name: string,
@@ -32,6 +34,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 		attacks: string,
 		ammo: number | null = null
 	) {
+		setLoading(true);
 		api
 			.put('/sheet/equipment', { name, type, damage, range, attacks, ammo })
 			.then((res) => {
@@ -41,22 +44,20 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 					{ id, name, type, damage, range, attacks, ammo, visible: true },
 				]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowEquipmentModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteEquipment(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/equipment', { data: { id } })
-			.then(() => {
-				const newEquipment = [...equipment];
-				const index = newEquipment.findIndex((eq) => eq.id === id);
-				if (index > -1) {
-					newEquipment.splice(index, 1);
-					setEquipment(newEquipment);
-				}
-			})
-			.catch(logError);
+		const newEquipment = [...equipment];
+		const index = newEquipment.findIndex((eq) => eq.id === id);
+		if (index > -1) {
+			newEquipment.splice(index, 1);
+			setEquipment(newEquipment);
+		}
 	}
 
 	return (
@@ -64,7 +65,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setShowEquipmentModal(true) }}>
+				addButton={{ onAdd: () => setShowEquipmentModal(true), disabled: loading }}>
 				<Row>
 					<Col>
 						<AdminTable centerText>
@@ -99,6 +100,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 				show={showEquipmentModal}
 				onHide={() => setShowEquipmentModal(false)}
 				onCreate={createEquipment}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -110,6 +112,7 @@ type EquipmentEditorFieldProps = {
 };
 
 function EquipmentEditorField(props: EquipmentEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.equipment.name);
 	const [lastType, type, setType] = useExtendedState(props.equipment.type);
 	const [lastDamage, damage, setDamage] = useExtendedState(props.equipment.damage);
@@ -177,14 +180,21 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 			});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/equipment', { data: { id: props.equipment.id } })
+			.then(() => props.onDelete(props.equipment.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.equipment.id)}
-					size='sm'
-					variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -192,6 +202,7 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onNameBlur}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -199,6 +210,7 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 					value={type}
 					onChange={(ev) => setType(ev.currentTarget.value)}
 					onBlur={onTypeBlur}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -208,6 +220,7 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 					onBlur={onDamageBlur}
 					className='text-center'
 					style={{ maxWidth: '7.5rem' }}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -217,6 +230,7 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 					onBlur={onRangeBlur}
 					className='text-center'
 					style={{ maxWidth: '7.5rem' }}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -226,6 +240,7 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 					onBlur={onAttacksBlur}
 					className='text-center'
 					style={{ maxWidth: '5rem' }}
+					disabled={loading}
 				/>
 			</td>
 			<td>
@@ -238,11 +253,12 @@ function EquipmentEditorField(props: EquipmentEditorFieldProps) {
 						onBlur={onAmmoBlur}
 						style={{ maxWidth: '3rem' }}
 						className='text-center'
+						disabled={loading}
 					/>
 				)}
 			</td>
 			<td>
-				<FormCheck checked={visible} onChange={onVisibleChange} />
+				<FormCheck checked={visible} onChange={onVisibleChange} disabled={loading} />
 			</td>
 		</tr>
 	);

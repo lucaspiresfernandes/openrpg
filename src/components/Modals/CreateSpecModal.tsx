@@ -8,6 +8,7 @@ import SheetModal from './SheetModal';
 type CreateSpecModalProps = {
 	onCreate(name: string): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -22,7 +23,11 @@ export default function CreateSpecModal(props: CreateSpecModalProps) {
 		<SheetModal
 			title='Nova Especificação de Personagem'
 			onExited={reset}
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name),
+				disabled: props.disabled,
+			}}
 			show={props.show}
 			onHide={props.onHide}>
 			<Container fluid>

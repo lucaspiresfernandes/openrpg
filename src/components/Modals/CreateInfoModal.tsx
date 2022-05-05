@@ -8,6 +8,7 @@ import SheetModal from './SheetModal';
 type CreateInfoModalProps = {
 	onCreate(name: string): void;
 	show: boolean;
+	disabled?: boolean;
 	onHide(): void;
 };
 
@@ -22,7 +23,11 @@ export default function CreateInfoModal(props: CreateInfoModalProps) {
 		<SheetModal
 			title='Criar'
 			onExited={reset}
-			applyButton={{ name: 'Criar', onApply: () => props.onCreate(name) }}
+			applyButton={{
+				name: 'Criar',
+				onApply: () => props.onCreate(name),
+				disabled: props.disabled,
+			}}
 			show={props.show}
 			onHide={props.onHide}>
 			<Container fluid>

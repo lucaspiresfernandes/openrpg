@@ -1,5 +1,5 @@
 import type { Spell } from '@prisma/client';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, FocusEvent } from 'react';
 import { useContext, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -10,6 +10,7 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateSpellModal from '../../Modals/CreateSpellModal';
 import AdminTable from '../AdminTable';
@@ -20,9 +21,10 @@ type SpellEditorContainerProps = {
 };
 
 export default function SpellEditorContainer(props: SpellEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showSpellModal, setShowSpellModal] = useState(false);
 	const [spell, setSpell] = useState(props.spells);
+	const logError = useContext(ErrorLogger);
 
 	function createSpell(
 		name: string,
@@ -36,6 +38,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 		slots: number,
 		target: string
 	) {
+		setLoading(true);
 		api
 			.put('/sheet/spell', {
 				name,
@@ -69,22 +72,20 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 					},
 				]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowSpellModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteSpell(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse spell?')) return;
-		api
-			.delete('/sheet/spell', { data: { id } })
-			.then(() => {
-				const newSpell = [...spell];
-				const index = newSpell.findIndex((spell) => spell.id === id);
-				if (index > -1) {
-					newSpell.splice(index, 1);
-					setSpell(newSpell);
-				}
-			})
-			.catch(logError);
+		const newSpell = [...spell];
+		const index = newSpell.findIndex((spell) => spell.id === id);
+		if (index > -1) {
+			newSpell.splice(index, 1);
+			setSpell(newSpell);
+		}
 	}
 
 	return (
@@ -92,7 +93,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setShowSpellModal(true) }}>
+				addButton={{ onAdd: () => setShowSpellModal(true), disabled: loading }}>
 				<Row>
 					<Col>
 						<AdminTable centerText>
@@ -127,6 +128,7 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 				show={showSpellModal}
 				onHide={() => setShowSpellModal(false)}
 				onCreate={createSpell}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -137,76 +139,77 @@ type SpellEditorFieldProps = {
 	onDelete(id: number): void;
 };
 
-function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
-	const logError = useContext(ErrorLogger);
-	const [lastName, name, setName] = useExtendedState(spell.name);
+function SpellEditorField(props: SpellEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
+	const [lastName, name, setName] = useExtendedState(props.spell.name);
 	const [lastDescription, description, setDescription] = useExtendedState(
-		spell.description
+		props.spell.description
 	);
-	const [lastCost, cost, setCost] = useExtendedState(spell.cost);
-	const [lastType, type, setType] = useExtendedState(spell.type);
-	const [lastTarget, target, setTarget] = useExtendedState(spell.target);
-	const [lastDamage, damage, setDamage] = useExtendedState(spell.damage);
+	const [lastCost, cost, setCost] = useExtendedState(props.spell.cost);
+	const [lastType, type, setType] = useExtendedState(props.spell.type);
+	const [lastTarget, target, setTarget] = useExtendedState(props.spell.target);
+	const [lastDamage, damage, setDamage] = useExtendedState(props.spell.damage);
 	const [lastCastingTime, castingTime, setCastingTime] = useExtendedState(
-		spell.castingTime
+		props.spell.castingTime
 	);
-	const [lastRange, range, setRange] = useExtendedState(spell.range);
-	const [lastDuration, duration, setDuration] = useExtendedState(spell.duration);
-	const [lastSlots, slots, setSlots] = useExtendedState(spell.slots);
-	const [visible, setVisible] = useState(spell.visible);
+	const [lastRange, range, setRange] = useExtendedState(props.spell.range);
+	const [lastDuration, duration, setDuration] = useExtendedState(props.spell.duration);
+	const [lastSlots, slots, setSlots] = useExtendedState(props.spell.slots);
+	const [visible, setVisible] = useState(props.spell.visible);
+	const logError = useContext(ErrorLogger);
 
 	function onNameBlur() {
 		if (name === lastName) return;
 		setName(name);
-		api.post('/sheet/spell', { id: spell.id, name }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, name }).catch(logError);
 	}
 
 	function onTypeBlur() {
 		if (type === lastType) return;
 		setType(type);
-		api.post('/sheet/spell', { id: spell.id, type }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, type }).catch(logError);
 	}
 
 	function onDescriptionBlur() {
 		if (description === lastDescription) return;
 		setDescription(description);
-		api.post('/sheet/spell', { id: spell.id, description }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, description }).catch(logError);
 	}
 
 	function onCostBlur() {
 		if (cost === lastCost) return;
 		setCost(cost);
-		api.post('/sheet/spell', { id: spell.id, cost }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, cost }).catch(logError);
 	}
 
 	function onTargetBlur() {
 		if (target === lastTarget) return;
 		setTarget(target);
-		api.post('/sheet/spell', { id: spell.id, target }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, target }).catch(logError);
 	}
 
 	function onDamageBlur() {
 		if (damage === lastDamage) return;
 		setDamage(damage);
-		api.post('/sheet/spell', { id: spell.id, damage }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, damage }).catch(logError);
 	}
 
 	function onCastingTimeBlur() {
 		if (castingTime === lastCastingTime) return;
 		setCastingTime(castingTime);
-		api.post('/sheet/spell', { id: spell.id, castingTime }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, castingTime }).catch(logError);
 	}
 
 	function onRangeBlur() {
 		if (range === lastRange) return;
 		setRange(range);
-		api.post('/sheet/spell', { id: spell.id, range }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, range }).catch(logError);
 	}
 
 	function onDurationBlur() {
 		if (duration === lastDuration) return;
 		setDuration(duration);
-		api.post('/sheet/spell', { id: spell.id, duration }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, duration }).catch(logError);
 	}
 
 	function onSlotsChange(ev: ChangeEvent<HTMLInputElement>) {
@@ -219,30 +222,41 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 		setSlots(newSlots);
 	}
 
-	function onSlotsBlur() {
+	function onSlotsBlur(ev: FocusEvent<HTMLInputElement>) {
 		if (slots === lastSlots) return;
 		setSlots(slots);
-		api.post('/sheet/spell', { id: spell.id, slots }).catch(logError);
+		api.post('/sheet/spell', { id: props.spell.id, slots }).catch(logError);
 	}
 
 	function onVisibleChange() {
 		const newVisible = !visible;
 		setVisible(newVisible);
-		api.post('/sheet/spell', { id: spell.id, visible: newVisible }).catch((err) => {
+		api.post('/sheet/spell', { id: props.spell.id, visible: newVisible }).catch((err) => {
 			setVisible(visible);
 			logError(err);
 		});
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse spell?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/spell', { data: { id: props.spell.id } })
+			.then(() => props.onDelete(props.spell.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button onClick={() => onDelete(spell.id)} size='sm' variant='secondary'>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onNameBlur}
@@ -250,6 +264,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={description}
 					onChange={(ev) => setDescription(ev.currentTarget.value)}
 					onBlur={onDescriptionBlur}
@@ -257,6 +272,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={cost}
 					onChange={(ev) => setCost(ev.currentTarget.value)}
 					onBlur={onCostBlur}
@@ -266,6 +282,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={type}
 					onChange={(ev) => setType(ev.currentTarget.value)}
 					onBlur={onTypeBlur}
@@ -273,6 +290,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={damage}
 					onChange={(ev) => setDamage(ev.currentTarget.value)}
 					onBlur={onDamageBlur}
@@ -282,6 +300,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={target}
 					onChange={(ev) => setTarget(ev.currentTarget.value)}
 					onBlur={onTargetBlur}
@@ -291,6 +310,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={castingTime}
 					onChange={(ev) => setCastingTime(ev.currentTarget.value)}
 					onBlur={onCastingTimeBlur}
@@ -300,6 +320,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={range}
 					onChange={(ev) => setRange(ev.currentTarget.value)}
 					onBlur={onRangeBlur}
@@ -309,6 +330,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={duration}
 					onChange={(ev) => setDuration(ev.currentTarget.value)}
 					onBlur={onDurationBlur}
@@ -318,6 +340,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<BottomTextInput
+					disabled={loading}
 					value={slots}
 					onChange={onSlotsChange}
 					onBlur={onSlotsBlur}
@@ -327,6 +350,7 @@ function SpellEditorField({ spell, onDelete }: SpellEditorFieldProps) {
 			</td>
 			<td>
 				<FormCheck
+					disabled={loading}
 					checked={visible}
 					onChange={onVisibleChange}
 					style={{ maxWidth: '3rem' }}

@@ -8,46 +8,46 @@ import { ErrorLogger } from '../../../contexts';
 import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
 import BottomTextInput from '../../BottomTextInput';
+import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
 import CreateCharacteristicModal from '../../Modals/CreateCharacteristicModal';
 import AdminTable from '../AdminTable';
 
 type CharacteristicEditorContainerProps = {
 	characteristics: Characteristic[];
-	disabled?: boolean;
 	title: string;
 };
 
 export default function CharacteristicEditorContainer(
 	props: CharacteristicEditorContainerProps
 ) {
-	const logError = useContext(ErrorLogger);
+	const [loading, setLoading] = useState(false);
 	const [showCharacteristicModal, setShowCharacteristicModal] = useState(false);
 	const [characteristic, setCharacteristic] = useState(props.characteristics);
+	const logError = useContext(ErrorLogger);
 
 	function createCharacteristic(name: string) {
+		setLoading(true);
 		api
 			.put('/sheet/characteristic', { name })
 			.then((res) => {
 				const id = res.data.id;
 				setCharacteristic([...characteristic, { id, name }]);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setShowCharacteristicModal(false);
+				setLoading(false);
+			});
 	}
 
 	function deleteCharacteristic(id: number) {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		api
-			.delete('/sheet/characteristic', { data: { id } })
-			.then(() => {
-				const newCharacteristic = [...characteristic];
-				const index = newCharacteristic.findIndex((char) => char.id === id);
-				if (index > -1) {
-					newCharacteristic.splice(index, 1);
-					setCharacteristic(newCharacteristic);
-				}
-			})
-			.catch(logError);
+		const newCharacteristic = [...characteristic];
+		const index = newCharacteristic.findIndex((char) => char.id === id);
+		if (index > -1) {
+			newCharacteristic.splice(index, 1);
+			setCharacteristic(newCharacteristic);
+		}
 	}
 
 	return (
@@ -57,7 +57,7 @@ export default function CharacteristicEditorContainer(
 				title={props.title}
 				addButton={{
 					onAdd: () => setShowCharacteristicModal(true),
-					disabled: props.disabled,
+					disabled: loading,
 				}}>
 				<Row>
 					<Col>
@@ -72,7 +72,6 @@ export default function CharacteristicEditorContainer(
 								{characteristic.map((characteristic) => (
 									<CharacteristicEditorField
 										key={characteristic.id}
-										deleteDisabled={props.disabled}
 										characteristic={characteristic}
 										onDelete={deleteCharacteristic}
 									/>
@@ -86,6 +85,7 @@ export default function CharacteristicEditorContainer(
 				show={showCharacteristicModal}
 				onHide={() => setShowCharacteristicModal(false)}
 				onCreate={createCharacteristic}
+				disabled={loading}
 			/>
 		</>
 	);
@@ -93,11 +93,11 @@ export default function CharacteristicEditorContainer(
 
 type CharacteristicEditorFieldProps = {
 	characteristic: Characteristic;
-	deleteDisabled?: boolean;
 	onDelete(id: number): void;
 };
 
 function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {
+	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.characteristic.name);
 	const logError = useContext(ErrorLogger);
 
@@ -109,15 +109,21 @@ function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {
 			.catch(logError);
 	}
 
+	function onDelete() {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/characteristic', { data: { id: props.characteristic.id } })
+			.then(() => props.onDelete(props.characteristic.id))
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
 	return (
 		<tr>
 			<td>
-				<Button
-					onClick={() => props.onDelete(props.characteristic.id)}
-					size='sm'
-					variant='secondary'
-					disabled={props.deleteDisabled}>
-					<BsTrash color='white' size={24} />
+				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
+					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
 			<td>
@@ -125,6 +131,7 @@ function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
 					onBlur={onBlur}
+					disabled={loading}
 				/>
 			</td>
 		</tr>

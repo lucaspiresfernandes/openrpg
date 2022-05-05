@@ -1,6 +1,6 @@
 import type { Skill } from '@prisma/client';
-import type { ChangeEvent } from 'react';
-import { memo, useContext, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
@@ -41,6 +41,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 		props.availableSkills
 	);
 	const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
+	const [loading, setLoading] = useState(false);
 	const [search, setSearch] = useState('');
 	const [notify, setNotify] = useState(false);
 
@@ -48,6 +49,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	const logError = useContext(ErrorLogger);
 
 	function onAddSkill(id: number) {
+		setLoading(true);
 		api
 			.put('/sheet/player/skill', { id })
 			.then((res) => {
@@ -61,7 +63,11 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				);
 				setAvailableSkills(newSkills);
 			})
-			.catch(logError);
+			.catch(logError)
+			.finally(() => {
+				setAddSkillShow(false);
+				setLoading(false);
+			});
 	}
 
 	useEffect(() => {
@@ -93,72 +99,64 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	}, [socket]);
 
 	function clearChecks() {
+		setLoading(true);
 		api
 			.post('/sheet/player/skill/clearchecks')
-			.then(() => {
-				setPlayerSkills((skills) =>
-					skills.map((skill) => {
-						return {
-							Skill: { ...skill.Skill },
-							checked: false,
-							value: skill.value,
-						};
-					})
-				);
-				setNotify((n) => !n);
-			})
-			.catch(logError);
+			.then(() => setNotify((n) => !n))
+			.catch(logError)
+			.finally(() => setLoading(false));
 	}
 
-	const skillList = useMemo(() => {
-		return playerSkills
-			.map((skill) => {
-				let name = skill.Skill.name;
-				if (skill.Skill.Specialization)
-					name = `${skill.Skill.Specialization.name} (${name})`;
-				return {
-					Skill: { ...skill.Skill, name },
-					value: skill.value,
-					checked: skill.checked,
-				};
-			})
-			.sort((a, b) => a.Skill.name.localeCompare(b.Skill.name));
-	}, [playerSkills]);
+	const skillList = useMemo(
+		() =>
+			playerSkills
+				.map((skill) => {
+					let name = skill.Skill.name;
+					if (skill.Skill.Specialization)
+						name = `${skill.Skill.Specialization.name} (${name})`;
+					return {
+						name,
+						id: skill.Skill.id,
+						value: skill.value,
+						checked: skill.checked,
+					};
+				})
+				.sort((a, b) => a.name.localeCompare(b.name)),
+		[playerSkills]
+	);
 
 	return (
 		<>
 			<DataContainer
 				outline
 				title={props.title}
-				addButton={{ onAdd: () => setAddSkillShow(true) }}>
-				<Row className='mb-3'>
-					<Col>
+				addButton={{ onAdd: () => setAddSkillShow(true), disabled: loading }}>
+				<Row className='mb-3 justify-content-center'>
+					<Col xs={12} sm={6} md={8} lg={9} xxl={10}>
 						<FormControl
+							disabled={loading}
 							className='theme-element'
 							placeholder='Procurar'
 							value={search}
 							onChange={(ev) => setSearch(ev.currentTarget.value)}
 						/>
 					</Col>
-					<Col xs='auto' className='me-2'>
-						<Button variant='secondary' onClick={clearChecks}>
+					<Col xs='auto' className='mt-3 mt-sm-0'>
+						<Button variant='secondary' onClick={clearChecks} disabled={loading}>
 							Limpar Marcadores
 						</Button>
 					</Col>
 				</Row>
 				<Row className='mb-3 mx-1 text-center justify-content-center'>
 					{skillList.map((skill) => (
-						<MemoPlayerSkillField
-							key={skill.Skill.id}
-							skillId={skill.Skill.id}
-							name={skill.Skill.name}
-							value={skill.value}
-							checked={skill.checked}
-							hidden={!skill.Skill.name.toLowerCase().includes(search.toLowerCase())}
-							skillDice={props.skillDiceConfig}
+						<PlayerSkillField
+							key={skill.id}
+							{...skill}
+							skillDiceConfig={props.skillDiceConfig}
 							automaticMarking={props.automaticMarking}
 							showDiceRollResult={onDiceRoll}
-							notifyChecked={notify}
+							notifyClearChecked={notify}
+							hidden={!skill.name.toLowerCase().includes(search.toLowerCase())}
 						/>
 					))}
 				</Row>
@@ -169,6 +167,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				onHide={() => setAddSkillShow(false)}
 				data={availableSkills}
 				onAddData={onAddSkill}
+				disabled={loading}
 			/>
 			<DiceRollResultModal {...diceRollResultModalProps} />
 		</>
@@ -176,38 +175,42 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 }
 
 type PlayerSkillFieldProps = {
-	skillId: number;
+	id: number;
 	name: string;
 	value: number;
-	checked: boolean;
 	hidden: boolean;
-	skillDice: DiceConfigCell;
+	checked: boolean;
+	skillDiceConfig: DiceConfigCell;
 	automaticMarking: boolean;
-	notifyChecked: boolean;
+	notifyClearChecked: boolean;
 	showDiceRollResult: DiceRollEvent;
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
 	const [lastValue, value, setValue] = useExtendedState(props.value);
 	const [checked, setChecked] = useState(props.checked);
+	const componentDidMount = useRef(false);
 	const logError = useContext(ErrorLogger);
 
 	useEffect(() => {
-		if (props.checked === checked) return;
-		setChecked(props.checked);
+		if (!componentDidMount.current) {
+			componentDidMount.current = true;
+			return;
+		}
+		if (checked) setChecked(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.notifyChecked]);
+	}, [props.notifyClearChecked]);
 
 	function onCheckChange(ev: ChangeEvent<HTMLInputElement>) {
-		const c = ev.target.checked;
-		setChecked(c);
-		api.post('/sheet/player/skill', { id: props.skillId, checked: c }).catch((err) => {
+		const chk = ev.target.checked;
+		setChecked(chk);
+		api.post('/sheet/player/skill', { id: props.id, checked: chk }).catch((err) => {
 			logError(err);
 			setChecked(checked);
 		});
 	}
 
-	function valueChange(ev: ChangeEvent<HTMLInputElement>) {
+	function onValueChange(ev: ChangeEvent<HTMLInputElement>) {
 		const aux = ev.currentTarget.value;
 		let newValue = parseInt(aux);
 
@@ -220,15 +223,15 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	function valueBlur() {
 		if (value === lastValue) return;
 		setValue(value);
-		api.post('/sheet/player/skill', { id: props.skillId, value }).catch((err) => {
+		api.post('/sheet/player/skill', { id: props.id, value }).catch((err) => {
 			logError(err);
 			setValue(lastValue);
 		});
 	}
 
 	function rollDice() {
-		const roll = props.skillDice.value;
-		const branched = props.skillDice.branched;
+		const roll = props.skillDiceConfig.value;
+		const branched = props.skillDiceConfig.branched;
 		props.showDiceRollResult(
 			[{ num: 1, roll, ref: value }],
 			`${roll}${branched ? 'b' : ''}`,
@@ -237,7 +240,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 				if (!props.automaticMarking || !result.resultType?.isSuccess || checked) return;
 				setChecked(true);
 				api
-					.post('/sheet/player/skill', { id: props.skillId, checked: true })
+					.post('/sheet/player/skill', { id: props.id, checked: true })
 					.catch((err) => {
 						logError(err);
 						setChecked(false);
@@ -264,7 +267,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 					<BottomTextInput
 						className='text text-center w-75'
 						value={value}
-						onChange={valueChange}
+						onChange={onValueChange}
 						onBlur={valueBlur}
 					/>
 				</Col>
@@ -275,5 +278,3 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		</Col>
 	);
 }
-
-const MemoPlayerSkillField = memo(PlayerSkillField);
