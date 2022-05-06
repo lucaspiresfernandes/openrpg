@@ -49,7 +49,7 @@ function PlayerSheet(props: PageProps) {
 	useEffect(() => {
 		if (!socket) return;
 		socket.on('playerDelete', () =>
-			api.delete('/player').then(() => Router.replace('/'))
+			api.delete('/player').then(() => Router.push('/'))
 		);
 		return () => {
 			socket.off('playerDelete');

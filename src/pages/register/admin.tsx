@@ -21,9 +21,9 @@ export default function Register() {
 	useAuthentication((player) => {
 		if (player) {
 			if (player.admin) {
-				return Router.replace('/admin/main');
+				return Router.push('/admin/main');
 			}
-			return Router.replace('/sheet/1');
+			return Router.push('/sheet/1');
 		}
 		setLoading(false);
 	});
@@ -46,7 +46,7 @@ export default function Register() {
 				throw new Error('Todos os campos devem ser preenchidos.');
 			if (password !== confirmPassword) throw new Error('As senhas não coincidem.');
 			await api.post('/register', { username, password, adminKey });
-			Router.replace('/admin/main');
+			Router.push('/admin/main');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);

@@ -57,7 +57,7 @@ export default function Navbar() {
 							<Nav.Link
 								href='#'
 								active={false}
-								onClick={() => api.delete('/player').then(() => router.replace('/'))}>
+								onClick={() => api.delete('/player').then(() => router.push('/'))}>
 								Sair
 							</Nav.Link>
 						)}
@@ -72,7 +72,8 @@ function ThemeManager() {
 	const [darkMode, setDarkMode] = useState(true);
 
 	useEffect(() => {
-		setDarkMode(localStorage.getItem('application_theme') === 'dark');
+		const theme = localStorage.getItem('application_theme');
+		setDarkMode(theme ? theme === 'dark' : true);
 	}, []);
 
 	useEffect(() => {
@@ -92,7 +93,7 @@ function ThemeManager() {
 			type='switch'
 			title='Modo Escuro'
 			checked={darkMode}
-			onChange={(ev) => setDarkMode(ev.target.checked)} 
+			onChange={(ev) => setDarkMode(ev.target.checked)}
 		/>
 	);
 }

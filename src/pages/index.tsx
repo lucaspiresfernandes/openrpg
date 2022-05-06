@@ -67,8 +67,8 @@ function HomePage() {
 			if (username.length === 0 || password.length === 0)
 				throw new Error('Você deve preencher tanto o usuário como a senha.');
 			const res = await api.post('/login', { username, password });
-			if (res.data.admin) return Router.replace('/admin/main');
-			Router.replace('/sheet/1');
+			if (res.data.admin) return Router.push('/admin/main');
+			Router.push('/sheet/1');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);
