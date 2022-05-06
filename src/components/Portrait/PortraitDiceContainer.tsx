@@ -115,9 +115,8 @@ export default function PortraitDiceContainer(props: {
 	return (
 		<div className={styles.diceContainer}>
 			<video
-				height={357}
 				muted
-				className={`popout${props.showDice ? ' show' : ''}`}
+				className={`popout${props.showDice ? ' show' : ''} ${styles.dice}`}
 				ref={diceVideo}>
 				<source src='/dice_animation.webm' />
 			</video>

@@ -180,7 +180,7 @@ $navbar-background-color: #303030;
 .shadow {
 	transition: filter 0.25s ease;
 	&.show {
-		filter: brightness(30%);
+		filter: brightness(25%);
 		transition: filter 0.5s ease-out;
 	}
 }

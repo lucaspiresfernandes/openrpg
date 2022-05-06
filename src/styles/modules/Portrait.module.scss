@@ -1,119 +1,128 @@
+$avatar-width: 420px;
+$avatar-height: 600px;
+
+$dice-container-left: 30px;
+
 .avatar {
-    position: absolute;
+	position: absolute;
+	width: $avatar-width;
+	height: $avatar-height;
 }
 
 .sideContainer {
-    position: absolute;
-    transform: translateY(-50%);
-    background-image: url(/side_placeholder.png);
-    background-size: 100% 100%;
-    width: 225px;
-    height: 200px;
+	position: absolute;
+	transform: translateY(-50%);
+	background-image: url(/side_placeholder.png);
+	background-size: 100% 100%;
+	width: 225px;
+	height: 200px;
 
-    &.top {
-        top: 300px;
-    }
+	&.top {
+		top: 300px;
+	}
 
-    &.center {
-        top: 500px;
-    }
+	&.center {
+		top: 500px;
+	}
 
-    &.bottom {
-        top: 500px;
-    }
+	&.bottom {
+		top: 500px;
+	}
 }
 
 .side {
-    position: absolute;
+	position: absolute;
 
-    top: 50%;
-    left: 47.5%;
-    transform: translate(-50%, -50%);
-    font-size: 68px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 68px;
 }
 
 .nameContainer {
-    position: absolute;
-    top: 300px;
-    left: 430px;
+	position: absolute;
+	left: $avatar-width + 10px;
 
-    max-width: 5em;
+	max-width: 5em;
 
-    color: white;
-    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
+	color: white;
+	text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
 
-    font-size: 96px;
-    font-style: italic;
-    text-transform: uppercase;
+	font-size: 96px;
+	font-style: italic;
+	text-transform: uppercase;
 
-    transform: translateY(-50%);
+	transform: translateY(-50%);
 
-    &.top {
-        top: 300px;
-    }
+	&.top {
+		top: 300px;
+	}
 
-    &.center {
-        top: 300px;
-    }
+	&.center {
+		top: 300px;
+	}
 
-    &.bottom {
-        top: 400px;
-    }
+	&.bottom {
+		top: 400px;
+	}
 }
 
 .combat {
-    position: absolute;
-    top: 300px;
-    left: 430px;
-    transform: translateY(-50%);
-    width: auto;
+	position: absolute;
+	left: $avatar-width + 10px;
+	transform: translateY(-50%);
+	width: auto;
 
-    &.top {
-        top: 300px;
-    }
+	&.top {
+		top: 300px;
+	}
 
-    &.center {
-        top: 300px;
-    }
+	&.center {
+		top: 300px;
+	}
 
-    &.bottom {
-        top: 400px;
-    }
+	&.bottom {
+		top: 400px;
+	}
 }
 
 .attribute {
-    $size: 108px;
+	$size: 108px;
 
-    font-size: $size;
-    font-style: italic;
-    max-width: 250px;
-    color: white;
-    line-height: $size + 20px;
+	font-size: $size;
+	font-style: italic;
+	max-width: 250px;
+	color: white;
+	line-height: $size + 20px;
 }
 
 .diceContainer {
-    position: absolute;
-    left: 30px;
+	position: absolute;
+	left: $dice-container-left;
+}
+
+.dice {
+    width: $avatar-width - $dice-container-left * 2;
 }
 
 .result {
-    position: absolute;
-    top: 195px;
-    left: 180px;
+	position: absolute;
+	top: 49%;
+	left: 50%;
 
-    font-size: 108px;
-    color: white;
+	font-size: 114px;
+	color: white;
 
-    transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
 }
 
 .description {
-    position: absolute;
-    top: 365px;
-    left: 180px;
+	position: absolute;
+	top: 99%;
+	left: 50%;
 
-    font-size: 78px;
-    color: white;
+	font-size: 80px;
+	color: white;
 
-    transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
 }

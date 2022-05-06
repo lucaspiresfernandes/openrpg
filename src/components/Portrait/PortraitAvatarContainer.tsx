@@ -82,8 +82,6 @@ export default function PortraitAvatar(props: {
 					alt='Avatar'
 					onError={() => setSrc('/avatar404.png')}
 					onLoad={() => setShowAvatar(true)}
-					width={420}
-					height={600}
 					className={styles.avatar}
 				/>
 			</div>

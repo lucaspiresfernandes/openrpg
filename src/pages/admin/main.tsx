@@ -34,7 +34,7 @@ export default function Page(props: PageProps) {
 	);
 }
 
-function AdminPanel(props: PageProps) {
+function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 	const [toasts, addToast] = useToast();
 	const [socket, setSocket] = useState<SocketIO | null>(null);
 
@@ -43,7 +43,7 @@ function AdminPanel(props: PageProps) {
 		setSocket(socket);
 	});
 
-	const playerNames = props.players.map((player) => {
+	const playerNames = players.map((player) => {
 		return {
 			id: player.id,
 			name:
@@ -72,10 +72,10 @@ function AdminPanel(props: PageProps) {
 							<Col>Painel do Mestre</Col>
 						</Row>
 						<Row className='my-4'>
-							<AdminEnvironmentConfigurations environment={props.environment} />
+							<AdminEnvironmentConfigurations environment={environment} />
 						</Row>
 						<Row className='justify-content-center'>
-							<PlayerManager players={props.players} />
+							<PlayerManager players={players} />
 						</Row>
 						<Row className='my-3 text-center'>
 							<AdminDiceRollContainer />
@@ -87,7 +87,7 @@ function AdminPanel(props: PageProps) {
 						</Row>
 						<Row className='my-3'>
 							<DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
-								<PlayerAnnotationsField value={props.notes?.value} />
+								<PlayerAnnotationsField value={adminAnnotations.value} />
 							</DataContainer>
 						</Row>
 					</Container>
@@ -138,7 +138,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		props: {
 			environment: (results[0]?.value || 'idle') as Environment,
 			players: results[1],
-			notes: results[2] || { value: '' },
+			adminAnnotations: results[2] || { value: '' },
 		},
 	};
 }
