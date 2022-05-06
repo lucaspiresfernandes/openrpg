@@ -14,6 +14,10 @@ O Open RPG oferece uma solução para todos os jogadores de RPG, com uma UI amig
 
 Você pode usar o Open RPG com qualquer outro aplicativo para aumentar ainda mais a imersão no jogo. Aplicativos como [Tabletop Simulator](https://store.steampowered.com/app/286160/Tabletop_Simulator/), [Owlbear Rodeo](https://www.owlbear.rodeo/) e [Kenku FM](https://www.kenku.fm/) são ótimas ferramentas para se usar em conjunto com o Open RPG.
 
+## Sempre quando eu vou fazer o login, a tela fica preta e carregando eternamente! Como resolver esse erro?
+
+Esse erro é o mais comum quando se usa o Open RPG pelo celular. Esse erro acontece porque o Open RPG só suporta conexões seguras (HTTPS). Para resolvê-lo, você deve ativar o uso de conexões seguras no seu dispositivo. Na maioria dos navegadores mobile, essa configuração não está ativada por padrão, e você deve fazê-la no menu de configurações do navegador.
+
 ## Quem é você?
 
 Eu sou Alyssa Fernandes, uma técnica de Informática e desenvolvedora do Open RPG. Sou apaixonada por jogos no geral e sempre estou produzindo novos conteúdos gratuitos para a comunidade.
