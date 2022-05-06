@@ -20,6 +20,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const id = req.body.id;
 	const name = req.body.name;
+	const startValue = req.body.startValue;
 	const mandatory = req.body.mandatory;
 	let specialization_id = req.body.specializationID;
 	if (specialization_id === 0) specialization_id = null;
@@ -30,7 +31,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	}
 
 	const skill = await database.skill.update({
-		data: { name, mandatory, specialization_id },
+		data: { name, startValue, mandatory, specialization_id },
 		where: { id },
 		select: { name: true, Specialization: { select: { name: true } } },
 	});
@@ -50,6 +51,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const name = req.body.name;
+	const startValue = req.body.startValue;
 	const mandatory = req.body.mandatory;
 	let specialization_id = req.body.specializationID;
 	if (specialization_id === 0) specialization_id = null;
@@ -60,7 +62,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const skill = await database.skill.create({
-		data: { name, mandatory, specialization_id },
+		data: { name, startValue, mandatory, specialization_id },
 	});
 
 	res.send({ id: skill.id });
@@ -81,26 +83,20 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	database.skill
-		.delete({ where: { id } })
-		.then(() => res.end())
-		.catch((err) => {
-			switch (err.code) {
-				//Foreign key fails
-				case 'P2003':
-					res
-						.status(400)
-						.send({
-							message:
-								'Não foi possível remover essa perícia pois ainda há alguma informação usando-a.',
-						});
-					break;
-
-				default:
-					res.status(500).end();
-					break;
-			}
-		});
+	try {
+		await database.skill.delete({ where: { id } });
+		res.end();
+	} catch (err) {
+		if ((<any>err).code === 'P2003') {
+			res.status(400).send({
+				message:
+					'Não foi possível remover essa perícia pois ainda há alguma informação usando-a.',
+			});
+			return;
+		}
+		res.status(500).end();
+		return;
+	}
 }
 
 export default sessionAPI(handler);

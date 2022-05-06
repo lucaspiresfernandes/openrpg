@@ -70,8 +70,9 @@ model Characteristic {
 }
 
 model Specialization {
-  id    Int     @id @default(autoincrement())
-  name  String
+  id   Int    @id @default(autoincrement())
+  name String
+
   Skill Skill[]
 }
 
@@ -80,6 +81,7 @@ model Skill {
   name              String
   Specialization    Specialization? @relation(fields: [specialization_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
   specialization_id Int?
+  startValue        Int             @default(0)
   mandatory         Boolean         @default(false)
   PlayerSkill       PlayerSkill[]
 }

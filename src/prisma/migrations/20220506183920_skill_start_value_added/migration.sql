@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `skill` ADD COLUMN `startValue` INTEGER NOT NULL DEFAULT 0;

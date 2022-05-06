@@ -65,14 +65,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function registerPlayerData(player: Player) {
 	const results = await prisma.$transaction([
-		prisma.info.findMany(),
-		prisma.attribute.findMany(),
-		prisma.attributeStatus.findMany(),
-		prisma.spec.findMany(),
-		prisma.characteristic.findMany(),
-		prisma.skill.findMany({ where: { mandatory: true } }),
-		prisma.extraInfo.findMany(),
-		prisma.currency.findMany(),
+		prisma.info.findMany({ select: { id: true } }),
+		prisma.attribute.findMany({ select: { id: true } }),
+		prisma.attributeStatus.findMany({ select: { id: true } }),
+		prisma.spec.findMany({ select: { id: true } }),
+		prisma.characteristic.findMany({ select: { id: true } }),
+		prisma.skill.findMany({
+			select: { id: true, startValue: true },
+			where: { mandatory: true },
+		}),
+		prisma.extraInfo.findMany({ select: { id: true } }),
+		prisma.currency.findMany({ select: { id: true } }),
 	]);
 
 	const playerAvatarData: {
@@ -141,7 +144,7 @@ async function registerPlayerData(player: Player) {
 				return {
 					player_id: player.id,
 					skill_id: skill.id,
-					value: 0,
+					value: skill.startValue,
 				};
 			}),
 		}),

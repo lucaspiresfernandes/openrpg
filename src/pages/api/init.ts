@@ -38,6 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	if (config && config.value === 'true') return res.status(400).end();
 
+	const databaseData = getDatabaseData();
+
 	await prisma.$transaction([
 		prisma.config.createMany({ data: databaseData.config }),
 		prisma.info.createMany({ data: databaseData.info }),
@@ -60,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	res.end();
 }
 
-const databaseData = {
+const getDatabaseData = () => ({
 	config: [
 		{
 			name: 'init',
@@ -127,6 +129,12 @@ const databaseData = {
 			color: 'ae00ff',
 			rollable: false,
 		},
+		{
+			id: 4,
+			name: 'Armadura',
+			color: 'ffea00',
+			rollable: false,
+		},
 	],
 	attribute_status: [
 		{
@@ -169,11 +177,14 @@ const databaseData = {
 		},
 	],
 	extraInfo: [
-		{ name: 'Patrimônio e Posses' },
-		{ name: 'Personalidade' },
-		{ name: 'Backstory' },
-		{ name: 'Itens, Pessoas e Locais Importantes' },
-		{ name: 'Fobias e Manias' },
+		{ name: 'Descrição Pessoal' },
+		{ name: 'Ideologia & Crenças' },
+		{ name: 'Pessoas & Lugares Significativos' },
+		{ name: 'Patrimônio & Bens Preciosos' },
+		{ name: 'Características' },
+		{ name: 'Lesões/Cicatrizes' },
+		{ name: 'Fobias & Manias' },
+		{ name: 'Encontros com Criaturas' },
 	],
 	info: [
 		{
@@ -281,12 +292,6 @@ const databaseData = {
 			visible: true,
 		},
 		{
-			name: 'Livro de Ocultismo',
-			description: 'Um livro de ocultismo. Descreva aqui seu conteúdo.',
-			weight: 0,
-			visible: true,
-		},
-		{
 			name: 'Kit Médico',
 			description:
 				'Um kit médico que garante vantagem em Primeiros Socorros/Medicina no uso.',
@@ -299,404 +304,478 @@ const databaseData = {
 			name: 'Antropologia',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Arcos',
 			specialization_id: 1,
 			mandatory: false,
+			startValue: 15,
 		},
 		{
 			name: 'Armas Pesadas',
 			specialization_id: 1,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Lança-Chamas',
 			specialization_id: 1,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Metralhadoras',
 			specialization_id: 1,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Pistolas',
 			specialization_id: 1,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Rifles/Espingardas',
 			specialization_id: 1,
 			mandatory: true,
+			startValue: 25,
 		},
 		{
 			name: 'Submetralhadoras',
 			specialization_id: 1,
 			mandatory: false,
+			startValue: 15,
 		},
 		{
 			name: 'Arqueologia',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Arremessar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Atuação',
 			specialization_id: 2,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Belas Artes',
 			specialization_id: 2,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Criptografia',
 			specialization_id: 2,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Falsificação',
 			specialization_id: 2,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Fotografia',
 			specialization_id: 2,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Artilharia',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Avaliação',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Cavalgar',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Charme',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 15,
 		},
 		{
 			name: 'Chaveiro',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Astronomia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Biologia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Botânica',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Ciência Forense',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Engenharia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Farmácia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Física',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Geologia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Matemática',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Meteorologia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Química',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Zoologia',
 			specialization_id: 3,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Consertos Elétricos',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Consertos Mecânicos',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Contabilidade',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Demolições',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Direito',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Dirigir Automóveis',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Disfarce',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 5,
 		},
 		{
 			name: 'Eletrônica',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Encontrar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 25,
 		},
 		{
 			name: 'Escalar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Escutar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Esquivar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 0,
 		},
 		{
 			name: 'Furtividade',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Hipnose',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'História',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Intimidação',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 15,
 		},
 		{
 			name: 'Lábia',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 5,
 		},
 		{
 			name: 'Leitura Labial',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Nativa',
 			specialization_id: 4,
 			mandatory: true,
+			startValue: 0,
 		},
 		{
 			name: 'Briga',
 			specialization_id: 5,
 			mandatory: true,
+			startValue: 25,
 		},
 		{
 			name: 'Chicotes',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Espadas',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 20,
 		},
 		{
 			name: 'Garrote',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 15,
 		},
 		{
 			name: 'Lanças',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 20,
 		},
 		{
 			name: 'Machados',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 15,
 		},
 		{
 			name: 'Manguais',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Motosserras',
 			specialization_id: 5,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Medicina',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 1,
 		},
 		{
 			name: 'Mergulho',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Mundo Natural',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Natação',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Navegação',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Nível de Crédito',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 0,
 		},
 		{
 			name: 'Ocultismo',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 5,
 		},
 		{
 			name: 'Operar Maquinário Pesado',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Persuasão',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 10,
 		},
 		{
 			name: 'Aeronave',
 			specialization_id: 6,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Barco',
 			specialization_id: 6,
 			mandatory: false,
+			startValue: 1,
 		},
 		{
 			name: 'Prestidigitação',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 10,
 		},
 		{
 			name: 'Primeiros Socorros',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 30,
 		},
 		{
 			name: 'Psicanálise',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 1,
 		},
 		{
 			name: 'Psicologia',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 10,
 		},
 		{
 			name: 'Rastrear',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 10,
 		},
 		{
 			name: 'Saltar',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Treinar Animais',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 		{
 			name: 'Usar Bibliotecas',
 			specialization_id: null,
 			mandatory: true,
+			startValue: 20,
 		},
 		{
 			name: 'Usar Computadores',
 			specialization_id: null,
 			mandatory: false,
+			startValue: 5,
 		},
 	],
-	spec: [
-		{ name: 'Dano Bônus' },
-		{ name: 'Corpo' },
-		{ name: 'Exposição Paranormal' },
-		{ name: 'Taxa de Movimento' },
-	],
+	spec: [{ name: 'Dano Bônus' }, { name: 'Corpo' }, { name: 'Taxa de Movimento' }],
 	specialization: [
 		{
 			id: 1,
@@ -742,4 +821,4 @@ const databaseData = {
 			visible: true,
 		},
 	],
-};
+});

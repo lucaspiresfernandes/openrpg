@@ -31,17 +31,18 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 
 	function createSkill(
 		name: string,
+		startValue: number,
 		mandatory: boolean,
 		specializationID: number | null
 	) {
 		setLoading(true);
 		api
-			.put('/sheet/skill', { name, specializationID, mandatory })
+			.put('/sheet/skill', { name, startValue, specializationID, mandatory })
 			.then((res) => {
 				const id = res.data.id;
 				setSkills([
 					...skills,
-					{ id, name, specialization_id: specializationID, mandatory },
+					{ id, name, startValue, specialization_id: specializationID, mandatory },
 				]);
 			})
 			.catch(logError)
@@ -139,6 +140,9 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 										<th title='Define qual Especialização será ligada à Perícia.'>
 											Especialização
 										</th>
+										<th title='Valor inicial da Perícia ao ser adicionada.'>
+											Valor Inicial
+										</th>
 										<th title='Define se essa Perícia será obrigatória a um jogador ter.'>
 											Obrigatório
 										</th>
@@ -185,17 +189,20 @@ type SkillEditorFieldProps = {
 function SkillEditorField(props: SkillEditorFieldProps) {
 	const [loading, setLoading] = useState(false);
 	const [lastName, name, setName] = useExtendedState(props.skill.name);
+	const [lastStartValue, startValue, setStartValue] = useExtendedState(
+		props.skill.startValue
+	);
 	const [specializationID, setSpecializationID] = useState(props.skill.specialization_id);
 	const [mandatory, setMandatory] = useState(props.skill.mandatory);
 	const logError = useContext(ErrorLogger);
 
-	function onBlur() {
+	function onNameBlur() {
 		if (name === lastName) return;
 		setName(name);
 		api.post('/sheet/skill', { id: props.skill.id, name }).catch(logError);
 	}
 
-	function specializationChange(ev: ChangeEvent<HTMLSelectElement>) {
+	function onSpecializationChange(ev: ChangeEvent<HTMLSelectElement>) {
 		const sID = parseInt(ev.currentTarget.value);
 		setSpecializationID(sID);
 		api
@@ -204,6 +211,22 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 				logError(err);
 				setSpecializationID(specializationID);
 			});
+	}
+
+	function onStartValueChange(ev: ChangeEvent<HTMLInputElement>) {
+		const aux = ev.currentTarget.value;
+		let newValue = parseInt(aux);
+
+		if (aux.length === 0) newValue = 0;
+		else if (isNaN(newValue)) return;
+
+		setStartValue(newValue);
+	}
+
+	function onStartValueBlur() {
+		if (startValue === lastStartValue) return;
+		setStartValue(startValue);
+		api.post('/sheet/skill', { id: props.skill.id, startValue }).catch(logError);
 	}
 
 	function mandatoryChange() {
@@ -238,7 +261,7 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 				<BottomTextInput
 					value={name}
 					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onBlur}
+					onBlur={onNameBlur}
 					disabled={loading}
 				/>
 			</td>
@@ -246,7 +269,7 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 				<select
 					className='theme-element'
 					value={specializationID || 0}
-					onChange={specializationChange}
+					onChange={onSpecializationChange}
 					disabled={loading}>
 					<option value={0}>Nenhuma</option>
 					{props.specializations.map((attr) => (
@@ -255,6 +278,16 @@ function SkillEditorField(props: SkillEditorFieldProps) {
 						</option>
 					))}
 				</select>
+			</td>
+			<td>
+				<BottomTextInput
+					className='text-center'
+					value={startValue}
+					onChange={onStartValueChange}
+					onBlur={onStartValueBlur}
+					style={{ maxWidth: '3rem' }}
+					disabled={loading}
+				/>
 			</td>
 			<td>
 				<FormCheck checked={mandatory} onChange={mandatoryChange} disabled={loading} />
