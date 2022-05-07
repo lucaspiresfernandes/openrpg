@@ -1,5 +1,6 @@
 import type { Attribute, AttributeStatus } from '@prisma/client';
 import { useContext, useEffect, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormCheck from 'react-bootstrap/FormCheck';
@@ -15,6 +16,7 @@ import type { DiceConfigCell } from '../../utils/config';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
 import EditAvatarModal from '../Modals/EditAvatarModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 const MAX_AVATAR_HEIGHT = 450;
 
@@ -22,6 +24,7 @@ type PlayerAttributeContainerProps = {
 	playerAttributes: {
 		value: number;
 		maxValue: number;
+		show: boolean;
 		Attribute: Attribute;
 	}[];
 	playerAttributeStatus: {
@@ -85,6 +88,7 @@ type PlayerAttributeFieldProps = {
 	playerAttribute: {
 		value: number;
 		maxValue: number;
+		show: boolean;
 		Attribute: Attribute;
 	};
 	playerStatus: {
@@ -102,6 +106,7 @@ type PlayerAttributeFieldProps = {
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	const attributeID = props.playerAttribute.Attribute.id;
+	const [show, setShow] = useState(props.playerAttribute.show);
 	const [value, setValue] = useState(props.playerAttribute.value);
 	const [maxValue, setMaxValue] = useState(props.playerAttribute.maxValue);
 	const barRef = useRef<HTMLDivElement>(null);
@@ -167,6 +172,20 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 			.catch(logError);
 	}
 
+	function onShowChange(ev: MouseEvent<HTMLButtonElement>) {
+		ev.currentTarget.blur();
+		setShow((s) => {
+			const newShow = !s;
+			api
+				.post('/sheet/player/attribute', {
+					id: attributeID,
+					show: newShow,
+				})
+				.catch(logError);
+			return newShow;
+		});
+	}
+
 	function diceClick() {
 		const roll = props.attributeDiceConfig.value;
 		const branched = props.attributeDiceConfig.branched;
@@ -186,6 +205,14 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 				</Col>
 			</Row>
 			<Row>
+				<Col xs='auto' className='align-self-center'>
+					<Button
+						size='sm'
+						variant={show ? 'primary' : 'secondary'}
+						onClick={onShowChange}>
+						{show ? <AiFillEye /> : <AiFillEyeInvisible />}
+					</Button>
+				</Col>
 				<Col>
 					<ProgressBar
 						now={value}

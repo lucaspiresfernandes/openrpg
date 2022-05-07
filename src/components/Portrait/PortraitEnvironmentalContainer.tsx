@@ -25,6 +25,7 @@ type PortraitAttributes = {
 		color: string;
 	};
 	maxValue: number;
+	show: boolean;
 }[];
 
 const bounds: DraggableBounds = {
@@ -106,7 +107,7 @@ function PortraitAttributesContainer(props: {
 		const socket = props.socket;
 		if (!socket) return;
 
-		socket.on('attributeChange', (playerId, attributeId, value, maxValue) => {
+		socket.on('attributeChange', (playerId, attributeId, value, maxValue, show) => {
 			if (playerId !== props.playerId) return;
 
 			setAttributes((attributes) => {
@@ -117,6 +118,7 @@ function PortraitAttributesContainer(props: {
 
 				if (value !== null) newAttributes[index].value = value;
 				if (maxValue !== null) newAttributes[index].maxValue = maxValue;
+				if (show != null) newAttributes[index].show = show;
 
 				return newAttributes;
 			});
@@ -142,7 +144,7 @@ function PortraitAttributesContainer(props: {
 							style={getAttributeStyle(attr.Attribute.color)}
 							key={attr.Attribute.id}>
 							<label htmlFor='#'>
-								{attr.value}/{attr.maxValue}
+								{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}
 							</label>
 						</div>
 					))}

@@ -25,6 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const value = req.body.value;
 	const maxValue = req.body.maxValue;
+	const show = req.body.show;
 
 	await prisma.playerAttribute.update({
 		where: {
@@ -33,12 +34,12 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 				attribute_id: attributeID,
 			},
 		},
-		data: { value, maxValue },
+		data: { value, maxValue, show },
 	});
 
 	res.end();
 
-	res.socket.server.io?.emit('attributeChange', player.id, attributeID, value, maxValue);
+	res.socket.server.io?.emit('attributeChange', player.id, attributeID, value, maxValue, show);
 }
 
 export default sessionAPI(handler);

@@ -152,6 +152,7 @@ model PlayerAttribute {
   attribute_id Int
   value        Int
   maxValue     Int
+  show         Boolean   @default(true)
 
   @@id([player_id, attribute_id])
 }

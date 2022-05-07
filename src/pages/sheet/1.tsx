@@ -48,9 +48,7 @@ function PlayerSheet(props: PageProps) {
 
 	useEffect(() => {
 		if (!socket) return;
-		socket.on('playerDelete', () =>
-			api.delete('/player').then(() => Router.push('/'))
-		);
+		socket.on('playerDelete', () => api.delete('/player').then(() => Router.push('/')));
 		return () => {
 			socket.off('playerDelete');
 		};
@@ -215,7 +213,9 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				spellSlots: true,
 				PlayerInfo: { select: { Info: true, value: true } },
 				PlayerAvatar: { select: { AttributeStatus: true, link: true } },
-				PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
+				PlayerAttributes: {
+					select: { Attribute: true, value: true, maxValue: true, show: true },
+				},
 				PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
 				PlayerSpec: { select: { Spec: true, value: true } },
 				PlayerCharacteristic: {

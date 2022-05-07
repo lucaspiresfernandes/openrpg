@@ -40,7 +40,8 @@ export interface ServerToClientEvents {
 		playerID: number,
 		attributeID: number,
 		value: number | null,
-		maxValue: number | null
+		maxValue: number | null,
+		show: boolean | null
 	) => void;
 	specChange: (playerID: number, specID: number, value: string) => void;
 	equipmentAdd: (playerID: number, equipment: SocketPlayerEquipment) => void;
