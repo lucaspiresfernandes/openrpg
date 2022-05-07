@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
+import type {
+	DraggableData,
+	DraggableEvent,
+	DraggableEventHandler,
+} from 'react-draggable';
+import Draggable from 'react-draggable';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
-import type { Environment, PortraitOrientation } from '../../utils/config';
-import { getAttributeStyle, getOrientationStyle } from '../../utils/style';
+import { clamp } from '../../utils';
+import type { Environment } from '../../utils/config';
+import { getAttributeStyle } from '../../utils/style';
 
 type PortraitPlayerName = {
 	value: string;
@@ -23,12 +30,17 @@ type PortraitAttributes = {
 export default function PortraitEnvironmentalContainer(props: {
 	socket: SocketIO | null;
 	environment: Environment;
-	orientation: PortraitOrientation;
 	attributes: PortraitAttributes;
 	playerName: PortraitPlayerName;
 	playerId: number;
 }) {
 	const [environment, setEnvironment] = useState(props.environment);
+	const [y, setY] = useState(0);
+
+	useEffect(() => {
+		setY(Number(localStorage.getItem('environmental-pos-y') || 300));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		const socket = props.socket;
@@ -45,18 +57,26 @@ export default function PortraitEnvironmentalContainer(props: {
 		};
 	}, [props.socket]);
 
+	function onDragStop(ev: DraggableEvent, data: DraggableData) {
+		const pos = clamp(data.y, 0, 450);
+		setY(pos);
+		localStorage.setItem('environmental-pos-y', pos.toString());
+	}
+
 	return (
 		<>
 			<PortraitAttributesContainer
+				y={y}
+				onDragStop={onDragStop}
 				environment={environment}
-				orientation={props.orientation}
 				attributes={props.attributes}
 				playerId={props.playerId}
 				socket={props.socket}
 			/>
 			<PortraitNameContainer
+				y={y}
+				onDragStop={onDragStop}
 				environment={environment}
-				orientation={props.orientation}
 				playerName={props.playerName}
 				playerId={props.playerId}
 				socket={props.socket}
@@ -66,9 +86,10 @@ export default function PortraitEnvironmentalContainer(props: {
 }
 
 function PortraitAttributesContainer(props: {
+	y: number;
+	onDragStop: DraggableEventHandler;
 	socket: SocketIO | null;
 	environment: Environment;
-	orientation: PortraitOrientation;
 	attributes: PortraitAttributes;
 	playerId: number;
 }) {
@@ -101,25 +122,30 @@ function PortraitAttributesContainer(props: {
 	}, [props.socket]);
 
 	return (
-		<Fade in={props.environment === 'combat'}>
-			<div className={`${styles.combat} ${getOrientationStyle(props.orientation)}`}>
-				{attributes.map((attr) => (
-					<div
-						className={styles.attribute}
-						style={getAttributeStyle(attr.Attribute.color)}
-						key={attr.Attribute.id}>
-						{attr.value}/{attr.maxValue}
-					</div>
-				))}
-			</div>
-		</Fade>
+		<Draggable axis='y' onStop={props.onDragStop} position={{ x: 0, y: props.y }}>
+			<Fade in={props.environment === 'combat'}>
+				<div className={styles.combat}>
+					{attributes.map((attr) => (
+						<div
+							className={styles.attribute}
+							style={getAttributeStyle(attr.Attribute.color)}
+							key={attr.Attribute.id}>
+							<label htmlFor='#'>
+								{attr.value}/{attr.maxValue}
+							</label>
+						</div>
+					))}
+				</div>
+			</Fade>
+		</Draggable>
 	);
 }
 
 function PortraitNameContainer(props: {
+	y: number;
+	onDragStop: DraggableEventHandler;
 	socket: SocketIO | null;
 	environment: Environment;
-	orientation: PortraitOrientation;
 	playerName: PortraitPlayerName;
 	playerId: number;
 }) {
@@ -141,11 +167,12 @@ function PortraitNameContainer(props: {
 	}, [props.socket]);
 
 	return (
-		<Fade in={props.environment === 'idle'}>
-			<div
-				className={`${styles.nameContainer} ${getOrientationStyle(props.orientation)}`}>
-				{playerName || 'Desconhecido'}
-			</div>
-		</Fade>
+		<Draggable axis='y' onStop={props.onDragStop} position={{ x: 0, y: props.y }}>
+			<Fade in={props.environment === 'idle'}>
+				<label htmlFor='#' className={styles.nameContainer}>
+					{playerName || 'Desconhecido'}
+				</label>
+			</Fade>
+		</Draggable>
 	);
 }

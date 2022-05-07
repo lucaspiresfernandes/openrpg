@@ -9,6 +9,8 @@ type AvatarFieldProps = {
 	playerId: number;
 };
 
+const style = { maxHeight: 250 };
+
 export default function AvatarField({ status, playerId }: AvatarFieldProps) {
 	const [src, setSrc] = useState('#');
 	const previousStatusID = useRef(Number.MAX_SAFE_INTEGER);
@@ -37,7 +39,7 @@ export default function AvatarField({ status, playerId }: AvatarFieldProps) {
 					fluid
 					src={src}
 					alt='Avatar'
-					style={{ maxHeight: 250 }}
+					style={style}
 					onError={() => setSrc('/avatar404.png')}
 				/>
 			</Col>

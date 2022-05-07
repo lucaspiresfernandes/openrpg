@@ -6,9 +6,11 @@ type AdminTableProps = {
 	children?: ReactNode;
 };
 
+const style = { maxHeight: 600 };
+
 export default function AdminTable(props: AdminTableProps) {
 	return (
-		<div className='overflow-auto' style={{ maxHeight: 600 }}>
+		<div className='overflow-auto' style={style}>
 			<Table className={`align-middle${props.centerText ? ' text-center' : ''}`}>
 				{props.children}
 			</Table>

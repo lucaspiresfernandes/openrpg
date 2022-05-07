@@ -13,8 +13,7 @@ import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSi
 import useSocket, { SocketIO } from '../../hooks/useSocket';
 import type {
 	Environment,
-	PortraitConfig,
-	PortraitOrientation
+	PortraitConfig
 } from '../../utils/config';
 import prisma from '../../utils/database';
 
@@ -53,14 +52,12 @@ export default function CharacterPortrait(
 				playerId={props.playerId}
 				attributeStatus={props.attributeStatus}
 				sideAttribute={props.sideAttribute}
-				orientation={props.orientation}
 				diceColor={props.diceColor}
 				socket={socket}
 			/>
 			<PortraitEnvironmentalContainer
 				attributes={props.attributes}
 				environment={props.environment}
-				orientation={props.orientation}
 				playerId={props.playerId}
 				playerName={props.playerName}
 				socket={socket}
@@ -73,7 +70,6 @@ function PortraitDiceRollContainer(props: {
 	playerId: number;
 	attributeStatus: PortraitAttributeStatus;
 	sideAttribute: PortraitSideAttribute;
-	orientation: PortraitOrientation;
 	diceColor: string;
 	socket: SocketIO | null;
 }) {
@@ -89,7 +85,6 @@ function PortraitDiceRollContainer(props: {
 				/>
 				<PortraitSideAttributeContainer
 					sideAttribute={props.sideAttribute}
-					orientation={props.orientation}
 					socket={props.socket}
 				/>
 			</div>
@@ -145,7 +140,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 		return {
 			props: {
 				playerId: player_id,
-				orientation: portraitConfig.orientation || 'bottom',
 				environment: 'idle' as Environment,
 				attributes: [],
 				attributeStatus: [],
@@ -171,7 +165,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 	return {
 		props: {
 			playerId: player_id,
-			orientation: portraitConfig.orientation || 'bottom',
 			environment: (results[0]?.value || 'idle') as Environment,
 			attributes,
 			sideAttribute,

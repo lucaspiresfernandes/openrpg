@@ -13,12 +13,9 @@ export type DiceConfigCell = {
 	branched: boolean;
 };
 
-export type PortraitOrientation = 'center' | 'top' | 'bottom';
-
 export type PortraitConfig = {
 	attributes: number[];
 	side_attribute: number;
-	orientation: PortraitOrientation;
 };
 
 export type Environment = 'idle' | 'combat';

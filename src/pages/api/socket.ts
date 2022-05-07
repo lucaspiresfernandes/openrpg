@@ -1,16 +1,15 @@
-import type { Server as HTTPServer } from 'http';
 import type { NextApiRequest } from 'next';
 import { Server } from 'socket.io';
 import type {
 	ClientToServerEvents,
 	NextApiResponseServerIO,
-	ServerToClientEvents,
+	ServerToClientEvents
 } from '../../utils/socket';
 
 export default function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	if (!res.socket.server.io) {
 		const io = new Server<ClientToServerEvents, ServerToClientEvents>(
-			res.socket.server as unknown as HTTPServer
+			res.socket.server
 		);
 
 		io.on('connection', (socket) => {

@@ -28,6 +28,8 @@ type SortableContainerProps = {
 	removeEntity: (id: number) => void;
 };
 
+const style = { maxWidth: '4rem' };
+
 const SortableList = SortableContainer((props: SortableContainerProps) => {
 	return (
 		<ListGroup variant='flush' className='text-center'>
@@ -161,7 +163,7 @@ export default function CombatContainer(props: {
 							className='ms-2 h4'
 							value={round}
 							onChange={roundUpdate}
-							style={{ maxWidth: '4rem' }}
+							style={style}
 						/>
 					</FormGroup>
 				</Col>

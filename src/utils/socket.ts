@@ -1,5 +1,6 @@
 import type { Equipment, Spell } from '@prisma/client';
-import type { Server as NetServer, Socket as NetSocket } from 'net';
+import type { Server as HTTPServer } from 'http';
+import type { Socket as NetSocket } from 'net';
 import type { NextApiResponse } from 'next';
 import type { Server as SocketIOServer } from 'socket.io';
 import type { DiceResult, ResolvedDice } from './dice';
@@ -85,7 +86,7 @@ export interface ClientToServerEvents {
 
 export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
 	socket: NetSocket & {
-		server: NetServer & {
+		server: HTTPServer & {
 			io?: SocketIOServer<ServerToClientEvents>;
 		};
 	};

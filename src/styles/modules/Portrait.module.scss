@@ -16,18 +16,7 @@ $dice-container-left: 30px;
 	background-size: 100% 100%;
 	width: 225px;
 	height: 200px;
-
-	&.top {
-		top: 300px;
-	}
-
-	&.center {
-		top: 500px;
-	}
-
-	&.bottom {
-		top: 500px;
-	}
+	z-index: 100;
 }
 
 .side {
@@ -53,18 +42,6 @@ $dice-container-left: 30px;
 	text-transform: uppercase;
 
 	transform: translateY(-50%);
-
-	&.top {
-		top: 300px;
-	}
-
-	&.center {
-		top: 300px;
-	}
-
-	&.bottom {
-		top: 400px;
-	}
 }
 
 .combat {
@@ -72,18 +49,6 @@ $dice-container-left: 30px;
 	left: $avatar-width + 10px;
 	transform: translateY(-50%);
 	width: auto;
-
-	&.top {
-		top: 300px;
-	}
-
-	&.center {
-		top: 300px;
-	}
-
-	&.bottom {
-		top: 400px;
-	}
 }
 
 .attribute {

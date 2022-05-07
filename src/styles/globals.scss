@@ -133,6 +133,10 @@ body {
 	}
 }
 
+.fade:not(.show) {
+	pointer-events: none;
+}
+
 .data-container {
 	border-style: solid;
 	border-width: 1px;

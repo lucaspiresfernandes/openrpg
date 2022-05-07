@@ -17,12 +17,7 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type {
-	ContainerConfig,
-	DiceConfig,
-	PortraitConfig,
-	PortraitOrientation,
-} from '../../utils/config';
+import type { ContainerConfig, DiceConfig, PortraitConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 import { containerConfigInsertData } from '../api/init';
@@ -368,7 +363,6 @@ type PortraitContainerProps = {
 	portrait: {
 		attributes: Attribute[];
 		side_attribute: Attribute | null;
-		orientation: PortraitOrientation;
 	};
 	attributes: Attribute[];
 	logError: (err: any) => void;
@@ -378,7 +372,6 @@ function PortraitEditor(props: PortraitContainerProps) {
 	const [loading, setLoading] = useState(false);
 	const [attributes, setAttributes] = useState<Attribute[]>(props.portrait.attributes);
 	const [sideAttribute, setSideAttribute] = useState(props.portrait.side_attribute);
-	const [orientation, setOrientation] = useState<string>(props.portrait.orientation);
 	const availableAttributes = props.attributes.filter(
 		(attr) => !attributes.find((at) => at.id === attr.id) && attr.id !== sideAttribute?.id
 	);
@@ -391,7 +384,6 @@ function PortraitEditor(props: PortraitContainerProps) {
 				value: {
 					attributes: attributes.map((attr) => attr.id),
 					side_attribute: sideAttribute?.id || 0,
-					orientation,
 				},
 			})
 			.then(() => alert('Configurações de retrato aplicadas com sucesso.'))
@@ -419,23 +411,6 @@ function PortraitEditor(props: PortraitContainerProps) {
 
 	return (
 		<>
-			<Row className='text-center'>
-				<Col className='h5'>
-					<label htmlFor='portraitOrientation' className='me-2'>
-						Orientação do Retrato:
-					</label>
-					<select
-						id='portraitOrientation'
-						className='theme-element'
-						value={orientation}
-						onChange={(ev) => setOrientation(ev.currentTarget.value)}>
-						<option value='center'>Centro</option>
-						<option value='top'>Superior</option>
-						<option value='bottom'>Inferior</option>
-					</select>
-				</Col>
-			</Row>
-			<hr />
 			<Row className='mt-2 justify-content-center align-items-center'>
 				<Col xs='auto' className='h5' style={{ margin: 0 }}>
 					Atributos Primários
@@ -558,7 +533,6 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			portrait: {
 				attributes: results[3],
 				side_attribute: results[4],
-				orientation: portraitConfig.orientation || 'bottom',
 			},
 			attributes: results[5],
 			containerConfig: JSON.parse(
