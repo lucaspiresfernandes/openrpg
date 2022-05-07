@@ -29,3 +29,10 @@ Eu também faço comissões de fichas eletrônicas de RPG. Para mais informaçõ
 ## Eu gostaria de entrar em contato com você.
 
 Sinta-se à vontade para abrir um post nas [Discussões](https://github.com/alyssapiresfernandescefet/openrpg/discussions) ou me enviar um e-mail para [alyssapiresfernandes@gmail.com](mailto:alyssapiresfernandes@gmail.com).
+
+## Roadmap do Open RPG
+
+Atualmente, o Open RPG já possui uma estrutura sólida para uso. No entanto, ainda há abertura para a implementação de novas funcionalidades, como:
+
+- Carregar fontes customizadas para o retrato do jogador.
+- Melhorar o modo claro do website.
