@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { DraggableData, DraggableEvent } from 'react-draggable';
+import type {
+	ControlPosition,
+	DraggableData,
+	DraggableEvent,
+	DraggableBounds,
+} from 'react-draggable';
 import Draggable from 'react-draggable';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
-import { clamp } from '../../utils';
 import { getAttributeStyle } from '../../utils/style';
 
 export type PortraitSideAttribute = {
@@ -15,15 +19,26 @@ export type PortraitSideAttribute = {
 	};
 } | null;
 
+const bounds: DraggableBounds = {
+	bottom: 420,
+	left: 0,
+	top: 0,
+	right: 200,
+};
+
 export default function PortraitSideAttributeContainer(props: {
 	socket: SocketIO | null;
 	sideAttribute: PortraitSideAttribute;
 }) {
 	const [sideAttribute, setSideAttribute] = useState(props.sideAttribute);
-	const [y, setY] = useState(0);
+	const [position, setPosition] = useState<ControlPosition>({ x: 0, y: 0 });
 
 	useEffect(() => {
-		setY(Number(localStorage.getItem('side-attribute-pos-y')) || 420);
+		setPosition(
+			(JSON.parse(
+				localStorage.getItem('side-attribute-pos') || 'null'
+			) as ControlPosition) || { x: 0, y: 420 }
+		);
 	}, []);
 
 	useEffect(() => {
@@ -54,13 +69,16 @@ export default function PortraitSideAttributeContainer(props: {
 	if (!sideAttribute) return null;
 
 	function onDragStop(ev: DraggableEvent, data: DraggableData) {
-		const pos = clamp(data.y, 0, 420);
-		setY(pos);
-		localStorage.setItem('side-attribute-pos-y', pos.toString());
+		const pos = {
+			x: data.x,
+			y: data.y,
+		};
+		setPosition(pos);
+		localStorage.setItem('side-attribute-pos', JSON.stringify(pos));
 	}
 
 	return (
-		<Draggable axis='y' onStop={onDragStop} position={{ x: 0, y }}>
+		<Draggable axis='both' onStop={onDragStop} position={position} bounds={bounds}>
 			<div className={styles.sideContainer} style={{ ...attributeStyle }}>
 				<label htmlFor='#' className={styles.side}>
 					{sideAttribute.value}

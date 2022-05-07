@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Fade from 'react-bootstrap/Fade';
 import type {
+	DraggableBounds,
 	DraggableData,
 	DraggableEvent,
 	DraggableEventHandler,
@@ -8,7 +9,6 @@ import type {
 import Draggable from 'react-draggable';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
-import { clamp } from '../../utils';
 import type { Environment } from '../../utils/config';
 import { getAttributeStyle } from '../../utils/style';
 
@@ -27,6 +27,13 @@ type PortraitAttributes = {
 	maxValue: number;
 }[];
 
+const bounds: DraggableBounds = {
+	top: 0,
+	bottom: 450,
+	left: 0,
+	right: 0,
+};
+
 export default function PortraitEnvironmentalContainer(props: {
 	socket: SocketIO | null;
 	environment: Environment;
@@ -35,10 +42,10 @@ export default function PortraitEnvironmentalContainer(props: {
 	playerId: number;
 }) {
 	const [environment, setEnvironment] = useState(props.environment);
-	const [y, setY] = useState(0);
+	const [positionY, setPositionY] = useState(0);
 
 	useEffect(() => {
-		setY(Number(localStorage.getItem('environmental-pos-y') || 300));
+		setPositionY(Number(localStorage.getItem('environmental-pos-y') || 300));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -58,15 +65,15 @@ export default function PortraitEnvironmentalContainer(props: {
 	}, [props.socket]);
 
 	function onDragStop(ev: DraggableEvent, data: DraggableData) {
-		const pos = clamp(data.y, 0, 450);
-		setY(pos);
-		localStorage.setItem('environmental-pos-y', pos.toString());
+		const posY = data.y;
+		setPositionY(posY);
+		localStorage.setItem('environmental-pos', posY.toString());
 	}
 
 	return (
 		<>
 			<PortraitAttributesContainer
-				y={y}
+				positionY={positionY}
 				onDragStop={onDragStop}
 				environment={environment}
 				attributes={props.attributes}
@@ -74,7 +81,7 @@ export default function PortraitEnvironmentalContainer(props: {
 				socket={props.socket}
 			/>
 			<PortraitNameContainer
-				y={y}
+				positionY={positionY}
 				onDragStop={onDragStop}
 				environment={environment}
 				playerName={props.playerName}
@@ -86,7 +93,7 @@ export default function PortraitEnvironmentalContainer(props: {
 }
 
 function PortraitAttributesContainer(props: {
-	y: number;
+	positionY: number;
 	onDragStop: DraggableEventHandler;
 	socket: SocketIO | null;
 	environment: Environment;
@@ -122,7 +129,11 @@ function PortraitAttributesContainer(props: {
 	}, [props.socket]);
 
 	return (
-		<Draggable axis='y' onStop={props.onDragStop} position={{ x: 0, y: props.y }}>
+		<Draggable
+			axis='y'
+			onStop={props.onDragStop}
+			position={{ x: 0, y: props.positionY }}
+			bounds={bounds}>
 			<Fade in={props.environment === 'combat'}>
 				<div className={styles.combat}>
 					{attributes.map((attr) => (
@@ -142,7 +153,7 @@ function PortraitAttributesContainer(props: {
 }
 
 function PortraitNameContainer(props: {
-	y: number;
+	positionY: number;
 	onDragStop: DraggableEventHandler;
 	socket: SocketIO | null;
 	environment: Environment;
@@ -167,7 +178,11 @@ function PortraitNameContainer(props: {
 	}, [props.socket]);
 
 	return (
-		<Draggable axis='y' onStop={props.onDragStop} position={{ x: 0, y: props.y }}>
+		<Draggable
+			axis='y'
+			onStop={props.onDragStop}
+			position={{ x: 0, y: props.positionY }}
+			bounds={bounds}>
 			<Fade in={props.environment === 'idle'}>
 				<label htmlFor='#' className={styles.nameContainer}>
 					{playerName || 'Desconhecido'}
