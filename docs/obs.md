@@ -30,4 +30,12 @@ Os atributos na tela são sincronizados com os atributos do jogador.
 
 #### Rolagens de Dado
 
-As rolagens de dado são automaticamente exibidas na tela quando um jogador rola um dado.
+As rolagens de dado são automaticamente exibidas na tela quando um jogador rola um ou mais dados. Caso o dado possua uma descrição, como "Fracasso" ou "Sucesso", essa descrição será exibida.
+
+## Editando o Retrato
+
+É possível editar os atributos que parecem no retrato na página de configurações, no painel do mestre.
+
+Além disso, também é possível editar a posição dos atributos e nome na tela. Para isso, você deve interagir com o retrato pelo OBS e mover os atributos e nome para onde bem entender. Note que o nome e atributos sempre têm posição iguais.
+
+![portrait](https://user-images.githubusercontent.com/71353674/167266495-3329e025-4917-4602-8400-91d8445899a8.gif)
