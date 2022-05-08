@@ -50,7 +50,7 @@ As Barras de Atributos e Status de Atributos representam o estado do seu persona
 
 As Barras de Atributos podem ser modificadas ao clicar no botão + ou - abaixo delas. Caso queira modificar o valor de 10 em 10, segure Shift antes de apertar. Para modificar o valor máximo da Barra de Atributo, clique na barra.
 
-Algumas Barras de Atributos podem possuir dados ao seu lado. Esses dados representam testes que se pode fazer com o Atributo em questão.
+Algumas Barras de Atributos podem possuir dados ao seu lado. Esses dados representam testes que se pode fazer com o Atributo em questão. Além disso, todas as barras também possuem um pequeno botão no lado esquerdo. Caso esse botão esteja ativado (caracterizado pelo olho aberto), o atributo será mostrado no retrato. Caso contrário, será exibido um "?/?" no lugar do atributo.
 
 Já os Status de Atributos são os pequenos botões que é possível ver abaixo da barra. Cada Status de Atributo significa um estado diferente do seu personagem, e esse estado reflete no seu Avatar, que é atualizado toda hora que um Status de Atributo é modificado.
 
