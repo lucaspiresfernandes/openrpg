@@ -4,13 +4,13 @@ Nessa seção, ensinarei tudo o que você precisa saber sobre o painel do mestre
 
 ## Criando uma Conta de Mestre
 
-Primeiramente, para acessar os recursos do mestre, é necessário criar uma conta de mestre.
+Primeiramente, para acessar os recursos do mestre, é necessário criar uma conta de mestre. Para criar, acesse a página de cadastro e clique em "Cadastrar-se como mestre".
 
-Para criar, acesse o cadastro e clique em "Cadastrar-se como mestre".
+Para se cadastrar como mestre, você irá precisar de uma chave especial chamada "chave do mestre". Se você é o primeiro mestre a criar uma conta, então a chave do mestre é desabilitada. No entanto, caso o sistema encontre uma conta de mestre já cadastrada, ele irá exigir a chave.
 
-Ao preencher suas credenciais, irá perceber um campo especial chamado "chave do mestre". Esse campo pede uma chave secreta que permite a criação de uma conta de mestre. Se você é o primeiro mestre a criar uma conta, então a chave do mestre padrão é 123456.
+A chave do mestre padrão é "123456".
 
-É possível mudar a chave do mestre, que é ensinado na seção [Acessando as configurações de sistema](./settings.md).
+É recomendável que, após criar sua conta de mestre, modificar a chave do mestre, que é ensinado na seção [Acessando as configurações de sistema](./settings.md).
 
 ## O Painel do Mestre
 
