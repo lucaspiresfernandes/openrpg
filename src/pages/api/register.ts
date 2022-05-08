@@ -178,7 +178,7 @@ async function registerPlayerData(player: Player) {
 	]);
 }
 
-function registerAdminData(admin: Player): Promise<any> {
+function registerAdminData(admin: Player) {
 	return prisma.playerNote.create({
 		data: {
 			player_id: admin.id,

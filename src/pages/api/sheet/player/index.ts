@@ -27,7 +27,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('maxLoadChange', player.id, maxLoad);
+	res.socket.server.io?.emit('playerMaxLoadChange', player.id, maxLoad);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {

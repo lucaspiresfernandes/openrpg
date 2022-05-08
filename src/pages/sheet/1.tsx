@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -17,7 +17,6 @@ import PlayerSkillContainer from '../../components/Player/PlayerSkillContainer';
 import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../components/Player/PlayerSpellContainer';
 import { ErrorLogger, Socket } from '../../contexts';
-import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
@@ -39,12 +38,7 @@ export default function Page(props: PageProps) {
 
 function PlayerSheet(props: PageProps) {
 	const [toasts, addToast] = useToast();
-	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	useSocket((socket) => {
-		socket.emit('roomJoin', `player${props.player.id}`);
-		setSocket(socket);
-	});
+	const socket = useSocket(`player${props.player.id}`);
 
 	useEffect(() => {
 		if (!socket) return;
@@ -52,7 +46,6 @@ function PlayerSheet(props: PageProps) {
 		return () => {
 			socket.off('playerDelete');
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [socket]);
 
 	if (!socket)
@@ -245,6 +238,15 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		}),
 		prisma.skill.findMany({
 			where: { PlayerSkill: { none: { player_id: player.id } } },
+			select: {
+				id: true,
+				name: true,
+				Specialization: {
+					select: {
+						name: true,
+					},
+				},
+			},
 		}),
 		prisma.item.findMany({
 			where: { visible: true, PlayerItem: { none: { player_id: player.id } } },

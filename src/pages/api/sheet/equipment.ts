@@ -20,11 +20,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const id = req.body.id;
 	const name = req.body.name;
-	const ammo = req.body.ammo;
-	const attacks = req.body.attacks;
+	const type = req.body.type;
 	const damage = req.body.damage;
 	const range = req.body.range;
-	const type = req.body.type;
+	const attacks = req.body.attacks;
+	const ammo = req.body.ammo;
 	const visible = req.body.visible;
 
 	if (!id) {
@@ -35,23 +35,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const eq = await database.equipment.update({
 		where: { id },
 		data: { name, ammo, attacks, damage, range, type, visible },
-		select: {
-			ammo: true,
-			attacks: true,
-			damage: true,
-			id: true,
-			range: true,
-			type: true,
-			name: true,
-		},
 	});
 
 	res.end();
 
-	if (visible !== undefined) {
-		if (visible) res.socket.server.io?.emit('playerEquipmentAdd', id, eq.name);
-		else res.socket.server.io?.emit('playerEquipmentRemove', id, false);
-	} else res.socket.server.io?.emit('playerEquipmentChange', id, eq);
+	if (visible === undefined) {
+		res.socket.server.io?.emit('equipmentChange', eq);
+	} else {
+		if (visible) res.socket.server.io?.emit('equipmentAdd', id, eq.name);
+		else res.socket.server.io?.emit('equipmentRemove', id, false);
+	}
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -87,7 +80,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ id: eq.id });
 
-	res.socket.server.io?.emit('playerEquipmentAdd', eq.id, eq.name);
+	res.socket.server.io?.emit('equipmentAdd', eq.id, eq.name);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -109,7 +102,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerEquipmentRemove', id, true);
+	res.socket.server.io?.emit('equipmentRemove', id, true);
 }
 
 export default sessionAPI(handler);

@@ -10,6 +10,7 @@ import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
+import type { ItemAddEvent, ItemChangeEvent, ItemRemoveEvent } from '../../utils/socket';
 import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
@@ -40,69 +41,85 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		props.availableItems
 	);
 	const [playerItems, setPlayerItems] = useState(props.playerItems);
-	const playerItemsRef = useRef(playerItems);
-	playerItemsRef.current = playerItems;
-	const logError = useContext(ErrorLogger);
-	const socket = useContext(Socket);
-	const [lastMaxLoad, maxLoad, setMaxLoad] = useExtendedState(
-		props.playerMaxLoad.toString()
-	);
 	const [load, setLoad] = useState(
 		playerItems.reduce((prev, cur) => prev + cur.Item.weight * cur.quantity, 0)
 	);
 	const [loading, setLoading] = useState(false);
+	const [lastMaxLoad, maxLoad, setMaxLoad] = useExtendedState(
+		props.playerMaxLoad.toString()
+	);
+
+	const logError = useContext(ErrorLogger);
+	const socket = useContext(Socket);
+
+	const socket_itemAdd = useRef<ItemAddEvent>(() => {});
+	const socket_itemRemove = useRef<ItemRemoveEvent>(() => {});
+	const socket_itemChange = useRef<ItemChangeEvent>(() => {});
 
 	useEffect(() => {
-		if (!socket) return;
+		socket_itemAdd.current = (id, name) => {
+			if (availableItems.findIndex((it) => it.id === id) > -1) return;
+			setAvailableItems((items) => [...items, { id, name }]);
+		};
 
-		socket.on('playerItemAdd', (id, name) => {
+		socket_itemRemove.current = (id, hardRemove) => {
+			if (hardRemove) {
+				const index = playerItems.findIndex((it) => it.Item.id === id);
+				if (index === -1) return;
+
+				setPlayerItems((items) => {
+					const newItems = [...items];
+					newItems.splice(index, 1);
+					return newItems;
+				});
+				return;
+			}
+
+			const index = availableItems.findIndex((it) => it.id === id);
+			if (index === -1) return;
+
 			setAvailableItems((items) => {
-				if (
-					items.findIndex((item) => item.id === id) > -1 ||
-					playerItemsRef.current.findIndex((eq) => eq.Item.id === id) > -1
-				)
-					return items;
-				return [...items, { id, name }];
-			});
-		});
-
-		socket.on('playerItemRemove', (id) => {
-			setAvailableItems((items) => {
-				const index = items.findIndex((item) => item.id === id);
-				if (index === -1) return items;
-
 				const newItems = [...items];
 				newItems.splice(index, 1);
 				return newItems;
 			});
-		});
+		};
 
-		socket.on('playerItemChange', (id, name) => {
-			setPlayerItems((items) => {
-				const index = items.findIndex((eq) => eq.Item.id === id);
-				if (index === -1) return items;
+		socket_itemChange.current = (id, name) => {
+			const playerItemIndex = playerItems.findIndex((it) => it.Item.id === id);
+			if (playerItemIndex > -1) {
+				setPlayerItems((items) => {
+					const newItems = [...items];
+					newItems[playerItemIndex].Item.name = name;
+					return newItems;
+				});
+				return;
+			}
 
-				const newItems = [...items];
-				newItems[index].Item.name = name;
-				return newItems;
-			});
+			const availableItemIndex = availableItems.findIndex((it) => it.id === id);
+			if (availableItemIndex === -1) return;
 
 			setAvailableItems((items) => {
-				const index = items.findIndex((eq) => eq.id === id);
-				if (index === -1) return items;
-
 				const newItems = [...items];
-				newItems[index].name = name;
+				newItems[availableItemIndex].name = name;
 				return newItems;
 			});
-		});
-
-		return () => {
-			socket.off('playerItemAdd');
-			socket.off('playerItemRemove');
-			socket.off('playerItemChange');
 		};
-	}, [socket]);
+	});
+
+	useEffect(() => {
+		socket.on('itemAdd', (id, name) => socket_itemAdd.current(id, name));
+		socket.on('itemRemove', (id, hardRemove) =>
+			socket_itemRemove.current(id, hardRemove)
+		);
+		socket.on('itemChange', (id, name) => socket_itemChange.current(id, name));
+		return () => {
+			socket.off('itemAdd');
+			socket.off('itemRemove');
+			socket.off('itemChange');
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	function onAddItem(id: number) {
 		setLoading(true);
@@ -158,7 +175,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
 	const colorStyle = { color: load > parseFloat(maxLoad) ? 'red' : 'inherit' };
 
-	const items = useMemo(() => {
+	const playerItemList = useMemo(() => {
 		return playerItems.sort((a, b) => a.Item.id - b.Item.id);
 	}, [playerItems]);
 
@@ -200,7 +217,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 								</tr>
 							</thead>
 							<tbody>
-								{items.map((item) => (
+								{playerItemList.map((item) => (
 									<PlayerItemField
 										key={item.Item.id}
 										description={item.currentDescription}

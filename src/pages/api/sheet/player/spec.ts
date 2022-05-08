@@ -33,7 +33,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('specChange', player.id, specID, value);
+	res.socket.server.io?.emit('playerSpecChange', player.id, specID, value);
 }
 
 export default sessionAPI(handler);

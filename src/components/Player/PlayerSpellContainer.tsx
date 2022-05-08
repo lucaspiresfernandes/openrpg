@@ -6,6 +6,11 @@ import Row from 'react-bootstrap/Row';
 import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
+import type {
+	SpellAddEvent,
+	SpellChangeEvent,
+	SpellRemoveEvent,
+} from '../../utils/socket';
 import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
@@ -20,7 +25,7 @@ type PlayerSpellContainerProps = {
 
 export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 	const [addSpellShow, setAddSpellShow] = useState(false);
-	const [spells, setSpells] = useState<{ id: number; name: string }[]>(
+	const [availableSpells, setAvailableSpells] = useState<{ id: number; name: string }[]>(
 		props.availableSpells
 	);
 	const [playerSpells, setPlayerSpells] = useState(props.playerSpells);
@@ -28,60 +33,72 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 		props.playerMaxSlots.toString()
 	);
 	const [loading, setLoading] = useState(false);
-	const playerSpellsRef = useRef(playerSpells);
-	playerSpellsRef.current = playerSpells;
+
 	const logError = useContext(ErrorLogger);
 	const socket = useContext(Socket);
 
+	const socket_spellAdd = useRef<SpellAddEvent>(() => {});
+	const socket_spellRemove = useRef<SpellRemoveEvent>(() => {});
+	const socket_spellChange = useRef<SpellChangeEvent>(() => {});
+
 	useEffect(() => {
-		if (!socket) return;
+		socket_spellAdd.current = (id, name) => {
+			if (availableSpells.findIndex((sp) => sp.id === id) > -1) return;
+			setAvailableSpells((spells) => [...spells, { id, name }]);
+		};
+		socket_spellRemove.current = (id, hardRemove) => {
+			if (hardRemove) {
+				const index = playerSpells.findIndex((spell) => spell.id === id);
+				if (index === -1) return;
+				setPlayerSpells((spell) => {
+					const newSpells = [...spell];
+					newSpells.splice(index, 1);
+					return newSpells;
+				});
+				return;
+			}
 
-		socket.on('playerSpellAdd', (id, name) => {
-			setSpells((spells) => {
-				if (
-					spells.findIndex((spell) => spell.id === id) > -1 ||
-					playerSpellsRef.current.findIndex((spell) => spell.id === id) > -1
-				)
-					return spells;
-				return [...spells, { id, name }];
-			});
-		});
+			const index = availableSpells.findIndex((spell) => spell.id === id);
+			if (index === -1) return;
 
-		socket.on('playerSpellRemove', (id) => {
-			setSpells((spells) => {
-				const index = spells.findIndex((spell) => spell.id === id);
-				if (index === -1) return spells;
-
+			setAvailableSpells((spells) => {
 				const newSpells = [...spells];
 				newSpells.splice(index, 1);
 				return newSpells;
 			});
-		});
+		};
+		socket_spellChange.current = (id, spell) => {
+			const playerSpellIndex = playerSpells.findIndex((spell) => spell.id === id);
+			if (playerSpellIndex > -1) {
+				setPlayerSpells((Spells) => {
+					const newSpells = [...Spells];
+					newSpells[playerSpellIndex] = spell;
+					return newSpells;
+				});
+				return;
+			}
 
-		socket.on('playerSpellChange', (id, spell) => {
-			setPlayerSpells((spells) => {
-				const index = spells.findIndex((spell) => spell.id === id);
-				if (index === -1) return spells;
+			const availableSpellIndex = availableSpells.findIndex((eq) => eq.id === id);
+			if (availableSpellIndex === -1) return;
 
-				const newSpells = [...spells];
-				newSpells[index] = spell;
+			setAvailableSpells((Spells) => {
+				const newSpells = [...Spells];
+				newSpells[availableSpellIndex] = spell;
 				return newSpells;
 			});
+		};
+	});
 
-			setSpells((spells) => {
-				const index = spells.findIndex((spell) => spell.id === id);
-				if (index === -1) return spells;
-
-				const newSpells = [...spells];
-				newSpells[index].name = spell.name;
-				return newSpells;
-			});
-		});
-
+	useEffect(() => {
+		socket.on('spellAdd', (id, name) => socket_spellAdd.current(id, name));
+		socket.on('spellRemove', (id, hardRemove) =>
+			socket_spellRemove.current(id, hardRemove)
+		);
+		socket.on('spellChange', (id, spell) => socket_spellChange.current(id, spell));
 		return () => {
-			socket.off('playerSpellAdd');
-			socket.off('playerSpellRemove');
-			socket.off('playerSpellChange');
+			socket.off('spellAdd');
+			socket.off('spellRemove');
+			socket.off('spellChange');
 		};
 	});
 
@@ -93,12 +110,12 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				const spell = res.data.spell as Spell;
 				setPlayerSpells([...playerSpells, spell]);
 
-				const newSpells = [...spells];
+				const newSpells = [...availableSpells];
 				newSpells.splice(
 					newSpells.findIndex((spell) => spell.id === id),
 					1
 				);
-				setSpells(newSpells);
+				setAvailableSpells(newSpells);
 			})
 			.catch(logError)
 			.finally(() => {
@@ -115,7 +132,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 		setPlayerSpells(newPlayerSpells);
 
 		const modalSpell = { id, name: playerSpells[index].name };
-		setSpells([...spells, modalSpell]);
+		setAvailableSpells([...availableSpells, modalSpell]);
 	}
 
 	function onMaxSlotsBlur() {
@@ -161,7 +178,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				title='Adicionar'
 				show={addSpellShow}
 				onHide={() => setAddSpellShow(false)}
-				data={spells}
+				data={availableSpells}
 				onAddData={onAddSpell}
 				disabled={loading}
 			/>

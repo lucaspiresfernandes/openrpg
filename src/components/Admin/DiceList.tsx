@@ -19,8 +19,6 @@ export default function DiceList(props: { players: { id: number; name: string }[
 	}, [values]);
 
 	useEffect(() => {
-		if (!socket) return;
-
 		socket.on('diceResult', (playerID, _results, _dices) => {
 			const playerName =
 				props.players.find((p) => p.id === playerID)?.name || 'Desconhecido';
@@ -59,7 +57,7 @@ export default function DiceList(props: { players: { id: number; name: string }[
 			socket.off('diceResult');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [socket]);
+	}, []);
 
 	return (
 		<DataContainer xs={12} lg title='Histórico'>

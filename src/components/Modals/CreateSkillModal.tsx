@@ -23,12 +23,13 @@ type CreateSkillModalProps = {
 
 export default function CreateSkillModal(props: CreateSkillModalProps) {
 	const [name, setName] = useState('');
-	const [startValue, setStartValue] = useState('');
+	const [startValue, setStartValue] = useState('0');
 	const [specializationID, setSpecializationID] = useState(0);
 	const [mandatory, setMandatory] = useState(false);
 
 	function reset() {
 		setName('');
+		setStartValue('0');
 		setSpecializationID(props.specialization[0]?.id || 0);
 		setMandatory(false);
 	}

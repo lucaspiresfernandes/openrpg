@@ -111,7 +111,7 @@ function HomePage() {
 	);
 }
 
-function LoginForm(props: { onSubmit(username: string, password: string): void }) {
+function LoginForm(props: { onSubmit: (username: string, password: string) => void }) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 

@@ -6,13 +6,26 @@ import type {
 	Info,
 	Spec,
 } from '@prisma/client';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
+import type {
+	PlayerAttributeStatusChangeEvent,
+	PlayerInfoChangeEvent,
+	PlayerAttributeChangeEvent,
+	PlayerSpecChangeEvent,
+	PlayerCurrencyChangeEvent,
+	PlayerEquipmentAddEvent,
+	PlayerEquipmentRemoveEvent,
+	PlayerItemAddEvent,
+	PlayerItemRemoveEvent,
+	PlayerItemChangeEvent,
+	PlayerMaxLoadChangeEvent,
+} from '../../utils/socket';
 import AvatarField from './AvatarField';
 import PlayerPortraitButton from './PlayerPortraitButton';
 
@@ -48,10 +61,7 @@ type PlayerManagerProps = {
 			Spec: Spec;
 			value: string;
 		}[];
-		PlayerEquipment: {
-			Equipment: Equipment;
-			currentAmmo: number | null;
-		}[];
+		PlayerEquipment: { Equipment: Equipment }[];
 		PlayerItem: PlayerItem[];
 		PlayerCurrency: {
 			value: string;
@@ -80,163 +90,207 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 			.catch(logError);
 	}
 
+	const socket_playerAttributeStatusChange = useRef<PlayerAttributeStatusChangeEvent>(
+		() => {}
+	);
+	const socket_playerInfoChange = useRef<PlayerInfoChangeEvent>(() => {});
+	const socket_playerAttributeChange = useRef<PlayerAttributeChangeEvent>(() => {});
+	const socket_playerSpecChange = useRef<PlayerSpecChangeEvent>(() => {});
+	const socket_playerCurrencyChange = useRef<PlayerCurrencyChangeEvent>(() => {});
+	const socket_playerEquipmentAdd = useRef<PlayerEquipmentAddEvent>(() => {});
+	const socket_playerEquipmentRemove = useRef<PlayerEquipmentRemoveEvent>(() => {});
+	const socket_playerItemAdd = useRef<PlayerItemAddEvent>(() => {});
+	const socket_playerItemRemove = useRef<PlayerItemRemoveEvent>(() => {});
+	const socket_playerItemChange = useRef<PlayerItemChangeEvent>(() => {});
+	const socket_playerMaxLoadChange = useRef<PlayerMaxLoadChangeEvent>(() => {});
+
 	useEffect(() => {
-		if (!socket) return;
+		socket_playerAttributeStatusChange.current = (playerId, id, value) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
 
-		socket.on('attributeStatusChange', (playerId, attrStatusID, value) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const index = player.PlayerAttributeStatus.findIndex(
-					(curr) => curr.AttributeStatus.id === attrStatusID
-				);
-				if (index === -1) return players;
-				player.PlayerAttributeStatus[index].value = value;
-				return newPlayers;
-			})
+			const index = player.PlayerAttributeStatus.findIndex(
+				(curr) => curr.AttributeStatus.id === id
+			);
+			if (index === -1) return;
+
+			player.PlayerAttributeStatus[index].value = value;
+			setPlayers([...players]);
+		};
+
+		socket_playerInfoChange.current = (playerId, id, value) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerAttributeStatus.findIndex(
+				(curr) => curr.AttributeStatus.id === id
+			);
+			if (index === -1) return;
+
+			player.PlayerInfo[index].value = value;
+			setPlayers([...players]);
+		};
+
+		socket_playerAttributeChange.current = (playerId, id, value, maxValue) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerAttributeStatus.findIndex(
+				(curr) => curr.AttributeStatus.id === id
+			);
+			if (index === -1 || (value === null && maxValue === null)) return;
+
+			if (value !== null) player.PlayerAttributes[index].value = value;
+			if (maxValue !== null) player.PlayerAttributes[index].maxValue = maxValue;
+
+			setPlayers([...players]);
+		};
+
+		socket_playerSpecChange.current = (playerId, id, value) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerAttributeStatus.findIndex(
+				(curr) => curr.AttributeStatus.id === id
+			);
+			if (index === -1) return;
+
+			player.PlayerSpec[index].value = value;
+			setPlayers([...players]);
+		};
+
+		socket_playerCurrencyChange.current = (playerId, id, value) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerAttributeStatus.findIndex(
+				(curr) => curr.AttributeStatus.id === id
+			);
+			if (index === -1) return;
+
+			player.PlayerCurrency[index].value = value;
+			setPlayers([...players]);
+		};
+
+		socket_playerEquipmentAdd.current = (playerId, equipment) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			player.PlayerEquipment = [...player.PlayerEquipment, { Equipment: equipment }];
+
+			setPlayers([...players]);
+		};
+
+		socket_playerEquipmentRemove.current = (playerId, id) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerEquipment.findIndex((it) => it.Equipment.id === id);
+			if (index === -1) return;
+
+			player.PlayerEquipment.splice(index, 1);
+
+			setPlayers([...players]);
+		};
+
+		socket_playerItemAdd.current = (playerId, item, currentDescription, quantity) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			player.PlayerItem = [
+				...player.PlayerItem,
+				{ Item: item, currentDescription, quantity },
+			];
+
+			setPlayers([...players]);
+		};
+
+		socket_playerItemRemove.current = (playerId, id) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerItem.findIndex((it) => it.Item.id === id);
+			if (index === -1) return;
+
+			player.PlayerItem.splice(index, 1);
+
+			setPlayers([...players]);
+		};
+
+		socket_playerItemChange.current = (playerId, id, currentDescription, quantity) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			const index = player.PlayerItem.findIndex((it) => it.Item.id === id);
+			if (index === -1) return;
+
+			if (currentDescription !== null)
+				player.PlayerItem[index].currentDescription = currentDescription;
+			if (quantity !== null) player.PlayerItem[index].quantity = quantity;
+
+			setPlayers([...players]);
+		};
+
+		socket_playerMaxLoadChange.current = (playerId, newLoad) => {
+			const player = players.find((p) => p.id === playerId);
+			if (!player) return;
+
+			player.maxLoad = newLoad;
+
+			setPlayers([...players]);
+		};
+	});
+
+	useEffect(() => {
+		socket.on('playerAttributeStatusChange', (playerId, attrStatusID, value) =>
+			socket_playerAttributeStatusChange.current(playerId, attrStatusID, value)
 		);
-
-		socket.on('infoChange', (playerId, infoID, value) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const index = player.PlayerInfo.findIndex((curr) => curr.Info.id === infoID);
-				if (index === -1) return players;
-				player.PlayerInfo[index].value = value;
-				return newPlayers;
-			})
+		socket.on('playerInfoChange', (playerId, infoID, value) =>
+			socket_playerInfoChange.current(playerId, infoID, value)
 		);
-
-		socket.on('attributeChange', (playerId, attributeID, value, maxValue) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const index = player.PlayerAttributes.findIndex(
-					(curr) => curr.Attribute.id === attributeID
-				);
-				if (index === -1) return players;
-				if (value !== null) player.PlayerAttributes[index].value = value;
-				if (maxValue !== null) player.PlayerAttributes[index].maxValue = maxValue;
-				return newPlayers;
-			})
+		socket.on('playerAttributeChange', (playerId, attributeID, value, maxValue, show) =>
+			socket_playerAttributeChange.current(playerId, attributeID, value, maxValue, show)
 		);
-
-		socket.on('specChange', (playerId, specID, value) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const index = player.PlayerSpec.findIndex((curr) => curr.Spec.id === specID);
-				if (index === -1) return players;
-				player.PlayerSpec[index].value = value;
-				return newPlayers;
-			})
+		socket.on('playerSpecChange', (playerId, specID, value) =>
+			socket_playerSpecChange.current(playerId, specID, value)
 		);
-
-		socket.on('currencyChange', (playerId, currencyId, value) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const index = player.PlayerCurrency.findIndex(
-					(curr) => curr.Currency.id === currencyId
-				);
-				if (index === -1) return players;
-				player.PlayerCurrency[index].value = value;
-				return newPlayers;
-			})
+		socket.on('playerCurrencyChange', (playerId, currencyId, value) =>
+			socket_playerCurrencyChange.current(playerId, currencyId, value)
 		);
-
-		socket.on('equipmentAdd', (playerId, playerEquipment) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				player.PlayerEquipment = [...player.PlayerEquipment, playerEquipment];
-				return newPlayers;
-			})
+		socket.on('playerEquipmentAdd', (playerId, equipment) =>
+			socket_playerEquipmentAdd.current(playerId, equipment)
 		);
-
-		socket.on('equipmentRemove', (playerId, equipID) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const newEquipments = [...player.PlayerEquipment];
-				const index = newEquipments.findIndex((equip) => equip.Equipment.id === equipID);
-				if (index === -1) return players;
-				newEquipments.splice(index, 1);
-				player.PlayerEquipment = newEquipments;
-				return newPlayers;
-			})
+		socket.on('playerEquipmentRemove', (playerId, equipID) =>
+			socket_playerEquipmentRemove.current(playerId, equipID)
 		);
-
-		socket.on('itemAdd', (playerId, playerItem) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				player.PlayerItem = [...player.PlayerItem, playerItem];
-				return newPlayers;
-			})
+		socket.on('playerItemAdd', (playerId, item, currentDescription, quantity) =>
+			socket_playerItemAdd.current(playerId, item, currentDescription, quantity)
 		);
-
-		socket.on('itemRemove', (playerId, itemID) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const newItems = [...player.PlayerItem];
-				const index = newItems.findIndex((item) => item.Item.id === itemID);
-				if (index === -1) return players;
-				newItems.splice(index, 1);
-				player.PlayerItem = newItems;
-				return newPlayers;
-			})
+		socket.on('playerItemRemove', (playerId, itemID) =>
+			socket_playerItemRemove.current(playerId, itemID)
 		);
-
-		socket.on('itemChange', (playerId, itemID, currentDescription, quantity) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				const newItems = [...player.PlayerItem];
-				const index = newItems.findIndex((item) => item.Item.id === itemID);
-				if (index === -1) return players;
-				if (currentDescription !== null)
-					newItems[index].currentDescription = currentDescription;
-				if (quantity !== null) newItems[index].quantity = quantity;
-				return newPlayers;
-			})
+		socket.on('playerItemChange', (playerId, itemID, currentDescription, quantity) =>
+			socket_playerItemChange.current(playerId, itemID, currentDescription, quantity)
 		);
-
-		socket.on('maxLoadChange', (playerId, newLoad) =>
-			setPlayers((players) => {
-				const newPlayers = [...players];
-				const player = newPlayers.find((p) => p.id === playerId);
-				if (!player) return players;
-				player.maxLoad = newLoad;
-				return newPlayers;
-			})
+		socket.on('playerMaxLoadChange', (playerId, newLoad) =>
+			socket_playerMaxLoadChange.current(playerId, newLoad)
 		);
 
 		return () => {
-			socket.off('infoChange');
-			socket.off('attributeChange');
-			socket.off('specChange');
-			socket.off('currencyChange');
-			socket.off('equipmentAdd');
-			socket.off('equipmentRemove');
-			socket.off('itemAdd');
-			socket.off('itemRemove');
-			socket.off('itemChange');
-			socket.off('maxLoadChange');
+			socket.off('playerAttributeStatusChange');
+			socket.off('playerInfoChange');
+			socket.off('playerAttributeChange');
+			socket.off('playerSpecChange');
+			socket.off('playerCurrencyChange');
+			socket.off('playerEquipmentAdd');
+			socket.off('playerEquipmentRemove');
+			socket.off('playerItemAdd');
+			socket.off('playerItemRemove');
+			socket.off('playerItemChange');
+			socket.off('playerMaxLoadChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [socket]);
+	}, []);
 
 	if (players.length === 0)
 		return (

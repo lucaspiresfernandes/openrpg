@@ -12,7 +12,7 @@ export type DiceResult = {
 	};
 };
 
-export function resolveDices(dices: string): ResolvedDice[] | undefined {
+export function resolveDices(dices: string) {
 	let formattedDiceString = dices.replace(/\s/g, '').toUpperCase();
 
 	const options = formattedDiceString.split('|');

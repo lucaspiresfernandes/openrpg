@@ -10,22 +10,15 @@ import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContain
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
 import type { PortraitSideAttribute } from '../../components/Portrait/PortraitSideAttributeContainer';
 import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
-import useSocket, { SocketIO } from '../../hooks/useSocket';
-import type {
-	Environment,
-	PortraitConfig
-} from '../../utils/config';
+import type { SocketIO } from '../../hooks/useSocket';
+import useSocket from '../../hooks/useSocket';
+import type { Environment, PortraitConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 
 export default function CharacterPortrait(
 	props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	useSocket((socket) => {
-		setSocket(socket);
-		socket.emit('roomJoin', `portrait${props.playerId}`);
-	});
+	const socket = useSocket(`portrait${props.playerId}`);
 
 	useEffect(() => {
 		document.body.style.backgroundColor = 'transparent';
@@ -71,7 +64,7 @@ function PortraitDiceRollContainer(props: {
 	attributeStatus: PortraitAttributeStatus;
 	sideAttribute: PortraitSideAttribute;
 	diceColor: string;
-	socket: SocketIO | null;
+	socket: SocketIO;
 }) {
 	const [showDice, setShowDice] = useState(false);
 

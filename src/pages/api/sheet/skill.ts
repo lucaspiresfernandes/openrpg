@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest } from 'next';
 import database from '../../../utils/database';
 import { sessionAPI } from '../../../utils/session';
 import type { NextApiResponseServerIO } from '../../../utils/socket';
@@ -39,10 +39,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	res.end();
 
 	if (name !== undefined || specialization_id !== undefined)
-		res.socket.server.io?.emit('playerSkillChange', id, skill.name, skill.Specialization);
+		res.socket.server.io?.emit(
+			'skillChange',
+			id,
+			skill.name,
+			skill.Specialization?.name || null
+		);
 }
 
-async function handlePut(req: NextApiRequest, res: NextApiResponse) {
+async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
 
 	if (!player || !player.admin) {
@@ -63,12 +68,23 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
 	const skill = await database.skill.create({
 		data: { name, startValue, mandatory, specialization_id },
+		select: {
+			id: true,
+			name: true,
+			Specialization: {
+				select: {
+					name: true,
+				},
+			},
+		},
 	});
 
 	res.send({ id: skill.id });
+
+	res.socket.server.io?.emit('skillAdd', skill.id, skill.name, skill.Specialization?.name || null);
 }
 
-async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
+async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
 
 	if (!player || !player.admin) {
@@ -86,6 +102,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 	try {
 		await database.skill.delete({ where: { id } });
 		res.end();
+		res.socket.server.io?.emit('skillRemove', id);
 	} catch (err) {
 		if ((<any>err).code === 'P2003') {
 			res.status(400).send({

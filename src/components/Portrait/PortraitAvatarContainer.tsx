@@ -13,7 +13,7 @@ export type PortraitAttributeStatus = {
 export default function PortraitAvatar(props: {
 	attributeStatus: PortraitAttributeStatus;
 	playerId: number;
-	socket: SocketIO | null;
+	socket: SocketIO;
 }) {
 	const [src, setSrc] = useState('#');
 	const [showAvatar, setShowAvatar] = useState(false);
@@ -31,10 +31,7 @@ export default function PortraitAvatar(props: {
 	}, []);
 
 	useEffect(() => {
-		const socket = props.socket;
-		if (!socket) return;
-
-		socket.on('attributeStatusChange', (playerId, attrStatusID, value) => {
+		props.socket.on('playerAttributeStatusChange', (playerId, attrStatusID, value) => {
 			if (playerId !== props.playerId) return;
 			setAttributeStatus((status) => {
 				const newAttrStatus = [...status];
@@ -69,7 +66,7 @@ export default function PortraitAvatar(props: {
 		});
 
 		return () => {
-			socket.off('attributeStatusChange');
+			props.socket.off('playerAttributeStatusChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.socket]);

@@ -54,9 +54,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	res.end();
 
 	if (visible !== undefined) {
-		if (visible) res.socket.server.io?.emit('playerSpellAdd', id, spell.name);
-		else res.socket.server.io?.emit('playerSpellRemove', id, false);
-	} else res.socket.server.io?.emit('playerSpellChange', id, spell);
+		if (visible) res.socket.server.io?.emit('spellAdd', id, spell.name);
+		else res.socket.server.io?.emit('spellRemove', id, false);
+	} else res.socket.server.io?.emit('spellChange', id, spell);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -116,7 +116,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ id: spell.id });
 
-	res.socket.server.io?.emit('playerSpellAdd', spell.id, spell.name);
+	res.socket.server.io?.emit('spellAdd', spell.id, spell.name);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -138,7 +138,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerSpellRemove', id, true);
+	res.socket.server.io?.emit('spellRemove', id, true);
 }
 
 export default sessionAPI(handler);

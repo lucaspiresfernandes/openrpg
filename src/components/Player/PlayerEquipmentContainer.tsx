@@ -13,6 +13,11 @@ import useDiceRoll from '../../hooks/useDiceRoll';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import { resolveDices } from '../../utils/dice';
+import type {
+	EquipmentAddEvent,
+	EquipmentChangeEvent,
+	EquipmentRemoveEvent,
+} from '../../utils/socket';
 import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
@@ -38,74 +43,92 @@ type PlayerEquipmentContainerProps = {
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+
 	const [addEquipmentShow, setAddEquipmentShow] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [availableEquipments, setAvailableEquipments] = useState<
 		{ id: number; name: string }[]
 	>(props.availableEquipments);
 	const [playerEquipments, setPlayerEquipments] = useState(props.playerEquipments);
-	const playerEquipmentsRef = useRef(playerEquipments);
-	playerEquipmentsRef.current = playerEquipments;
+
 	const socket = useContext(Socket);
 	const logError = useContext(ErrorLogger);
 
+	const socket_equipmentAdd = useRef<EquipmentAddEvent>(() => {});
+	const socket_equipmentRemove = useRef<EquipmentRemoveEvent>(() => {});
+	const socket_equipmentChange = useRef<EquipmentChangeEvent>(() => {});
+
 	useEffect(() => {
-		if (!socket) return;
+		socket_equipmentAdd.current = (id, name) => {
+			if (availableEquipments.findIndex((eq) => eq.id === id) > -1) return;
+			setAvailableEquipments((equipments) => [...equipments, { id, name }]);
+		};
 
-		socket.on('playerEquipmentAdd', (id, name) => {
-			setAvailableEquipments((equipments) => {
-				if (
-					equipments.findIndex((eq) => eq.id === id) > -1 ||
-					playerEquipmentsRef.current.findIndex((eq) => eq.Equipment.id === id) > -1
-				)
-					return equipments;
-				return [...equipments, { id, name }];
-			});
-		});
-
-		socket.on('playerEquipmentRemove', (id, hardRemove) => {
+		socket_equipmentRemove.current = (id, hardRemove) => {
 			if (hardRemove) {
-				setPlayerEquipments((playerEquipments) => {
-					const index = playerEquipments.findIndex((eq) => eq.Equipment.id === id);
-					if (index === -1) return playerEquipments;
-					const newEquipments = [...playerEquipments];
-					newEquipments.slice(index, 1);
+				const index = playerEquipments.findIndex((eq) => eq.Equipment.id === id);
+				if (index === -1) return;
+
+				setPlayerEquipments((equipments) => {
+					const newEquipments = [...equipments];
+					newEquipments.splice(index, 1);
 					return newEquipments;
 				});
+				return;
 			}
+
+			const index = availableEquipments.findIndex((eq) => eq.id === id);
+			if (index === -1) return;
+
 			setAvailableEquipments((equipments) => {
-				const index = equipments.findIndex((eq) => eq.id === id);
-				if (index === -1) return equipments;
 				const newEquipments = [...equipments];
 				newEquipments.splice(index, 1);
 				return newEquipments;
 			});
-		});
-
-		socket.on('playerEquipmentChange', (id, equip) => {
-			setPlayerEquipments((equipments) => {
-				const index = equipments.findIndex((eq) => eq.Equipment.id === id);
-				if (index === -1) return equipments;
-				const newEquipments = [...equipments];
-				newEquipments[index].Equipment = equip;
-				return newEquipments;
-			});
-
-			setAvailableEquipments((equipments) => {
-				const index = equipments.findIndex((eq) => eq.id === id);
-				if (index === -1) return equipments;
-				const newEquipments = [...equipments];
-				newEquipments[index].name = equip.name;
-				return newEquipments;
-			});
-		});
-
-		return () => {
-			socket.off('playerEquipmentAdd');
-			socket.off('playerEquipmentRemove');
-			socket.off('playerEquipmentChange');
 		};
-	}, [socket]);
+
+		socket_equipmentChange.current = (equipment) => {
+			const availableEquipmentIndex = availableEquipments.findIndex(
+				(eq) => eq.id === equipment.id
+			);
+			if (availableEquipmentIndex > -1) {
+				setAvailableEquipments((equipments) => {
+					const newEquipments = [...equipments];
+					newEquipments[availableEquipmentIndex] = {
+						id: equipment.id,
+						name: equipment.name,
+					};
+					return newEquipments;
+				});
+				return;
+			}
+
+			const playerEquipmentIndex = playerEquipments.findIndex(
+				(eq) => eq.Equipment.id === equipment.id
+			);
+			if (playerEquipmentIndex === -1) return;
+
+			setPlayerEquipments((equipments) => {
+				const newEquipments = [...equipments];
+				newEquipments[playerEquipmentIndex].Equipment = equipment;
+				return newEquipments;
+			});
+		};
+	});
+
+	useEffect(() => {
+		socket.on('equipmentAdd', (id, name) => socket_equipmentAdd.current(id, name));
+		socket.on('equipmentRemove', (id, hardRemove) =>
+			socket_equipmentRemove.current(id, hardRemove)
+		);
+		socket.on('equipmentChange', (eq) => socket_equipmentChange.current(eq));
+		return () => {
+			socket.off('equipmentAdd');
+			socket.off('equipmentRemove');
+			socket.off('equipmentChange');
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	function onAddEquipment(id: number) {
 		setLoading(true);

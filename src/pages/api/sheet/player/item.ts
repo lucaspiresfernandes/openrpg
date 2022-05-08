@@ -36,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.socket.server.io
 		?.to('admin')
-		.emit('itemChange', player.id, itemID, currentDescription, quantity);
+		.emit('playerItemChange', player.id, itemID, currentDescription, quantity);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -61,13 +61,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 			player_id: player.id,
 			item_id: itemID,
 		},
-		select: {
-			quantity: true,
-			currentDescription: true,
-			Item: {
-				select: { id: true, name: true, description: true, weight: true },
-			},
-		},
+		include: { Item: true },
 	});
 
 	await prisma.playerItem.update({
@@ -79,7 +73,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ item });
 
-	res.socket.server.io?.to('admin').emit('itemAdd', player.id, item);
+	res.socket.server.io
+		?.to('admin')
+		.emit('playerItemAdd', player.id, item.Item, item.currentDescription, item.quantity);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -103,7 +99,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.to('admin').emit('itemRemove', player.id, itemID);
+	res.socket.server.io?.to('admin').emit('playerItemRemove', player.id, itemID);
 }
 
 export default sessionAPI(handler);

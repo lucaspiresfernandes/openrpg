@@ -61,7 +61,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ equipment });
 
-	res.socket.server.io?.to('admin').emit('equipmentAdd', player.id, equipment);
+	res.socket.server.io
+		?.to('admin')
+		.emit('playerEquipmentAdd', player.id, equipment.Equipment);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -84,7 +86,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.to('admin').emit('equipmentRemove', player.id, equipID);
+	res.socket.server.io?.to('admin').emit('playerEquipmentRemove', player.id, equipID);
 }
 
 export default sessionAPI(handler);

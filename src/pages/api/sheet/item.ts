@@ -35,9 +35,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	});
 
 	if (visible !== undefined) {
-		if (visible) res.socket.server.io?.emit('playerItemAdd', id, item.name);
-		else res.socket.server.io?.emit('playerItemRemove', id, false);
-	} else if (name !== undefined) res.socket.server.io?.emit('playerItemChange', id, name);
+		if (visible) res.socket.server.io?.emit('itemAdd', id, item.name);
+		else res.socket.server.io?.emit('itemRemove', id, false);
+	} else if (name !== undefined) res.socket.server.io?.emit('itemChange', id, name);
 
 	res.end();
 }
@@ -62,7 +62,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ id: item.id });
 
-	res.socket.server.io?.emit('playerItemAdd', item.id, item.name);
+	res.socket.server.io?.emit('itemAdd', item.id, item.name);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -84,7 +84,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerItemRemove', id, true);
+	res.socket.server.io?.emit('itemRemove', id, true);
 }
 
 export default sessionAPI(handler);

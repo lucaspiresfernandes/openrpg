@@ -36,7 +36,7 @@ const bounds: DraggableBounds = {
 };
 
 export default function PortraitEnvironmentalContainer(props: {
-	socket: SocketIO | null;
+	socket: SocketIO;
 	environment: Environment;
 	attributes: PortraitAttributes;
 	playerName: PortraitPlayerName;
@@ -51,17 +51,12 @@ export default function PortraitEnvironmentalContainer(props: {
 	}, []);
 
 	useEffect(() => {
-		const socket = props.socket;
-		if (!socket) return;
-
-		socket.on('configChange', (name, newValue) => {
-			if (name === 'environment') {
-				setEnvironment(newValue as Environment);
-			}
+		props.socket.on('configChange', (name, newValue) => {
+			if (name === 'environment') setEnvironment(newValue as Environment);
 		});
 
 		return () => {
-			socket.off('configChange');
+			props.socket.off('configChange');
 		};
 	}, [props.socket]);
 
@@ -96,7 +91,7 @@ export default function PortraitEnvironmentalContainer(props: {
 function PortraitAttributesContainer(props: {
 	positionY: number;
 	onDragStop: DraggableEventHandler;
-	socket: SocketIO | null;
+	socket: SocketIO;
 	environment: Environment;
 	attributes: PortraitAttributes;
 	playerId: number;
@@ -104,10 +99,7 @@ function PortraitAttributesContainer(props: {
 	const [attributes, setAttributes] = useState(props.attributes);
 
 	useEffect(() => {
-		const socket = props.socket;
-		if (!socket) return;
-
-		socket.on('attributeChange', (playerId, attributeId, value, maxValue, show) => {
+		props.socket.on('playerAttributeChange', (playerId, attributeId, value, maxValue, show) => {
 			if (playerId !== props.playerId) return;
 
 			setAttributes((attributes) => {
@@ -125,7 +117,7 @@ function PortraitAttributesContainer(props: {
 		});
 
 		return () => {
-			socket.off('attributeChange');
+			props.socket.off('playerAttributeChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.socket]);
@@ -157,7 +149,7 @@ function PortraitAttributesContainer(props: {
 function PortraitNameContainer(props: {
 	positionY: number;
 	onDragStop: DraggableEventHandler;
-	socket: SocketIO | null;
+	socket: SocketIO;
 	environment: Environment;
 	playerName: PortraitPlayerName;
 	playerId: number;
@@ -165,16 +157,13 @@ function PortraitNameContainer(props: {
 	const [playerName, setPlayerName] = useState(props.playerName.value);
 
 	useEffect(() => {
-		const socket = props.socket;
-		if (!socket) return;
-
-		socket.on('infoChange', (playerId, infoId, value) => {
+		props.socket.on('playerInfoChange', (playerId, infoId, value) => {
 			if (playerId !== props.playerId || infoId !== props.playerName.info_id) return;
 			setPlayerName(value);
 		});
 
 		return () => {
-			socket.off('infoChange');
+			props.socket.off('playerInfoChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.socket]);

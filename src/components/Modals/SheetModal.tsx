@@ -8,7 +8,7 @@ interface SheetModalProps extends ModalProps {
 	children?: React.ReactElement;
 	applyButton?: {
 		name: string;
-		onApply(ev: MouseEvent | FormEvent | undefined): any;
+		onApply: (ev: MouseEvent | FormEvent | undefined) => any;
 		disabled?: boolean;
 	};
 	closeButton?: {

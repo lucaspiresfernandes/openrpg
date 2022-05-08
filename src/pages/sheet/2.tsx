@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -12,7 +12,6 @@ import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
-import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
@@ -34,18 +33,11 @@ export default function Page(props: PageProps) {
 
 function PlayerSheet(props: PageProps) {
 	const [toasts, addToast] = useToast();
-	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	useSocket((socket) => {
-		socket.emit('roomJoin', `player${props.player.id}`);
-		setSocket(socket);
-	});
+	const socket = useSocket(`player${props.player.id}`);
 
 	useEffect(() => {
 		if (!socket) return;
-		socket.on('playerDelete', () =>
-			api.delete('/player').then(() => Router.push('/'))
-		);
+		socket.on('playerDelete', () => api.delete('/player').then(() => Router.push('/')));
 		return () => {
 			socket.off('playerDelete');
 		};

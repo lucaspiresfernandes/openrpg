@@ -1,5 +1,4 @@
 import type { GetServerSidePropsContext } from 'next';
-import { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -15,7 +14,6 @@ import DataContainer from '../../components/DataContainer';
 import ErrorToastContainer from '../../components/ErrorToastContainer';
 import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
 import { ErrorLogger, Socket } from '../../contexts';
-import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
@@ -36,12 +34,7 @@ export default function Page(props: PageProps) {
 
 function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 	const [toasts, addToast] = useToast();
-	const [socket, setSocket] = useState<SocketIO | null>(null);
-
-	useSocket((socket) => {
-		socket.emit('roomJoin', 'admin');
-		setSocket(socket);
-	});
+	const socket = useSocket('admin');
 
 	const playerNames = players.map((player) => {
 		return {
@@ -123,7 +116,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				},
 				PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
 				PlayerSpec: { select: { Spec: true, value: true } },
-				PlayerEquipment: { select: { Equipment: true, currentAmmo: true } },
+				PlayerEquipment: { include: { Equipment: true } },
 				PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } },
 				PlayerCurrency: { select: { Currency: true, value: true } },
 			},

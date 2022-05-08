@@ -7,7 +7,7 @@ import type { DiceResult } from '../../utils/dice';
 import { getAttributeStyle } from '../../utils/style';
 
 export default function PortraitDiceContainer(props: {
-	socket: SocketIO | null;
+	socket: SocketIO;
 	playerId: number;
 	showDice: boolean;
 	onShowDice: () => void;
@@ -20,10 +20,10 @@ export default function PortraitDiceContainer(props: {
 	const showDiceRef = useRef(props.showDice);
 
 	const [diceResult, setDiceResult] = useState<number | null>(null);
-	const diceResultRef = useRef<HTMLDivElement | null>(null);
+	const diceResultRef = useRef<HTMLDivElement>(null);
 	const lastDiceResult = useRef(0);
 	const [diceDescription, setDiceDescription] = useState<string | null>(null);
-	const diceDescriptionRef = useRef<HTMLDivElement | null>(null);
+	const diceDescriptionRef = useRef<HTMLDivElement>(null);
 	const lastDiceDescription = useRef('');
 
 	const diceVideo = useRef<HTMLVideoElement>(null);
@@ -40,13 +40,6 @@ export default function PortraitDiceContainer(props: {
 			diceDescriptionRef.current.style.color = style.color;
 			diceDescriptionRef.current.style.textShadow = style.textShadow;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		const socket = props.socket;
-
-		if (!socket) return;
 
 		function showDiceRoll() {
 			if (showDiceRef.current) return;
@@ -94,8 +87,8 @@ export default function PortraitDiceContainer(props: {
 			else diceData.current = undefined;
 		}
 
-		socket.on('diceRoll', showDiceRoll);
-		socket.on('diceResult', (playerId, results) => {
+		props.socket.on('diceRoll', showDiceRoll);
+		props.socket.on('diceResult', (playerId, results) => {
 			if (playerId !== props.playerId) return;
 			if (results.length === 1) onDiceResult(results[0]);
 			else if (results.length > 1) {
@@ -106,11 +99,11 @@ export default function PortraitDiceContainer(props: {
 		});
 
 		return () => {
-			socket.off('diceRoll');
-			socket.off('diceResult');
+			props.socket.off('diceRoll');
+			props.socket.off('diceResult');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.socket]);
+	}, []);
 
 	return (
 		<div className={styles.diceContainer}>

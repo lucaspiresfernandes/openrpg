@@ -1,6 +1,4 @@
-import type { Skill } from '@prisma/client';
-import { ChangeEvent, useMemo, useRef } from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
@@ -11,6 +9,11 @@ import useDiceRoll from '../../hooks/useDiceRoll';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
+import type {
+	SkillAddEvent,
+	SkillChangeEvent,
+	SkillRemoveEvent,
+} from '../../utils/socket';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
@@ -28,7 +31,13 @@ type PlayerSkillContainerProps = {
 			} | null;
 		};
 	}[];
-	availableSkills: Skill[];
+	availableSkills: {
+		id: number;
+		name: string;
+		Specialization: {
+			name: string;
+		} | null;
+	}[];
 	skillDiceConfig: DiceConfigCell;
 	title: string;
 	automaticMarking: boolean;
@@ -36,6 +45,7 @@ type PlayerSkillContainerProps = {
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+
 	const [addSkillShow, setAddSkillShow] = useState(false);
 	const [availableSkills, setAvailableSkills] = useState(props.availableSkills);
 	const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
@@ -45,6 +55,95 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 
 	const socket = useContext(Socket);
 	const logError = useContext(ErrorLogger);
+
+	const socket_skillAdd = useRef<SkillAddEvent>(() => {});
+	const socket_skillRemove = useRef<SkillRemoveEvent>(() => {});
+	const socket_skillChange = useRef<SkillChangeEvent>(() => {});
+
+	useEffect(() => {
+		socket_skillAdd.current = (id, name, specializationName) => {
+			if (availableSkills.findIndex((sk) => sk.id === id) > -1) return;
+			setAvailableSkills((skills) => [
+				...skills,
+				{
+					id,
+					name,
+					Specialization: specializationName
+						? {
+								name: specializationName,
+						  }
+						: null,
+				},
+			]);
+		};
+
+		socket_skillRemove.current = (id) => {
+			const availableSkillIndex = availableSkills.findIndex((skill) => skill.id === id);
+			if (availableSkillIndex > -1) {
+				setAvailableSkills((availableSkills) => {
+					const newSkills = [...availableSkills];
+					newSkills.splice(availableSkillIndex, 1);
+					return newSkills;
+				});
+				return;
+			}
+
+			const playerSkillIndex = playerSkills.findIndex((skill) => skill.Skill.id === id);
+			if (playerSkillIndex === -1) return;
+
+			setPlayerSkills((skills) => {
+				const newSkills = [...skills];
+				newSkills.splice(playerSkillIndex, 1);
+				return newSkills;
+			});
+		};
+
+		socket_skillChange.current = (id, name, specializationName) => {
+			const availableSkillIndex = availableSkills.findIndex((skill) => skill.id === id);
+
+			if (availableSkillIndex > -1) {
+				setAvailableSkills((skills) => {
+					const newSkills = [...skills];
+					newSkills[availableSkillIndex] = {
+						id,
+						name,
+						Specialization: specializationName ? { name: specializationName } : null,
+					};
+					return newSkills;
+				});
+				return;
+			}
+
+			const playerSkillIndex = playerSkills.findIndex((skill) => skill.Skill.id === id);
+			if (playerSkillIndex === -1) return;
+
+			setPlayerSkills((skills) => {
+				const newSkills = [...skills];
+				newSkills[playerSkillIndex].Skill = {
+					id,
+					name,
+					Specialization: specializationName ? { name: specializationName } : null,
+				};
+				return newSkills;
+			});
+		};
+	});
+
+	useEffect(() => {
+		socket.on('skillAdd', (id, name, specializationName) =>
+			socket_skillAdd.current(id, name, specializationName)
+		);
+		socket.on('skillRemove', (id) => socket_skillRemove.current(id));
+		socket.on('skillChange', (id, name, specializationName) =>
+			socket_skillChange.current(id, name, specializationName)
+		);
+		return () => {
+			socket.off('skillAdd');
+			socket.off('skillRemove');
+			socket.off('skillChange');
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	function onAddSkill(id: number) {
 		setLoading(true);
@@ -68,34 +167,6 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 			});
 	}
 
-	useEffect(() => {
-		if (!socket) return;
-
-		socket.on('playerSkillChange', (id, name, Specialization) => {
-			setPlayerSkills((skills) => {
-				const index = skills.findIndex((skill) => skill.Skill.id === id);
-				if (index === -1) return skills;
-
-				const newSkills = [...skills];
-				newSkills[index].Skill = { id, name, Specialization };
-				return newSkills;
-			});
-
-			setAvailableSkills((skills) => {
-				const index = skills.findIndex((skill) => skill.id === id);
-				if (index === -1) return skills;
-
-				const newSkills = [...skills];
-				newSkills[index].name = name;
-				return newSkills;
-			});
-		});
-
-		return () => {
-			socket.off('playerSkillChange');
-		};
-	}, [socket]);
-
 	function clearChecks() {
 		setLoading(true);
 		api
@@ -105,7 +176,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 			.finally(() => setLoading(false));
 	}
 
-	const skillList = useMemo(
+	const playerSkillsList = useMemo(
 		() =>
 			playerSkills
 				.map((skill) => {
@@ -121,6 +192,19 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				})
 				.sort((a, b) => a.name.localeCompare(b.name)),
 		[playerSkills]
+	);
+
+	const availableSkillsList = useMemo(
+		() =>
+			availableSkills.map((skill) => {
+				let name = skill.name;
+				if (skill.Specialization) name = `${skill.Specialization.name} (${name})`;
+				return {
+					id: skill.id,
+					name,
+				};
+			}),
+		[availableSkills]
 	);
 
 	return (
@@ -146,7 +230,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 					</Col>
 				</Row>
 				<Row className='mb-3 mx-1 text-center justify-content-center'>
-					{skillList.map((skill) => (
+					{playerSkillsList.map((skill) => (
 						<PlayerSkillField
 							key={skill.id}
 							{...skill}
@@ -163,7 +247,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				title='Adicionar'
 				show={addSkillShow}
 				onHide={() => setAddSkillShow(false)}
-				data={availableSkills}
+				data={availableSkillsList}
 				onAddData={onAddSkill}
 				disabled={loading}
 			/>

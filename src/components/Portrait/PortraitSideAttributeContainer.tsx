@@ -27,7 +27,7 @@ const bounds: DraggableBounds = {
 };
 
 export default function PortraitSideAttributeContainer(props: {
-	socket: SocketIO | null;
+	socket: SocketIO;
 	sideAttribute: PortraitSideAttribute;
 }) {
 	const [sideAttribute, setSideAttribute] = useState(props.sideAttribute);
@@ -42,10 +42,7 @@ export default function PortraitSideAttributeContainer(props: {
 	}, []);
 
 	useEffect(() => {
-		const socket = props.socket;
-		if (!socket) return;
-
-		socket.on('attributeChange', (playerId, attributeId, value) => {
+		props.socket.on('playerAttributeChange', (playerId, attributeId, value) => {
 			if (value === null) return;
 
 			setSideAttribute((attr) => {
@@ -55,7 +52,7 @@ export default function PortraitSideAttributeContainer(props: {
 		});
 
 		return () => {
-			socket.off('attributeChange');
+			props.socket.off('playerAttributeChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.socket]);

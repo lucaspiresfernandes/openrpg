@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('attributeStatusChange', player.id, statusID, value);
+	res.socket.server.io?.emit('playerAttributeStatusChange', player.id, statusID, value);
 }
 
 export default sessionAPI(handler);

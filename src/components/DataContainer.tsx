@@ -3,6 +3,7 @@ import type { ColProps } from 'react-bootstrap/Col';
 import Col from 'react-bootstrap/Col';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Row from 'react-bootstrap/Row';
+import CustomSpinner from './CustomSpinner';
 
 interface DataContainerProps extends ColProps {
 	title: string;
@@ -52,7 +53,7 @@ export default function DataContainer({
 								variant='secondary'
 								onClick={addButton.onAdd}
 								disabled={addButton.disabled}>
-								+
+								{addButton.disabled ? <CustomSpinner /> : '+'}
 							</Button>
 						)}
 					</Col>
