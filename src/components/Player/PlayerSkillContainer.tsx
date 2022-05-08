@@ -37,9 +37,7 @@ type PlayerSkillContainerProps = {
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	const [addSkillShow, setAddSkillShow] = useState(false);
-	const [availableSkills, setAvailableSkills] = useState<{ id: number; name: string }[]>(
-		props.availableSkills
-	);
+	const [availableSkills, setAvailableSkills] = useState(props.availableSkills);
 	const [playerSkills, setPlayerSkills] = useState(props.playerSkills);
 	const [loading, setLoading] = useState(false);
 	const [search, setSearch] = useState('');
@@ -239,12 +237,10 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 				const result = results[0];
 				if (!props.automaticMarking || !result.resultType?.isSuccess || checked) return;
 				setChecked(true);
-				api
-					.post('/sheet/player/skill', { id: props.id, checked: true })
-					.catch((err) => {
-						logError(err);
-						setChecked(false);
-					});
+				api.post('/sheet/player/skill', { id: props.id, checked: true }).catch((err) => {
+					logError(err);
+					setChecked(false);
+				});
 			}
 		);
 	}

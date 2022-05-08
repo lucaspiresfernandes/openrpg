@@ -48,11 +48,16 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const skill = await prisma.playerSkill.create({
+	const skill = await prisma.skill.findUnique({
+		where: { id: skillID },
+		select: { startValue: true },
+	});
+
+	const playerSkill = await prisma.playerSkill.create({
 		data: {
 			player_id: player.id,
 			skill_id: skillID,
-			value: 0,
+			value: skill?.startValue || 0,
 			checked: false,
 		},
 		select: {
@@ -64,7 +69,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		},
 	});
 
-	res.send({ skill });
+	res.send({ skill: playerSkill });
 }
 
 export default sessionAPI(handler);
