@@ -1,3 +1,4 @@
+import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
@@ -13,8 +14,11 @@ import useAuthentication from '../../hooks/useAuthentication';
 import useToast from '../../hooks/useToast';
 import homeStyles from '../../styles/modules/Home.module.scss';
 import api from '../../utils/api';
+import prisma from '../../utils/database';
 
-export default function Register() {
+export default function Register(
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
 	const [loading, setLoading] = useState(true);
 	const [toasts, addToast] = useToast();
 
@@ -75,7 +79,7 @@ export default function Register() {
 						</h1>
 					</Col>
 				</Row>
-				<RegisterForm onSubmit={onFormSubmit} />
+				<RegisterForm onSubmit={onFormSubmit} disableKey={props.firstAdmin} />
 				<Row>
 					<Col>
 						<Row className='my-3'>
@@ -109,11 +113,12 @@ function RegisterForm(props: {
 		confirmPassword: string,
 		adminKey: string
 	) => void;
+	disableKey: boolean;
 }) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const [adminKey, setAdminKey] = useState('');
+	const [adminKey, setAdminKey] = useState(props.disableKey ? 'disabled' : '');
 
 	return (
 		<form
@@ -121,7 +126,7 @@ function RegisterForm(props: {
 				ev.preventDefault();
 				setPassword('');
 				setConfirmPassword('');
-				setAdminKey('');
+				if (!props.disableKey) setAdminKey('');
 				props.onSubmit(username, password, confirmPassword, adminKey);
 			}}>
 			<Row className='my-3 justify-content-center'>
@@ -162,19 +167,25 @@ function RegisterForm(props: {
 					/>
 				</Col>
 			</Row>
-			<Row className='my-3 justify-content-center'>
-				<Col md={6}>
-					<FormControl
-						type='password'
-						className='text-center theme-element'
-						placeholder='Chave do Mestre'
-						id='adminKey'
-						name='adminKey'
-						value={adminKey}
-						onChange={(e) => setAdminKey(e.currentTarget.value)}
-					/>
-				</Col>
-			</Row>
+			{props.disableKey ? (
+				<label>
+					Chave do mestre desabilitada para o primeiro cadastro de mestre.
+				</label>
+			) : (
+				<Row className='my-3 justify-content-center'>
+					<Col md={6}>
+						<FormControl
+							type='password'
+							className='text-center theme-element'
+							placeholder='Chave do Mestre'
+							id='adminKey'
+							name='adminKey'
+							value={adminKey}
+							onChange={(e) => setAdminKey(e.currentTarget.value)}
+						/>
+					</Col>
+				</Row>
+			)}
 			<Row className='my-3 justify-content-center'>
 				<Col md={6}>
 					<Button type='submit' variant='secondary'>
@@ -184,4 +195,14 @@ function RegisterForm(props: {
 			</Row>
 		</form>
 	);
+}
+
+export async function getServerSideProps() {
+	const admins = await prisma.player.findMany({ where: { role: 'ADMIN' } });
+
+	return {
+		props: {
+			firstAdmin: admins.length === 0,
+		},
+	};
 }

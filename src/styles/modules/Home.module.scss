@@ -11,5 +11,6 @@
         border-radius: 5px;
         background-color: #ff000070;
     }
-    transition: all 250ms;
+    transition-property: padding, border;
+    transition-duration: 250ms;
 }

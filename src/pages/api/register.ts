@@ -11,10 +11,6 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
-	const serverAdminKey = (
-		await prisma.config.findUnique({ where: { name: 'admin_key' } })
-	)?.value as string;
-
 	const username = req.body.username;
 	const plainPassword = req.body.password;
 	const adminKey = req.body.adminKey;
@@ -33,9 +29,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	let isAdmin = false;
 	if (adminKey) {
-		if (adminKey === serverAdminKey) {
-			isAdmin = true;
-		} else {
+		isAdmin = await validateAdminKey(adminKey);
+		if (!isAdmin) {
 			res.status(401).send({ message: 'Chave do mestre incorreta.' });
 			return;
 		}
@@ -61,6 +56,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	await req.session.save();
 
 	res.json({ id: player.id });
+}
+
+async function validateAdminKey(key: string) {
+	const admin = await prisma.player.findMany({ where: { role: 'ADMIN' } });
+
+	if (admin.length === 0) return true;
+
+	const serverAdminKey = (
+		await prisma.config.findUnique({ where: { name: 'admin_key' } })
+	)?.value as string;
+
+	if (key === serverAdminKey) return true;
+	return false;
 }
 
 async function registerPlayerData(player: Player) {
