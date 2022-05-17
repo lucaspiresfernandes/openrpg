@@ -218,6 +218,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 						now={value}
 						min={0}
 						max={maxValue}
+						style={{ backgroundColor: `#${props.playerAttribute.Attribute.color}40` }}
 						ref={barRef}
 						className='clickable'
 						onClick={onNewMaxValue}

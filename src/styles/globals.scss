@@ -8,24 +8,18 @@ $secondary: #6c757d;
 	$text-color: #000000;
 	$skill-container-outline-color: #111111;
 	$player-container-background-color: #cecece;
-	$attribute-bar-background-color: gray;
 
 	@if $dark-theme {
 		$background-color: #111111;
 		$text-color: #ffffff;
 		$skill-container-outline-color: #ffffff;
 		$player-container-background-color: #252525;
-		$attribute-bar-background-color: #2b2b2b;
 	}
 
 	padding: 0;
 	font-family: 'Cinzel', serif;
 	background-color: $background-color;
 	color: $text-color;
-
-	.progress {
-		background-color: $attribute-bar-background-color;
-	}
 
 	.table {
 		color: $text-color;
@@ -39,19 +33,16 @@ $secondary: #6c757d;
 	}
 
 	.skill-container {
-		$text-color-hover: invert($text-color);
-
 		background-color: $background-color;
 		border-radius: 20px;
 
 		&:hover {
 			background-color: $skill-container-outline-color;
-			.text {
-				background-color: $skill-container-outline-color;
-				color: $text-color-hover;
-			}
-			.label {
-				color: $text-color-hover;
+			color: invert($text-color);
+
+			input {
+				background-color: inherit;
+				color: inherit;
 			}
 		}
 	}
