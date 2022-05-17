@@ -345,14 +345,14 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			<Row>
 				<Col>
 					<BottomTextInput
-						className='text text-center w-75'
+						className='text-center w-75'
 						value={value}
 						onChange={onValueChange}
 						onBlur={valueBlur}
 					/>
 				</Col>
 			</Row>
-			<Row className='label h-100' onClick={rollDice}>
+			<Row className='h-100' onClick={rollDice}>
 				<Col>{props.name}</Col>
 			</Row>
 		</Col>

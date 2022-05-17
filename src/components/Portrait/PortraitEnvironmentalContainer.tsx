@@ -99,22 +99,25 @@ function PortraitAttributesContainer(props: {
 	const [attributes, setAttributes] = useState(props.attributes);
 
 	useEffect(() => {
-		props.socket.on('playerAttributeChange', (playerId, attributeId, value, maxValue, show) => {
-			if (playerId !== props.playerId) return;
+		props.socket.on(
+			'playerAttributeChange',
+			(playerId, attributeId, value, maxValue, show) => {
+				if (playerId !== props.playerId) return;
 
-			setAttributes((attributes) => {
-				const index = attributes.findIndex((attr) => attr.Attribute.id === attributeId);
-				if (index === -1) return attributes;
+				setAttributes((attributes) => {
+					const index = attributes.findIndex((attr) => attr.Attribute.id === attributeId);
+					if (index === -1) return attributes;
 
-				const newAttributes = [...attributes];
+					const newAttributes = [...attributes];
 
-				if (value !== null) newAttributes[index].value = value;
-				if (maxValue !== null) newAttributes[index].maxValue = maxValue;
-				if (show != null) newAttributes[index].show = show;
+					if (value !== null) newAttributes[index].value = value;
+					if (maxValue !== null) newAttributes[index].maxValue = maxValue;
+					if (show != null) newAttributes[index].show = show;
 
-				return newAttributes;
-			});
-		});
+					return newAttributes;
+				});
+			}
+		);
 
 		return () => {
 			props.socket.off('playerAttributeChange');
@@ -135,9 +138,7 @@ function PortraitAttributesContainer(props: {
 							className={styles.attribute}
 							style={getAttributeStyle(attr.Attribute.color)}
 							key={attr.Attribute.id}>
-							<label htmlFor='#'>
-								{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}
-							</label>
+							<label>{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}</label>
 						</div>
 					))}
 				</div>
@@ -175,9 +176,7 @@ function PortraitNameContainer(props: {
 			position={{ x: 0, y: props.positionY }}
 			bounds={bounds}>
 			<Fade in={props.environment === 'idle'}>
-				<label htmlFor='#' className={styles.nameContainer}>
-					{playerName || 'Desconhecido'}
-				</label>
+				<label className={styles.nameContainer}>{playerName || 'Desconhecido'}</label>
 			</Fade>
 		</Draggable>
 	);

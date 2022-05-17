@@ -4,6 +4,7 @@ import Image from 'react-bootstrap/Image';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import api from '../../utils/api';
+import type { PlayerAttributeStatusChangeEvent } from '../../utils/socket';
 
 export type PortraitAttributeStatus = {
 	value: boolean;
@@ -30,40 +31,43 @@ export default function PortraitAvatar(props: {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const socket_playerAttributeStatusChange = useRef<PlayerAttributeStatusChangeEvent>(
+		() => {}
+	);
+
 	useEffect(() => {
-		props.socket.on('playerAttributeStatusChange', (playerId, attrStatusID, value) => {
+		socket_playerAttributeStatusChange.current = (playerId, id, value) => {
 			if (playerId !== props.playerId) return;
-			setAttributeStatus((status) => {
-				const newAttrStatus = [...status];
-				const index = newAttrStatus.findIndex(
-					(stat) => stat.attribute_status_id === attrStatusID
-				);
-				if (index === -1) return status;
+			const newStatus = [...attributeStatus];
 
-				newAttrStatus[index].value = value;
+			const index = newStatus.findIndex((stat) => stat.attribute_status_id === id);
+			if (index === -1) return;
 
-				const newStatusID =
-					newAttrStatus.find((stat) => stat.value)?.attribute_status_id || 0;
+			newStatus[index].value = value;
 
-				if (newStatusID !== previousStatusID.current) {
-					previousStatusID.current = newStatusID;
-					api
-						.get(`/sheet/player/avatar/${newStatusID}`, {
-							params: { playerID: props.playerId },
-						})
-						.then((res) => {
-							setSrc((src) => {
-								if (res.data.link === src.split('?')[0]) return src;
-								setShowAvatar(false);
-								return `${res.data.link}?v=${Date.now()}`;
-							});
-						})
-						.catch(() => setSrc('/avatar404.png'));
-				}
+			const newStatusID = newStatus.find((stat) => stat.value)?.attribute_status_id || 0;
+			setAttributeStatus(newStatus);
 
-				return newAttrStatus;
-			});
-		});
+			if (newStatusID !== previousStatusID.current) {
+				previousStatusID.current = newStatusID;
+				api
+					.get(`/sheet/player/avatar/${newStatusID}`, {
+						params: { playerID: props.playerId },
+					})
+					.then((res) => {
+						if (res.data.link === src.split('?')[0]) return;
+						setShowAvatar(false);
+						setSrc(`${res.data.link}?v=${Date.now()}`);
+					})
+					.catch(() => setSrc('/avatar404.png'));
+			}
+		};
+	});
+
+	useEffect(() => {
+		props.socket.on('playerAttributeStatusChange', (playerId, id, value) =>
+			socket_playerAttributeStatusChange.current(playerId, id, value)
+		);
 
 		return () => {
 			props.socket.off('playerAttributeStatusChange');

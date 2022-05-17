@@ -1,7 +1,7 @@
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type {
 	DiceRoll,
-	DiceRollResultModalProps,
+	DiceRollResultModalProps
 } from '../components/Modals/DiceRollResultModal';
 import type { DiceResult, ResolvedDice } from '../utils/dice';
 
@@ -22,14 +22,11 @@ export default function useDiceRoll(): [DiceRollResultModalProps, DiceRollEvent]
 		setDiceRoll(roll);
 	};
 
-	const DiceRollModalProps: DiceRollResultModalProps = useMemo(
-		() => ({
-			...diceRoll,
-			onHide: () => setDiceRoll({ dices: [] }),
-			onRollAgain: () => setDiceRoll(lastRoll.current),
-		}),
-		[diceRoll]
-	);
+	const diceRollModalProps = {
+		...diceRoll,
+		onHide: () => setDiceRoll({ dices: [] }),
+		onRollAgain: () => setDiceRoll(lastRoll.current),
+	};
 
-	return [DiceRollModalProps, onDiceRoll];
+	return [diceRollModalProps, onDiceRoll];
 }

@@ -77,9 +77,7 @@ export default function PortraitSideAttributeContainer(props: {
 	return (
 		<Draggable axis='both' onStop={onDragStop} position={position} bounds={bounds}>
 			<div className={styles.sideContainer} style={{ ...attributeStyle }}>
-				<label htmlFor='#' className={styles.side}>
-					{sideAttribute.value}
-				</label>
+				<label className={styles.side}>{sideAttribute.value}</label>
 			</div>
 		</Draggable>
 	);
