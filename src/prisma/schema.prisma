@@ -12,6 +12,8 @@ datasource db {
 
 model Player {
   id                    Int                     @id @default(autoincrement())
+  name                  String                  @default("")
+  showName              Boolean                 @default(true)
   username              String
   password              String
   maxLoad               Float                   @default(1)
@@ -35,7 +37,6 @@ model Player {
 model Info {
   id         Int          @id @default(autoincrement())
   name       String
-  default    Boolean      @default(false)
   PlayerInfo PlayerInfo[]
 }
 

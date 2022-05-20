@@ -3,7 +3,6 @@ import type {
 	AttributeStatus,
 	Currency,
 	Equipment,
-	Info,
 	Spec,
 } from '@prisma/client';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -14,17 +13,17 @@ import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
 import type {
-	PlayerAttributeStatusChangeEvent,
-	PlayerInfoChangeEvent,
 	PlayerAttributeChangeEvent,
-	PlayerSpecChangeEvent,
+	PlayerAttributeStatusChangeEvent,
 	PlayerCurrencyChangeEvent,
 	PlayerEquipmentAddEvent,
 	PlayerEquipmentRemoveEvent,
 	PlayerItemAddEvent,
-	PlayerItemRemoveEvent,
 	PlayerItemChangeEvent,
+	PlayerItemRemoveEvent,
 	PlayerMaxLoadChangeEvent,
+	PlayerNameChangeEvent,
+	PlayerSpecChangeEvent,
 } from '../../utils/socket';
 import AvatarField from './AvatarField';
 import PlayerPortraitButton from './PlayerPortraitButton';
@@ -43,14 +42,11 @@ type PlayerItem = {
 type PlayerManagerProps = {
 	players: {
 		id: number;
+		name: string;
 		maxLoad: number;
 		PlayerAttributeStatus: {
 			AttributeStatus: AttributeStatus;
 			value: boolean;
-		}[];
-		PlayerInfo: {
-			Info: Info;
-			value: string;
 		}[];
 		PlayerAttributes: {
 			Attribute: Attribute;
@@ -93,7 +89,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 	const socket_playerAttributeStatusChange = useRef<PlayerAttributeStatusChangeEvent>(
 		() => {}
 	);
-	const socket_playerInfoChange = useRef<PlayerInfoChangeEvent>(() => {});
+	const socket_playerNameChange = useRef<PlayerNameChangeEvent>(() => {});
 	const socket_playerAttributeChange = useRef<PlayerAttributeChangeEvent>(() => {});
 	const socket_playerSpecChange = useRef<PlayerSpecChangeEvent>(() => {});
 	const socket_playerCurrencyChange = useRef<PlayerCurrencyChangeEvent>(() => {});
@@ -118,16 +114,12 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 			setPlayers([...players]);
 		};
 
-		socket_playerInfoChange.current = (playerId, id, value) => {
+		socket_playerNameChange.current = (playerId, value) => {
 			const player = players.find((p) => p.id === playerId);
 			if (!player) return;
 
-			const index = player.PlayerAttributeStatus.findIndex(
-				(curr) => curr.AttributeStatus.id === id
-			);
-			if (index === -1) return;
+			player.name = value;
 
-			player.PlayerInfo[index].value = value;
 			setPlayers([...players]);
 		};
 
@@ -245,8 +237,8 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 		socket.on('playerAttributeStatusChange', (playerId, attrStatusID, value) =>
 			socket_playerAttributeStatusChange.current(playerId, attrStatusID, value)
 		);
-		socket.on('playerInfoChange', (playerId, infoID, value) =>
-			socket_playerInfoChange.current(playerId, infoID, value)
+		socket.on('playerNameChange', (playerId, value) =>
+			socket_playerNameChange.current(playerId, value)
 		);
 		socket.on('playerAttributeChange', (playerId, attributeID, value, maxValue, show) =>
 			socket_playerAttributeChange.current(playerId, attributeID, value, maxValue, show)
@@ -278,7 +270,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 
 		return () => {
 			socket.off('playerAttributeStatusChange');
-			socket.off('playerInfoChange');
+			socket.off('playerNameChange');
 			socket.off('playerAttributeChange');
 			socket.off('playerSpecChange');
 			socket.off('playerCurrencyChange');
@@ -346,13 +338,11 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 								})}
 							/>
 							<Row className='mt-2'>
-								{player.PlayerInfo.map((info) => (
-									<Col key={info.Info.id}>
-										<Row>
-											<Col className='h5'>{info.value || 'Desconhecido'}</Col>
-										</Row>
-									</Col>
-								))}
+								<Col>
+									<Row>
+										<Col className='h5'>{player.name || 'Desconhecido'}</Col>
+									</Row>
+								</Col>
 							</Row>
 							<hr />
 							<Row>

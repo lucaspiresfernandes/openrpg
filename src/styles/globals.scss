@@ -21,6 +21,14 @@ $secondary: #6c757d;
 	background-color: $background-color;
 	color: $text-color;
 
+	// .btn-primary {
+	// 	@include button-variant($background-color, $background-color);
+	// }
+	//
+	// .btn-secondary {
+	// 	@include button-variant($background-color, $background-color);
+	// }
+
 	.table {
 		color: $text-color;
 		tr {

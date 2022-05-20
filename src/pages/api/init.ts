@@ -188,40 +188,28 @@ const getDatabaseData = () => ({
 	],
 	info: [
 		{
-			name: 'Nome',
-			default: true,
-		},
-		{
 			name: 'Player',
-			default: false,
 		},
 		{
 			name: 'Ocupação',
-			default: false,
 		},
 		{
 			name: 'Idade',
-			default: false,
 		},
 		{
 			name: 'Gênero',
-			default: false,
 		},
 		{
 			name: 'Residência',
-			default: false,
 		},
 		{
 			name: 'Local de Nascimento',
-			default: false,
 		},
 		{
 			name: 'Peso',
-			default: false,
 		},
 		{
 			name: 'Altura',
-			default: false,
 		},
 	],
 	item: [

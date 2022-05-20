@@ -5,6 +5,9 @@ import type { NextApiResponse } from 'next';
 import type { Server as SocketIOServer } from 'socket.io';
 import type { DiceResult, ResolvedDice } from './dice';
 
+export type PlayerNameChangeEvent = (playerId: number, value: string) => void;
+export type PlayerNameShowChangeEvent = (playerId: number, show: boolean) => void;
+
 export type PlayerAttributeStatusChangeEvent = (
 	playerId: number,
 	attStatusId: number,
@@ -37,10 +40,7 @@ export type PlayerCurrencyChangeEvent = (
 	value: string
 ) => void;
 
-export type PlayerEquipmentAddEvent = (
-	playerId: number,
-	equipment: Equipment
-) => void;
+export type PlayerEquipmentAddEvent = (playerId: number, equipment: Equipment) => void;
 
 export type PlayerEquipmentRemoveEvent = (playerId: number, id: number) => void;
 
@@ -108,6 +108,8 @@ export type DiceResultEvent = (
 
 export interface ServerToClientEvents {
 	//---------- Player-triggered Events ----------
+	playerNameChange: PlayerNameChangeEvent;
+	playerNameShowChange: PlayerNameShowChangeEvent;
 	playerAttributeStatusChange: PlayerAttributeStatusChangeEvent;
 	playerInfoChange: PlayerInfoChangeEvent;
 	playerAttributeChange: PlayerAttributeChangeEvent;

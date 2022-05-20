@@ -39,9 +39,7 @@ function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 	const playerNames = players.map((player) => {
 		return {
 			id: player.id,
-			name:
-				player.PlayerInfo.find((info) => info.Info.name === 'Nome')?.value ||
-				'Desconhecido',
+			name: player.name,
 		};
 	});
 
@@ -108,12 +106,9 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { role: 'PLAYER' },
 			select: {
 				id: true,
+				name: true,
 				maxLoad: true,
 				PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
-				PlayerInfo: {
-					where: { Info: { name: { in: ['Nome'] } } },
-					select: { Info: true, value: true },
-				},
 				PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
 				PlayerSpec: { select: { Spec: true, value: true } },
 				PlayerEquipment: { include: { Equipment: true } },

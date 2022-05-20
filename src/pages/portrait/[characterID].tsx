@@ -106,6 +106,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 		prisma.player.findUnique({
 			where: { id: player_id },
 			select: {
+				name: true,
+				showName: true,
 				PlayerAttributes: {
 					where: {
 						Attribute: {
@@ -122,10 +124,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				PlayerAttributeStatus: {
 					select: { value: true, attribute_status_id: true },
 				},
-				PlayerInfo: {
-					where: { Info: { name: 'Nome' } },
-					select: { value: true, info_id: true },
-				},
 			},
 		}),
 	]);
@@ -138,7 +136,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				attributes: [],
 				attributeStatus: [],
 				sideAttribute: null,
-				playerName: { value: 'Desconhecido', info_id: 0 },
+				playerName: { name: 'Desconhecido', show: false },
 				notFound: true,
 				diceColor,
 			},
@@ -163,7 +161,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 			attributes,
 			sideAttribute,
 			attributeStatus: results[1].PlayerAttributeStatus,
-			playerName: results[1].PlayerInfo[0],
+			playerName: { name: results[1].name, show: results[1].showName },
 			diceColor,
 		},
 	};

@@ -11,10 +11,9 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import PlayerAttributeContainer from '../../components/Player/PlayerAttributeContainer';
 import PlayerCharacteristicContainer from '../../components/Player/PlayerCharacteristicContainer';
 import PlayerEquipmentContainer from '../../components/Player/PlayerEquipmentContainer';
-import PlayerInfoField from '../../components/Player/PlayerInfoField';
+import PlayerInfoContainer from '../../components/Player/PlayerInfoContainer';
 import PlayerItemContainer from '../../components/Player/PlayerItemContainer';
 import PlayerSkillContainer from '../../components/Player/PlayerSkillContainer';
-import PlayerSpecField from '../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../components/Player/PlayerSpellContainer';
 import { ErrorLogger, Socket } from '../../contexts';
 import useSocket from '../../hooks/useSocket';
@@ -68,46 +67,17 @@ function PlayerSheet(props: PageProps) {
 							<Col>Ficha do Personagem</Col>
 						</Row>
 						<Row className='mb-3'>
-							<DataContainer
-								outline
+							<PlayerInfoContainer
 								title={
 									props.containerConfig.find(
 										(c) => c.originalName === 'Detalhes Pessoais'
 									)?.name || 'Detalhes Pessoais'
-								}>
-								<>
-									{props.player.PlayerInfo.map((info) => (
-										<Row className='mb-4' key={info.Info.id}>
-											<Col className='mx-2'>
-												<Row>
-													<label className='h5' htmlFor={`info${info.Info.id}`}>
-														{info.Info.name}
-													</label>
-													<PlayerInfoField infoId={info.Info.id} value={info.value} />
-												</Row>
-											</Col>
-										</Row>
-									))}
-									<hr />
-									<Row className='justify-content-center'>
-										{props.player.PlayerSpec.map((spec) => (
-											<Col
-												key={spec.Spec.id}
-												xs={12}
-												sm={6}
-												lg={4}
-												className='text-center mb-2'>
-												<PlayerSpecField
-													value={spec.value}
-													specId={spec.Spec.id}
-													name={spec.Spec.name}
-												/>
-												<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
-											</Col>
-										))}
-									</Row>
-								</>
-							</DataContainer>
+								}
+								playerName={props.player.name}
+								playerNameShow={props.player.showName}
+								playerInfo={props.player.PlayerInfo}
+								playerSpec={props.player.PlayerSpec}
+							/>
 							<Col>
 								<PlayerAttributeContainer
 									playerAttributes={props.player.PlayerAttributes}
@@ -202,6 +172,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { id: player.id },
 			select: {
 				id: true,
+				name: true,
+				showName: true,
 				maxLoad: true,
 				spellSlots: true,
 				PlayerInfo: { select: { Info: true, value: true } },

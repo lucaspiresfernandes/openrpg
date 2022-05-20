@@ -12,10 +12,7 @@ import styles from '../../styles/modules/Portrait.module.scss';
 import type { Environment } from '../../utils/config';
 import { getAttributeStyle } from '../../utils/style';
 
-type PortraitPlayerName = {
-	value: string;
-	info_id: number;
-};
+type PortraitPlayerName = { name: string; show: boolean };
 
 type PortraitAttributes = {
 	value: number;
@@ -155,16 +152,21 @@ function PortraitNameContainer(props: {
 	playerName: PortraitPlayerName;
 	playerId: number;
 }) {
-	const [playerName, setPlayerName] = useState(props.playerName.value);
+	const [playerName, setPlayerName] = useState(props.playerName);
 
 	useEffect(() => {
-		props.socket.on('playerInfoChange', (playerId, infoId, value) => {
-			if (playerId !== props.playerId || infoId !== props.playerName.info_id) return;
-			setPlayerName(value);
+		props.socket.on('playerNameChange', (playerId, name) => {
+			if (playerId !== props.playerId) return;
+			setPlayerName((pn) => ({ ...pn, name }));
+		});
+
+		props.socket.on('playerNameShowChange', (playerId, show) => {
+			if (playerId !== props.playerId) return;
+			setPlayerName((pn) => ({ ...pn, show }));
 		});
 
 		return () => {
-			props.socket.off('playerInfoChange');
+			props.socket.off('playerNameChange');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.socket]);
@@ -176,7 +178,9 @@ function PortraitNameContainer(props: {
 			position={{ x: 0, y: props.positionY }}
 			bounds={bounds}>
 			<Fade in={props.environment === 'idle'}>
-				<label className={styles.nameContainer}>{playerName || 'Desconhecido'}</label>
+				<label className={styles.nameContainer}>
+					{playerName.show ? playerName.name || 'Desconhecido' : '???'}
+				</label>
 			</Fade>
 		</Draggable>
 	);
