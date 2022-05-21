@@ -29,43 +29,43 @@ export default function DataContainer({
 	const _title = htmlFor ? <label htmlFor={htmlFor}>{title}</label> : <>{title}</>;
 
 	return (
-		<Col
-			{...props}
-			className={`${outline ? 'data-container ' : ''}${
-				props.className ? props.className + ' ' : ''
-			}h-100 my-2`}>
-			{addButton ? (
-				<Row className='mx-1 text-center'>
-					<Col xs={{ offset: 2 }} className='mt-2 h2'>
-						{_title}
-					</Col>
-					<Col xs={2} className='align-self-center'>
-						{addButton.type === 'dropdown' ? (
-							<DropdownButton
-								title='+'
-								variant='secondary'
-								menuVariant='dark'
-								disabled={addButton.disabled}>
-								{addButton.children}
-							</DropdownButton>
-						) : (
-							<Button
-								variant='secondary'
-								onClick={addButton.onAdd}
-								disabled={addButton.disabled}>
-								{addButton.disabled ? <CustomSpinner /> : '+'}
-							</Button>
-						)}
-					</Col>
-					<hr />
-				</Row>
-			) : (
-				<Row className='mx-1'>
-					<Col className='mt-2 h2 text-center'>{_title}</Col>
-					<hr />
-				</Row>
-			)}
-			{children}
+		<Col {...props} className={props.className}>
+			<Row className={outline ? 'data-container' : undefined}>
+				<Col>
+					{addButton ? (
+						<Row className='mx-1 text-center'>
+							<Col xs={{ offset: 2 }} className='mt-2 h2'>
+								{_title}
+							</Col>
+							<Col xs={2} className='align-self-center'>
+								{addButton.type === 'dropdown' ? (
+									<DropdownButton
+										title='+'
+										variant='secondary'
+										menuVariant='dark'
+										disabled={addButton.disabled}>
+										{addButton.children}
+									</DropdownButton>
+								) : (
+									<Button
+										variant='secondary'
+										onClick={addButton.onAdd}
+										disabled={addButton.disabled}>
+										{addButton.disabled ? <CustomSpinner /> : '+'}
+									</Button>
+								)}
+							</Col>
+							<hr />
+						</Row>
+					) : (
+						<Row className='mx-1'>
+							<Col className='mt-2 h2 text-center'>{_title}</Col>
+							<hr />
+						</Row>
+					)}
+					{children}
+				</Col>
+			</Row>
 		</Col>
 	);
 }

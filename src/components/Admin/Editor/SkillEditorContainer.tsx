@@ -1,55 +1,165 @@
 import type { Skill, Specialization } from '@prisma/client';
-import type { ChangeEvent } from 'react';
+import type { AxiosRequestConfig } from 'axios';
 import { useContext, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import FormCheck from 'react-bootstrap/FormCheck';
-import Row from 'react-bootstrap/Row';
-import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
-import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
-import CreateSkillModal from '../../Modals/CreateSkillModal';
+import SkillEditorModal from '../../Modals/SkillEditorModal';
 import CreateSpecializationModal from '../../Modals/CreateSpecializationModal';
-import AdminTable from '../AdminTable';
+import EditorRow from './EditorRow';
+import EditorRowWrapper from './EditorRowWrapper';
+
+type SpecializationEditorContainerProps = {
+	skills: Skill[];
+	specializations: Specialization[];
+};
+
+export default function SpecializationEditorContainer(
+	props: SpecializationEditorContainerProps
+) {
+	const [loading, setLoading] = useState(false);
+	const [specializationModal, setSpecializationModal] = useState<
+		EditorModalData<Specialization>
+	>({
+		show: false,
+		operation: 'create',
+	});
+	const [specializations, setSpecializations] = useState(props.specializations);
+	const logError = useContext(ErrorLogger);
+
+	function onModalSubmit({ id, name }: Specialization) {
+		setLoading(true);
+
+		const config: AxiosRequestConfig =
+			specializationModal.operation === 'create'
+				? {
+						method: 'PUT',
+						data: { name },
+				  }
+				: {
+						method: 'POST',
+						data: { id, name },
+				  };
+
+		api('/sheet/specialization', config)
+			.then((res) => {
+				if (specializationModal.operation === 'create') {
+					setSpecializations([...specializations, { id: res.data.id, name }]);
+					return;
+				}
+				specializations[specializations.findIndex((cur) => cur.id === id)].name = name;
+				setSpecializations([...specializations]);
+			})
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
+	function deleteSpecialization(id: number) {
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/specialization', { data: { id } })
+			.then(() => {
+				specializations.splice(
+					specializations.findIndex((sp) => sp.id === id),
+					1
+				);
+				setSpecializations([...specializations]);
+			})
+			.catch(logError)
+			.finally(() => setLoading(false));
+	}
+
+	return (
+		<>
+			<DataContainer
+				xs={6}
+				outline
+				title='Especializações'
+				addButton={{
+					onAdd: () => setSpecializationModal({ operation: 'create', show: true }),
+					disabled: loading,
+				}}>
+				<EditorRowWrapper>
+					{specializations.map((spec) => (
+						<EditorRow
+							key={spec.id}
+							name={spec.name}
+							onEdit={() =>
+								setSpecializationModal({ operation: 'edit', show: true, data: spec })
+							}
+							onDelete={() => deleteSpecialization(spec.id)}
+						/>
+					))}
+				</EditorRowWrapper>
+			</DataContainer>
+			<CreateSpecializationModal
+				{...specializationModal}
+				onHide={() => setSpecializationModal({ operation: 'create', show: false })}
+				onSubmit={onModalSubmit}
+				disabled={loading}
+			/>
+			<SkillEditorContainer skills={props.skills} specializations={specializations} />
+		</>
+	);
+}
 
 type SkillEditorContainerProps = {
 	skills: Skill[];
 	specializations: Specialization[];
 };
 
-export default function SkillEditorContainer(props: SkillEditorContainerProps) {
+function SkillEditorContainer(props: SkillEditorContainerProps) {
 	const [loading, setLoading] = useState(false);
-	const [showSkillModal, setShowSkillModal] = useState(false);
+	const [skillModal, setSkillModal] = useState<EditorModalData<Skill>>({
+		show: false,
+		operation: 'create',
+	});
 	const [skills, setSkills] = useState(props.skills);
-	const [showSpecModal, setShowSpecModal] = useState(false);
-	const [specializations, setSpecializations] = useState(props.specializations);
 	const logError = useContext(ErrorLogger);
 
-	function createSkill(
-		name: string,
-		startValue: number,
-		mandatory: boolean,
-		specializationID: number | null
-	) {
+	function onModalSubmit({ id, name, mandatory, specialization_id, startValue }: Skill) {
 		setLoading(true);
-		api
-			.put('/sheet/skill', { name, startValue, specializationID, mandatory })
+
+		const config: AxiosRequestConfig =
+			skillModal.operation === 'create'
+				? {
+						method: 'PUT',
+						data: { name, mandatory, specialization_id, startValue },
+				  }
+				: {
+						method: 'POST',
+						data: { id, name, mandatory, specialization_id, startValue },
+				  };
+
+		api('/sheet/skill', config)
 			.then((res) => {
-				const id = res.data.id;
-				setSkills([
-					...skills,
-					{ id, name, startValue, specialization_id: specializationID, mandatory },
-				]);
+				if (skillModal.operation === 'create') {
+					setSkills([
+						...skills,
+						{
+							id: res.data.id,
+							name,
+							mandatory,
+							specialization_id,
+							startValue,
+						},
+					]);
+					return;
+				}
+				const index = skills.findIndex((sk) => sk.id === id);
+				skills[index] = {
+					...skills[index],
+					id,
+					name,
+					mandatory,
+					specialization_id,
+					startValue,
+				};
+				setSkills([...skills]);
 			})
 			.catch(logError)
-			.finally(() => {
-				setLoading(false);
-				setShowSkillModal(false);
-			});
+			.finally(() => setLoading(false));
 	}
 
 	function deleteSkill(id: number) {
@@ -61,286 +171,43 @@ export default function SkillEditorContainer(props: SkillEditorContainerProps) {
 		}
 	}
 
-	function onSpecializationNameChange(id: number, name: string) {
-		const newSpecializations = [...specializations];
-		const sp = newSpecializations.find((sp) => sp.id === id);
-		if (sp) {
-			sp.name = name;
-			setSpecializations(newSpecializations);
-		}
-	}
-
-	function createSpecialization(name: string) {
-		setLoading(true);
-		api
-			.put('/sheet/specialization', { name })
-			.then((res) => {
-				const id = res.data.id;
-				setSpecializations([...specializations, { id, name }]);
-			})
-			.catch(logError)
-			.finally(() => {
-				setLoading(false);
-				setShowSpecModal(false);
-			});
-	}
-
-	function deleteSpecialization(id: number) {
-		const newSpec = [...specializations];
-		const index = newSpec.findIndex((specialization) => specialization.id === id);
-		if (index > -1) {
-			newSpec.splice(index, 1);
-			setSpecializations(newSpec);
-		}
-	}
-
 	return (
 		<>
-			<Row>
-				<DataContainer
-					outline
-					title='Especializações'
-					addButton={{ onAdd: () => setShowSpecModal(true), disabled: loading }}>
-					<Row>
-						<Col>
-							<AdminTable>
-								<thead>
-									<tr>
-										<th></th>
-										<th title='Nome da Especialização.'>Nome</th>
-									</tr>
-								</thead>
-								<tbody>
-									{specializations.map((specialization) => (
-										<SpecializationEditorField
-											key={specialization.id}
-											specialization={specialization}
-											onDelete={deleteSpecialization}
-											onNameChange={onSpecializationNameChange}
-										/>
-									))}
-								</tbody>
-							</AdminTable>
-						</Col>
-					</Row>
-				</DataContainer>
-			</Row>
-			<Row>
-				<DataContainer
-					outline
-					title='Perícias'
-					addButton={{ onAdd: () => setShowSkillModal(true), disabled: loading }}>
-					<Row>
-						<Col>
-							<AdminTable>
-								<thead>
-									<tr>
-										<th></th>
-										<th title='Nome da Perícia.'>Nome</th>
-										<th title='Define qual Especialização será ligada à Perícia.'>
-											Especialização
-										</th>
-										<th title='Valor inicial da Perícia ao ser adicionada.'>
-											Valor Inicial
-										</th>
-										<th title='Define se essa Perícia será obrigatória a um jogador ter.'>
-											Obrigatório
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{skills.map((skill) => (
-										<SkillEditorField
-											key={skill.id}
-											skill={skill}
-											onDelete={deleteSkill}
-											specializations={specializations}
-										/>
-									))}
-								</tbody>
-							</AdminTable>
-						</Col>
-					</Row>
-				</DataContainer>
-			</Row>
-			<CreateSpecializationModal
-				show={showSpecModal}
-				onHide={() => setShowSpecModal(false)}
-				onCreate={createSpecialization}
+			<DataContainer
+				xs={6}
+				outline
+				title='Perícias'
+				addButton={{
+					onAdd: () => setSkillModal({ operation: 'create', show: true }),
+					disabled: loading,
+				}}>
+				<EditorRowWrapper>
+					{skills.map((skill) => {
+						let name = skill.name;
+						const spec = props.specializations.find(
+							(sp) => sp.id === skill.specialization_id
+						);
+						if (spec) name = `${spec.name} (${name})`;
+						return (
+							<EditorRow
+								key={skill.id}
+								name={name}
+								onEdit={() =>
+									setSkillModal({ operation: 'edit', show: true, data: skill })
+								}
+								onDelete={() => deleteSkill(skill.id)}
+							/>
+						);
+					})}
+				</EditorRowWrapper>
+			</DataContainer>
+			<SkillEditorModal
+				{...skillModal}
+				onHide={() => setSkillModal({ operation: 'create', show: false })}
+				onSubmit={onModalSubmit}
 				disabled={loading}
-			/>
-			<CreateSkillModal
-				show={showSkillModal}
-				onHide={() => setShowSkillModal(false)}
-				onCreate={createSkill}
-				specialization={specializations}
-				disabled={loading}
+				specializations={props.specializations}
 			/>
 		</>
-	);
-}
-
-type SkillEditorFieldProps = {
-	skill: Skill;
-	specializations: Specialization[];
-	onDelete: (id: number) => void;
-};
-
-function SkillEditorField(props: SkillEditorFieldProps) {
-	const [loading, setLoading] = useState(false);
-	const [lastName, name, setName] = useExtendedState(props.skill.name);
-	const [lastStartValue, startValue, setStartValue] = useExtendedState(
-		props.skill.startValue
-	);
-	const [specializationID, setSpecializationID] = useState(props.skill.specialization_id);
-	const [mandatory, setMandatory] = useState(props.skill.mandatory);
-	const logError = useContext(ErrorLogger);
-
-	function onNameBlur() {
-		if (name === lastName) return;
-		setName(name);
-		api.post('/sheet/skill', { id: props.skill.id, name }).catch(logError);
-	}
-
-	function onSpecializationChange(ev: ChangeEvent<HTMLSelectElement>) {
-		const sID = parseInt(ev.currentTarget.value);
-		setSpecializationID(sID);
-		api
-			.post('/sheet/skill', { id: props.skill.id, specializationID: sID })
-			.catch((err) => {
-				logError(err);
-				setSpecializationID(specializationID);
-			});
-	}
-
-	function onStartValueChange(ev: ChangeEvent<HTMLInputElement>) {
-		const aux = ev.currentTarget.value;
-		let newValue = parseInt(aux);
-
-		if (aux.length === 0) newValue = 0;
-		else if (isNaN(newValue)) return;
-
-		setStartValue(newValue);
-	}
-
-	function onStartValueBlur() {
-		if (startValue === lastStartValue) return;
-		setStartValue(startValue);
-		api.post('/sheet/skill', { id: props.skill.id, startValue }).catch(logError);
-	}
-
-	function mandatoryChange() {
-		const newMandatory = !mandatory;
-		setMandatory(newMandatory);
-		api
-			.post('/sheet/skill', { id: props.skill.id, mandatory: newMandatory })
-			.catch((err) => {
-				setMandatory(mandatory);
-				logError(err);
-			});
-	}
-
-	function onDelete() {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		setLoading(true);
-		api
-			.delete('/sheet/skill', { data: { id: props.skill.id } })
-			.then(() => props.onDelete(props.skill.id))
-			.catch(logError)
-			.finally(() => setLoading(false));
-	}
-
-	return (
-		<tr>
-			<td>
-				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
-					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
-				</Button>
-			</td>
-			<td>
-				<BottomTextInput
-					value={name}
-					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onNameBlur}
-					disabled={loading}
-				/>
-			</td>
-			<td>
-				<select
-					className='theme-element'
-					value={specializationID || 0}
-					onChange={onSpecializationChange}
-					disabled={loading}>
-					<option value={0}>Nenhuma</option>
-					{props.specializations.map((attr) => (
-						<option key={attr.id} value={attr.id}>
-							{attr.name}
-						</option>
-					))}
-				</select>
-			</td>
-			<td>
-				<BottomTextInput
-					className='text-center'
-					value={startValue}
-					onChange={onStartValueChange}
-					onBlur={onStartValueBlur}
-					style={{ maxWidth: '3rem' }}
-					disabled={loading}
-				/>
-			</td>
-			<td>
-				<FormCheck checked={mandatory} onChange={mandatoryChange} disabled={loading} />
-			</td>
-		</tr>
-	);
-}
-
-type SpecializationEditorFieldProps = {
-	specialization: Specialization;
-	onDelete: (id: number) => void;
-	onNameChange?: (id: number, newName: string) => void;
-};
-
-function SpecializationEditorField(props: SpecializationEditorFieldProps) {
-	const [loading, setLoading] = useState(false);
-	const [lastName, name, setName] = useExtendedState(props.specialization.name);
-	const logError = useContext(ErrorLogger);
-
-	function onBlur() {
-		if (name === lastName) return;
-		setName(name);
-		if (props.onNameChange) props.onNameChange(props.specialization.id, name);
-		api
-			.post('/sheet/specialization', { id: props.specialization.id, name })
-			.catch(logError);
-	}
-
-	function onDelete() {
-		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
-		setLoading(true);
-		api
-			.delete('/sheet/specialization', { data: { id: props.specialization.id } })
-			.then(() => props.onDelete(props.specialization.id))
-			.catch(logError)
-			.finally(() => setLoading(false));
-	}
-
-	return (
-		<tr>
-			<td>
-				<Button onClick={onDelete} size='sm' variant='secondary'>
-					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
-				</Button>
-			</td>
-			<td>
-				<BottomTextInput
-					value={name}
-					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onBlur}
-					disabled={loading}
-				/>
-			</td>
-		</tr>
 	);
 }

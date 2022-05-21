@@ -1,17 +1,12 @@
 import type { Info } from '@prisma/client';
+import type { AxiosRequestConfig } from 'axios';
 import { useContext, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
-import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
-import CreateInfoModal from '../../Modals/CreateInfoModal';
-import AdminTable from '../AdminTable';
+import InfoEditorModal from '../../Modals/InfoEditorModal';
+import EditorRow from './EditorRow';
+import EditorRowWrapper from './EditorRowWrapper';
 
 type InfoEditorContainerProps = {
 	info: Info[];
@@ -19,115 +14,85 @@ type InfoEditorContainerProps = {
 };
 
 export default function InfoEditorContainer(props: InfoEditorContainerProps) {
-	const logError = useContext(ErrorLogger);
 	const [loading, setLoading] = useState(false);
-	const [showInfoModal, setShowInfoModal] = useState(false);
+	const [infoModal, setInfoModal] = useState<EditorModalData<Info>>({
+		show: false,
+		operation: 'create',
+	});
 	const [info, setInfo] = useState(props.info);
+	const logError = useContext(ErrorLogger);
 
-	function createInfo(name: string) {
+	function onModalSubmit({ id, name }: Info) {
 		setLoading(true);
-		api
-			.put('/sheet/info', { name })
+
+		const config: AxiosRequestConfig =
+			infoModal.operation === 'create'
+				? {
+						method: 'PUT',
+						data: { name },
+				  }
+				: {
+						method: 'POST',
+						data: { id, name },
+				  };
+
+		api('/sheet/info', config)
 			.then((res) => {
-				const id = res.data.id;
-				setInfo([...info, { id, name, default: false }]);
+				if (infoModal.operation === 'create') {
+					setInfo([...info, { id: res.data.id, name }]);
+					return;
+				}
+				info[info.findIndex((info) => info.id === id)].name = name;
+				setInfo([...info]);
 			})
 			.catch(logError)
-			.finally(() => {
-				setShowInfoModal(false);
-				setLoading(false);
-			});
+			.finally(() => setLoading(false));
 	}
 
 	function deleteInfo(id: number) {
-		const newInfo = [...info];
-		const index = newInfo.findIndex((info) => info.id === id);
-		if (index > -1) {
-			newInfo.splice(index, 1);
-			setInfo(newInfo);
-		}
-	}
-
-	return (
-		<>
-			<DataContainer
-				outline
-				title={`${props.title} (Geral)`}
-				addButton={{ onAdd: () => setShowInfoModal(true), disabled: loading }}>
-				<Row>
-					<Col>
-						<AdminTable>
-							<thead>
-								<tr>
-									<th></th>
-									<th title='Nome da Informação Pessoal.'>Nome</th>
-								</tr>
-							</thead>
-							<tbody>
-								{info.map((info) => (
-									<InfoEditorField key={info.id} {...info} onDelete={deleteInfo} />
-								))}
-							</tbody>
-						</AdminTable>
-					</Col>
-				</Row>
-			</DataContainer>
-			<CreateInfoModal
-				show={showInfoModal}
-				onHide={() => setShowInfoModal(false)}
-				onCreate={createInfo}
-				disabled={loading}
-			/>
-		</>
-	);
-}
-
-type InfoEditorFieldProps = {
-	id: number;
-	name: string;
-	default: boolean;
-	onDelete: (id: number) => void;
-};
-
-function InfoEditorField(props: InfoEditorFieldProps) {
-	const [loading, setLoading] = useState(false);
-	const [lastName, name, setName] = useExtendedState(props.name);
-	const logError = useContext(ErrorLogger);
-
-	function onBlur() {
-		if (name === lastName) return;
-		setName(name);
-		api.post('/sheet/info', { id: props.id, name }).catch(logError);
-	}
-
-	function onDelete() {
 		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
 		setLoading(true);
 		api
-			.delete('/sheet/info', { data: { id: props.id } })
-			.then(() => props.onDelete(props.id))
+			.delete('/sheet/info', { data: { id } })
+			.then(() => {
+				const newInfo = [...info];
+				const index = newInfo.findIndex((info) => info.id === id);
+				if (index > -1) {
+					newInfo.splice(index, 1);
+					setInfo(newInfo);
+				}
+			})
 			.catch(logError)
 			.finally(() => setLoading(false));
 	}
 
 	return (
-		<tr>
-			<td>
-				{!props.default && (
-					<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
-						{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
-					</Button>
-				)}
-			</td>
-			<td>
-				<BottomTextInput
-					value={name}
-					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onBlur}
-					readOnly={props.default}
-					disabled={props.default || loading}
-				/>
-			</td>
-		</tr>
+		<>
+			<DataContainer
+				xs={6}
+				outline
+				title={`${props.title} (Geral)`}
+				addButton={{
+					onAdd: () => setInfoModal({ operation: 'create', show: true }),
+					disabled: loading,
+				}}>
+				<EditorRowWrapper>
+					{info.map((info) => (
+						<EditorRow
+							key={info.id}
+							name={info.name}
+							onEdit={() => setInfoModal({ operation: 'edit', show: true, data: info })}
+							onDelete={() => deleteInfo(info.id)}
+						/>
+					))}
+				</EditorRowWrapper>
+			</DataContainer>
+			<InfoEditorModal
+				{...infoModal}
+				onHide={() => setInfoModal({ operation: 'create', show: false })}
+				onSubmit={onModalSubmit}
+				disabled={loading}
+			/>
+		</>
 	);
 }

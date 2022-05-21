@@ -1,17 +1,12 @@
 import type { Characteristic } from '@prisma/client';
+import type { AxiosRequestConfig } from 'axios';
 import { useContext, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
-import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
-import CreateCharacteristicModal from '../../Modals/CreateCharacteristicModal';
-import AdminTable from '../AdminTable';
+import CharacteristicEditorModal from '../../Modals/CharacteristicEditorModal';
+import EditorRow from './EditorRow';
+import EditorRowWrapper from './EditorRowWrapper';
 
 type CharacteristicEditorContainerProps = {
 	characteristics: Characteristic[];
@@ -22,118 +17,88 @@ export default function CharacteristicEditorContainer(
 	props: CharacteristicEditorContainerProps
 ) {
 	const [loading, setLoading] = useState(false);
-	const [showCharacteristicModal, setShowCharacteristicModal] = useState(false);
-	const [characteristic, setCharacteristic] = useState(props.characteristics);
+	const [characteristicModal, setCharacteristicModal] = useState<
+		EditorModalData<Characteristic>
+	>({
+		show: false,
+		operation: 'create',
+	});
+	const [characteristics, setCharacteristics] = useState(props.characteristics);
 	const logError = useContext(ErrorLogger);
 
-	function createCharacteristic(name: string) {
+	function onModalSubmit({ id, name }: Characteristic) {
 		setLoading(true);
-		api
-			.put('/sheet/characteristic', { name })
+
+		const config: AxiosRequestConfig =
+			characteristicModal.operation === 'create'
+				? {
+						method: 'PUT',
+						data: { name },
+				  }
+				: {
+						method: 'POST',
+						data: { id, name },
+				  };
+
+		api('/sheet/characteristic', config)
 			.then((res) => {
-				const id = res.data.id;
-				setCharacteristic([...characteristic, { id, name }]);
+				if (characteristicModal.operation === 'create') {
+					setCharacteristics([...characteristics, { id: res.data.id, name }]);
+					return;
+				}
+				characteristics[characteristics.findIndex((char) => char.id === id)].name = name;
+				setCharacteristics([...characteristics]);
 			})
 			.catch(logError)
-			.finally(() => {
-				setShowCharacteristicModal(false);
-				setLoading(false);
-			});
+			.finally(() => setLoading(false));
 	}
 
 	function deleteCharacteristic(id: number) {
-		const newCharacteristic = [...characteristic];
-		const index = newCharacteristic.findIndex((char) => char.id === id);
-		if (index > -1) {
-			newCharacteristic.splice(index, 1);
-			setCharacteristic(newCharacteristic);
-		}
-	}
-
-	return (
-		<>
-			<DataContainer
-				outline
-				title={props.title}
-				addButton={{
-					onAdd: () => setShowCharacteristicModal(true),
-					disabled: loading,
-				}}>
-				<Row>
-					<Col>
-						<AdminTable>
-							<thead>
-								<tr>
-									<th></th>
-									<th title='Nome da Característica.'>Nome</th>
-								</tr>
-							</thead>
-							<tbody>
-								{characteristic.map((characteristic) => (
-									<CharacteristicEditorField
-										key={characteristic.id}
-										characteristic={characteristic}
-										onDelete={deleteCharacteristic}
-									/>
-								))}
-							</tbody>
-						</AdminTable>
-					</Col>
-				</Row>
-			</DataContainer>
-			<CreateCharacteristicModal
-				show={showCharacteristicModal}
-				onHide={() => setShowCharacteristicModal(false)}
-				onCreate={createCharacteristic}
-				disabled={loading}
-			/>
-		</>
-	);
-}
-
-type CharacteristicEditorFieldProps = {
-	characteristic: Characteristic;
-	onDelete: (id: number) => void;
-};
-
-function CharacteristicEditorField(props: CharacteristicEditorFieldProps) {
-	const [loading, setLoading] = useState(false);
-	const [lastName, name, setName] = useExtendedState(props.characteristic.name);
-	const logError = useContext(ErrorLogger);
-
-	function onBlur() {
-		if (name === lastName) return;
-		setName(name);
-		api
-			.post('/sheet/characteristic', { id: props.characteristic.id, name })
-			.catch(logError);
-	}
-
-	function onDelete() {
 		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
 		setLoading(true);
 		api
-			.delete('/sheet/characteristic', { data: { id: props.characteristic.id } })
-			.then(() => props.onDelete(props.characteristic.id))
+			.delete('/sheet/characteristic', { data: { id } })
+			.then(() => {
+				const newCharacteristic = [...characteristics];
+				const index = newCharacteristic.findIndex((char) => char.id === id);
+				if (index > -1) {
+					newCharacteristic.splice(index, 1);
+					setCharacteristics(newCharacteristic);
+				}
+			})
 			.catch(logError)
 			.finally(() => setLoading(false));
 	}
 
 	return (
-		<tr>
-			<td>
-				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
-					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
-				</Button>
-			</td>
-			<td>
-				<BottomTextInput
-					value={name}
-					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onBlur}
-					disabled={loading}
-				/>
-			</td>
-		</tr>
+		<>
+			<DataContainer
+				xs={6}
+				outline
+				title={props.title}
+				addButton={{
+					onAdd: () => setCharacteristicModal({ operation: 'create', show: true }),
+					disabled: loading,
+				}}>
+				<EditorRowWrapper>
+					{characteristics.map((char) => (
+						<EditorRow
+							key={char.id}
+							name={char.name}
+							onEdit={() =>
+								setCharacteristicModal({ operation: 'edit', show: true, data: char })
+							}
+							onDelete={() => deleteCharacteristic(char.id)}
+						/>
+					))}
+				</EditorRowWrapper>
+			</DataContainer>
+			<CharacteristicEditorModal
+				{...characteristicModal}
+				onHide={() => setCharacteristicModal({ operation: 'create', show: false })}
+				onSubmit={onModalSubmit}
+				disabled={loading}
+			/>
+		</>
 	);
 }

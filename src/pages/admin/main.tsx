@@ -58,14 +58,14 @@ function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 		<>
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
-					<Container>
+					<Container className='px-3'>
 						<Row className='display-5 text-center'>
 							<Col>Painel do Mestre</Col>
 						</Row>
 						<Row className='my-4'>
 							<AdminEnvironmentConfigurations environment={environment} />
 						</Row>
-						<Row className='justify-content-center'>
+						<Row className='justify-content-center gx-5'>
 							<PlayerManager players={players} />
 						</Row>
 						<Row className='my-3 text-center'>

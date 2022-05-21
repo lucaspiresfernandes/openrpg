@@ -1,4 +1,4 @@
-import type { Specialization } from '@prisma/client';
+import type { Spec } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
@@ -6,38 +6,38 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Specialization> & {
-	onSubmit: (spec: Specialization) => void;
+type ModalProps = EditorModalData<Spec> & {
+	onSubmit: (spec: Spec) => void;
 	disabled?: boolean;
 	onHide: () => void;
 };
 
-const initialState: Specialization = {
+const initialState: Spec = {
 	id: 0,
 	name: '',
 };
 
-export default function SpecializationEditorModal(props: ModalProps) {
-	const [specialization, setSpecialization] = useState(initialState);
+export default function SpecEditorModal(props: ModalProps) {
+	const [spec, setSpec] = useState(initialState);
 
 	useEffect(() => {
 		if (!props.data) return;
-		setSpecialization(props.data);
+		setSpec(props.data);
 	}, [props.data]);
 
 	function hide() {
-		setSpecialization(initialState);
+		setSpec(initialState);
 		props.onHide();
 	}
 
 	return (
 		<SheetModal
 			animation={false}
-			title={props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização'}
+			title={props.operation === 'create' ? 'Criar Informação' : 'Editar Informação'}
 			applyButton={{
-				name: props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização',
+				name: props.operation === 'create' ? 'Criar' : 'Editar',
 				onApply: () => {
-					props.onSubmit(specialization);
+					props.onSubmit(spec);
 					hide();
 				},
 				disabled: props.disabled,
@@ -45,13 +45,13 @@ export default function SpecializationEditorModal(props: ModalProps) {
 			show={props.show}
 			onHide={hide}>
 			<Container fluid>
-				<FormGroup controlId='createSpecializationName'>
+				<FormGroup controlId='createSpecName'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
 						autoFocus
 						className='theme-element'
-						value={specialization.name}
-						onChange={(ev) => setSpecialization((i) => ({ ...i, name: ev.target.value }))}
+						value={spec.name}
+						onChange={(ev) => setSpec((i) => ({ ...i, name: ev.target.value }))}
 					/>
 				</FormGroup>
 			</Container>

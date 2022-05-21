@@ -122,6 +122,28 @@ $secondary: #6c757d;
 	}
 }
 
+@mixin custom_scrollbar {
+	/* width */
+	&::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	/* Track */
+	&::-webkit-scrollbar-track {
+		background: inherit;
+	}
+
+	/* Handle */
+	&::-webkit-scrollbar-thumb {
+		background: #888;
+	}
+
+	/* Handle on hover */
+	&::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+}
+
 body {
 	&.dark {
 		@include theme-components($dark-theme: true);
@@ -167,6 +189,12 @@ $navbar-background-color: #303030;
 	background-color: $navbar-background-color;
 }
 
+.row-wrapper {
+	max-height: 294px;
+	overflow-y: auto;
+	@include custom_scrollbar();
+}
+
 .wrapper {
 	@extend .data-container;
 	overflow-y: auto;
@@ -175,9 +203,8 @@ $navbar-background-color: #303030;
 	.list-group {
 		min-height: 200px;
 	}
-	&::-webkit-scrollbar {
-		width: 0;
-	}
+	
+	@include custom_scrollbar();
 }
 
 .shadow {

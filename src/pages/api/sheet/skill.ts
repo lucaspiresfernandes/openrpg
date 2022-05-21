@@ -22,7 +22,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const name = req.body.name;
 	const startValue = req.body.startValue;
 	const mandatory = req.body.mandatory;
-	let specialization_id = req.body.specializationID;
+	let specialization_id = req.body.specialization_id;
 	if (specialization_id === 0) specialization_id = null;
 
 	if (!id) {
@@ -58,7 +58,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const name = req.body.name;
 	const startValue = req.body.startValue;
 	const mandatory = req.body.mandatory;
-	let specialization_id = req.body.specializationID;
+	let specialization_id = req.body.specialization_id;
 	if (specialization_id === 0) specialization_id = null;
 
 	if (name === undefined || mandatory === undefined || specialization_id === undefined) {

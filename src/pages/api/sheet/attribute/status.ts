@@ -19,7 +19,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	const id = req.body.id;
 	const name = req.body.name;
-	const attribute_id = req.body.attributeID;
+	const attribute_id = req.body.attribute_id;
 
 	if (!id) {
 		res.status(401).send({ message: 'ID is undefined.' });
@@ -43,7 +43,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const name = req.body.name;
-	const attribute_id = req.body.attributeID;
+	const attribute_id = req.body.attribute_id;
 
 	if (name === undefined || attribute_id === undefined) {
 		res.status(401).send({ message: 'attributeStatus ID or name is undefined.' });

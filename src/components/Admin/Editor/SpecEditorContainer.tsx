@@ -1,17 +1,12 @@
 import type { Spec } from '@prisma/client';
+import type { AxiosRequestConfig } from 'axios';
 import { useContext, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import { BsTrash } from 'react-icons/bs';
 import { ErrorLogger } from '../../../contexts';
-import useExtendedState from '../../../hooks/useExtendedState';
 import api from '../../../utils/api';
-import BottomTextInput from '../../BottomTextInput';
-import CustomSpinner from '../../CustomSpinner';
 import DataContainer from '../../DataContainer';
-import CreateSpecModal from '../../Modals/CreateSpecModal';
-import AdminTable from '../AdminTable';
+import SpecEditorModal from '../../Modals/SpecEditorModal';
+import EditorRow from './EditorRow';
+import EditorRowWrapper from './EditorRowWrapper';
 
 type SpecEditorContainerProps = {
 	specs: Spec[];
@@ -19,109 +14,84 @@ type SpecEditorContainerProps = {
 
 export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 	const [loading, setLoading] = useState(false);
-	const [showSpecModal, setShowSpecModal] = useState(false);
+	const [specModal, setSpecModal] = useState<EditorModalData<Spec>>({
+		show: false,
+		operation: 'create',
+	});
 	const [spec, setSpec] = useState(props.specs);
 	const logError = useContext(ErrorLogger);
 
-	function createSpec(name: string) {
+	function onModalSubmit({ id, name }: Spec) {
 		setLoading(true);
-		api
-			.put('/sheet/spec', { name })
+
+		const config: AxiosRequestConfig =
+			specModal.operation === 'create'
+				? {
+						method: 'PUT',
+						data: { name },
+				  }
+				: {
+						method: 'POST',
+						data: { id, name },
+				  };
+
+		api('/sheet/spec', config)
 			.then((res) => {
-				const id = res.data.id;
-				setSpec([...spec, { id, name }]);
+				if (specModal.operation === 'create') {
+					setSpec([...spec, { id: res.data.id, name }]);
+					return;
+				}
+				spec[spec.findIndex((spec) => spec.id === id)].name = name;
+				setSpec([...spec]);
 			})
 			.catch(logError)
-			.finally(() => {
-				setShowSpecModal(false);
-				setLoading(false);
-			});
+			.finally(() => setLoading(false));
 	}
 
 	function deleteSpec(id: number) {
-		const newSpec = [...spec];
-		const index = newSpec.findIndex((spec) => spec.id === id);
-		if (index > -1) {
-			newSpec.splice(index, 1);
-			setSpec(newSpec);
-		}
-	}
-
-	return (
-		<>
-			<DataContainer
-				outline
-				title='Especificações de Personagem'
-				addButton={{ onAdd: () => setShowSpecModal(true), disabled: loading }}>
-				<Row>
-					<Col>
-						<AdminTable>
-							<thead>
-								<tr>
-									<th></th>
-									<th title='Nome da Especificação de Personagem.'>Nome</th>
-								</tr>
-							</thead>
-							<tbody>
-								{spec.map((spec) => (
-									<SpecEditorField key={spec.id} spec={spec} onDelete={deleteSpec} />
-								))}
-							</tbody>
-						</AdminTable>
-					</Col>
-				</Row>
-			</DataContainer>
-			<CreateSpecModal
-				show={showSpecModal}
-				onHide={() => setShowSpecModal(false)}
-				onCreate={createSpec}
-				disabled={loading}
-			/>
-		</>
-	);
-}
-
-type SpecEditorFieldProps = {
-	spec: Spec;
-	onDelete: (id: number) => void;
-};
-
-function SpecEditorField(props: SpecEditorFieldProps) {
-	const [loading, setLoading] = useState(false);
-	const [lastName, name, setName] = useExtendedState(props.spec.name);
-	const logError = useContext(ErrorLogger);
-
-	function onBlur() {
-		if (name === lastName) return;
-		setName(name);
-		api.post('/sheet/spec', { id: props.spec.id, name }).catch(logError);
-	}
-
-	function onDelete() {
 		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
 		setLoading(true);
 		api
-			.delete('/sheet/spec', { data: { id: props.spec.id } })
-			.then(() => props.onDelete(props.spec.id))
+			.delete('/sheet/spec', { data: { id } })
+			.then(() => {
+				const newSpec = [...spec];
+				const index = newSpec.findIndex((spec) => spec.id === id);
+				if (index > -1) {
+					newSpec.splice(index, 1);
+					setSpec(newSpec);
+				}
+			})
 			.catch(logError)
 			.finally(() => setLoading(false));
 	}
 
 	return (
-		<tr>
-			<td>
-				<Button onClick={onDelete} size='sm' variant='secondary' disabled={loading}>
-					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
-				</Button>
-			</td>
-			<td>
-				<BottomTextInput
-					value={name}
-					onChange={(ev) => setName(ev.currentTarget.value)}
-					onBlur={onBlur}
-					disabled={loading}
-				/>
-			</td>
-		</tr>
+		<>
+			<DataContainer
+				xs={6}
+				outline
+				title='Especificações de Personagem'
+				addButton={{
+					onAdd: () => setSpecModal({ operation: 'create', show: true }),
+					disabled: loading,
+				}}>
+				<EditorRowWrapper>
+					{spec.map((spec) => (
+						<EditorRow
+							key={spec.id}
+							name={spec.name}
+							onEdit={() => setSpecModal({ operation: 'edit', show: true, data: spec })}
+							onDelete={() => deleteSpec(spec.id)}
+						/>
+					))}
+				</EditorRowWrapper>
+			</DataContainer>
+			<SpecEditorModal
+				{...specModal}
+				onSubmit={onModalSubmit}
+				onHide={() => setSpecModal({ operation: 'create', show: false })}
+				disabled={loading}
+			/>
+		</>
 	);
 }

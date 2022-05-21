@@ -8,7 +8,7 @@ import EquipmentEditorContainer from '../../components/Admin/Editor/EquipmentEdi
 import ExtraInfoEditorContainer from '../../components/Admin/Editor/ExtraInfoEditorContainer';
 import InfoEditorContainer from '../../components/Admin/Editor/InfoEditorContainer';
 import ItemEditorContainer from '../../components/Admin/Editor/ItemEditorContainer';
-import SkillEditorContainer from '../../components/Admin/Editor/SkillEditorContainer';
+import SpecializationEditorContainer from '../../components/Admin/Editor/SkillEditorContainer';
 import SpecEditorContainer from '../../components/Admin/Editor/SpecEditorContainer';
 import SpellEditorContainer from '../../components/Admin/Editor/SpellEditorContainer';
 import ApplicationHead from '../../components/ApplicationHead';
@@ -26,9 +26,9 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 	return (
 		<>
 			<ApplicationHead title='Editor' />
-			<Container>
+			<Container className='px-3'>
 				<ErrorLogger.Provider value={addToast}>
-					<Row>
+					<Row className='gx-5 gy-4'>
 						<InfoEditorContainer
 							info={props.info}
 							title={
@@ -36,8 +36,6 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 									?.name || 'Detalhes Pessoais'
 							}
 						/>
-					</Row>
-					<Row>
 						<ExtraInfoEditorContainer
 							extraInfo={props.extraInfo}
 							title={
@@ -45,15 +43,11 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 									?.name || 'Detalhes Pessoais'
 							}
 						/>
-					</Row>
-					<AttributeEditorContainer
-						attributes={props.attribute}
-						attributeStatus={props.attributeStatus}
-					/>
-					<Row>
+						<AttributeEditorContainer
+							attributes={props.attribute}
+							attributeStatus={props.attributeStatus}
+						/>
 						<SpecEditorContainer specs={props.spec} />
-					</Row>
-					<Row>
 						<CharacteristicEditorContainer
 							characteristics={props.characteristic}
 							title={
@@ -61,15 +55,11 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 									?.name || 'Características'
 							}
 						/>
-					</Row>
-					<Row>
 						<CurrencyEditorContainer currencies={props.currency} />
-					</Row>
-					<SkillEditorContainer
-						skills={props.skill}
-						specializations={props.specialization}
-					/>
-					<Row>
+						<SpecializationEditorContainer
+							skills={props.skill}
+							specializations={props.specialization}
+						/>
 						<EquipmentEditorContainer
 							equipments={props.equipment}
 							title={
@@ -77,8 +67,6 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 								'Combate'
 							}
 						/>
-					</Row>
-					<Row>
 						<ItemEditorContainer
 							items={props.item}
 							title={
@@ -86,8 +74,6 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 								'Itens'
 							}
 						/>
-					</Row>
-					<Row>
 						<SpellEditorContainer
 							spells={props.spell}
 							title={
