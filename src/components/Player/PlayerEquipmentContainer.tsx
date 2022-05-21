@@ -64,53 +64,49 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 			setAvailableEquipments((equipments) => [...equipments, { id, name }]);
 		};
 
-		socket_equipmentRemove.current = (id, hardRemove) => {
-			if (hardRemove) {
-				const index = playerEquipments.findIndex((eq) => eq.Equipment.id === id);
-				if (index === -1) return;
-
-				setPlayerEquipments((equipments) => {
-					const newEquipments = [...equipments];
-					newEquipments.splice(index, 1);
-					return newEquipments;
-				});
-				return;
-			}
-
-			const index = availableEquipments.findIndex((eq) => eq.id === id);
+		socket_equipmentRemove.current = (id) => {
+			const index = playerEquipments.findIndex((eq) => eq.Equipment.id === id);
 			if (index === -1) return;
 
-			setAvailableEquipments((equipments) => {
+			setPlayerEquipments((equipments) => {
 				const newEquipments = [...equipments];
 				newEquipments.splice(index, 1);
 				return newEquipments;
 			});
 		};
 
-		socket_equipmentChange.current = (equipment) => {
-			const availableEquipmentIndex = availableEquipments.findIndex(
-				(eq) => eq.id === equipment.id
-			);
-			if (availableEquipmentIndex > -1) {
+		socket_equipmentChange.current = (eq) => {
+			const availableIndex = availableEquipments.findIndex((_eq) => _eq.id === eq.id);
+			const playerIndex = playerEquipments.findIndex((_eq) => _eq.Equipment.id === eq.id);
+			
+			if (eq.visible) {
+				if (availableIndex === -1 && playerIndex === -1)
+					return setAvailableEquipments((equipments) => [...equipments, eq]);
+			} else if (availableIndex > -1) {
+				return setAvailableEquipments((equipments) => {
+					const newEquipments = [...equipments];
+					newEquipments.splice(availableIndex, 1);
+					return newEquipments;
+				});
+			}
+
+			if (availableIndex > -1) {
 				setAvailableEquipments((equipments) => {
 					const newEquipments = [...equipments];
-					newEquipments[availableEquipmentIndex] = {
-						id: equipment.id,
-						name: equipment.name,
+					newEquipments[availableIndex] = {
+						id: eq.id,
+						name: eq.name,
 					};
 					return newEquipments;
 				});
 				return;
 			}
 
-			const playerEquipmentIndex = playerEquipments.findIndex(
-				(eq) => eq.Equipment.id === equipment.id
-			);
-			if (playerEquipmentIndex === -1) return;
+			if (playerIndex === -1) return;
 
 			setPlayerEquipments((equipments) => {
 				const newEquipments = [...equipments];
-				newEquipments[playerEquipmentIndex].Equipment = equipment;
+				newEquipments[playerIndex].Equipment = eq;
 				return newEquipments;
 			});
 		};
@@ -118,9 +114,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 
 	useEffect(() => {
 		socket.on('equipmentAdd', (id, name) => socket_equipmentAdd.current(id, name));
-		socket.on('equipmentRemove', (id, hardRemove) =>
-			socket_equipmentRemove.current(id, hardRemove)
-		);
+		socket.on('equipmentRemove', (id) => socket_equipmentRemove.current(id));
 		socket.on('equipmentChange', (eq) => socket_equipmentChange.current(eq));
 		return () => {
 			socket.off('equipmentAdd');

@@ -83,7 +83,8 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title={props.title}
 				addButton={{

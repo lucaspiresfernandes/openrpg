@@ -39,12 +39,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	if (visible === undefined) {
-		res.socket.server.io?.emit('equipmentChange', eq);
-	} else {
-		if (visible) res.socket.server.io?.emit('equipmentAdd', id, eq.name);
-		else res.socket.server.io?.emit('equipmentRemove', id, false);
-	}
+	
+	res.socket.server.io?.emit('equipmentChange', eq);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -102,7 +98,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('equipmentRemove', id, true);
+	res.socket.server.io?.emit('equipmentRemove', id);
 }
 
 export default sessionAPI(handler);

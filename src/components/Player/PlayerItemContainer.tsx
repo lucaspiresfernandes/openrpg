@@ -45,9 +45,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		playerItems.reduce((prev, cur) => prev + cur.Item.weight * cur.quantity, 0)
 	);
 	const [loading, setLoading] = useState(false);
-	const [maxLoad, setMaxLoad, isClean] = useExtendedState(
-		props.playerMaxLoad.toString()
-	);
+	const [maxLoad, setMaxLoad, isClean] = useExtendedState(props.playerMaxLoad.toString());
 
 	const logError = useContext(ErrorLogger);
 	const socket = useContext(Socket);
@@ -62,46 +60,46 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 			setAvailableItems((items) => [...items, { id, name }]);
 		};
 
-		socket_itemRemove.current = (id, hardRemove) => {
-			if (hardRemove) {
-				const index = playerItems.findIndex((it) => it.Item.id === id);
-				if (index === -1) return;
-
-				setPlayerItems((items) => {
-					const newItems = [...items];
-					newItems.splice(index, 1);
-					return newItems;
-				});
-				return;
-			}
-
-			const index = availableItems.findIndex((it) => it.id === id);
+		socket_itemRemove.current = (id) => {
+			const index = playerItems.findIndex((it) => it.Item.id === id);
 			if (index === -1) return;
 
-			setAvailableItems((items) => {
+			setPlayerItems((items) => {
 				const newItems = [...items];
 				newItems.splice(index, 1);
 				return newItems;
 			});
 		};
 
-		socket_itemChange.current = (id, name) => {
-			const playerItemIndex = playerItems.findIndex((it) => it.Item.id === id);
-			if (playerItemIndex > -1) {
-				setPlayerItems((items) => {
+		socket_itemChange.current = (it) => {
+			const availableIndex = availableItems.findIndex((_it) => _it.id === it.id);
+			const playerIndex = playerItems.findIndex((_it) => _it.Item.id === it.id);
+
+			if (it.visible) {
+				if (availableIndex === -1 && playerIndex === -1)
+					return setAvailableItems((items) => [...items, it]);
+			} else if (availableIndex > -1) {
+				return setAvailableItems((items) => {
 					const newItems = [...items];
-					newItems[playerItemIndex].Item.name = name;
+					newItems.splice(availableIndex, 1);
+					return newItems;
+				});
+			}
+
+			if (availableIndex > -1) {
+				setAvailableItems((items) => {
+					const newItems = [...items];
+					newItems[availableIndex] = it;
 					return newItems;
 				});
 				return;
 			}
 
-			const availableItemIndex = availableItems.findIndex((it) => it.id === id);
-			if (availableItemIndex === -1) return;
+			if (playerIndex === -1) return;
 
-			setAvailableItems((items) => {
+			setPlayerItems((items) => {
 				const newItems = [...items];
-				newItems[availableItemIndex].name = name;
+				newItems[playerIndex].Item = it;
 				return newItems;
 			});
 		};
@@ -109,10 +107,8 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
 	useEffect(() => {
 		socket.on('itemAdd', (id, name) => socket_itemAdd.current(id, name));
-		socket.on('itemRemove', (id, hardRemove) =>
-			socket_itemRemove.current(id, hardRemove)
-		);
-		socket.on('itemChange', (id, name) => socket_itemChange.current(id, name));
+		socket.on('itemRemove', (id) => socket_itemRemove.current(id));
+		socket.on('itemChange', (item) => socket_itemChange.current(item));
 		return () => {
 			socket.off('itemAdd');
 			socket.off('itemRemove');
@@ -296,9 +292,8 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	const [currentQuantity, setCurrentQuantity, isQuantityClean] = useExtendedState(
 		props.quantity
 	);
-	const [currentDescription, setCurrentDescription, isDescriptionClean] = useExtendedState(
-		props.description
-	);
+	const [currentDescription, setCurrentDescription, isDescriptionClean] =
+		useExtendedState(props.description);
 	const [loading, setLoading] = useState(false);
 	const logError = useContext(ErrorLogger);
 	const itemID = props.item.id;

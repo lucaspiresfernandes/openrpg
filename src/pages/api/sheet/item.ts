@@ -34,10 +34,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		where: { id },
 	});
 
-	if (visible !== undefined) {
-		if (visible) res.socket.server.io?.emit('itemAdd', id, item.name);
-		else res.socket.server.io?.emit('itemRemove', id, false);
-	} else if (name !== undefined) res.socket.server.io?.emit('itemChange', id, name);
+	res.socket.server.io?.emit('itemChange', item);
 
 	res.end();
 }
@@ -84,7 +81,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('itemRemove', id, true);
+	res.socket.server.io?.emit('itemRemove', id);
 }
 
 export default sessionAPI(handler);

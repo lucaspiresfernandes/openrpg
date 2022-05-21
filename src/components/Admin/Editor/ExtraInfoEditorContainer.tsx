@@ -69,7 +69,8 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title={`${props.title} (Extra)`}
 				addButton={{

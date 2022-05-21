@@ -63,6 +63,7 @@ export default function ItemEditorModal(props: ModalProps) {
 				<FormGroup controlId='createItemName' className='mb-3'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
+						autoFocus
 						className='theme-element'
 						value={item.name}
 						onChange={(ev) => setItem((it) => ({ ...it, name: ev.target.value }))}

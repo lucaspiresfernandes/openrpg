@@ -67,7 +67,8 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title='Moedas'
 				addButton={{

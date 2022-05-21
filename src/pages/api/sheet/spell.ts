@@ -53,10 +53,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	if (visible !== undefined) {
-		if (visible) res.socket.server.io?.emit('spellAdd', id, spell.name);
-		else res.socket.server.io?.emit('spellRemove', id, false);
-	} else res.socket.server.io?.emit('spellChange', id, spell);
+	res.socket.server.io?.emit('spellChange', spell);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -138,7 +135,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('spellRemove', id, true);
+	res.socket.server.io?.emit('spellRemove', id);
 }
 
 export default sessionAPI(handler);

@@ -68,7 +68,8 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title='Especificações de Personagem'
 				addButton={{

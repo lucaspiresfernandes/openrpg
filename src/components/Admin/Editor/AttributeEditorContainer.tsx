@@ -81,7 +81,8 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title='Barras de Atributo'
 				addButton={{
@@ -187,7 +188,8 @@ function AttributeStatusEditorContainer(props: AttributeStatusEditorContainerPro
 		<>
 			<DataContainer
 				outline
-				xs={6}
+				xs={12}
+				lg={6}
 				title='Status de Atributos'
 				addButton={{
 					onAdd: () => setAttributeStatusModal({ operation: 'create', show: true }),

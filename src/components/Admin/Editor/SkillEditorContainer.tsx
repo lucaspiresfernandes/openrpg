@@ -73,7 +73,8 @@ export default function SpecializationEditorContainer(
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title='Especializações'
 				addButton={{
@@ -175,7 +176,8 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 	return (
 		<>
 			<DataContainer
-				xs={6}
+				xs={12}
+				lg={6}
 				outline
 				title='Perícias'
 				addButton={{

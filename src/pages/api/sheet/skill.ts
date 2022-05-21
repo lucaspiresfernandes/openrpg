@@ -38,13 +38,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	if (name !== undefined || specialization_id !== undefined)
-		res.socket.server.io?.emit(
-			'skillChange',
-			id,
-			skill.name,
-			skill.Specialization?.name || null
-		);
+	res.socket.server.io?.emit(
+		'skillChange',
+		id,
+		skill.name,
+		skill.Specialization?.name || null
+	);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -81,7 +80,12 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.send({ id: skill.id });
 
-	res.socket.server.io?.emit('skillAdd', skill.id, skill.name, skill.Specialization?.name || null);
+	res.socket.server.io?.emit(
+		'skillAdd',
+		skill.id,
+		skill.name,
+		skill.Specialization?.name || null
+	);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {

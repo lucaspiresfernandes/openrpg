@@ -46,44 +46,46 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 			if (availableSpells.findIndex((sp) => sp.id === id) > -1) return;
 			setAvailableSpells((spells) => [...spells, { id, name }]);
 		};
-		socket_spellRemove.current = (id, hardRemove) => {
-			if (hardRemove) {
-				const index = playerSpells.findIndex((spell) => spell.id === id);
-				if (index === -1) return;
-				setPlayerSpells((spell) => {
-					const newSpells = [...spell];
-					newSpells.splice(index, 1);
-					return newSpells;
-				});
-				return;
-			}
 
-			const index = availableSpells.findIndex((spell) => spell.id === id);
+		socket_spellRemove.current = (id) => {
+			const index = playerSpells.findIndex((spell) => spell.id === id);
 			if (index === -1) return;
-
-			setAvailableSpells((spells) => {
-				const newSpells = [...spells];
+			setPlayerSpells((spell) => {
+				const newSpells = [...spell];
 				newSpells.splice(index, 1);
 				return newSpells;
 			});
 		};
-		socket_spellChange.current = (id, spell) => {
-			const playerSpellIndex = playerSpells.findIndex((spell) => spell.id === id);
-			if (playerSpellIndex > -1) {
-				setPlayerSpells((Spells) => {
-					const newSpells = [...Spells];
-					newSpells[playerSpellIndex] = spell;
+
+		socket_spellChange.current = (sp) => {
+			const availableIndex = availableSpells.findIndex((_sp) => _sp.id === sp.id);
+			const playerIndex = playerSpells.findIndex((_sp) => _sp.id === sp.id);
+
+			if (sp.visible) {
+				if (availableIndex === -1 && playerIndex === -1)
+					return setAvailableSpells((spells) => [...spells, sp]);
+			} else if (availableIndex > -1) {
+				return setAvailableSpells((spells) => {
+					const newSpells = [...spells];
+					newSpells.splice(availableIndex, 1);
+					return newSpells;
+				});
+			}
+
+			if (availableIndex > -1) {
+				setAvailableSpells((spells) => {
+					const newSpells = [...spells];
+					newSpells[availableIndex] = sp;
 					return newSpells;
 				});
 				return;
 			}
 
-			const availableSpellIndex = availableSpells.findIndex((eq) => eq.id === id);
-			if (availableSpellIndex === -1) return;
+			if (playerIndex === -1) return;
 
-			setAvailableSpells((Spells) => {
-				const newSpells = [...Spells];
-				newSpells[availableSpellIndex] = spell;
+			setPlayerSpells((spells) => {
+				const newSpells = [...spells];
+				newSpells[playerIndex] = sp;
 				return newSpells;
 			});
 		};
@@ -91,10 +93,8 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 
 	useEffect(() => {
 		socket.on('spellAdd', (id, name) => socket_spellAdd.current(id, name));
-		socket.on('spellRemove', (id, hardRemove) =>
-			socket_spellRemove.current(id, hardRemove)
-		);
-		socket.on('spellChange', (id, spell) => socket_spellChange.current(id, spell));
+		socket.on('spellRemove', (id) => socket_spellRemove.current(id));
+		socket.on('spellChange', (spell) => socket_spellChange.current(spell));
 		return () => {
 			socket.off('spellAdd');
 			socket.off('spellRemove');

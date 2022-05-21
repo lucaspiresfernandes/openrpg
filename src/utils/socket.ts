@@ -82,21 +82,21 @@ export type SkillChangeEvent = (
 
 export type EquipmentAddEvent = (id: number, name: string) => void;
 
-export type EquipmentRemoveEvent = (id: number, hardRemove: boolean) => void;
+export type EquipmentRemoveEvent = (id: number) => void;
 
 export type EquipmentChangeEvent = (equipment: Equipment) => void;
 
 export type ItemAddEvent = (id: number, name: string) => void;
 
-export type ItemRemoveEvent = (id: number, hardRemove: boolean) => void;
+export type ItemRemoveEvent = (id: number) => void;
 
-export type ItemChangeEvent = (id: number, name: string) => void;
+export type ItemChangeEvent = (item: Item) => void;
 
 export type SpellAddEvent = (id: number, name: string) => void;
 
-export type SpellRemoveEvent = (id: number, hardRemove: boolean) => void;
+export type SpellRemoveEvent = (id: number) => void;
 
-export type SpellChangeEvent = (id: number, spell: Spell) => void;
+export type SpellChangeEvent = (spell: Spell) => void;
 
 export type DiceRollEvent = () => void;
 
