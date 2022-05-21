@@ -26,9 +26,9 @@ export default function Admin2(props: InferSSRProps<typeof getSSP>) {
 	return (
 		<>
 			<ApplicationHead title='Editor' />
-			<Container className='px-3'>
+			<Container className='px-5'>
 				<ErrorLogger.Provider value={addToast}>
-					<Row className='gx-5 gy-4'>
+					<Row className='gx-5 gy-4 mb-3'>
 						<InfoEditorContainer
 							info={props.info}
 							title={

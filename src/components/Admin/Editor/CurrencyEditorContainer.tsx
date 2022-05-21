@@ -83,6 +83,7 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
 								setCurrencyModal({ operation: 'edit', show: true, data: curr })
 							}
 							onDelete={() => deleteCurrency(curr.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

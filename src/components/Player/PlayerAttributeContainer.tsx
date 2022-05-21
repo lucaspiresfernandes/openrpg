@@ -14,7 +14,7 @@ import { clamp } from '../../utils';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
 import DiceRollResultModal from '../Modals/DiceRollResultModal';
-import EditAvatarModal from '../Modals/EditAvatarModal';
+import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
@@ -369,7 +369,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 					onClick={() => setAvatarModalShow(true)}
 				/>
 			</Col>
-			<EditAvatarModal
+			<PlayerAvatarModal
 				playerAvatars={props.playerAvatars}
 				show={avatarModalShow}
 				onHide={() => setAvatarModalShow(false)}

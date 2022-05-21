@@ -11,7 +11,7 @@ export default function DiceList(props: { players: { id: number; name: string }[
 	const [values, setValues] = useState<
 		{ name: string; dices: string; results: string }[]
 	>([]);
-	const wrapper = useRef<HTMLDivElement | null>(null);
+	const wrapper = useRef<HTMLDivElement>(null);
 	const socket = useContext(Socket);
 
 	useEffect(() => {

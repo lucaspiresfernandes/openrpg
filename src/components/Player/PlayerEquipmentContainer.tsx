@@ -236,7 +236,7 @@ type PlayerEquipmentFieldProps = {
 };
 
 function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
-	const [lastAmmo, currentAmmo, setCurrentAmmo] = useExtendedState(props.currentAmmo);
+	const [currentAmmo, setCurrentAmmo, isClean] = useExtendedState(props.currentAmmo);
 	const [loading, setLoading] = useState(false);
 
 	const logError = useContext(ErrorLogger);
@@ -253,14 +253,13 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 	}
 
 	function onAmmoBlur() {
-		if (currentAmmo === lastAmmo) return;
+		if (isClean()) return;
 		let newAmmo = currentAmmo;
 
 		if (props.equipment.ammo && currentAmmo > props.equipment.ammo)
 			newAmmo = props.equipment.ammo;
 
 		setCurrentAmmo(newAmmo);
-
 		api
 			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: newAmmo })
 			.catch(logError);

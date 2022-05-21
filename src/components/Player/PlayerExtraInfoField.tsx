@@ -7,11 +7,10 @@ export default function PlayerExtraInfoField(props: {
 	value: string;
 	logError: (err: any) => void;
 }) {
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [value, setValue, isClean] = useExtendedState(props.value);
 
 	function onValueBlur() {
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api
 			.post('/sheet/player/extrainfo', { id: props.extraInfoId, value })
 			.catch(props.logError);

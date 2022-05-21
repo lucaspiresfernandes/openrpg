@@ -29,7 +29,7 @@ const initialState: Spell = {
 	visible: true,
 };
 
-export default function CreateSpellModal(props: ModalProps) {
+export default function SpellEditorModal(props: ModalProps) {
 	const [spell, setSpell] = useState(initialState);
 
 	useEffect(() => {

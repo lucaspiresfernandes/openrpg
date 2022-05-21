@@ -45,7 +45,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 		playerItems.reduce((prev, cur) => prev + cur.Item.weight * cur.quantity, 0)
 	);
 	const [loading, setLoading] = useState(false);
-	const [lastMaxLoad, maxLoad, setMaxLoad] = useExtendedState(
+	const [maxLoad, setMaxLoad, isClean] = useExtendedState(
 		props.playerMaxLoad.toString()
 	);
 
@@ -155,7 +155,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	}
 
 	function onMaxLoadBlur() {
-		if (maxLoad === lastMaxLoad) return;
+		if (isClean()) return;
 		let maxLoadFloat = parseFloat(maxLoad);
 		if (isNaN(maxLoadFloat)) {
 			maxLoadFloat = 0;
@@ -253,11 +253,10 @@ type PlayerCurrencyFieldProps = {
 
 function PlayerCurrencyField({ currency }: PlayerCurrencyFieldProps) {
 	const logError = useContext(ErrorLogger);
-	const [lastValue, value, setValue] = useExtendedState(currency.value);
+	const [value, setValue, isClean] = useExtendedState(currency.value);
 
 	function onBlur() {
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api
 			.post('/sheet/player/currency', { id: currency.Currency.id, value })
 			.catch(logError);
@@ -294,10 +293,10 @@ type PlayerItemFieldProps = {
 };
 
 function PlayerItemField(props: PlayerItemFieldProps) {
-	const [lastQuantity, currentQuantity, setCurrentQuantity] = useExtendedState(
+	const [currentQuantity, setCurrentQuantity, isQuantityClean] = useExtendedState(
 		props.quantity
 	);
-	const [lastDescription, currentDescription, setCurrentDescription] = useExtendedState(
+	const [currentDescription, setCurrentDescription, isDescriptionClean] = useExtendedState(
 		props.description
 	);
 	const [loading, setLoading] = useState(false);
@@ -328,8 +327,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	}
 
 	function quantityBlur() {
-		if (currentQuantity === lastQuantity) return;
-		setCurrentQuantity(currentQuantity);
+		if (isQuantityClean()) return;
 		api
 			.post('/sheet/player/item', { id: itemID, quantity: currentQuantity })
 			.then(() => {
@@ -339,8 +337,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	}
 
 	function descriptionBlur() {
-		if (currentDescription === lastDescription) return;
-		setCurrentDescription(currentDescription);
+		if (isDescriptionClean()) return;
 		api.post('/sheet/player/item', { id: itemID, currentDescription }).catch(logError);
 	}
 

@@ -4,7 +4,7 @@ import { useContext, useState } from 'react';
 import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
-import CreateSpellModal from '../../Modals/CreateSpellModal';
+import SpellEditorModal from '../../Modals/SpellEditorModal';
 import EditorRow from './EditorRow';
 import EditorRowWrapper from './EditorRowWrapper';
 
@@ -97,11 +97,12 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 							name={sp.name}
 							onEdit={() => setSpellModal({ operation: 'edit', show: true, data: sp })}
 							onDelete={() => deleteSpell(sp.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>
 			</DataContainer>
-			<CreateSpellModal
+			<SpellEditorModal
 				{...spellModal}
 				onHide={() => setSpellModal({ operation: 'create', show: false })}
 				onSubmit={onModalSubmit}

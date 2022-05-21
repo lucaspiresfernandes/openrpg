@@ -269,7 +269,7 @@ type PlayerSkillFieldProps = {
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [value, setValue, isClean] = useExtendedState(props.value);
 	const [checked, setChecked] = useState(props.checked);
 	const componentDidMount = useRef(false);
 	const logError = useContext(ErrorLogger);
@@ -303,12 +303,8 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	}
 
 	function valueBlur() {
-		if (value === lastValue) return;
-		setValue(value);
-		api.post('/sheet/player/skill', { id: props.id, value }).catch((err) => {
-			logError(err);
-			setValue(lastValue);
-		});
+		if (isClean()) return;
+		api.post('/sheet/player/skill', { id: props.id, value }).catch(logError);
 	}
 
 	function rollDice() {

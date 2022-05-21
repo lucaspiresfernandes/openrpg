@@ -29,7 +29,7 @@ type EditAvatarModalProps = {
 	onUpdate?: () => void;
 };
 
-export default function EditAvatarModal(props: EditAvatarModalProps) {
+export default function PlayerAvatarModal(props: EditAvatarModalProps) {
 	const [avatars, setAvatars] = useState<AvatarData[]>(
 		props.playerAvatars.map((avatar) => {
 			if (avatar.AttributeStatus)

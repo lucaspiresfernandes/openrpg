@@ -97,6 +97,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 								setAttributeModal({ operation: 'edit', show: true, data: attr })
 							}
 							onDelete={() => deleteAttribute(attr.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>
@@ -201,6 +202,7 @@ function AttributeStatusEditorContainer(props: AttributeStatusEditorContainerPro
 								setAttributeStatusModal({ operation: 'edit', show: true, data: stat })
 							}
 							onDelete={() => deleteAttributeStatus(stat.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

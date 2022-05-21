@@ -57,7 +57,7 @@ type PlayerCharacteristicFieldProps = {
 };
 
 function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [value, setValue, isClean] = useExtendedState(props.value);
 	const [modifier, setModifier] = useState(props.modifier);
 	const lastModifier = useRef(modifier);
 	const logError = useContext(ErrorLogger);
@@ -75,8 +75,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 	}
 
 	function onValueBlur() {
-		if (value === lastValue) return;
-		setValue(value);
+		if (isClean()) return;
 		api.post('/sheet/player/characteristic', { value, id: charID }).catch(logError);
 	}
 
@@ -140,6 +139,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 			<Row>
 				<Col>
 					<BottomTextInput
+						autoComplete='off'
 						className='h5 w-75 text-center'
 						id={`char${props.characteristic.id}`}
 						name={`char${props.characteristic.name.substring(0, 3).toUpperCase()}`}

@@ -83,6 +83,7 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
 							name={info.name}
 							onEdit={() => setInfoModal({ operation: 'edit', show: true, data: info })}
 							onDelete={() => deleteExtraInfo(info.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

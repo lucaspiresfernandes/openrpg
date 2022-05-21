@@ -89,6 +89,7 @@ export default function CharacteristicEditorContainer(
 								setCharacteristicModal({ operation: 'edit', show: true, data: char })
 							}
 							onDelete={() => deleteCharacteristic(char.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

@@ -82,6 +82,7 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 							name={spec.name}
 							onEdit={() => setSpecModal({ operation: 'edit', show: true, data: spec })}
 							onDelete={() => deleteSpec(spec.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

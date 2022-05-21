@@ -29,7 +29,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 		props.availableSpells
 	);
 	const [playerSpells, setPlayerSpells] = useState(props.playerSpells);
-	const [lastMaxSlots, maxSlots, setMaxSlots] = useExtendedState(
+	const [maxSlots, setMaxSlots, isClean] = useExtendedState(
 		props.playerMaxSlots.toString()
 	);
 	const [loading, setLoading] = useState(false);
@@ -136,12 +136,13 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 	}
 
 	function onMaxSlotsBlur() {
-		if (maxSlots === lastMaxSlots) return;
+		if (isClean()) return;
 		let maxSlotsFloat = parseFloat(maxSlots);
 		if (isNaN(maxSlotsFloat)) {
 			maxSlotsFloat = 0;
 			setMaxSlots(maxSlotsFloat.toString());
 		} else setMaxSlots(maxSlots);
+		console.log('send');
 		api.post('/sheet/player', { maxSlots: maxSlotsFloat }).catch(logError);
 	}
 

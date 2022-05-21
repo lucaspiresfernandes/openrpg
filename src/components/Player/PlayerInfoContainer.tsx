@@ -64,7 +64,7 @@ type PlayerNameFieldProps = {
 
 function PlayerNameField(props: PlayerNameFieldProps) {
 	const [show, setShow] = useState(props.show);
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [value, setValue, isClean] = useExtendedState(props.value);
 	const [isDefined, setDefined] = useState(props.value.length > 0);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const componentDidMount = useRef(false);
@@ -94,8 +94,7 @@ function PlayerNameField(props: PlayerNameFieldProps) {
 
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api.post('/sheet/player', { name: value }).catch(logError);
 	}
 
@@ -145,7 +144,7 @@ type PlayerInfoFieldProps = {
 };
 
 function PlayerInfoField(props: PlayerInfoFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(props.value);
+	const [value, setValue, isClean] = useExtendedState(props.value);
 	const [isDefined, setDefined] = useState(props.value.length > 0);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const componentDidMount = useRef(false);
@@ -162,8 +161,7 @@ function PlayerInfoField(props: PlayerInfoFieldProps) {
 
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api.post('/sheet/player/info', { id: props.infoId, value }).catch(logError);
 	}
 
@@ -189,14 +187,13 @@ type PlayerSpecFieldProps = {
 };
 
 function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
-	const [lastValue, value, setValue] = useExtendedState(playerSpec.value);
+	const [value, setValue, isClean] = useExtendedState(playerSpec.value);
 
 	const logError = useContext(ErrorLogger);
 	const specID = playerSpec.specId;
 
 	function onValueBlur() {
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api.post('/sheet/player/spec', { id: specID, value }).catch(logError);
 	}
 

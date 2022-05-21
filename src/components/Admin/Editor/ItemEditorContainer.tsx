@@ -87,6 +87,7 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
 							name={item.name}
 							onEdit={() => setItemModal({ operation: 'edit', show: true, data: item })}
 							onDelete={() => deleteItem(item.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>

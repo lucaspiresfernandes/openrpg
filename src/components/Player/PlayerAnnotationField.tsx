@@ -7,13 +7,12 @@ import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 
 export default function PlayerAnnotationsField(props: { value?: string }) {
-	const [lastValue, value, setValue] = useExtendedState(props.value || '');
+	const [value, setValue, isClean] = useExtendedState(props.value || '');
 
 	const logError = useContext(ErrorLogger);
 
 	function onValueBlur() {
-		if (lastValue === value) return;
-		setValue(value);
+		if (isClean()) return;
 		api.post('/sheet/player/annotation', { value }).catch(logError);
 	}
 

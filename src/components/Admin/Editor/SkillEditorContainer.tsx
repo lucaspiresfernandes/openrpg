@@ -5,7 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import SkillEditorModal from '../../Modals/SkillEditorModal';
-import CreateSpecializationModal from '../../Modals/CreateSpecializationModal';
+import CreateSpecializationModal from '../../Modals/SpecializationEditorModal';
 import EditorRow from './EditorRow';
 import EditorRowWrapper from './EditorRowWrapper';
 
@@ -89,6 +89,7 @@ export default function SpecializationEditorContainer(
 								setSpecializationModal({ operation: 'edit', show: true, data: spec })
 							}
 							onDelete={() => deleteSpecialization(spec.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>
@@ -196,6 +197,7 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 									setSkillModal({ operation: 'edit', show: true, data: skill })
 								}
 								onDelete={() => deleteSkill(skill.id)}
+								disabled={loading}
 							/>
 						);
 					})}

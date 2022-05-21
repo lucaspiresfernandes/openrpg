@@ -89,6 +89,7 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 								setEquipmentModal({ operation: 'edit', show: true, data: eq })
 							}
 							onDelete={() => deleteEquipment(eq.id)}
+							disabled={loading}
 						/>
 					))}
 				</EditorRowWrapper>
