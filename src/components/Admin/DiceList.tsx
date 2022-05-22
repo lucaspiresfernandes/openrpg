@@ -7,18 +7,17 @@ import DataContainer from '../DataContainer';
 
 const highlightStyle = { color: '#00a000', fontWeight: 'bold' };
 
+type Dice = { name: string; dices: string; results: string };
+
 export default function DiceList(props: { players: { id: number; name: string }[] }) {
-	const [values, setValues] = useState<
-		{ name: string; dices: string; results: string }[]
-	>([]);
+	const [values, setValues] = useState<Dice[]>([]);
 	const wrapper = useRef<HTMLDivElement>(null);
 	const socket = useContext(Socket);
+	const componentDidMount = useRef(false);
 
 	useEffect(() => {
-		if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });
-	}, [values]);
-
-	useEffect(() => {
+		setValues(JSON.parse(localStorage.getItem('admin_dice_history') || '[]') as Dice[]);
+		
 		socket.on('diceResult', (playerID, _results, _dices) => {
 			const playerName =
 				props.players.find((p) => p.id === playerID)?.name || 'Desconhecido';
@@ -58,6 +57,16 @@ export default function DiceList(props: { players: { id: number; name: string }[
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (wrapper.current) wrapper.current.scrollTo({ top: 0, behavior: 'auto' });
+
+		if (componentDidMount.current) {
+			localStorage.setItem('admin_dice_history', JSON.stringify(values));
+			return;
+		}
+		componentDidMount.current = true;
+	}, [values]);
 
 	return (
 		<DataContainer xs={12} lg title='Histórico'>

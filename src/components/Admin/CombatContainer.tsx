@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -11,11 +12,6 @@ import { SortableContainer, SortableElement, SortEnd } from 'react-sortable-hoc'
 import { clamp } from '../../utils';
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
-
-let __id = 0;
-function getId() {
-	return __id++;
-}
 
 type Entity = {
 	id: number;
@@ -67,12 +63,42 @@ const SortableItem = SortableElement((props: SortableElementProps) => {
 	);
 });
 
+type Storage = {
+	round?: number;
+	entities?: Entity[];
+	pointer?: number;
+};
+
 export default function CombatContainer(props: {
 	players: { id: number; name: string }[];
 }) {
 	const [round, setRound] = useState(1);
 	const [entities, setEntities] = useState<Entity[]>([]);
 	const [pointer, setPointer] = useState(0);
+	const componentDidMount = useRef(false);
+
+	useEffect(() => {
+		const storage: Storage = JSON.parse(localStorage.getItem('admin_combat') || '{}');
+		if (storage.round) setRound(storage.round);
+		if (storage.entities) setEntities(storage.entities);
+		if (storage.pointer) setPointer(storage.pointer);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (componentDidMount.current) {
+			localStorage.setItem(
+				'admin_combat',
+				JSON.stringify({
+					round,
+					entities,
+					pointer,
+				})
+			);
+			return;
+		}
+		componentDidMount.current = true;
+	}, [round, entities, pointer]);
 
 	function roundUpdate(ev: FormEvent<HTMLInputElement>) {
 		const aux = ev.currentTarget.value;
@@ -113,7 +139,7 @@ export default function CombatContainer(props: {
 	function addNPCEntity() {
 		const name = prompt('Digite o nome:');
 		if (!name) return;
-		setEntities([...entities, { id: getId(), name }]);
+		setEntities([...entities, { id: Date.now(), name }]);
 	}
 
 	function removeEntity(id: number) {
@@ -137,7 +163,7 @@ export default function CombatContainer(props: {
 				return (
 					<Dropdown.Item
 						key={pl.id}
-						onClick={() => setEntities([...entities, { id: getId(), name: pl.name }])}>
+						onClick={() => setEntities([...entities, { ...pl }])}>
 						{pl.name}
 					</Dropdown.Item>
 				);
