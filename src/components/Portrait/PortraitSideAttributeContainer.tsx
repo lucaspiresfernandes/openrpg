@@ -20,10 +20,10 @@ export type PortraitSideAttribute = {
 } | null;
 
 const bounds: DraggableBounds = {
-	bottom: 420,
-	left: 0,
-	top: 0,
-	right: 200,
+	bottom: 475,
+	left: 5,
+	top: 5,
+	right: 215,
 };
 
 export default function PortraitSideAttributeContainer(props: {
@@ -77,7 +77,8 @@ export default function PortraitSideAttributeContainer(props: {
 	return (
 		<Draggable axis='both' onStop={onDragStop} position={position} bounds={bounds}>
 			<div className={styles.sideContainer} style={{ ...attributeStyle }}>
-				<label className={styles.side}>{sideAttribute.value}</label>
+				<div className={styles.sideBackground}></div>
+				<label className={styles.sideContent}>{sideAttribute.value}</label>
 			</div>
 		</Draggable>
 	);

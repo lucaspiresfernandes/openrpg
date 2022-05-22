@@ -60,7 +60,7 @@ export default function PortraitEnvironmentalContainer(props: {
 	function onDragStop(ev: DraggableEvent, data: DraggableData) {
 		const posY = data.y;
 		setPositionY(posY);
-		localStorage.setItem('environmental-pos', posY.toString());
+		localStorage.setItem('environmental-pos-y', posY.toString());
 	}
 
 	return (

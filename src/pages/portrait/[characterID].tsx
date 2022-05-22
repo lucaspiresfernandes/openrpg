@@ -22,7 +22,6 @@ export default function CharacterPortrait(
 
 	useEffect(() => {
 		document.body.style.backgroundColor = 'transparent';
-		document.body.style.color = 'black';
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
