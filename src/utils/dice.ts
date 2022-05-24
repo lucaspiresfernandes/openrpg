@@ -1,10 +1,10 @@
-export type ResolvedDice = {
+export type DiceRequest = {
 	num: number;
 	roll: number;
 	ref?: number;
 };
 
-export type DiceResult = {
+export type DiceResponse = {
 	roll: number;
 	resultType?: {
 		description: string;
@@ -33,7 +33,7 @@ export function resolveDices(dices: string) {
 	}
 
 	const diceArray = formattedDiceString.split('+');
-	const resolvedDices: ResolvedDice[] = [];
+	const resolvedDices: DiceRequest[] = [];
 
 	for (let i = 0; i < diceArray.length; i++) {
 		const dice = resolveDice(diceArray[i]);
@@ -43,7 +43,7 @@ export function resolveDices(dices: string) {
 	return resolvedDices;
 }
 
-function resolveDice(dice: string): ResolvedDice {
+function resolveDice(dice: string): DiceRequest {
 	if (dice.includes('DB')) {
 		const bonusDamageArray = document.getElementsByName(
 			'specDano Bônus'

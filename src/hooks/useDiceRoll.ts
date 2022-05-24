@@ -3,12 +3,12 @@ import type {
 	DiceRoll,
 	DiceRollResultModalProps,
 } from '../components/Modals/DiceRollResultModal';
-import type { DiceResult, ResolvedDice } from '../utils/dice';
+import type { DiceResponse, DiceRequest } from '../utils/dice';
 
 export type DiceRollEvent = (
-	dices: ResolvedDice[],
+	dices: DiceRequest[],
 	resolverKey?: string,
-	onResult?: (result: DiceResult[]) => void
+	onResult?: (result: DiceResponse[]) => void
 ) => void;
 
 export default function useDiceRoll(): [DiceRollResultModalProps, DiceRollEvent] {

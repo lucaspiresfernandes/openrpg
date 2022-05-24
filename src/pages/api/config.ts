@@ -3,30 +3,33 @@ import { setSuccessTypeConfigDirty } from '../../utils/config';
 import prisma from '../../utils/database';
 import type { NextApiResponseServerIO } from '../../utils/socket';
 
-const customBehaviours = new Map<string, () => void>([
+const customBehaviours = new Map<
+	string,
+	(res: NextApiResponseServerIO, value: any) => void
+>([
 	['enable_success_types', setSuccessTypeConfigDirty],
+	['environment', (res, value) => res.socket.server.io?.emit('environmentChange', value)],
 ]);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-	const name = req.body.name;
-	let value = req.body.value;
+	const name = String(req.body.name);
+	let value: any = req.body.value;
 
-	if (name === undefined || value === undefined) {
+	if (!name || value === undefined) {
 		res.status(400).end();
 		return;
 	}
 
-	if (typeof value !== 'string') value = JSON.stringify(value);
+	if (typeof value === 'object') value = JSON.stringify(value);
 
-	let config = await prisma.config.findUnique({ where: { name } });
-
-	if (!config) config = await prisma.config.create({ data: { name, value } });
-	else await prisma.config.update({ where: { name }, data: { value } });
-
-	const behaviour = customBehaviours.get(config.name);
-	if (behaviour) behaviour();
+	await prisma.config.upsert({
+		where: { name },
+		update: { value },
+		create: { name, value },
+	});
 
 	res.end();
 
-	res.socket.server.io?.emit('configChange', name, value);
+	const behaviour = customBehaviours.get(name);
+	if (behaviour) behaviour(res, value);
 }

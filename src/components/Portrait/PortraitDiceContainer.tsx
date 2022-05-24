@@ -3,7 +3,7 @@ import Fade from 'react-bootstrap/Fade';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { sleep } from '../../utils';
-import type { DiceResult } from '../../utils/dice';
+import type { DiceResponse } from '../../utils/dice';
 import { getAttributeStyle } from '../../utils/style';
 
 export default function PortraitDiceContainer(props: {
@@ -14,8 +14,8 @@ export default function PortraitDiceContainer(props: {
 	onHideDice: () => void;
 	color: string;
 }) {
-	const diceQueue = useRef<DiceResult[]>([]);
-	const diceData = useRef<DiceResult>();
+	const diceQueue = useRef<DiceResponse[]>([]);
+	const diceData = useRef<DiceResponse>();
 
 	const showDiceRef = useRef(props.showDice);
 
@@ -51,14 +51,14 @@ export default function PortraitDiceContainer(props: {
 			}
 		}
 
-		async function showNextResult(result: DiceResult) {
+		async function showNextResult(result: DiceResponse) {
 			showDiceRoll();
 			await sleep(1000);
 			diceData.current = undefined;
 			onDiceResult(result);
 		}
 
-		async function onDiceResult(result: DiceResult) {
+		async function onDiceResult(result: DiceResponse) {
 			if (diceData.current) return diceQueue.current.push(result);
 			if (!showDiceRef.current) return showNextResult(result);
 

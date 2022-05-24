@@ -6,13 +6,13 @@ import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
-import type { DiceResult, ResolvedDice } from '../../utils/dice';
+import type { DiceResponse, DiceRequest } from '../../utils/dice';
 import SheetModal from './SheetModal';
 
 export type DiceRoll = {
-	dices: ResolvedDice[];
+	dices: DiceRequest[];
 	resolverKey?: string;
-	onResult?: (result: DiceResult[]) => void;
+	onResult?: (result: DiceResponse[]) => void;
 };
 
 export type DiceRollResultModalProps = DiceRoll & {
@@ -21,7 +21,7 @@ export type DiceRollResultModalProps = DiceRoll & {
 };
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
-	const [diceResults, setDiceResults] = useState<DiceResult[]>([]);
+	const [diceResults, setDiceResults] = useState<DiceResponse[]>([]);
 	const [descriptionFade, setDescriptionFade] = useState(false);
 
 	const logError = useContext(ErrorLogger);
@@ -53,7 +53,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 				{ timeout: 5000 }
 			)
 			.then((res) => {
-				const results: DiceResult[] = res.data.results;
+				const results: DiceResponse[] = res.data.results;
 				setDiceResults(results);
 				if (props.onResult) props.onResult(results);
 			})

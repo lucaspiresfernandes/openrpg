@@ -3,6 +3,7 @@ import type { Config } from '@prisma/client';
 export type DiceConfig = {
 	//Legacy object
 	base: DiceConfigCell;
+	
 	characteristic: DiceConfigCell;
 	skill: DiceConfigCell;
 	attribute: DiceConfigCell;

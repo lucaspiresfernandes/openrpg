@@ -3,7 +3,7 @@ import type { Server as HTTPServer } from 'http';
 import type { Socket as NetSocket } from 'net';
 import type { NextApiResponse } from 'next';
 import type { Server as SocketIOServer } from 'socket.io';
-import type { DiceResult, ResolvedDice } from './dice';
+import type { DiceResponse, DiceRequest } from './dice';
 
 export type PlayerNameChangeEvent = (playerId: number, value: string) => void;
 export type PlayerNameShowChangeEvent = (playerId: number, show: boolean) => void;
@@ -62,7 +62,7 @@ export type PlayerItemChangeEvent = (
 
 export type PlayerMaxLoadChangeEvent = (playerId: number, newLoad: number) => void;
 
-export type ConfigChangeEvent = (name: string, newValue: string) => void;
+export type EnvironmentChangeEvent = (newValue: string) => void;
 
 export type PlayerDeleteEvent = () => void;
 
@@ -102,8 +102,8 @@ export type DiceRollEvent = () => void;
 
 export type DiceResultEvent = (
 	playerId: number,
-	results: DiceResult[],
-	dices: ResolvedDice[]
+	results: DiceResponse[],
+	dices: DiceRequest[]
 ) => void;
 
 export interface ServerToClientEvents {
@@ -123,7 +123,7 @@ export interface ServerToClientEvents {
 	playerMaxLoadChange: PlayerMaxLoadChangeEvent;
 
 	//---------- Admin-triggered Events ----------
-	configChange: ConfigChangeEvent;
+	environmentChange: EnvironmentChangeEvent;
 	playerDelete: PlayerDeleteEvent;
 	skillAdd: SkillAddEvent;
 	skillRemove: SkillRemoveEvent;

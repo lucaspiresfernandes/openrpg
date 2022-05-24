@@ -48,12 +48,12 @@ export default function PortraitEnvironmentalContainer(props: {
 	}, []);
 
 	useEffect(() => {
-		props.socket.on('configChange', (name, newValue) => {
-			if (name === 'environment') setEnvironment(newValue as Environment);
-		});
+		props.socket.on('environmentChange', (newValue) =>
+			setEnvironment(newValue as Environment)
+		);
 
 		return () => {
-			props.socket.off('configChange');
+			props.socket.off('environmentChange');
 		};
 	}, [props.socket]);
 

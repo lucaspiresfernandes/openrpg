@@ -6,7 +6,7 @@ import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import { clamp } from '../../utils';
-import type { ResolvedDice } from '../../utils/dice';
+import type { DiceRequest } from '../../utils/dice';
 import SheetModal from './SheetModal';
 
 type DiceOption = {
@@ -50,7 +50,7 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
 	const applyRef = useRef(false);
 
 	function reset() {
-		const rollDices: ResolvedDice[] = [];
+		const rollDices: DiceRequest[] = [];
 		dices.map((dice) => {
 			if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
 		});
