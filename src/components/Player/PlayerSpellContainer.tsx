@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Image from 'react-bootstrap/Image';
 import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
@@ -15,6 +16,10 @@ import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
+import { resolveDices } from '../../utils/dice';
+import type { DiceRollEvent } from '../../hooks/useDiceRoll';
+import DiceRollModal from '../Modals/DiceRollModal';
+import useDiceRoll from '../../hooks/useDiceRoll';
 
 type PlayerSpellContainerProps = {
 	playerSpells: Spell[];
@@ -36,6 +41,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 
 	const logError = useContext(ErrorLogger);
 	const socket = useContext(Socket);
+	const [diceRoll, rollDice] = useDiceRoll();
 
 	const socket_spellAdd = useRef<SpellAddEvent>(() => {});
 	const socket_spellRemove = useRef<SpellRemoveEvent>(() => {});
@@ -142,7 +148,6 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 			maxSlotsFloat = 0;
 			setMaxSlots(maxSlotsFloat.toString());
 		} else setMaxSlots(maxSlots);
-		console.log('send');
 		api.post('/sheet/player', { maxSlots: maxSlotsFloat }).catch(logError);
 	}
 
@@ -171,7 +176,12 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				</Row>
 				<Row>
 					{playerSpells.map((spell) => (
-						<PlayerSpellField key={spell.id} spell={spell} onDelete={onDeleteSpell} />
+						<PlayerSpellField
+							key={spell.id}
+							spell={spell}
+							onDelete={onDeleteSpell}
+							showDiceRollResult={rollDice}
+						/>
 					))}
 				</Row>
 			</DataContainer>
@@ -183,6 +193,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 				onAddData={onAddSpell}
 				disabled={loading}
 			/>
+			<DiceRollModal {...diceRoll} />
 		</>
 	);
 }
@@ -190,9 +201,14 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 type PlayerSpellFieldProps = {
 	spell: Spell;
 	onDelete: (id: number) => void;
+	showDiceRollResult: DiceRollEvent;
 };
 
-function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
+function PlayerSpellField({
+	spell,
+	onDelete,
+	showDiceRollResult,
+}: PlayerSpellFieldProps) {
 	const logError = useContext(ErrorLogger);
 	const [loading, setLoading] = useState(false);
 
@@ -206,6 +222,11 @@ function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
 			})
 			.catch(logError)
 			.finally(() => setLoading(false));
+	}
+
+	function diceRoll() {
+		const aux = resolveDices(spell.damage);
+		if (aux) showDiceRollResult({ dices: aux });
 	}
 
 	return (
@@ -235,7 +256,16 @@ function PlayerSpellField({ spell, onDelete }: PlayerSpellFieldProps) {
 						<Col>Tipo: {spell.type}</Col>
 					</Row>
 					<Row className='mb-2'>
-						<Col>Dano: {spell.damage}</Col>
+						<Col>
+							<span className='me-1'>Dano: {spell.damage} </span>
+							<Image
+								alt='Dado'
+								src='/dice20.png'
+								className='clickable'
+								onClick={diceRoll}
+								style={{ maxHeight: '2rem' }}
+							/>
+						</Col>
 					</Row>
 					<Row className='mb-2'>
 						<Col>Alvo: {spell.target}</Col>

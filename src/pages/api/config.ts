@@ -13,14 +13,15 @@ const customBehaviours = new Map<
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const name = String(req.body.name);
-	let value: any = req.body.value;
+	let value: string;
+
+	if (typeof req.body.value === 'object') value = JSON.stringify(req.body.value);
+	else value = String(req.body.value);
 
 	if (!name || value === undefined) {
 		res.status(400).end();
 		return;
 	}
-
-	if (typeof value === 'object') value = JSON.stringify(value);
 
 	await prisma.config.upsert({
 		where: { name },

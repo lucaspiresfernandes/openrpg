@@ -2,15 +2,11 @@ import { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
-import useDiceRoll from '../../hooks/useDiceRoll';
 import DataContainer from '../DataContainer';
-import DiceRollResultModal from '../Modals/DiceRollResultModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 
 export default function AdminDiceRollContainer() {
-	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
-
 	return (
 		<>
 			<DataContainer xs={12} lg className='mb-5 mb-lg-0' title='Rolagem'>
@@ -34,9 +30,7 @@ export default function AdminDiceRollContainer() {
 			<GeneralDiceRollModal
 				show={generalDiceRollShow}
 				onHide={() => setGeneralDiceRollShow(false)}
-				showDiceRollResult={onDiceRoll}
 			/>
-			<DiceRollResultModal {...diceRollResultModalProps} />
 		</>
 	);
 }

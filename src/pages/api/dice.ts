@@ -3,9 +3,9 @@ import RandomOrg from 'random-org';
 import { isSuccessTypeEnabled } from '../../utils/config';
 import type {
 	DiceResponse,
-	DiceRequest,
 	DiceResolverKey,
 	DiceResponseResultType,
+	DiceRequest,
 } from '../../utils/dice';
 import { sessionAPI } from '../../utils/session';
 import type { NextApiResponseServerIO } from '../../utils/socket';
@@ -48,8 +48,6 @@ async function handler(
 
 	const dices: DiceRequest | DiceRequest[] = req.body.dices;
 	const resolverKey: DiceResolverKey | undefined = req.body.resolverKey || undefined;
-
-	console.log(dices);
 
 	if (!dices) {
 		res.status(400).end();

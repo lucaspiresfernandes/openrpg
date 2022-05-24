@@ -9,6 +9,7 @@ export type DiceRequest = {
 
 export type DiceResponseResultType = {
 	description: string;
+
 	//0: normal, < 0: failure, > 0: success
 	successWeight: number;
 };
@@ -17,7 +18,6 @@ export type DiceResponse = {
 	roll: number;
 	resultType?: DiceResponseResultType;
 };
-
 
 export function resolveDices(dices: string) {
 	let formattedDiceString = dices.replace(/\s/g, '').toUpperCase();

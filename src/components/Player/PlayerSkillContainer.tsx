@@ -17,7 +17,7 @@ import type {
 import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
-import DiceRollResultModal from '../Modals/DiceRollResultModal';
+import DiceRollModal from '../Modals/DiceRollModal';
 
 type PlayerSkillContainerProps = {
 	playerSkills: {
@@ -251,7 +251,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 				onAddData={onAddSkill}
 				disabled={loading}
 			/>
-			<DiceRollResultModal {...diceRollResultModalProps} />
+			<DiceRollModal {...diceRollResultModalProps} />
 		</>
 	);
 }
@@ -307,15 +307,16 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		api.post('/sheet/player/skill', { id: props.id, value }).catch(logError);
 	}
 
-	function rollDice() {
+	function rollDice(standalone: boolean) {
 		const roll = props.skillDiceConfig.value;
 		const branched = props.skillDiceConfig.branched;
 		props.showDiceRollResult({
-			dices: { num: 1, roll, ref: value },
+			dices: { num: standalone ? 1 : undefined, roll, ref: value },
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 			onResult: (results) => {
 				const result = results[0];
 				if (
+					results.length > 1 ||
 					!props.automaticMarking ||
 					!result.resultType ||
 					result.resultType.successWeight < 0 ||
@@ -354,7 +355,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 					/>
 				</Col>
 			</Row>
-			<Row className='h-100' onClick={rollDice}>
+			<Row className='h-100' onClick={ev => rollDice(ev.ctrlKey)}>
 				<Col>{props.name}</Col>
 			</Row>
 		</Col>

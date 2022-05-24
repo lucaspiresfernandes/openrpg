@@ -22,7 +22,7 @@ import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
-import DiceRollResultModal from '../Modals/DiceRollResultModal';
+import DiceRollModal from '../Modals/DiceRollModal';
 
 type PlayerEquipmentContainerProps = {
 	playerEquipments: {
@@ -209,7 +209,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				onAddData={onAddEquipment}
 				disabled={loading}
 			/>
-			<DiceRollResultModal {...diceRollResultModalProps} />
+			<DiceRollModal {...diceRollResultModalProps} />
 		</>
 	);
 }

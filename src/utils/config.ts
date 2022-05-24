@@ -38,5 +38,5 @@ export async function isSuccessTypeEnabled() {
 			where: { name: 'enable_success_types' },
 		});
 	}
-	return successTypeEnabled?.value || 'false';
+	return successTypeEnabled?.value === 'true';
 }

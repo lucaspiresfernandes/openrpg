@@ -4,8 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
 interface SheetModalProps extends ModalProps {
-	title: string;
-	children?: React.ReactElement;
+	children?: React.ReactNode;
 	applyButton?: {
 		name: string;
 		onApply: (ev: MouseEvent | FormEvent | undefined) => any;
@@ -19,51 +18,41 @@ interface SheetModalProps extends ModalProps {
 	onCancel?: () => void;
 }
 
-export default function SheetModal(props: SheetModalProps) {
+export default function SheetModal({
+	title,
+	children,
+	applyButton,
+	closeButton,
+	bodyStyle,
+	onCancel,
+	...props
+}: SheetModalProps) {
 	function submit(ev: FormEvent<HTMLFormElement>) {
 		ev.preventDefault();
-		props.applyButton?.onApply(ev);
+		applyButton?.onApply(ev);
 	}
 
 	return (
-		<Modal
-			animation={props.animation}
-			autoFocus={props.autoFocus}
-			backdrop={props.backdrop}
-			centered={props.centered}
-			fullscreen={props.fullscreen}
-			keyboard={props.keyboard}
-			onEnter={props.onEnter}
-			onEntered={props.onEntered}
-			onEntering={props.onEntering}
-			onEscapeKeyDown={props.onEscapeKeyDown}
-			onExit={props.onExit}
-			onExited={props.onExited}
-			onExiting={props.onExiting}
-			onHide={props.onHide}
-			onShow={props.onShow}
-			scrollable={props.scrollable}
-			show={props.show}
-			size={props.size}>
+		<Modal {...props}>
 			<Modal.Header>
-				<Modal.Title>{props.title}</Modal.Title>
+				<Modal.Title>{title}</Modal.Title>
 			</Modal.Header>
 			<Form onSubmit={submit} style={{ display: 'contents' }}>
-				<Modal.Body style={props.bodyStyle}>{props.children}</Modal.Body>
+				<Modal.Body style={bodyStyle}>{children}</Modal.Body>
 				<Modal.Footer>
-					{props.applyButton && (
-						<Button type='submit' variant='primary' disabled={props.applyButton.disabled}>
-							{props.applyButton.name}
+					{applyButton && (
+						<Button type='submit' variant='primary' disabled={applyButton.disabled}>
+							{applyButton.name}
 						</Button>
 					)}
 					<Button
 						variant='secondary'
 						onClick={() => {
-							if (props.onCancel) props.onCancel();
-							if (props.onHide) props.onHide();
+							onCancel?.();
+							props.onHide?.();
 						}}
-						disabled={props.closeButton?.disabled || false}>
-						{props.closeButton?.name || 'Fechar'}
+						disabled={closeButton?.disabled || false}>
+						{closeButton?.name || 'Fechar'}
 					</Button>
 				</Modal.Footer>
 			</Form>

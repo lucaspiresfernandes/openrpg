@@ -1,15 +1,15 @@
 import { useRef, useState } from 'react';
 import type {
 	DiceRoll,
-	DiceRollResultModalProps,
-} from '../components/Modals/DiceRollResultModal';
+	DiceRollModalProps,
+} from '../components/Modals/DiceRollModal';
 
 export type DiceRollEvent = (diceRoll: DiceRoll) => void;
 
-export default function useDiceRoll(): [DiceRollResultModalProps, DiceRollEvent] {
-	const [diceRoll, setDiceRoll] = useState<DiceRoll>({ dices: [] });
+export default function useDiceRoll(): [DiceRollModalProps, DiceRollEvent] {
+	const [diceRoll, setDiceRoll] = useState<DiceRoll>({ dices: null });
 
-	const lastRoll = useRef<DiceRoll>({ dices: [] });
+	const lastRoll = useRef<DiceRoll>({ dices: null });
 
 	const onDiceRoll: DiceRollEvent = ({ dices, resolverKey, onResult }) => {
 		const roll = { dices, resolverKey, onResult };
@@ -17,9 +17,9 @@ export default function useDiceRoll(): [DiceRollResultModalProps, DiceRollEvent]
 		setDiceRoll(roll);
 	};
 
-	const diceRollModalProps: DiceRollResultModalProps = {
+	const diceRollModalProps: DiceRollModalProps = {
 		...diceRoll,
-		onHide: () => setDiceRoll({ dices: [] }),
+		onHide: () => setDiceRoll({ dices: null }),
 		onRollAgain: () => setDiceRoll(lastRoll.current),
 	};
 

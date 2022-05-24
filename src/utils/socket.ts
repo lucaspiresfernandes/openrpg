@@ -3,7 +3,7 @@ import type { Server as HTTPServer } from 'http';
 import type { Socket as NetSocket } from 'net';
 import type { NextApiResponse } from 'next';
 import type { Server as SocketIOServer } from 'socket.io';
-import type { DiceResponse, DiceRequest } from './dice';
+import type { DiceRequest, DiceResponse } from './dice';
 
 export type PlayerNameChangeEvent = (playerId: number, value: string) => void;
 export type PlayerNameShowChangeEvent = (playerId: number, show: boolean) => void;

@@ -11,7 +11,7 @@ import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
 import BottomTextInput from '../BottomTextInput';
-import DiceRollResultModal from '../Modals/DiceRollResultModal';
+import DiceRollModal from '../Modals/DiceRollModal';
 
 type PlayerCharacteristicContainerProps = {
 	playerCharacteristics: {
@@ -40,7 +40,7 @@ export default function PlayerCharacteristicContainer(
 					/>
 				))}
 			</Row>
-			<DiceRollResultModal {...diceRollResultModalProps} />
+			<DiceRollModal {...diceRollResultModalProps} />
 		</>
 	);
 }
@@ -93,11 +93,15 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 			.catch(logError);
 	}
 
-	function rollDice() {
+	function rollDice(standalone: boolean) {
 		const roll = props.characteristicDiceConfig.value;
 		const branched = props.characteristicDiceConfig.branched;
 		props.showDiceRollResult({
-			dices: { num: 1, roll, ref: Math.max(1, value + parseInt(modifier)) },
+			dices: {
+				num: standalone ? 1 : undefined,
+				roll,
+				ref: Math.max(1, value + parseInt(modifier)),
+			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 		});
 	}
@@ -111,7 +115,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 						alt='Dado'
 						className='clickable'
 						src='/dice20.png'
-						onClick={rollDice}
+						onClick={(ev) => rollDice(ev.ctrlKey)}
 						style={{ maxHeight: 50 }}
 					/>
 				</Col>

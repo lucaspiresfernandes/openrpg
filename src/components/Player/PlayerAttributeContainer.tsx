@@ -1,22 +1,22 @@
 import type { Attribute, AttributeStatus } from '@prisma/client';
-import { useContext, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormCheck from 'react-bootstrap/FormCheck';
 import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { ErrorLogger } from '../../contexts';
 import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import useDiceRoll from '../../hooks/useDiceRoll';
 import { clamp } from '../../utils';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
-import DiceRollResultModal from '../Modals/DiceRollResultModal';
-import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
+import DiceRollModal from '../Modals/DiceRollModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
 
 const MAX_AVATAR_HEIGHT = 450;
 
@@ -62,7 +62,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					playerAvatars={props.playerAvatars}
 					onAvatarUpdate={() => setNotify((n) => !n)}
 				/>
-				<PlayerAvatarDice showDiceRollResult={onDiceRoll} />
+				<PlayerAvatarDice />
 			</Row>
 			{props.playerAttributes.map((attr) => {
 				const status = playerAttributeStatus.filter(
@@ -79,7 +79,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					/>
 				);
 			})}
-			<DiceRollResultModal {...diceRollResultModalProps} />
+			<DiceRollModal {...diceRollResultModalProps} />
 		</>
 	);
 }
@@ -110,7 +110,9 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	const [value, setValue] = useState(props.playerAttribute.value);
 	const [maxValue, setMaxValue] = useState(props.playerAttribute.maxValue);
 	const barRef = useRef<HTMLDivElement>(null);
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<{ timeout?: NodeJS.Timeout; lastValue: number }>({
+		lastValue: value,
+	});
 	const logError = useContext(ErrorLogger);
 
 	useEffect(() => {
@@ -125,11 +127,11 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	}, [barRef]);
 
 	useEffect(() => {
-		if (timeout.current) clearTimeout(timeout.current);
+		if (timeout.current.timeout) clearTimeout(timeout.current.timeout);
 	}, [maxValue]);
 
 	function updateValue(ev: React.MouseEvent, coeff: number) {
-		if (ev.shiftKey) coeff *= 10;
+		if (ev.ctrlKey) coeff *= 10;
 
 		const newVal = clamp(value + coeff, 0, maxValue);
 
@@ -137,12 +139,17 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 
 		setValue(newVal);
 
-		if (timeout.current) clearTimeout(timeout.current);
-		timeout.current = setTimeout(
+		if (timeout.current.timeout) {
+			clearTimeout(timeout.current.timeout);
+			if (timeout.current.lastValue === newVal) return;
+		}
+
+		timeout.current.timeout = setTimeout(
 			() =>
 				api
 					.post('/sheet/player/attribute', { id: attributeID, value: newVal })
-					.catch(logError),
+					.catch(logError)
+					.finally(() => (timeout.current.lastValue = newVal)),
 			750
 		);
 	}
@@ -186,11 +193,11 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 		});
 	}
 
-	function diceClick() {
+	function diceClick(standalone: boolean) {
 		const roll = props.attributeDiceConfig.value;
 		const branched = props.attributeDiceConfig.branched;
 		props.showDiceRollResult({
-			dices: { num: 1, roll, ref: value },
+			dices: { num: standalone ? 1 : undefined, roll, ref: value },
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 		});
 	}
@@ -230,7 +237,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 							src='/dice20.png'
 							alt='Dado'
 							className='attribute-dice clickable'
-							onClick={diceClick}
+							onClick={(ev) => diceClick(ev.ctrlKey)}
 						/>
 					</Col>
 				)}
@@ -379,7 +386,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 	);
 }
 
-function PlayerAvatarDice({ showDiceRollResult }: { showDiceRollResult: DiceRollEvent }) {
+function PlayerAvatarDice() {
 	const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
 
 	return (
@@ -396,7 +403,6 @@ function PlayerAvatarDice({ showDiceRollResult }: { showDiceRollResult: DiceRoll
 			<GeneralDiceRollModal
 				show={generalDiceRollShow}
 				onHide={() => setGeneralDiceRollShow(false)}
-				showDiceRollResult={showDiceRollResult}
 			/>
 		</>
 	);
