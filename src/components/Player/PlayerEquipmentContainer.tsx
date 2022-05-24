@@ -170,7 +170,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 				outline
 				title={props.title}
 				addButton={{ onAdd: () => setAddEquipmentShow(true), disabled: loading }}>
-				<Row className='mb-3 text-center'>
+				<Row className='text-center'>
 					<Col>
 						<Table responsive className='align-middle'>
 							<thead>

@@ -229,7 +229,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 						</Button>
 					</Col>
 				</Row>
-				<Row className='mb-3 mx-1 text-center justify-content-center'>
+				<Row className='mx-1 text-center justify-content-center'>
 					{playerSkillsList.map((skill) => (
 						<PlayerSkillField
 							key={skill.id}

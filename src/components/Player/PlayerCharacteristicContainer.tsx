@@ -28,7 +28,7 @@ export default function PlayerCharacteristicContainer(
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
 	return (
 		<>
-			<Row className='mb-3 text-center align-items-end justify-content-center'>
+			<Row className='text-center align-items-end justify-content-center'>
 				{props.playerCharacteristics.map((char) => (
 					<PlayerCharacteristicField
 						key={char.Characteristic.id}

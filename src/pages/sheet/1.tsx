@@ -87,7 +87,7 @@ function PlayerSheet(props: PageProps) {
 								/>
 							</Col>
 						</Row>
-						<Row>
+						<Row className='mb-3'>
 							<DataContainer
 								outline
 								title={
@@ -102,7 +102,7 @@ function PlayerSheet(props: PageProps) {
 								/>
 							</DataContainer>
 						</Row>
-						<Row>
+						<Row className='mb-3'>
 							<PlayerEquipmentContainer
 								availableEquipments={props.availableEquipments}
 								playerEquipments={props.player.PlayerEquipment}
@@ -112,7 +112,7 @@ function PlayerSheet(props: PageProps) {
 								}
 							/>
 						</Row>
-						<Row>
+						<Row className='mb-3'>
 							<PlayerSkillContainer
 								playerSkills={props.player.PlayerSkill}
 								availableSkills={props.availableSkills}
@@ -124,7 +124,7 @@ function PlayerSheet(props: PageProps) {
 								automaticMarking={props.automaticMarking}
 							/>
 						</Row>
-						<Row>
+						<Row className='mb-3'>
 							<PlayerItemContainer
 								playerItems={props.player.PlayerItem}
 								availableItems={props.availableItems}
@@ -136,7 +136,7 @@ function PlayerSheet(props: PageProps) {
 								}
 							/>
 						</Row>
-						<Row>
+						<Row className='mb-3'>
 							<PlayerSpellContainer
 								playerSpells={props.player.PlayerSpell.map((sp) => sp.Spell)}
 								availableSpells={props.availableSpells}

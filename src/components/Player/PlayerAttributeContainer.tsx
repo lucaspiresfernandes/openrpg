@@ -55,7 +55,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 
 	return (
 		<>
-			<Row className='mt-4 mb-2 justify-content-center'>
+			<Row className='justify-content-center'>
 				<PlayerAvatarImage
 					statusID={playerAttributeStatus.find((stat) => stat.value)?.AttributeStatus.id}
 					rerender={notify}
@@ -203,78 +203,80 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	}
 
 	return (
-		<>
-			<Row>
-				<Col>
-					<label htmlFor={`attribute${attributeID}`}>
-						Pontos de {props.playerAttribute.Attribute.name}
-					</label>
-				</Col>
-			</Row>
-			<Row>
-				<Col xs='auto' className='align-self-center' style={{ paddingRight: 0 }}>
-					<Button
-						size='sm'
-						variant={show ? 'primary' : 'secondary'}
-						onClick={onShowChange}>
-						{show ? <AiFillEye /> : <AiFillEyeInvisible />}
-					</Button>
-				</Col>
-				<Col>
-					<ProgressBar
-						now={value}
-						min={0}
-						max={maxValue}
-						style={{ backgroundColor: `#${props.playerAttribute.Attribute.color}40` }}
-						ref={barRef}
-						className='clickable'
-						onClick={onNewMaxValue}
-					/>
-				</Col>
-				{props.playerAttribute.Attribute.rollable && (
-					<Col xs='auto' className='align-self-center' style={{ paddingLeft: 0 }}>
-						<Image
-							src='/dice20.png'
-							alt='Dado'
-							className='attribute-dice clickable'
-							onClick={(ev) => diceClick(ev.ctrlKey)}
+		<Row className='mt-3'>
+			<Col>
+				<Row>
+					<Col>
+						<label htmlFor={`attribute${attributeID}`}>
+							Pontos de {props.playerAttribute.Attribute.name}
+						</label>
+					</Col>
+				</Row>
+				<Row>
+					<Col xs='auto' className='align-self-center' style={{ paddingRight: 0 }}>
+						<Button
+							size='sm'
+							variant={show ? 'primary' : 'secondary'}
+							onClick={onShowChange}>
+							{show ? <AiFillEye /> : <AiFillEyeInvisible />}
+						</Button>
+					</Col>
+					<Col>
+						<ProgressBar
+							now={value}
+							min={0}
+							max={maxValue}
+							style={{ backgroundColor: `#${props.playerAttribute.Attribute.color}40` }}
+							ref={barRef}
+							className='clickable'
+							onClick={onNewMaxValue}
 						/>
 					</Col>
-				)}
-			</Row>
-			<Row className='justify-content-center mt-2'>
-				<Col xs lg={3}>
-					<Button
-						variant='secondary'
-						className='w-100'
-						onClick={(ev) => updateValue(ev, -1)}>
-						-
-					</Button>
-				</Col>
-				<Col xs lg={2} className='text-center align-self-center h5 m-0'>
-					{`${value}/${maxValue}`}
-				</Col>
-				<Col xs lg={3}>
-					<Button
-						variant='secondary'
-						className='w-100'
-						onClick={(ev) => updateValue(ev, 1)}>
-						+
-					</Button>
-				</Col>
-			</Row>
-			<Row className='mt-2 mb-3'>
-				<Col>
-					{props.playerStatus.map((stat) => (
-						<PlayerAttributeStatusField
-							key={stat.AttributeStatus.id}
-							playerAttributeStatus={stat}
-							onStatusChanged={props.onStatusChanged}
-						/>
-					))}
-				</Col>
-			</Row>
-		</>
+					{props.playerAttribute.Attribute.rollable && (
+						<Col xs='auto' className='align-self-center' style={{ paddingLeft: 0 }}>
+							<Image
+								src='/dice20.png'
+								alt='Dado'
+								className='attribute-dice clickable'
+								onClick={(ev) => diceClick(ev.ctrlKey)}
+							/>
+						</Col>
+					)}
+				</Row>
+				<Row className='justify-content-center mt-2'>
+					<Col xs lg={3}>
+						<Button
+							variant='secondary'
+							className='w-100'
+							onClick={(ev) => updateValue(ev, -1)}>
+							-
+						</Button>
+					</Col>
+					<Col xs lg={2} className='text-center align-self-center h5 m-0'>
+						{`${value}/${maxValue}`}
+					</Col>
+					<Col xs lg={3}>
+						<Button
+							variant='secondary'
+							className='w-100'
+							onClick={(ev) => updateValue(ev, 1)}>
+							+
+						</Button>
+					</Col>
+				</Row>
+				<Row className='mt-2'>
+					<Col>
+						{props.playerStatus.map((stat) => (
+							<PlayerAttributeStatusField
+								key={stat.AttributeStatus.id}
+								playerAttributeStatus={stat}
+								onStatusChanged={props.onStatusChanged}
+							/>
+						))}
+					</Col>
+				</Row>
+			</Col>
+		</Row>
 	);
 }
 
