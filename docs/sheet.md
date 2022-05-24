@@ -98,7 +98,7 @@ As moedas são pequenas caixas de texto para guardar informações sobre dinheir
 
 As Magias são um contêiner que serve para guardar informações de uma habilidade especial do personagem.
 
-Para adicionar uma magia, clique no + ao lado do título do contêiner. Para excluir, clique em "Apagar".
+Para adicionar uma magia, clique no + ao lado do título do contêiner. Para excluir, clique em "Apagar". O campo "Dano" é rolável e as mesmas regras de rolagem dos Equipamentos são aplicados nas Magias.
 
 O contêiner de Magias também possui uma capacidade, que se torna vermelha quando é excedida. Essa capacidade pode ser modificada a qualquer momento.
 
