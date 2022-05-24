@@ -1,16 +1,23 @@
+export type DiceResolverKeyNum = 20 | 100;
+export type DiceResolverKey = '20' | '100' | '20b' | '100b';
+
 export type DiceRequest = {
 	num: number;
 	roll: number;
 	ref?: number;
 };
 
+export type DiceResponseResultType = {
+	description: string;
+	//0: normal, < 0: failure, > 0: success
+	successWeight: number;
+};
+
 export type DiceResponse = {
 	roll: number;
-	resultType?: {
-		description: string;
-		isSuccess: boolean;
-	};
+	resultType?: DiceResponseResultType;
 };
+
 
 export function resolveDices(dices: string) {
 	let formattedDiceString = dices.replace(/\s/g, '').toUpperCase();

@@ -78,7 +78,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 		socket_equipmentChange.current = (eq) => {
 			const availableIndex = availableEquipments.findIndex((_eq) => _eq.id === eq.id);
 			const playerIndex = playerEquipments.findIndex((_eq) => _eq.Equipment.id === eq.id);
-			
+
 			if (eq.visible) {
 				if (availableIndex === -1 && playerIndex === -1)
 					return setAvailableEquipments((equipments) => [...equipments, eq]);
@@ -264,7 +264,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 			return alert('Você não tem munição suficiente.');
 		const aux = resolveDices(props.equipment.damage);
 		if (!aux) return;
-		props.showDiceRollResult(aux);
+		props.showDiceRollResult({ dices: aux });
 		const ammo = currentAmmo - 1;
 		setCurrentAmmo(ammo);
 		api

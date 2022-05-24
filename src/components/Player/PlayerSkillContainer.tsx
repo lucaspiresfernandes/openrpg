@@ -310,19 +310,25 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	function rollDice() {
 		const roll = props.skillDiceConfig.value;
 		const branched = props.skillDiceConfig.branched;
-		props.showDiceRollResult(
-			[{ num: 1, roll, ref: value }],
-			`${roll}${branched ? 'b' : ''}`,
-			(results) => {
+		props.showDiceRollResult({
+			dices: { num: 1, roll, ref: value },
+			resolverKey: `${roll}${branched ? 'b' : ''}`,
+			onResult: (results) => {
 				const result = results[0];
-				if (!props.automaticMarking || !result.resultType?.isSuccess || checked) return;
+				if (
+					!props.automaticMarking ||
+					!result.resultType ||
+					result.resultType.successWeight < 0 ||
+					checked
+				)
+					return;
 				setChecked(true);
 				api.post('/sheet/player/skill', { id: props.id, checked: true }).catch((err) => {
 					logError(err);
 					setChecked(false);
 				});
-			}
-		);
+			},
+		});
 	}
 
 	if (props.hidden) return null;

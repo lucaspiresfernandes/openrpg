@@ -103,7 +103,7 @@ export type DiceRollEvent = () => void;
 export type DiceResultEvent = (
 	playerId: number,
 	results: DiceResponse[],
-	dices: DiceRequest[]
+	dices: DiceRequest | DiceRequest[]
 ) => void;
 
 export interface ServerToClientEvents {

@@ -19,6 +19,7 @@ import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
 import type { ContainerConfig, DiceConfig, PortraitConfig } from '../../utils/config';
 import prisma from '../../utils/database';
+import type { DiceResolverKeyNum } from '../../utils/dice';
 import { sessionSSR } from '../../utils/session';
 import { containerConfigInsertData } from '../api/init';
 
@@ -165,7 +166,11 @@ function DiceEditor(props: {
 								id='attributeDiceValue'
 								className='theme-element'
 								value={attributeDiceNum}
-								onChange={(ev) => setAttributeDiceNum(parseInt(ev.currentTarget.value))}>
+								onChange={(ev) =>
+									setAttributeDiceNum(
+										parseInt(ev.currentTarget.value) as DiceResolverKeyNum
+									)
+								}>
 								<option value={20}>d20</option>
 								<option value={100}>d100</option>
 							</select>
@@ -205,7 +210,9 @@ function DiceEditor(props: {
 								className='theme-element'
 								value={characteristicDiceNum}
 								onChange={(ev) =>
-									setCharacteristicDiceNum(parseInt(ev.currentTarget.value))
+									setCharacteristicDiceNum(
+										parseInt(ev.currentTarget.value) as DiceResolverKeyNum
+									)
 								}>
 								<option value={20}>d20</option>
 								<option value={100}>d100</option>
@@ -245,7 +252,9 @@ function DiceEditor(props: {
 								id='skillDiceValue'
 								className='theme-element'
 								value={skillDiceNum}
-								onChange={(ev) => setSkillDiceNum(parseInt(ev.currentTarget.value))}>
+								onChange={(ev) =>
+									setSkillDiceNum(parseInt(ev.currentTarget.value) as DiceResolverKeyNum)
+								}>
 								<option value={20}>d20</option>
 								<option value={100}>d100</option>
 							</select>

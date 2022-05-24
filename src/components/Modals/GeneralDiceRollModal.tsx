@@ -55,7 +55,7 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
 			if (dice.num > 0) rollDices.push({ num: dice.num, roll: dice.roll });
 		});
 		if (rollDices.length > 0 && applyRef.current) {
-			props.showDiceRollResult(rollDices);
+			props.showDiceRollResult({ dices: rollDices });
 			applyRef.current = false;
 		}
 		setDices(

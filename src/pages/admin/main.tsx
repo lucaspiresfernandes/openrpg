@@ -68,15 +68,15 @@ function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 						<Row className='justify-content-center gx-5'>
 							<PlayerManager players={players} />
 						</Row>
-						<Row className='my-3 text-center'>
+						<Row className='my-5 text-center'>
 							<AdminDiceRollContainer />
 							<CombatContainer players={playerNames} />
 						</Row>
-						<Row className='my-3'>
+						<Row className='mb-5'>
 							<DiceList players={playerNames} />
 							<NPCContainer />
 						</Row>
-						<Row className='my-3'>
+						<Row className='mb-3'>
 							<DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
 								<PlayerAnnotationsField value={adminAnnotations.value} />
 							</DataContainer>

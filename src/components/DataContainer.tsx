@@ -9,6 +9,7 @@ interface DataContainerProps extends ColProps {
 	title: string;
 	children?: React.ReactNode;
 	addButton?: {
+		name?: string;
 		type?: 'button' | 'dropdown';
 		onAdd?: () => void;
 		children?: React.ReactNode;
@@ -40,7 +41,7 @@ export default function DataContainer({
 							<Col xs={2} className='align-self-center'>
 								{addButton.type === 'dropdown' ? (
 									<DropdownButton
-										title='+'
+										title={addButton.name || '+'}
 										variant='secondary'
 										menuVariant='dark'
 										disabled={addButton.disabled}>
@@ -50,8 +51,9 @@ export default function DataContainer({
 									<Button
 										variant='secondary'
 										onClick={addButton.onAdd}
-										disabled={addButton.disabled}>
-										{addButton.disabled ? <CustomSpinner /> : '+'}
+										disabled={addButton.disabled}
+										size='sm'>
+										{addButton.disabled ? <CustomSpinner /> : addButton.name || '+'}
 									</Button>
 								)}
 							</Col>

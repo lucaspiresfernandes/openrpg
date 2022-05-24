@@ -1,14 +1,18 @@
 import type { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
 import { isSuccessTypeEnabled } from '../../utils/config';
-import type { DiceResult, ResolvedDice } from '../../utils/dice';
+import type {
+	DiceResponse,
+	DiceRequest,
+	DiceResolverKey,
+	DiceResponseResultType,
+} from '../../utils/dice';
 import { sessionAPI } from '../../utils/session';
 import type { NextApiResponseServerIO } from '../../utils/socket';
 
 const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
-type ResolverKey = '20' | '20b' | '100' | '100b';
 
-async function nextInt(min: number, max: number, n: number) {
+async function nextInt(min: number, max: number, n: number): Promise<{ data: number[] }> {
 	try {
 		return (await random.generateIntegers({ min, max, n })).random;
 	} catch (err) {
@@ -26,7 +30,10 @@ async function nextInt(min: number, max: number, n: number) {
 	return { data };
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
+async function handler(
+	req: NextApiRequest,
+	res: NextApiResponseServerIO<{ results: DiceResponse[] }>
+) {
 	if (req.method !== 'POST') {
 		res.status(404).end();
 		return;
@@ -39,8 +46,10 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const dices: ResolvedDice[] = req.body.dices;
-	const resolverKey: ResolverKey | undefined = req.body.resolverKey || undefined;
+	const dices: DiceRequest | DiceRequest[] = req.body.dices;
+	const resolverKey: DiceResolverKey | undefined = req.body.resolverKey || undefined;
+
+	console.log(dices);
 
 	if (!dices) {
 		res.status(400).end();
@@ -51,114 +60,146 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	io?.to(`portrait${player.id}`).emit('diceRoll');
 
-	const results = new Array<DiceResult>(dices.length);
+	const isArray = Array.isArray(dices);
+	const results: Array<DiceResponse> = isArray
+		? new Array(dices.length)
+		: new Array(dices.num);
 
-	try {
-		await Promise.all(
-			dices.map((dice, index) => {
-				const numDices = dice.num;
-				const diceRoll = dice.roll;
-				const reference = dice.ref;
+	if (isArray) {
+		try {
+			await Promise.all(
+				dices.map((dice, index) => {
+					const numDices = dice.num;
+					const roll = dice.roll;
 
-				if (isNaN(numDices) || isNaN(diceRoll)) throw new Error();
+					if (isNaN(numDices) || isNaN(roll)) throw new Error();
 
-				if (numDices === 0 || diceRoll < 1) {
-					results[index] = { roll: diceRoll };
-					return;
-				}
+					if (numDices === 0 || roll < 1) {
+						results[index] = { roll };
+						return;
+					}
 
-				if (diceRoll === 1) {
-					results[index] = { roll: numDices };
-					return;
-				}
+					if (roll === 1) {
+						results[index] = { roll: numDices };
+						return;
+					}
 
-				return nextInt(numDices, numDices * diceRoll, 1).then((result) => {
-					const roll = result.data.reduce((a, b) => a + b, 0);
-					results[index] = { roll };
+					return nextInt(numDices, numDices * roll, 1).then(
+						({ data }) => (results[index] = { roll: data[0] })
+					);
+				})
+			);
+		} catch (err) {
+			console.error(err);
+			res.status(400).end();
+		}
+	} else {
+		const numDices = dices.num;
+		const roll = dices.roll;
+		const reference = dices.ref;
 
-					if (!isSuccessTypeEnabled() || !resolverKey || reference === undefined) return;
-					results[index].resultType = resolveSuccessType(resolverKey, reference, roll);
-				});
-			})
-		);
+		if (isNaN(numDices) || isNaN(roll)) {
+			res.status(400).end();
+			return;
+		}
 
-		res.send({ results });
+		if (numDices === 0 || roll < 1) {
+			res.send({ results: [{ roll }] });
+			return;
+		}
 
-		if (!player.admin) io?.to('admin').emit('diceResult', player.id, results, dices);
+		if (roll === 1) {
+			res.send({ results: [{ roll: numDices }] });
+			return;
+		}
 
-		io?.to(`portrait${player.id}`).emit('diceResult', player.id, results, []);
-	} catch (err) {
-		console.error(err);
-		res.status(400).end();
+		const { data } = await nextInt(1, roll, numDices);
+
+		for (let index = 0; index < data.length; index++) {
+			const result = data[index];
+			results[index] = { roll: result };
+			const successTypeEnabled = await isSuccessTypeEnabled();
+			if (successTypeEnabled && resolverKey && reference)
+				results[index].resultType = resolveSuccessType(resolverKey, reference, result);
+		}
 	}
+
+	res.send({ results });
+
+	if (!player.admin) io?.to('admin').emit('diceResult', player.id, results, dices);
+	io?.to(`portrait${player.id}`).emit('diceResult', player.id, results, dices);
 }
 
-function resolveSuccessType(key: ResolverKey, reference: number, roll: number) {
+function resolveSuccessType(
+	key: DiceResolverKey,
+	reference: number,
+	roll: number
+): DiceResponseResultType {
 	switch (key) {
 		case '20':
 			if (roll > 20 - reference)
 				return {
 					description: 'Sucesso',
-					isSuccess: true,
+					successWeight: 0,
 				};
 			return {
 				description: 'Fracasso',
-				isSuccess: false,
+				successWeight: -1,
 			};
 		case '20b':
 			if (roll > 20 - Math.floor(reference * 0.2))
 				return {
 					description: 'Extremo',
-					isSuccess: true,
+					successWeight: 2,
 				};
 			if (roll > 20 - Math.floor(reference * 0.5))
 				return {
 					description: 'Bom',
-					isSuccess: true,
+					successWeight: 1,
 				};
 			if (roll > 20 - reference)
 				return {
 					description: 'Sucesso',
-					isSuccess: true,
+					successWeight: 0,
 				};
 			return {
 				description: 'Fracasso',
-				isSuccess: false,
+				successWeight: -1,
 			};
 		case '100':
 			if (roll <= reference)
 				return {
 					description: 'Sucesso',
-					isSuccess: true,
+					successWeight: 0,
 				};
 			return {
 				description: 'Fracasso',
-				isSuccess: false,
+				successWeight: -1,
 			};
 		case '100b':
 			if (roll <= Math.floor(reference * 0.2))
 				return {
 					description: 'Extremo',
-					isSuccess: true,
+					successWeight: 2,
 				};
 			if (roll <= Math.floor(reference * 0.5))
 				return {
 					description: 'Bom',
-					isSuccess: true,
+					successWeight: 1,
 				};
 			if (roll <= reference)
 				return {
 					description: 'Sucesso',
-					isSuccess: true,
+					successWeight: 0,
 				};
 			return {
 				description: 'Fracasso',
-				isSuccess: false,
+				successWeight: -1,
 			};
 		default:
 			return {
 				description: 'Unkown',
-				isSuccess: false,
+				successWeight: 0,
 			};
 	}
 }

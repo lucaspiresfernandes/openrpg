@@ -189,10 +189,10 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	function diceClick() {
 		const roll = props.attributeDiceConfig.value;
 		const branched = props.attributeDiceConfig.branched;
-		props.showDiceRollResult(
-			[{ num: 1, roll, ref: value }],
-			`${roll}${branched ? 'b' : ''}`
-		);
+		props.showDiceRollResult({
+			dices: { num: 1, roll, ref: value },
+			resolverKey: `${roll}${branched ? 'b' : ''}`,
+		});
 	}
 
 	return (
@@ -205,7 +205,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 				</Col>
 			</Row>
 			<Row>
-				<Col xs='auto' className='align-self-center' style={{paddingRight: 0}}>
+				<Col xs='auto' className='align-self-center' style={{ paddingRight: 0 }}>
 					<Button
 						size='sm'
 						variant={show ? 'primary' : 'secondary'}
@@ -225,7 +225,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					/>
 				</Col>
 				{props.playerAttribute.Attribute.rollable && (
-					<Col xs='auto' className='align-self-center' style={{paddingLeft: 0}}>
+					<Col xs='auto' className='align-self-center' style={{ paddingLeft: 0 }}>
 						<Image
 							src='/dice20.png'
 							alt='Dado'

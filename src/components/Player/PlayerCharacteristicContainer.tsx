@@ -46,10 +46,7 @@ export default function PlayerCharacteristicContainer(
 }
 
 type PlayerCharacteristicFieldProps = {
-	characteristicDiceConfig: {
-		value: number;
-		branched: boolean;
-	};
+	characteristicDiceConfig: DiceConfigCell;
 	value: number;
 	modifier: string;
 	characteristic: Characteristic;
@@ -97,12 +94,12 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 	}
 
 	function rollDice() {
-		const roll = props.characteristicDiceConfig['value'] as number;
-		const branched = props.characteristicDiceConfig['branched'] as boolean;
-		props.showDiceRollResult(
-			[{ num: 1, roll, ref: Math.max(1, value + parseInt(modifier)) }],
-			`${roll}${branched ? 'b' : ''}`
-		);
+		const roll = props.characteristicDiceConfig.value;
+		const branched = props.characteristicDiceConfig.branched;
+		props.showDiceRollResult({
+			dices: { num: 1, roll, ref: Math.max(1, value + parseInt(modifier)) },
+			resolverKey: `${roll}${branched ? 'b' : ''}`,
+		});
 	}
 
 	return (

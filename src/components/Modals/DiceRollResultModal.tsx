@@ -6,18 +6,28 @@ import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 import { ErrorLogger } from '../../contexts';
 import api from '../../utils/api';
-import type { DiceResponse, DiceRequest } from '../../utils/dice';
+import type {
+	DiceResponse,
+	DiceRequest,
+	DiceResolverKey,
+	DiceResponseResultType,
+} from '../../utils/dice';
 import SheetModal from './SheetModal';
 
 export type DiceRoll = {
-	dices: DiceRequest[];
-	resolverKey?: string;
+	dices: DiceRequest | DiceRequest[];
+	resolverKey?: DiceResolverKey;
 	onResult?: (result: DiceResponse[]) => void;
 };
 
 export type DiceRollResultModalProps = DiceRoll & {
 	onHide: () => void;
 	onRollAgain: () => void;
+};
+
+type DiceDisplay = {
+	roll: number | string;
+	description?: number | string;
 };
 
 export default function DiceRollResultModal(props: DiceRollResultModalProps) {
@@ -29,23 +39,41 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 	const rollAgain = useRef(false);
 	const descriptionDelayTimeout = useRef<NodeJS.Timeout | null>(null);
 
-	const result = useMemo(() => {
-		if (diceResults.length === 1) return diceResults[0];
-		else if (diceResults.length > 1) {
-			const dices = diceResults.map((d) => d.roll);
-			const sum = dices.reduce((a, b) => a + b, 0);
+	const result: DiceDisplay | undefined = useMemo(() => {
+		if (diceResults.length === 1) {
 			return {
-				roll: sum,
-				resultType: {
-					description: dices.join(' + '),
-					isSuccess: false,
-				},
+				roll: diceResults[0].roll,
+				description: diceResults[0].resultType?.description,
 			};
+		} else if (diceResults.length > 1) {
+			if (Array.isArray(props.dices)) {
+				const dices = diceResults.map((d) => d.roll);
+				const sum = dices.reduce((a, b) => a + b, 0);
+				return {
+					roll: sum,
+					description: dices.join(' + '),
+				};
+			} else {
+				let max: DiceResponseResultType | null = null;
+				for (const result of diceResults) {
+					if (
+						result.resultType &&
+						result.resultType.successWeight >
+							(max?.successWeight || Number.MIN_SAFE_INTEGER)
+					) {
+						max = result.resultType;
+					}
+				}
+				const roll = diceResults.map((d) => d.roll).join(', ');
+				const description = max?.description;
+				return { roll, description };
+			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [diceResults]);
 
 	useEffect(() => {
-		if (props.dices.length === 0) return;
+		if (Array.isArray(props.dices) && props.dices.length === 0) return;
 		api
 			.post(
 				'/dice',
@@ -55,6 +83,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 			.then((res) => {
 				const results: DiceResponse[] = res.data.results;
 				setDiceResults(results);
+				console.log(results);
 				if (props.onResult) props.onResult(results);
 			})
 			.catch(logError);
@@ -84,7 +113,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 
 	return (
 		<SheetModal
-			show={props.dices.length != 0}
+			show={Array.isArray(props.dices) ? props.dices.length != 0 : true}
 			onExited={onExited}
 			title='Resultado da Rolagem'
 			onHide={onHide}
@@ -119,7 +148,7 @@ export default function DiceRollResultModal(props: DiceRollResultModalProps) {
 				<Row>
 					{result && (
 						<Fade in={descriptionFade}>
-							<Col>{result.resultType?.description}</Col>
+							<Col>{result.description}</Col>
 						</Fade>
 					)}
 				</Row>

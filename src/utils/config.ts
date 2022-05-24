@@ -1,16 +1,17 @@
 import type { Config } from '@prisma/client';
+import type { DiceResolverKeyNum } from './dice';
 
 export type DiceConfig = {
 	//Legacy object
 	base: DiceConfigCell;
-	
+
 	characteristic: DiceConfigCell;
 	skill: DiceConfigCell;
 	attribute: DiceConfigCell;
 };
 
 export type DiceConfigCell = {
-	value: number;
+	value: DiceResolverKeyNum;
 	branched: boolean;
 };
 

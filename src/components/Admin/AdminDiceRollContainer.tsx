@@ -13,7 +13,7 @@ export default function AdminDiceRollContainer() {
 
 	return (
 		<>
-			<DataContainer xs={12} lg title='Rolagem'>
+			<DataContainer xs={12} lg className='mb-5 mb-lg-0' title='Rolagem'>
 				<Row className='mb-3 justify-content-center'>
 					<Col xs={3}>
 						<Row>

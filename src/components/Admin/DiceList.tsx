@@ -17,16 +17,22 @@ export default function DiceList(props: { players: { id: number; name: string }[
 
 	useEffect(() => {
 		setValues(JSON.parse(localStorage.getItem('admin_dice_history') || '[]') as Dice[]);
-		
+
 		socket.on('diceResult', (playerID, _results, _dices) => {
 			const playerName =
 				props.players.find((p) => p.id === playerID)?.name || 'Desconhecido';
 
-			const dices = _dices.map((dice) => {
-				const num = dice.num;
-				const roll = dice.roll;
-				return num > 0 ? `${num}d${roll}` : roll;
-			});
+			const isArray = Array.isArray(_dices);
+
+			const dices = isArray
+				? _dices.map((dice) => {
+						const num = dice.num;
+						const roll = dice.roll;
+						return num > 0 ? `${num}d${roll}` : roll;
+				  })
+				: _dices.num > 0
+				? [`${_dices.num}d${_dices.roll}`]
+				: [_dices.roll];
 
 			const results = _results.map((res) => {
 				const roll = res.roll;
@@ -69,7 +75,12 @@ export default function DiceList(props: { players: { id: number; name: string }[
 	}, [values]);
 
 	return (
-		<DataContainer xs={12} lg title='Histórico'>
+		<DataContainer xs={12} lg title='Histórico' className='mb-5 mb-lg-0' addButton={{
+			name: 'Limpar',
+			onAdd: () => {
+				setValues([]);
+			}
+		}}>
 			<Row>
 				<Col>
 					<div className='w-100 wrapper' ref={wrapper}>
