@@ -127,9 +127,7 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 			const player = players.find((p) => p.id === playerId);
 			if (!player) return;
 
-			const index = player.PlayerAttributeStatus.findIndex(
-				(curr) => curr.AttributeStatus.id === id
-			);
+			const index = player.PlayerAttributes.findIndex((curr) => curr.Attribute.id === id);
 			if (index === -1 || (value === null && maxValue === null)) return;
 
 			if (value !== null) player.PlayerAttributes[index].value = value;
@@ -142,8 +140,8 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 			const player = players.find((p) => p.id === playerId);
 			if (!player) return;
 
-			const index = player.PlayerAttributeStatus.findIndex(
-				(curr) => curr.AttributeStatus.id === id
+			const index = player.PlayerSpec.findIndex(
+				(curr) => curr.Spec.id === id
 			);
 			if (index === -1) return;
 
@@ -155,8 +153,8 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 			const player = players.find((p) => p.id === playerId);
 			if (!player) return;
 
-			const index = player.PlayerAttributeStatus.findIndex(
-				(curr) => curr.AttributeStatus.id === id
+			const index = player.PlayerCurrency.findIndex(
+				(curr) => curr.Currency.id === id
 			);
 			if (index === -1) return;
 

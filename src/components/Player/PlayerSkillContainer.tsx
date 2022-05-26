@@ -155,7 +155,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 
 				const newSkills = [...availableSkills];
 				newSkills.splice(
-					newSkills.findIndex((eq) => eq.id === id),
+					newSkills.findIndex((sk) => sk.id === id),
 					1
 				);
 				setAvailableSkills(newSkills);
@@ -355,7 +355,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 					/>
 				</Col>
 			</Row>
-			<Row className='h-100' onClick={ev => rollDice(ev.ctrlKey)}>
+			<Row className='h-100' onClick={(ev) => rollDice(ev.ctrlKey)}>
 				<Col>{props.name}</Col>
 			</Row>
 		</Col>

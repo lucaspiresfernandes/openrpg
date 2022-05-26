@@ -127,7 +127,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
 				const newItems = [...availableItems];
 				newItems.splice(
-					newItems.findIndex((eq) => eq.id === id),
+					newItems.findIndex((_item) => _item.id === id),
 					1
 				);
 				setAvailableItems(newItems);
@@ -141,7 +141,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
 	function onDeleteItem(id: number) {
 		const newPlayerItems = [...playerItems];
-		const index = newPlayerItems.findIndex((eq) => eq.Item.id === id);
+		const index = newPlayerItems.findIndex((_item) => _item.Item.id === id);
 
 		newPlayerItems.splice(index, 1);
 		setPlayerItems(newPlayerItems);
