@@ -258,13 +258,15 @@ function PlayerSpellField({
 					<Row className='mb-2'>
 						<Col>
 							<span className='me-1'>Dano: {spell.damage} </span>
-							<Image
-								alt='Dado'
-								src='/dice20.png'
-								className='clickable'
-								onClick={diceRoll}
-								style={{ maxHeight: '2rem' }}
-							/>
+							{spell.damage !== '-' && (
+								<Image
+									alt='Dado'
+									src='/dice20.png'
+									className='clickable'
+									onClick={diceRoll}
+									style={{ maxHeight: '2rem' }}
+								/>
+							)}
 						</Col>
 					</Row>
 					<Row className='mb-2'>
