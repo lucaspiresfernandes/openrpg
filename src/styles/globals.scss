@@ -16,8 +16,6 @@ $secondary: #6c757d;
 		$player-container-background-color: #252525;
 	}
 
-	padding: 0;
-	font-family: 'Cinzel', serif;
 	background-color: $background-color;
 	color: $text-color;
 
@@ -145,6 +143,9 @@ $secondary: #6c757d;
 }
 
 body {
+	padding: 0;
+	font-family: 'Cinzel', serif;
+
 	&.dark {
 		@include theme-components($dark-theme: true);
 	}
@@ -152,6 +153,10 @@ body {
 	&.light {
 		@include theme-components($dark-theme: false);
 	}
+}
+
+.custom-font {
+	font-family: 'OpenRPG Custom Font';
 }
 
 .fade:not(.show) {
@@ -203,7 +208,7 @@ $navbar-background-color: #303030;
 	.list-group {
 		min-height: 200px;
 	}
-	
+
 	@include custom_scrollbar();
 }
 

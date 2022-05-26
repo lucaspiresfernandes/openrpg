@@ -1,13 +1,14 @@
 import type { Attribute } from '@prisma/client';
 import type { GetServerSidePropsContext } from 'next';
 import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 import FormCheck from 'react-bootstrap/FormCheck';
+import FormControl from 'react-bootstrap/FormControl';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import ApplicationHead from '../../components/ApplicationHead';
@@ -17,7 +18,12 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type { ContainerConfig, DiceConfig, PortraitConfig } from '../../utils/config';
+import type {
+	ContainerConfig,
+	DiceConfig,
+	PortraitConfig,
+	PortraitFontConfig,
+} from '../../utils/config';
 import prisma from '../../utils/database';
 import type { DiceResolverKeyNum } from '../../utils/dice';
 import { sessionSSR } from '../../utils/session';
@@ -68,6 +74,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 							<PortraitEditor
 								portrait={props.portrait}
 								attributes={props.attributes}
+								portraitFont={props.portraitFont}
 								logError={addToast}
 							/>
 						)}
@@ -374,6 +381,7 @@ type PortraitContainerProps = {
 		side_attribute: Attribute | null;
 	};
 	attributes: Attribute[];
+	portraitFont: PortraitFontConfig;
 	logError: (err: any) => void;
 };
 
@@ -384,17 +392,24 @@ function PortraitEditor(props: PortraitContainerProps) {
 	const availableAttributes = props.attributes.filter(
 		(attr) => !attributes.find((at) => at.id === attr.id) && attr.id !== sideAttribute?.id
 	);
+	const [font, setFont] = useState<PortraitFontConfig | null>(props.portraitFont);
+	const fontRef = useRef<HTMLInputElement | null>(null);
 
 	function onApply() {
 		setLoading(true);
-		api
-			.post('/config', {
+		Promise.all([
+			api.post('/config', {
 				name: 'portrait',
 				value: {
 					attributes: attributes.map((attr) => attr.id),
 					side_attribute: sideAttribute?.id || 0,
 				},
-			})
+			}),
+			api.post('/config', {
+				name: 'portrait_font',
+				value: font,
+			}),
+		])
 			.then(() => alert('Configurações de retrato aplicadas com sucesso.'))
 			.catch(props.logError)
 			.finally(() => setLoading(false));
@@ -416,6 +431,21 @@ function PortraitEditor(props: PortraitContainerProps) {
 	function onSideAttributeChange(ev: ChangeEvent<HTMLSelectElement>) {
 		const id = parseInt(ev.currentTarget.value);
 		setSideAttribute(availableAttributes.find((attr) => attr.id === id) || null);
+	}
+
+	function onPortraitFontChange(ev: ChangeEvent<HTMLInputElement>) {
+		if (!ev.currentTarget.files) return;
+		const file = ev.currentTarget.files[0];
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			if (!e.target) return;
+			const base64 = e.target.result;
+			setFont({
+				name: file.name,
+				data: String(base64),
+			});
+		};
+		reader.readAsDataURL(file);
 	}
 
 	return (
@@ -457,7 +487,6 @@ function PortraitEditor(props: PortraitContainerProps) {
 					</ListGroup>
 				</Col>
 			</Row>
-			<hr />
 			<Row className='my-2 text-center justify-content-center'>
 				<Col className='h5'>
 					<label htmlFor='portraitSideAttribute' className='me-2'>
@@ -482,7 +511,36 @@ function PortraitEditor(props: PortraitContainerProps) {
 					</select>
 				</Col>
 			</Row>
-			<Row className='mt-5 mb-3 text-center'>
+			<hr />
+			<Row className='my-2 text-center justify-content-center'>
+				<Col className='h5'>
+					<label htmlFor='portraitCustomFont' className='me-2'>
+						Fonte personalizada:
+					</label>
+					<div className='my-3'>Atual: {font?.name || 'Nenhuma'}</div>
+					<FormControl
+						ref={fontRef}
+						id='portraitCustomFont'
+						type='file'
+						accept='.ttf,.woff'
+						className='theme-element'
+						onChange={onPortraitFontChange}
+					/>
+					<Button
+						className='mt-2'
+						size='sm'
+						variant='secondary'
+						onClick={() => {
+							setFont(null);
+							if (fontRef.current) fontRef.current.value = '';
+						}}
+						disabled={loading}>
+						Remover Fonte
+					</Button>
+				</Col>
+			</Row>
+			<hr />
+			<Row className='my-3 text-center'>
 				<Col>
 					<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
 						Aplicar
@@ -529,6 +587,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { name: 'enable_automatic_markers' },
 			select: { value: true },
 		}),
+		prisma.config.findUnique({
+			where: { name: 'portrait_font' },
+			select: { value: true },
+		}),
 	]);
 
 	const containerConfigQuery =
@@ -548,6 +610,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				containerConfigQuery.value || 'null'
 			) as ContainerConfig,
 			automaticMarking: results[7]?.value === 'true' ? true : false,
+			portraitFont: JSON.parse(results[8]?.value || 'null') as PortraitFontConfig,
 		},
 	};
 }

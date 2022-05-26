@@ -20,6 +20,11 @@ export type PortraitConfig = {
 	side_attribute: number;
 };
 
+export type PortraitFontConfig = {
+	name: string;
+	data: string;
+}
+
 export type Environment = 'idle' | 'combat';
 
 export type ContainerConfig = { originalName: string; name: string }[];

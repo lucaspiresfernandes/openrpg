@@ -85,6 +85,10 @@ const getDatabaseData = () => ({
 			value: 'true',
 		},
 		{
+			name: 'portrait_font',
+			value: 'null',
+		},
+		{
 			name: 'dice',
 			value: JSON.stringify({
 				characteristic: {

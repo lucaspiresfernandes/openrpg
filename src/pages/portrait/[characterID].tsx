@@ -12,7 +12,7 @@ import type { PortraitSideAttribute } from '../../components/Portrait/PortraitSi
 import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
 import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
-import type { Environment, PortraitConfig } from '../../utils/config';
+import type { Environment, PortraitConfig, PortraitFontConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 
 export default function CharacterPortrait(
@@ -22,6 +22,14 @@ export default function CharacterPortrait(
 
 	useEffect(() => {
 		document.body.style.backgroundColor = 'transparent';
+
+		if (props.customFont) {
+			const font = new FontFace('OpenRPG Custom Font', `url(${props.customFont.data})`);
+			font.load().then(() => {
+				document.fonts.add(font);
+				document.body.classList.add('custom-font');
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -125,6 +133,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				},
 			},
 		}),
+		prisma.config.findUnique({ where: { name: 'portrait_font' } }),
 	]);
 
 	if (!results[1])
@@ -162,6 +171,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 			attributeStatus: results[1].PlayerAttributeStatus,
 			playerName: { name: results[1].name, show: results[1].showName },
 			diceColor,
+			customFont: JSON.parse(results[2]?.value || 'null') as PortraitFontConfig,
 		},
 	};
 }
