@@ -165,12 +165,20 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 	}
 
 	function deleteSkill(id: number) {
-		const newSkill = [...skills];
-		const index = newSkill.findIndex((skill) => skill.id === id);
-		if (index > -1) {
-			newSkill.splice(index, 1);
-			setSkills(newSkill);
-		}
+		if (!confirm('Tem certeza de que deseja apagar esse item?')) return;
+		setLoading(true);
+		api
+			.delete('/sheet/skill', { data: { id } })
+			.then(() => {
+				const newSkill = [...skills];
+				const index = newSkill.findIndex((skill) => skill.id === id);
+				if (index > -1) {
+					newSkill.splice(index, 1);
+					setSkills(newSkill);
+				}
+			})
+			.catch(logError)
+			.finally(() => setLoading(false));
 	}
 
 	return (
