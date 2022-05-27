@@ -58,6 +58,13 @@ function PlayerSheet(props: PageProps) {
 			</Container>
 		);
 
+	const chars = props.diceConfig.characteristic.enable_modifiers
+		? props.player.PlayerCharacteristic
+		: props.player.PlayerCharacteristic.map((char) => ({
+				...char,
+				modifier: null,
+		  }));
+
 	return (
 		<>
 			<ErrorLogger.Provider value={addToast}>
@@ -95,7 +102,7 @@ function PlayerSheet(props: PageProps) {
 										?.name || 'Características'
 								}>
 								<PlayerCharacteristicContainer
-									playerCharacteristics={props.player.PlayerCharacteristic}
+									playerCharacteristics={chars}
 									characteristicDiceConfig={
 										props.diceConfig.characteristic || props.diceConfig.base
 									}

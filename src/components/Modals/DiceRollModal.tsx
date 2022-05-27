@@ -14,7 +14,7 @@ import { ErrorLogger } from '../../contexts';
 export type DiceRoll = {
 	dices: (Omit<DiceRequest, 'num'> & { num?: number }) | DiceRequest[] | null;
 	resolverKey?: DiceResolverKey;
-	onResult?: (result: DiceResponse[]) => void;
+	onResult?: (result: DiceResponse[]) => void | DiceResponse[];
 };
 
 export type DiceRollModalProps = DiceRoll & {
@@ -130,10 +130,8 @@ export default function DiceRollModal(props: DiceRollModalProps) {
 	);
 }
 
-type DiceRollResult = {
+type DiceRollResult = Omit<DiceRoll, 'dices'> & {
 	dices: DiceRequest | DiceRequest[] | null;
-	resolverKey?: DiceResolverKey;
-	onResult?: (result: DiceResponse[]) => void;
 };
 
 type DiceRollResultModalProps = Omit<
@@ -191,7 +189,7 @@ function DiceRollResultModal(props: DiceRollResultModalProps) {
 					}
 				}
 
-				const roll = diceResults.map((d) => d.roll).join(', ');
+				const roll = diceResults.map((d) => d.roll).join(' | ');
 				let description: string | undefined;
 
 				if (min.description && max.description) {
@@ -214,9 +212,12 @@ function DiceRollResultModal(props: DiceRollResultModalProps) {
 				{ timeout: 5000 }
 			)
 			.then((res) => {
-				const results: DiceResponse[] = res.data.results;
+				let results: DiceResponse[] = res.data.results;
+				if (props.onResult) {
+					let newResults = props.onResult(results);
+					if (newResults) results = newResults;
+				}
 				setDiceResults(results);
-				if (props.onResult) props.onResult(results);
 			})
 			.catch(logError);
 		// eslint-disable-next-line react-hooks/exhaustive-deps

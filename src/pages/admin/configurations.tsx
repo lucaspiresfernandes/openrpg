@@ -99,6 +99,9 @@ function DiceEditor(props: {
 	const [characteristicDiceBranched, setCharacteristicDiceBranched] = useState(
 		props.diceConfig.characteristic?.branched || props.diceConfig.base?.branched
 	);
+	const [characteristicDiceModifier, setCharacteristicDiceModifier] = useState(
+		props.diceConfig.characteristic?.enable_modifiers || false
+	);
 	const [skillDiceNum, setSkillDiceNum] = useState(
 		props.diceConfig.skill?.value || props.diceConfig.base?.value
 	);
@@ -122,6 +125,7 @@ function DiceEditor(props: {
 					characteristic: {
 						value: characteristicDiceNum,
 						branched: characteristicDiceBranched,
+						enable_modifiers: characteristicDiceModifier,
 					},
 					skill: {
 						value: skillDiceNum,
@@ -231,9 +235,20 @@ function DiceEditor(props: {
 							<FormCheck
 								inline
 								checked={characteristicDiceBranched}
-								onChange={() => setCharacteristicDiceBranched((b) => !b)}
+								onChange={(ev) => setCharacteristicDiceBranched(ev.currentTarget.checked)}
 								id='characteristicDiceBranched'
 								label='Ativar Ramificações'
+							/>
+						</Col>
+					</Row>
+					<Row className='mt-1'>
+						<Col>
+							<FormCheck
+								inline
+								checked={characteristicDiceModifier}
+								onChange={(ev) => setCharacteristicDiceModifier(ev.currentTarget.checked)}
+								id='characteristicDiceModifiers'
+								label='Ativar Modificadores'
 							/>
 						</Col>
 					</Row>

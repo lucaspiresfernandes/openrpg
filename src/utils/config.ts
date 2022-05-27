@@ -5,7 +5,9 @@ export type DiceConfig = {
 	//Legacy object
 	base: DiceConfigCell;
 
-	characteristic: DiceConfigCell;
+	characteristic: DiceConfigCell & {
+		enable_modifiers: boolean;
+	};
 	skill: DiceConfigCell;
 	attribute: DiceConfigCell;
 };
@@ -23,7 +25,7 @@ export type PortraitConfig = {
 export type PortraitFontConfig = {
 	name: string;
 	data: string;
-}
+};
 
 export type Environment = 'idle' | 'combat';
 

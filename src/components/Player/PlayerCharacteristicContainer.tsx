@@ -17,7 +17,7 @@ type PlayerCharacteristicContainerProps = {
 	playerCharacteristics: {
 		value: number;
 		Characteristic: Characteristic;
-		modifier: string;
+		modifier: string | null;
 	}[];
 	characteristicDiceConfig: DiceConfigCell;
 };
@@ -48,7 +48,7 @@ export default function PlayerCharacteristicContainer(
 type PlayerCharacteristicFieldProps = {
 	characteristicDiceConfig: DiceConfigCell;
 	value: number;
-	modifier: string;
+	modifier: string | null;
 	characteristic: Characteristic;
 	showDiceRollResult: DiceRollEvent;
 };
@@ -77,6 +77,8 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 	}
 
 	function onModifierBlur() {
+		if (!modifier) return;
+
 		const num = parseInt(modifier);
 
 		let newModifier = modifier;
@@ -96,13 +98,26 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 	function rollDice(standalone: boolean) {
 		const roll = props.characteristicDiceConfig.value;
 		const branched = props.characteristicDiceConfig.branched;
+
+		let mod: number | null = null;
+		if (modifier) mod = parseInt(modifier);
+
 		props.showDiceRollResult({
 			dices: {
 				num: standalone ? 1 : undefined,
 				roll,
-				ref: Math.max(1, value + parseInt(modifier)),
+				ref: mod === null ? value : Math.max(1, value + mod),
 			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
+			onResult: (results) => {
+				if (mod === null) return;
+				return results.map((res) => ({
+					// I have no idea why typescript is complaining about this next line, so I'm leaving it ignored.
+					//@ts-ignore
+					roll: res.roll + mod,
+					resultType: res.resultType,
+				}));
+			},
 		});
 	}
 
@@ -127,16 +142,18 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 					</label>
 				</Col>
 			</Row>
-			<Row className='justify-content-center mb-2'>
-				<Col xs={3}>
-					<BottomTextInput
-						className='text-center w-100'
-						value={modifier}
-						onChange={(ev) => setModifier(ev.currentTarget.value)}
-						onBlur={onModifierBlur}
-					/>
-				</Col>
-			</Row>
+			{modifier !== null && (
+				<Row className='justify-content-center mb-2'>
+					<Col xs={3}>
+						<BottomTextInput
+							className='text-center w-100'
+							value={modifier}
+							onChange={(ev) => setModifier(ev.currentTarget.value)}
+							onBlur={onModifierBlur}
+						/>
+					</Col>
+				</Row>
+			)}
 			<Row>
 				<Col>
 					<BottomTextInput
