@@ -201,46 +201,48 @@ function DiceEditor(props: {
 				</DataContainer>
 			</Row>
 			<Row className='text-center'>
-				<DataContainer
-					title='Rolagem de Característica'
-					outline
-					className='mx-3'
-					hidden={!successTypeEnabled}>
+				<DataContainer title='Rolagem de Característica' outline className='mx-3'>
 					<Row>
 						<Col className='h5' style={{ color: 'gray' }}>
 							Rolagem de Característica é o tipo de rolagem aplicado a Características.
 						</Col>
 					</Row>
-					<Row>
-						<Col>
-							<label htmlFor='characteristicDiceValue' className='me-2'>
-								Valor:
-							</label>
-							<select
-								id='characteristicDiceValue'
-								className='theme-element'
-								value={characteristicDiceNum}
-								onChange={(ev) =>
-									setCharacteristicDiceNum(
-										parseInt(ev.currentTarget.value) as DiceResolverKeyNum
-									)
-								}>
-								<option value={20}>d20</option>
-								<option value={100}>d100</option>
-							</select>
-						</Col>
-					</Row>
-					<Row className='mt-2'>
-						<Col>
-							<FormCheck
-								inline
-								checked={characteristicDiceBranched}
-								onChange={(ev) => setCharacteristicDiceBranched(ev.currentTarget.checked)}
-								id='characteristicDiceBranched'
-								label='Ativar Ramificações'
-							/>
-						</Col>
-					</Row>
+					{successTypeEnabled && (
+						<>
+							<Row>
+								<Col>
+									<label htmlFor='characteristicDiceValue' className='me-2'>
+										Valor:
+									</label>
+									<select
+										id='characteristicDiceValue'
+										className='theme-element'
+										value={characteristicDiceNum}
+										onChange={(ev) =>
+											setCharacteristicDiceNum(
+												parseInt(ev.currentTarget.value) as DiceResolverKeyNum
+											)
+										}>
+										<option value={20}>d20</option>
+										<option value={100}>d100</option>
+									</select>
+								</Col>
+							</Row>
+							<Row className='mt-2'>
+								<Col>
+									<FormCheck
+										inline
+										checked={characteristicDiceBranched}
+										onChange={(ev) =>
+											setCharacteristicDiceBranched(ev.currentTarget.checked)
+										}
+										id='characteristicDiceBranched'
+										label='Ativar Ramificações'
+									/>
+								</Col>
+							</Row>
+						</>
+					)}
 					<Row className='mt-1'>
 						<Col>
 							<FormCheck
