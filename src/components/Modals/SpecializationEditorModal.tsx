@@ -6,18 +6,14 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Specialization> & {
-	onSubmit: (spec: Specialization) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Specialization = {
 	id: 0,
 	name: '',
 };
 
-export default function SpecializationEditorModal(props: ModalProps) {
+export default function SpecializationEditorModal(
+	props: EditorModalProps<Specialization>
+) {
 	const [specialization, setSpecialization] = useState(initialState);
 
 	useEffect(() => {
@@ -33,9 +29,12 @@ export default function SpecializationEditorModal(props: ModalProps) {
 	return (
 		<SheetModal
 			animation={false}
-			title={props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização'}
+			title={
+				props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização'
+			}
 			applyButton={{
-				name: props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização',
+				name:
+					props.operation === 'create' ? 'Criar Especialização' : 'Editar Especialização',
 				onApply: () => {
 					props.onSubmit(specialization);
 					hide();

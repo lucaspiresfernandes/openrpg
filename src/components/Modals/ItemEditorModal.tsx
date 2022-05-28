@@ -8,12 +8,6 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Item> & {
-	onSubmit: (item: Item) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Item = {
 	id: 0,
 	name: '',
@@ -22,7 +16,7 @@ const initialState: Item = {
 	visible: true,
 };
 
-export default function ItemEditorModal(props: ModalProps) {
+export default function ItemEditorModal(props: EditorModalProps<Item>) {
 	const [item, setItem] = useState(initialState);
 
 	useEffect(() => {

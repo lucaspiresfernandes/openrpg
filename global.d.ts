@@ -5,3 +5,9 @@ declare type EditorModalData<T> = {
 	show: boolean;
 	data?: T;
 };
+
+declare type EditorModalProps<T> = EditorModalData<T> & {
+	disabled?: boolean;
+	onSubmit: (data: T) => void;
+	onHide: () => void;
+};

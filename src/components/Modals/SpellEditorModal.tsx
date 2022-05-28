@@ -8,12 +8,6 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Spell> & {
-	onSubmit: (spell: Spell) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Spell = {
 	id: 0,
 	name: '',
@@ -29,7 +23,7 @@ const initialState: Spell = {
 	visible: true,
 };
 
-export default function SpellEditorModal(props: ModalProps) {
+export default function SpellEditorModal(props: EditorModalProps<Spell>) {
 	const [spell, setSpell] = useState(initialState);
 
 	useEffect(() => {

@@ -6,18 +6,12 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Currency> & {
-	onSubmit: (curr: Currency) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Currency = {
 	id: 0,
 	name: '',
 };
 
-export default function CurrencyEditorModal(props: ModalProps) {
+export default function CurrencyEditorModal(props: EditorModalProps<Currency>) {
 	const [currency, setCurrency] = useState(initialState);
 
 	useEffect(() => {

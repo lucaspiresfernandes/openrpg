@@ -7,12 +7,6 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Attribute> & {
-	onSubmit: (attr: Attribute) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Attribute = {
 	id: 0,
 	name: '',
@@ -20,7 +14,7 @@ const initialState: Attribute = {
 	color: '#ff0000',
 };
 
-export default function AttributeEditorModal(props: ModalProps) {
+export default function AttributeEditorModal(props: EditorModalProps<Attribute>) {
 	const [attribute, setAttribute] = useState(initialState);
 
 	useEffect(() => {

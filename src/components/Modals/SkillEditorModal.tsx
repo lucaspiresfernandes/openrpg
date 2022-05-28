@@ -9,10 +9,7 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import FormSelect from 'react-bootstrap/FormSelect';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Skill> & {
-	onSubmit: (attrStatus: Skill) => void;
-	disabled?: boolean;
-	onHide: () => void;
+type ModalProps = EditorModalProps<Skill> & {
 	specializations: Specialization[];
 };
 

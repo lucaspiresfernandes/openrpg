@@ -6,18 +6,14 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Characteristic> & {
-	onSubmit: (char: Characteristic) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Characteristic = {
 	id: 0,
 	name: '',
 };
 
-export default function CharacteristicEditorModal(props: ModalProps) {
+export default function CharacteristicEditorModal(
+	props: EditorModalProps<Characteristic>
+) {
 	const [characteristic, setCharacteristic] = useState(initialState);
 
 	useEffect(() => {
@@ -45,7 +41,7 @@ export default function CharacteristicEditorModal(props: ModalProps) {
 			show={props.show}
 			onHide={hide}>
 			<Container fluid>
-			<FormGroup controlId='createCharacteristicName'>
+				<FormGroup controlId='createCharacteristicName'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
 						autoFocus

@@ -8,12 +8,6 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Equipment> & {
-	onSubmit: (eq: Equipment) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Equipment = {
 	id: 0,
 	ammo: 0,
@@ -25,7 +19,7 @@ const initialState: Equipment = {
 	visible: true,
 };
 
-export default function EquipmentEditorModal(props: ModalProps) {
+export default function EquipmentEditorModal(props: EditorModalProps<Equipment>) {
 	const [equipment, setEquipment] = useState(initialState);
 
 	useEffect(() => {

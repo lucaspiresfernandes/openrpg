@@ -6,18 +6,12 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Info> & {
-	onSubmit: (info: Info) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Info = {
 	id: 0,
 	name: '',
 };
 
-export default function InfoEditorModal(props: ModalProps) {
+export default function InfoEditorModal(props: EditorModalProps<Info>) {
 	const [info, setInfo] = useState(initialState);
 
 	useEffect(() => {

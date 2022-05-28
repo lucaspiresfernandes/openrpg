@@ -6,18 +6,12 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-type ModalProps = EditorModalData<Spec> & {
-	onSubmit: (spec: Spec) => void;
-	disabled?: boolean;
-	onHide: () => void;
-};
-
 const initialState: Spec = {
 	id: 0,
 	name: '',
 };
 
-export default function SpecEditorModal(props: ModalProps) {
+export default function SpecEditorModal(props: EditorModalProps<Spec>) {
 	const [spec, setSpec] = useState(initialState);
 
 	useEffect(() => {
