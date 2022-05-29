@@ -3,71 +3,166 @@ import type {
 	AttributeStatus,
 	Currency,
 	Equipment,
+	Item,
 	Spec,
 } from '@prisma/client';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { Reducer, useContext, useEffect, useReducer } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
-import type {
-	PlayerAttributeChangeEvent,
-	PlayerAttributeStatusChangeEvent,
-	PlayerCurrencyChangeEvent,
-	PlayerEquipmentAddEvent,
-	PlayerEquipmentRemoveEvent,
-	PlayerItemAddEvent,
-	PlayerItemChangeEvent,
-	PlayerItemRemoveEvent,
-	PlayerMaxLoadChangeEvent,
-	PlayerNameChangeEvent,
-	PlayerSpecChangeEvent,
-} from '../../utils/socket';
 import AvatarField from './AvatarField';
 import PlayerPortraitButton from './PlayerPortraitButton';
 
-type PlayerItem = {
-	Item: {
-		id: number;
-		name: string;
-		description: string;
-		weight: number;
-	};
-	currentDescription: string;
-	quantity: number;
-};
-
-type PlayerManagerProps = {
-	players: {
-		id: number;
-		name: string;
-		maxLoad: number;
-		PlayerAttributeStatus: {
-			AttributeStatus: AttributeStatus;
-			value: boolean;
-		}[];
-		PlayerAttributes: {
-			Attribute: Attribute;
-			value: number;
-			maxValue: number;
-		}[];
-		PlayerSpec: {
-			Spec: Spec;
-			value: string;
-		}[];
-		PlayerEquipment: { Equipment: Equipment }[];
-		PlayerItem: PlayerItem[];
-		PlayerCurrency: {
-			value: string;
-			Currency: Currency;
-		}[];
+type Player = {
+	id: number;
+	name: string;
+	maxLoad: number;
+	PlayerAttributeStatus: {
+		AttributeStatus: AttributeStatus;
+		value: boolean;
+	}[];
+	PlayerAttributes: {
+		Attribute: Attribute;
+		value: number;
+		maxValue: number;
+	}[];
+	PlayerSpec: {
+		Spec: Spec;
+		value: string;
+	}[];
+	PlayerEquipment: { Equipment: Equipment }[];
+	PlayerItem: {
+		Item: {
+			id: number;
+			name: string;
+			description: string;
+			weight: number;
+		};
+		currentDescription: string;
+		quantity: number;
+	}[];
+	PlayerCurrency: {
+		value: string;
+		Currency: Currency;
 	}[];
 };
 
-export default function PlayerManager({ players: _players }: PlayerManagerProps) {
-	const [players, setPlayers] = useState(_players);
+type PlayerManagerActions = {
+	delete: { playerId: number };
+	updateAttributeStatus: { playerId: number; id: number; value: boolean };
+	updateName: { playerId: number; value: string };
+	updateAttribute: {
+		playerId: number;
+		id: number;
+		value: number | null;
+		maxValue: number | null;
+	};
+	updateSpec: { playerId: number; id: number; value: string };
+	updateCurrency: { playerId: number; id: number; value: string };
+	addEquipment: { playerId: number; equipment: Equipment };
+	removeEquipment: { playerId: number; id: number };
+	addItem: { playerId: number; item: Item; description: string; quantity: number };
+	removeItem: { playerId: number; id: number };
+	updateItem: {
+		playerId: number;
+		id: number;
+		description: string | null;
+		quantity: number | null;
+	};
+	updateMaxLoad: { playerId: number; value: number };
+};
+
+const PlayerManagerReducer: Reducer<Player[], ReducerActions<PlayerManagerActions>> = (
+	players,
+	{ type, data }
+) => {
+	const playerIndex = players.findIndex((p) => p.id === data.playerId);
+
+	if (playerIndex === -1) return players;
+
+	switch (type) {
+		case 'delete':
+			players.splice(playerIndex, 1);
+			break;
+		case 'updateAttributeStatus': {
+			const stat = players[playerIndex].PlayerAttributeStatus.find(
+				(s) => s.AttributeStatus.id === data.id
+			);
+			if (stat) stat.value = data.value;
+			break;
+		}
+		case 'updateName':
+			players[playerIndex].name = data.value;
+			break;
+		case 'updateAttribute': {
+			const attr = players[playerIndex].PlayerAttributes.find(
+				(a) => a.Attribute.id === data.id
+			);
+			if (attr) {
+				if (data.value) attr.value = data.value;
+				if (data.maxValue) attr.maxValue = data.maxValue;
+			}
+			break;
+		}
+		case 'updateSpec': {
+			const spec = players[playerIndex].PlayerSpec.find((s) => s.Spec.id === data.id);
+			if (spec) spec.value = data.value;
+			break;
+		}
+		case 'updateCurrency': {
+			const cur = players[playerIndex].PlayerCurrency.find(
+				(c) => c.Currency.id === data.id
+			);
+			if (cur) cur.value = data.value;
+			break;
+		}
+		case 'addEquipment':
+			players[playerIndex].PlayerEquipment.push({ Equipment: data.equipment });
+			break;
+		case 'removeEquipment': {
+			const eq = players[playerIndex].PlayerEquipment;
+			eq.splice(
+				eq.findIndex((_eq) => _eq.Equipment.id === data.id),
+				1
+			);
+			break;
+		}
+		case 'addItem':
+			players[playerIndex].PlayerItem.push({
+				Item: data.item,
+				currentDescription: data.description,
+				quantity: data.quantity,
+			});
+			break;
+		case 'removeItem': {
+			const it = players[playerIndex].PlayerItem;
+			it.splice(
+				it.findIndex((_it) => _it.Item.id === data.id),
+				1
+			);
+			break;
+		}
+		case 'updateItem': {
+			let it = players[playerIndex].PlayerItem.find((_it) => _it.Item.id === data.id);
+			if (it) {
+				if (data.description) it.currentDescription = data.description;
+				if (data.quantity) it.quantity = data.quantity;
+			}
+			break;
+		}
+	}
+	return [...players];
+};
+
+type PlayerManagerProps = {
+	players: Player[];
+};
+
+export default function PlayerManager(props: PlayerManagerProps) {
+	const [players, dispatch] = useReducer(PlayerManagerReducer, props.players);
 	const socket = useContext(Socket);
 	const logError = useContext(ErrorLogger);
 
@@ -75,195 +170,43 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 		if (!confirm('Tem certeza que deseja apagar esse jogador?')) return;
 		api
 			.delete('/sheet/player', { data: { id } })
-			.then(() => {
-				const newPlayers = [...players];
-				newPlayers.splice(
-					players.findIndex((p) => p.id === id),
-					1
-				);
-				setPlayers(newPlayers);
-			})
+			.then(() => dispatch({ type: 'delete', data: { playerId: id } }))
 			.catch(logError);
 	}
 
-	const socket_playerAttributeStatusChange = useRef<PlayerAttributeStatusChangeEvent>(
-		() => {}
-	);
-	const socket_playerNameChange = useRef<PlayerNameChangeEvent>(() => {});
-	const socket_playerAttributeChange = useRef<PlayerAttributeChangeEvent>(() => {});
-	const socket_playerSpecChange = useRef<PlayerSpecChangeEvent>(() => {});
-	const socket_playerCurrencyChange = useRef<PlayerCurrencyChangeEvent>(() => {});
-	const socket_playerEquipmentAdd = useRef<PlayerEquipmentAddEvent>(() => {});
-	const socket_playerEquipmentRemove = useRef<PlayerEquipmentRemoveEvent>(() => {});
-	const socket_playerItemAdd = useRef<PlayerItemAddEvent>(() => {});
-	const socket_playerItemRemove = useRef<PlayerItemRemoveEvent>(() => {});
-	const socket_playerItemChange = useRef<PlayerItemChangeEvent>(() => {});
-	const socket_playerMaxLoadChange = useRef<PlayerMaxLoadChangeEvent>(() => {});
-
 	useEffect(() => {
-		socket_playerAttributeStatusChange.current = (playerId, id, value) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerAttributeStatus.findIndex(
-				(curr) => curr.AttributeStatus.id === id
-			);
-			if (index === -1) return;
-
-			player.PlayerAttributeStatus[index].value = value;
-			setPlayers([...players]);
-		};
-
-		socket_playerNameChange.current = (playerId, value) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			player.name = value;
-
-			setPlayers([...players]);
-		};
-
-		socket_playerAttributeChange.current = (playerId, id, value, maxValue) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerAttributes.findIndex((curr) => curr.Attribute.id === id);
-			if (index === -1 || (value === null && maxValue === null)) return;
-
-			if (value !== null) player.PlayerAttributes[index].value = value;
-			if (maxValue !== null) player.PlayerAttributes[index].maxValue = maxValue;
-
-			setPlayers([...players]);
-		};
-
-		socket_playerSpecChange.current = (playerId, id, value) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerSpec.findIndex(
-				(curr) => curr.Spec.id === id
-			);
-			if (index === -1) return;
-
-			player.PlayerSpec[index].value = value;
-			setPlayers([...players]);
-		};
-
-		socket_playerCurrencyChange.current = (playerId, id, value) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerCurrency.findIndex(
-				(curr) => curr.Currency.id === id
-			);
-			if (index === -1) return;
-
-			player.PlayerCurrency[index].value = value;
-			setPlayers([...players]);
-		};
-
-		socket_playerEquipmentAdd.current = (playerId, equipment) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			player.PlayerEquipment = [...player.PlayerEquipment, { Equipment: equipment }];
-
-			setPlayers([...players]);
-		};
-
-		socket_playerEquipmentRemove.current = (playerId, id) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerEquipment.findIndex((it) => it.Equipment.id === id);
-			if (index === -1) return;
-
-			player.PlayerEquipment.splice(index, 1);
-
-			setPlayers([...players]);
-		};
-
-		socket_playerItemAdd.current = (playerId, item, currentDescription, quantity) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			player.PlayerItem = [
-				...player.PlayerItem,
-				{ Item: item, currentDescription, quantity },
-			];
-
-			setPlayers([...players]);
-		};
-
-		socket_playerItemRemove.current = (playerId, id) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerItem.findIndex((it) => it.Item.id === id);
-			if (index === -1) return;
-
-			player.PlayerItem.splice(index, 1);
-
-			setPlayers([...players]);
-		};
-
-		socket_playerItemChange.current = (playerId, id, currentDescription, quantity) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			const index = player.PlayerItem.findIndex((it) => it.Item.id === id);
-			if (index === -1) return;
-
-			if (currentDescription !== null)
-				player.PlayerItem[index].currentDescription = currentDescription;
-			if (quantity !== null) player.PlayerItem[index].quantity = quantity;
-
-			setPlayers([...players]);
-		};
-
-		socket_playerMaxLoadChange.current = (playerId, newLoad) => {
-			const player = players.find((p) => p.id === playerId);
-			if (!player) return;
-
-			player.maxLoad = newLoad;
-
-			setPlayers([...players]);
-		};
-	});
-
-	useEffect(() => {
-		socket.on('playerAttributeStatusChange', (playerId, attrStatusID, value) =>
-			socket_playerAttributeStatusChange.current(playerId, attrStatusID, value)
+		socket.on('playerAttributeStatusChange', (playerId, id, value) =>
+			dispatch({ type: 'updateAttributeStatus', data: { playerId, id, value } })
 		);
 		socket.on('playerNameChange', (playerId, value) =>
-			socket_playerNameChange.current(playerId, value)
+			dispatch({ type: 'updateName', data: { playerId, value } })
 		);
-		socket.on('playerAttributeChange', (playerId, attributeID, value, maxValue, show) =>
-			socket_playerAttributeChange.current(playerId, attributeID, value, maxValue, show)
+		socket.on('playerAttributeChange', (playerId, id, value, maxValue) =>
+			dispatch({ type: 'updateAttribute', data: { playerId, id, value, maxValue } })
 		);
-		socket.on('playerSpecChange', (playerId, specID, value) =>
-			socket_playerSpecChange.current(playerId, specID, value)
+		socket.on('playerSpecChange', (playerId, id, value) =>
+			dispatch({ type: 'updateSpec', data: { playerId, id, value } })
 		);
-		socket.on('playerCurrencyChange', (playerId, currencyId, value) =>
-			socket_playerCurrencyChange.current(playerId, currencyId, value)
+		socket.on('playerCurrencyChange', (playerId, id, value) =>
+			dispatch({ type: 'updateCurrency', data: { playerId, id, value } })
 		);
 		socket.on('playerEquipmentAdd', (playerId, equipment) =>
-			socket_playerEquipmentAdd.current(playerId, equipment)
+			dispatch({ type: 'addEquipment', data: { playerId, equipment } })
 		);
-		socket.on('playerEquipmentRemove', (playerId, equipID) =>
-			socket_playerEquipmentRemove.current(playerId, equipID)
+		socket.on('playerEquipmentRemove', (playerId, id) =>
+			dispatch({ type: 'removeEquipment', data: { playerId, id } })
 		);
-		socket.on('playerItemAdd', (playerId, item, currentDescription, quantity) =>
-			socket_playerItemAdd.current(playerId, item, currentDescription, quantity)
+		socket.on('playerItemAdd', (playerId, item, description, quantity) =>
+			dispatch({ type: 'addItem', data: { playerId, item, description, quantity } })
 		);
-		socket.on('playerItemRemove', (playerId, itemID) =>
-			socket_playerItemRemove.current(playerId, itemID)
+		socket.on('playerItemRemove', (playerId, id) =>
+			dispatch({ type: 'removeItem', data: { playerId, id } })
 		);
-		socket.on('playerItemChange', (playerId, itemID, currentDescription, quantity) =>
-			socket_playerItemChange.current(playerId, itemID, currentDescription, quantity)
+		socket.on('playerItemChange', (playerId, id, description, quantity) =>
+			dispatch({ type: 'updateItem', data: { playerId, id, description, quantity } })
 		);
-		socket.on('playerMaxLoadChange', (playerId, newLoad) =>
-			socket_playerMaxLoadChange.current(playerId, newLoad)
+		socket.on('playerMaxLoadChange', (playerId, value) =>
+			dispatch({ type: 'updateMaxLoad', data: { playerId, value } })
 		);
 
 		return () => {
@@ -288,27 +231,6 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 				Não há nenhum jogador cadastrado.
 			</Col>
 		);
-
-	function ItemHeader({
-		playerItem,
-		maxLoad,
-	}: {
-		playerItem: PlayerItem[];
-		maxLoad: number;
-	}) {
-		const load = playerItem.reduce(
-			(prev, cur) => prev + cur.Item.weight * cur.quantity,
-			0
-		);
-		return (
-			<>
-				Peso Atual:{' '}
-				<span style={{ color: load > maxLoad ? 'red' : '' }}>
-					{load}/{maxLoad}
-				</span>
-			</>
-		);
-	}
 
 	return (
 		<>
@@ -437,6 +359,24 @@ export default function PlayerManager({ players: _players }: PlayerManagerProps)
 					</Row>
 				</Col>
 			))}
+		</>
+	);
+}
+
+function ItemHeader({
+	playerItem,
+	maxLoad,
+}: {
+	playerItem: { Item: { weight: number }; quantity: number }[];
+	maxLoad: number;
+}) {
+	const load = playerItem.reduce((prev, cur) => prev + cur.Item.weight * cur.quantity, 0);
+	return (
+		<>
+			Peso Atual:{' '}
+			<span style={{ color: load > maxLoad ? 'red' : '' }}>
+				{load}/{maxLoad}
+			</span>
 		</>
 	);
 }
