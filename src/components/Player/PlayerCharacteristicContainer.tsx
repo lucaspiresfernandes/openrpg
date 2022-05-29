@@ -84,7 +84,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 		let newModifier = modifier;
 		if (isNaN(num)) newModifier = '+0';
 		else if (newModifier === '-0') newModifier = '+0';
-		newModifier = `+${num}`;
+		else if (num > 0) newModifier = `+${num}`;
 
 		if (modifier !== newModifier) setModifier(newModifier);
 
