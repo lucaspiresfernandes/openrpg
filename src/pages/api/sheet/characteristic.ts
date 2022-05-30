@@ -57,7 +57,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 					characteristic_id: char.id,
 					player_id: player.id,
 					value: 0,
-					modifier: '+0',
+					modifier: 0,
 				};
 			}),
 		});
