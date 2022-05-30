@@ -23,6 +23,7 @@ type PlayerSkillContainerProps = {
 	playerSkills: {
 		value: number;
 		checked: boolean;
+		modifier: number | null;
 		Skill: {
 			id: number;
 			name: string;
@@ -188,6 +189,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 						id: skill.Skill.id,
 						value: skill.value,
 						checked: skill.checked,
+						modifier: skill.modifier,
 					};
 				})
 				.sort((a, b) => a.name.localeCompare(b.name)),
@@ -262,6 +264,7 @@ type PlayerSkillFieldProps = {
 	value: number;
 	hidden: boolean;
 	checked: boolean;
+	modifier: number | null;
 	skillDiceConfig: DiceConfigCell;
 	automaticMarking: boolean;
 	notifyClearChecked: boolean;
@@ -269,8 +272,16 @@ type PlayerSkillFieldProps = {
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
-	const [value, setValue, isClean] = useExtendedState(props.value);
+	const [value, setValue, isValueClean] = useExtendedState(props.value);
 	const [checked, setChecked] = useState(props.checked);
+	const [modifier, setModifier, isModifierClean] = useExtendedState(() => {
+		const modifier = props.modifier;
+		if (modifier === null) return null;
+
+		let mod = modifier.toString();
+		if (modifier > -1) mod = `+${mod}`;
+		return mod;
+	});
 	const componentDidMount = useRef(false);
 	const logError = useContext(ErrorLogger);
 
@@ -302,32 +313,66 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		setValue(newValue);
 	}
 
-	function valueBlur() {
-		if (isClean()) return;
+	function onValueBlur() {
+		if (isValueClean()) return;
 		api.post('/sheet/player/skill', { id: props.id, value }).catch(logError);
+	}
+
+	function onModifierBlur() {
+		if (!modifier) return;
+
+		const num = parseInt(modifier);
+
+		let newModifier = modifier;
+		if (isNaN(num)) newModifier = '+0';
+		else if (newModifier === '-0') newModifier = '+0';
+		else if (num > 0) newModifier = `+${num}`;
+
+		if (modifier !== newModifier) setModifier(newModifier);
+
+		if (isModifierClean()) return;
+
+		api
+			.post('/sheet/player/skill', { modifier: newModifier, id: props.id })
+			.catch(logError);
 	}
 
 	function rollDice(standalone: boolean) {
 		const roll = props.skillDiceConfig.value;
 		const branched = props.skillDiceConfig.branched;
+
+		let mod: number | null = null;
+		if (modifier) mod = parseInt(modifier);
+
 		props.showDiceRollResult({
-			dices: { num: standalone ? 1 : undefined, roll, ref: value },
+			dices: {
+				num: standalone ? 1 : undefined,
+				roll,
+				ref: mod === null ? value : Math.max(1, value + mod),
+			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 			onResult: (results) => {
 				const result = results[0];
 				if (
-					results.length > 1 ||
-					!props.automaticMarking ||
-					!result.resultType ||
-					result.resultType.successWeight < 0 ||
-					checked
-				)
-					return;
-				setChecked(true);
-				api.post('/sheet/player/skill', { id: props.id, checked: true }).catch((err) => {
-					logError(err);
-					setChecked(false);
-				});
+					results.length === 1 &&
+					props.automaticMarking &&
+					result.resultType &&
+					result.resultType.successWeight >= 0
+				) {
+					setChecked(true);
+					api
+						.post('/sheet/player/skill', { id: props.id, checked: true })
+						.catch((err) => {
+							logError(err);
+							setChecked(false);
+						});
+				}
+				const _mod = mod;
+				if (_mod === null) return;
+				return results.map((res) => ({
+					roll: Math.max(1, res.roll + _mod),
+					resultType: res.resultType,
+				}));
 			},
 		});
 	}
@@ -345,13 +390,25 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 					<input type='checkbox' checked={checked} onChange={onCheckChange} />
 				</Col>
 			</Row>
+			{modifier !== null && (
+				<Row className='justify-content-center mb-2'>
+					<Col xs={3}>
+						<BottomTextInput
+							className='text-center w-100'
+							value={modifier}
+							onChange={(ev) => setModifier(ev.currentTarget.value)}
+							onBlur={onModifierBlur}
+						/>
+					</Col>
+				</Row>
+			)}
 			<Row>
 				<Col>
 					<BottomTextInput
 						className='text-center w-75'
 						value={value}
 						onChange={onValueChange}
-						onBlur={valueBlur}
+						onBlur={onValueBlur}
 					/>
 				</Col>
 			</Row>

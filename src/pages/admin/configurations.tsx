@@ -108,6 +108,9 @@ function DiceEditor(props: {
 	const [skillDiceBranched, setSkillDiceBranched] = useState(
 		props.diceConfig.skill?.branched || props.diceConfig.base?.branched
 	);
+	const [skillDiceModifier, setSkillDiceModifier] = useState(
+		props.diceConfig.skill?.enable_modifiers || false
+	);
 	const [attributeDiceNum, setAttributeDiceNum] = useState(
 		props.diceConfig.attribute.value
 	);
@@ -130,6 +133,7 @@ function DiceEditor(props: {
 					skill: {
 						value: skillDiceNum,
 						branched: skillDiceBranched,
+						enable_modifiers: skillDiceModifier,
 					},
 					attribute: {
 						value: attributeDiceNum,
@@ -156,7 +160,7 @@ function DiceEditor(props: {
 					/>
 				</Col>
 			</Row>
-			<Row className='text-center'>
+			<Row className='text-center mb-2'>
 				<DataContainer
 					title='Rolagem de Atributo'
 					outline
@@ -200,7 +204,7 @@ function DiceEditor(props: {
 					</Row>
 				</DataContainer>
 			</Row>
-			<Row className='text-center'>
+			<Row className='text-center mb-2'>
 				<DataContainer title='Rolagem de Característica' outline className='mx-3'>
 					<Row>
 						<Col className='h5' style={{ color: 'gray' }}>
@@ -256,42 +260,55 @@ function DiceEditor(props: {
 					</Row>
 				</DataContainer>
 			</Row>
-			<Row className='text-center mb-1'>
-				<DataContainer
-					title='Rolagem de Perícia'
-					outline
-					className='mx-3'
-					hidden={!successTypeEnabled}>
+			<Row className='text-center mb-2'>
+				<DataContainer title='Rolagem de Perícia' outline className='mx-3'>
 					<Row>
 						<Col className='h5' style={{ color: 'gray' }}>
 							Rolagem de Perícia é o tipo de rolagem aplicado a Perícias.
 						</Col>
 					</Row>
-					<Row>
-						<Col>
-							<label htmlFor='skillDiceValue' className='me-2'>
-								Valor:
-							</label>
-							<select
-								id='skillDiceValue'
-								className='theme-element'
-								value={skillDiceNum}
-								onChange={(ev) =>
-									setSkillDiceNum(parseInt(ev.currentTarget.value) as DiceResolverKeyNum)
-								}>
-								<option value={20}>d20</option>
-								<option value={100}>d100</option>
-							</select>
-						</Col>
-					</Row>
-					<Row className='mt-2'>
+					{successTypeEnabled && (
+						<>
+							<Row>
+								<Col>
+									<label htmlFor='skillDiceValue' className='me-2'>
+										Valor:
+									</label>
+									<select
+										id='skillDiceValue'
+										className='theme-element'
+										value={skillDiceNum}
+										onChange={(ev) =>
+											setSkillDiceNum(
+												parseInt(ev.currentTarget.value) as DiceResolverKeyNum
+											)
+										}>
+										<option value={20}>d20</option>
+										<option value={100}>d100</option>
+									</select>
+								</Col>
+							</Row>
+							<Row className='mt-2'>
+								<Col>
+									<FormCheck
+										inline
+										checked={skillDiceBranched}
+										onChange={() => setSkillDiceBranched((b) => !b)}
+										id='skillDiceBranched'
+										label='Ativar Ramificações'
+									/>
+								</Col>
+							</Row>
+						</>
+					)}
+					<Row className='mt-1'>
 						<Col>
 							<FormCheck
 								inline
-								checked={skillDiceBranched}
-								onChange={() => setSkillDiceBranched((b) => !b)}
-								id='skillDiceBranched'
-								label='Ativar Ramificações'
+								checked={skillDiceModifier}
+								onChange={(ev) => setSkillDiceModifier(ev.currentTarget.checked)}
+								id='skillDiceModifiers'
+								label='Ativar Modificadores'
 							/>
 						</Col>
 					</Row>

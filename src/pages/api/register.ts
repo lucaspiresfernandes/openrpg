@@ -143,7 +143,7 @@ async function registerPlayerData(player: Player) {
 					player_id: player.id,
 					characteristic_id: char.id,
 					value: 0,
-					modifier: '+0',
+					modifier: 0,
 				};
 			}),
 		}),
@@ -153,6 +153,8 @@ async function registerPlayerData(player: Player) {
 					player_id: player.id,
 					skill_id: skill.id,
 					value: skill.startValue,
+					checked: false,
+					modifier: 0,
 				};
 			}),
 		}),

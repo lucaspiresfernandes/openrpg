@@ -94,10 +94,12 @@ const getDatabaseData = () => ({
 				characteristic: {
 					value: 20,
 					branched: false,
+					enable_modifiers: false,
 				},
 				skill: {
 					value: 20,
 					branched: false,
+					enable_modifiers: false,
 				},
 				attribute: {
 					value: 100,

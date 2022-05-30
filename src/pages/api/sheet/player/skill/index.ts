@@ -19,6 +19,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const skillID = req.body.id;
 	const value: number = req.body.value;
 	const checked: boolean = req.body.checked;
+	const modifier = parseInt(req.body.modifier);
 
 	if (!skillID) {
 		res.status(400).send({ message: 'Skill ID or value is undefined.' });
@@ -27,7 +28,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	await prisma.playerSkill.update({
 		where: { player_id_skill_id: { player_id: player.id, skill_id: skillID } },
-		data: { value, checked },
+		data: { value, checked, modifier },
 	});
 
 	res.end();

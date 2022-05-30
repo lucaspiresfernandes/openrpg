@@ -65,6 +65,13 @@ function PlayerSheet(props: PageProps) {
 				modifier: null,
 		  }));
 
+	const skills = props.diceConfig.skill.enable_modifiers
+		? props.player.PlayerSkill
+		: props.player.PlayerSkill.map((skill) => ({
+				...skill,
+				modifier: null,
+		  }));
+
 	return (
 		<>
 			<ErrorLogger.Provider value={addToast}>
@@ -121,7 +128,7 @@ function PlayerSheet(props: PageProps) {
 						</Row>
 						<Row className='mb-3'>
 							<PlayerSkillContainer
-								playerSkills={props.player.PlayerSkill}
+								playerSkills={skills}
 								availableSkills={props.availableSkills}
 								skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
 								title={
@@ -205,6 +212,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 						},
 						value: true,
 						checked: true,
+						modifier: true,
 					},
 				},
 				PlayerCurrency: { select: { value: true, Currency: true } },

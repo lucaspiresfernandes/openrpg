@@ -1,6 +1,6 @@
 import type { Characteristic } from '@prisma/client';
 import type { ChangeEvent } from 'react';
-import { useContext, useRef, useState } from 'react';
+import { useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
@@ -17,7 +17,7 @@ type PlayerCharacteristicContainerProps = {
 	playerCharacteristics: {
 		value: number;
 		Characteristic: Characteristic;
-		modifier: string | null;
+		modifier: number | null;
 	}[];
 	characteristicDiceConfig: DiceConfigCell;
 };
@@ -48,15 +48,21 @@ export default function PlayerCharacteristicContainer(
 type PlayerCharacteristicFieldProps = {
 	characteristicDiceConfig: DiceConfigCell;
 	value: number;
-	modifier: string | null;
+	modifier: number | null;
 	characteristic: Characteristic;
 	showDiceRollResult: DiceRollEvent;
 };
 
 function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
-	const [value, setValue, isClean] = useExtendedState(props.value);
-	const [modifier, setModifier] = useState(props.modifier);
-	const lastModifier = useRef(modifier);
+	const [value, setValue, isValueClean] = useExtendedState(props.value);
+	const [modifier, setModifier, isModifierClean] = useExtendedState(() => {
+		const modifier = props.modifier;
+		if (modifier === null) return null;
+
+		let mod = modifier.toString();
+		if (modifier > -1) mod = `+${mod}`;
+		return mod;
+	});
 	const logError = useContext(ErrorLogger);
 
 	const charID = props.characteristic.id;
@@ -72,7 +78,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 	}
 
 	function onValueBlur() {
-		if (isClean()) return;
+		if (isValueClean()) return;
 		api.post('/sheet/player/characteristic', { value, id: charID }).catch(logError);
 	}
 
@@ -88,8 +94,8 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 
 		if (modifier !== newModifier) setModifier(newModifier);
 
-		if (newModifier === lastModifier.current) return;
-		lastModifier.current = newModifier;
+		if (isModifierClean()) return;
+
 		api
 			.post('/sheet/player/characteristic', { modifier: newModifier, id: charID })
 			.catch(logError);
@@ -110,11 +116,10 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 			onResult: (results) => {
-				if (mod === null) return;
+				const _mod = mod;
+				if (_mod === null) return;
 				return results.map((res) => ({
-					// I have no idea why typescript is complaining about this next line, so I'm leaving it ignored.
-					//@ts-ignore
-					roll: res.roll + mod,
+					roll: Math.max(1, res.roll + _mod),
 					resultType: res.resultType,
 				}));
 			},

@@ -8,7 +8,9 @@ export type DiceConfig = {
 	characteristic: DiceConfigCell & {
 		enable_modifiers: boolean;
 	};
-	skill: DiceConfigCell;
+	skill: DiceConfigCell & {
+		enable_modifiers: boolean;
+	};
 	attribute: DiceConfigCell;
 };
 

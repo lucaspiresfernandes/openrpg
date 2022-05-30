@@ -26,7 +26,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	}
 
 	const value = req.body.value;
-	const modifier = req.body.modifier;
+	const modifier = parseInt(req.body.modifier);
 
 	await database.playerCharacteristic.update({
 		data: { value, modifier },
