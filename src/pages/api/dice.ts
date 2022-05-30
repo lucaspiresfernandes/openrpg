@@ -1,11 +1,11 @@
 import type { NextApiRequest } from 'next';
 import RandomOrg from 'random-org';
-import { isSuccessTypeEnabled } from '../../utils/config';
+import prisma from '../../utils/database';
 import type {
-	DiceResponse,
-	DiceResolverKey,
-	DiceResponseResultType,
 	DiceRequest,
+	DiceResolverKey,
+	DiceResponse,
+	DiceResponseResultType,
 } from '../../utils/dice';
 import { sessionAPI } from '../../utils/session';
 import type { NextApiResponseServerIO } from '../../utils/socket';
@@ -48,6 +48,14 @@ async function handler(
 
 	const dices: DiceRequest | DiceRequest[] = req.body.dices;
 	const resolverKey: DiceResolverKey | undefined = req.body.resolverKey || undefined;
+
+	const successTypeEnabled = resolverKey
+		? (
+				await prisma.config.findUnique({
+					where: { name: 'enable_success_types' },
+				})
+		  )?.value === 'true'
+		: undefined;
 
 	if (!dices) {
 		res.status(400).end();
@@ -103,12 +111,9 @@ async function handler(
 
 		for (let index = 0; index < data.length; index++) {
 			const result = data[index];
-			
 			results[index] = { roll: result };
-
-			const successTypeEnabled = await isSuccessTypeEnabled();
-			if (successTypeEnabled && resolverKey && reference)
-				results[index].resultType = resolveSuccessType(resolverKey, reference, result);
+			if (!reference || !successTypeEnabled) continue;
+			results[index].resultType = resolveSuccessType(resolverKey, reference, result);
 		}
 	}
 
@@ -119,10 +124,16 @@ async function handler(
 }
 
 function resolveSuccessType(
-	key: DiceResolverKey,
+	key: DiceResolverKey | undefined,
 	reference: number,
 	roll: number
 ): DiceResponseResultType {
+	if (!key)
+		return {
+			description: 'Unkown',
+			successWeight: 0,
+		};
+
 	switch (key) {
 		case '20':
 			if (roll > 20 - reference)
