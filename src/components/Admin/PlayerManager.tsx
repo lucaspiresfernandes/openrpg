@@ -77,79 +77,83 @@ type PlayerManagerActions = {
 
 const PlayerManagerReducer: Reducer<Player[], ReducerActions<PlayerManagerActions>> = (
 	players,
-	{ type, data }
+	action
 ) => {
-	const playerIndex = players.findIndex((p) => p.id === data.playerId);
+	const playerIndex = players.findIndex((p) => p.id === action.data.playerId);
 
 	if (playerIndex === -1) return players;
 
-	switch (type) {
+	switch (action.type) {
 		case 'delete':
 			players.splice(playerIndex, 1);
 			break;
 		case 'updateAttributeStatus': {
 			const stat = players[playerIndex].PlayerAttributeStatus.find(
-				(s) => s.AttributeStatus.id === data.id
+				(s) => s.AttributeStatus.id === action.data.id
 			);
-			if (stat) stat.value = data.value;
+			if (stat) stat.value = action.data.value;
 			break;
 		}
 		case 'updateName':
-			players[playerIndex].name = data.value;
+			players[playerIndex].name = action.data.value;
 			break;
 		case 'updateAttribute': {
 			const attr = players[playerIndex].PlayerAttributes.find(
-				(a) => a.Attribute.id === data.id
+				(a) => a.Attribute.id === action.data.id
 			);
 			if (attr) {
-				if (data.value) attr.value = data.value;
-				if (data.maxValue) attr.maxValue = data.maxValue;
+				if (action.data.value) attr.value = action.data.value;
+				if (action.data.maxValue) attr.maxValue = action.data.maxValue;
 			}
 			break;
 		}
 		case 'updateSpec': {
-			const spec = players[playerIndex].PlayerSpec.find((s) => s.Spec.id === data.id);
-			if (spec) spec.value = data.value;
+			const spec = players[playerIndex].PlayerSpec.find(
+				(s) => s.Spec.id === action.data.id
+			);
+			if (spec) spec.value = action.data.value;
 			break;
 		}
 		case 'updateCurrency': {
 			const cur = players[playerIndex].PlayerCurrency.find(
-				(c) => c.Currency.id === data.id
+				(c) => c.Currency.id === action.data.id
 			);
-			if (cur) cur.value = data.value;
+			if (cur) cur.value = action.data.value;
 			break;
 		}
 		case 'addEquipment':
-			players[playerIndex].PlayerEquipment.push({ Equipment: data.equipment });
+			players[playerIndex].PlayerEquipment.push({ Equipment: action.data.equipment });
 			break;
 		case 'removeEquipment': {
 			const eq = players[playerIndex].PlayerEquipment;
 			eq.splice(
-				eq.findIndex((_eq) => _eq.Equipment.id === data.id),
+				eq.findIndex((_eq) => _eq.Equipment.id === action.data.id),
 				1
 			);
 			break;
 		}
 		case 'addItem':
 			players[playerIndex].PlayerItem.push({
-				Item: data.item,
-				currentDescription: data.description,
-				quantity: data.quantity,
+				Item: action.data.item,
+				currentDescription: action.data.description,
+				quantity: action.data.quantity,
 			});
 			break;
 		case 'removeItem': {
 			const it = players[playerIndex].PlayerItem;
 			it.splice(
-				it.findIndex((_it) => _it.Item.id === data.id),
+				it.findIndex((_it) => _it.Item.id === action.data.id),
 				1
 			);
 			break;
 		}
 		case 'updateItem': {
-			let it = players[playerIndex].PlayerItem.find((_it) => _it.Item.id === data.id);
+			let it = players[playerIndex].PlayerItem.find(
+				(_it) => _it.Item.id === action.data.id
+			);
 			if (it) {
-				if (data.description) it.currentDescription = data.description;
-				if (data.quantity) it.quantity = data.quantity;
+				if (action.data.description) it.currentDescription = action.data.description;
+				if (action.data.quantity) it.quantity = action.data.quantity;
 			}
 			break;
 		}
