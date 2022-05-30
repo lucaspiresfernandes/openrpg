@@ -59,12 +59,12 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 							<GeneralEditor
 								containerConfig={props.containerConfig}
 								adminKey={props.adminKey}
-								enableAutomaticMarking={props.automaticMarking}
 								logError={addToast}
 							/>
 						)}
 						{index === 1 && (
 							<DiceEditor
+								enableAutomaticMarking={props.automaticMarking}
 								successTypeEnabled={props.enableSuccessTypes}
 								diceConfig={props.dice}
 								logError={addToast}
@@ -88,6 +88,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 
 function DiceEditor(props: {
 	successTypeEnabled: boolean;
+	enableAutomaticMarking: boolean;
 	diceConfig: DiceConfig;
 	logError: (err: any) => void;
 }) {
@@ -111,6 +112,7 @@ function DiceEditor(props: {
 	const [skillDiceModifier, setSkillDiceModifier] = useState(
 		props.diceConfig.skill?.enable_modifiers || false
 	);
+	const [automaticMarking, setAutomaticMarking] = useState(props.enableAutomaticMarking);
 	const [attributeDiceNum, setAttributeDiceNum] = useState(
 		props.diceConfig.attribute.value
 	);
@@ -122,6 +124,7 @@ function DiceEditor(props: {
 		setLoading(true);
 		Promise.all([
 			api.post('/config', { name: 'enable_success_types', value: successTypeEnabled }),
+			api.post('/config', { name: 'enable_automatic_markers', value: automaticMarking }),
 			api.post('/config', {
 				name: 'dice',
 				value: {
@@ -166,16 +169,10 @@ function DiceEditor(props: {
 					outline
 					className='mx-3'
 					hidden={!successTypeEnabled}>
-					<Row>
-						<Col className='h5' style={{ color: 'gray' }}>
-							Rolagem de atributo é o tipo de rolagem aplicado a barras de Atributo
-							roláveis.
-						</Col>
-					</Row>
-					<Row>
+					<Row className='mb-1'>
 						<Col>
 							<label className='me-2' htmlFor='attributeDiceValue'>
-								Valor:
+								Dado:
 							</label>
 							<select
 								id='attributeDiceValue'
@@ -191,7 +188,7 @@ function DiceEditor(props: {
 							</select>
 						</Col>
 					</Row>
-					<Row className='mt-2'>
+					<Row className='mb-1'>
 						<Col>
 							<FormCheck
 								inline
@@ -206,17 +203,12 @@ function DiceEditor(props: {
 			</Row>
 			<Row className='text-center mb-2'>
 				<DataContainer title='Rolagem de Característica' outline className='mx-3'>
-					<Row>
-						<Col className='h5' style={{ color: 'gray' }}>
-							Rolagem de Característica é o tipo de rolagem aplicado a Características.
-						</Col>
-					</Row>
 					{successTypeEnabled && (
 						<>
-							<Row>
+							<Row className='mb-1'>
 								<Col>
 									<label htmlFor='characteristicDiceValue' className='me-2'>
-										Valor:
+										Dado:
 									</label>
 									<select
 										id='characteristicDiceValue'
@@ -232,7 +224,7 @@ function DiceEditor(props: {
 									</select>
 								</Col>
 							</Row>
-							<Row className='mt-2'>
+							<Row className='mb-1'>
 								<Col>
 									<FormCheck
 										inline
@@ -247,7 +239,7 @@ function DiceEditor(props: {
 							</Row>
 						</>
 					)}
-					<Row className='mt-1'>
+					<Row className='mb-1'>
 						<Col>
 							<FormCheck
 								inline
@@ -262,17 +254,12 @@ function DiceEditor(props: {
 			</Row>
 			<Row className='text-center mb-2'>
 				<DataContainer title='Rolagem de Perícia' outline className='mx-3'>
-					<Row>
-						<Col className='h5' style={{ color: 'gray' }}>
-							Rolagem de Perícia é o tipo de rolagem aplicado a Perícias.
-						</Col>
-					</Row>
 					{successTypeEnabled && (
 						<>
-							<Row>
+							<Row className='mb-1'>
 								<Col>
 									<label htmlFor='skillDiceValue' className='me-2'>
-										Valor:
+										Dado:
 									</label>
 									<select
 										id='skillDiceValue'
@@ -288,7 +275,7 @@ function DiceEditor(props: {
 									</select>
 								</Col>
 							</Row>
-							<Row className='mt-2'>
+							<Row className='mb-1'>
 								<Col>
 									<FormCheck
 										inline
@@ -301,7 +288,7 @@ function DiceEditor(props: {
 							</Row>
 						</>
 					)}
-					<Row className='mt-1'>
+					<Row className='mb-1'>
 						<Col>
 							<FormCheck
 								inline
@@ -309,6 +296,18 @@ function DiceEditor(props: {
 								onChange={(ev) => setSkillDiceModifier(ev.currentTarget.checked)}
 								id='skillDiceModifiers'
 								label='Ativar Modificadores'
+							/>
+						</Col>
+					</Row>
+					<Row className='mb-1'>
+						<Col>
+							<FormCheck
+								inline
+								checked={automaticMarking}
+								onChange={(ev) => setAutomaticMarking(ev.currentTarget.checked)}
+								id='skillDiceAutomaticMarking'
+								title='Marca a Perícia automaticamente ao tirar um Sucesso ou maior no teste.'
+								label='Ativar Marcação Automática?'
 							/>
 						</Col>
 					</Row>
@@ -328,13 +327,11 @@ function DiceEditor(props: {
 function GeneralEditor(props: {
 	containerConfig: ContainerConfig;
 	adminKey: string;
-	enableAutomaticMarking: boolean;
 	logError: (err: any) => void;
 }) {
 	const [names, setNames] = useState(props.containerConfig);
 	const [loading, setLoading] = useState(false);
 	const [adminKey, setAdminKey] = useState(props.adminKey);
-	const [automaticMarking, setAutomaticMarking] = useState(props.enableAutomaticMarking);
 
 	function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
 		const newNames = [...names];
@@ -347,7 +344,6 @@ function GeneralEditor(props: {
 		setLoading(true);
 		Promise.all([
 			api.post('/config', { name: 'container', value: names }),
-			api.post('/config', { name: 'enable_automatic_markers', value: automaticMarking }),
 			api.post('/config', { name: 'admin_key', value: adminKey }),
 		])
 			.then(() => alert('Configurações gerais aplicadas com sucesso.'))
@@ -366,16 +362,6 @@ function GeneralEditor(props: {
 						id='adminKeyField'
 						value={adminKey}
 						onChange={(ev) => setAdminKey(ev.currentTarget.value)}
-					/>
-				</Col>
-			</Row>
-			<Row className='mb-3'>
-				<Col className='h5'>
-					<FormCheck
-						checked={automaticMarking}
-						onChange={(ev) => setAutomaticMarking(ev.target.checked)}
-						label='Ativar Marcação Automática de Perícia?'
-						title='Marca a Perícia automaticamente ao tirar um Sucesso ou maior no teste.'
 					/>
 				</Col>
 			</Row>
