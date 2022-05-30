@@ -64,42 +64,30 @@ async function handler(
 		: new Array(dices.num);
 
 	if (isArray) {
-		try {
-			await Promise.all(
-				dices.map((dice, index) => {
-					const numDices = dice.num;
-					const roll = dice.roll;
+		await Promise.all(
+			dices.map((dice, index) => {
+				const numDices = dice.num;
+				const roll = dice.roll;
 
-					if (isNaN(numDices) || isNaN(roll)) throw new Error();
+				if (numDices === 0 || roll < 1) {
+					results[index] = { roll };
+					return;
+				}
 
-					if (numDices === 0 || roll < 1) {
-						results[index] = { roll };
-						return;
-					}
+				if (roll === 1) {
+					results[index] = { roll: numDices };
+					return;
+				}
 
-					if (roll === 1) {
-						results[index] = { roll: numDices };
-						return;
-					}
-
-					return nextInt(numDices, numDices * roll, 1).then(
-						({ data }) => (results[index] = { roll: data[0] })
-					);
-				})
-			);
-		} catch (err) {
-			console.error(err);
-			res.status(400).end();
-		}
+				return nextInt(numDices, numDices * roll, 1).then(
+					({ data }) => (results[index] = { roll: data[0] })
+				);
+			})
+		);
 	} else {
 		const numDices = dices.num;
 		const roll = dices.roll;
 		const reference = dices.ref;
-
-		if (isNaN(numDices) || isNaN(roll)) {
-			res.status(400).end();
-			return;
-		}
 
 		if (numDices === 0 || roll < 1) {
 			res.send({ results: [{ roll }] });
@@ -115,7 +103,9 @@ async function handler(
 
 		for (let index = 0; index < data.length; index++) {
 			const result = data[index];
+			
 			results[index] = { roll: result };
+
 			const successTypeEnabled = await isSuccessTypeEnabled();
 			if (successTypeEnabled && resolverKey && reference)
 				results[index].resultType = resolveSuccessType(resolverKey, reference, result);
