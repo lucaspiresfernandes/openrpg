@@ -331,9 +331,9 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		if (modifier !== newModifier) setModifier(newModifier);
 
 		if (isModifierClean()) return;
-
+		
 		api
-			.post('/sheet/player/skill', { modifier: newModifier, id: props.id })
+			.post('/sheet/player/skill', { modifier: parseInt(newModifier), id: props.id })
 			.catch(logError);
 	}
 

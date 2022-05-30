@@ -95,9 +95,9 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 		if (modifier !== newModifier) setModifier(newModifier);
 
 		if (isModifierClean()) return;
-
+		
 		api
-			.post('/sheet/player/characteristic', { modifier: newModifier, id: charID })
+			.post('/sheet/player/characteristic', { modifier: parseInt(newModifier), id: charID })
 			.catch(logError);
 	}
 

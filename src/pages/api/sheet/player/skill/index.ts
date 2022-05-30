@@ -19,7 +19,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const skillID = req.body.id;
 	const value: number = req.body.value;
 	const checked: boolean = req.body.checked;
-	const modifier = parseInt(req.body.modifier);
+	const modifier: number = req.body.modifier;
 
 	if (!skillID) {
 		res.status(400).send({ message: 'Skill ID or value is undefined.' });
