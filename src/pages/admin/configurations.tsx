@@ -4,6 +4,8 @@ import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import Container from 'react-bootstrap/Container';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
@@ -31,53 +33,38 @@ import { containerConfigInsertData } from '../api/init';
 
 export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 	const [toasts, addToast] = useToast();
-	const [index, setIndex] = useState(0);
 
 	return (
 		<>
 			<ApplicationHead title='Configurações' />
 			<Container>
 				<Row>
-					<Col xs={12} sm={4} lg={2} className='me-1'>
-						<ListGroup>
-							<ListGroup.Item action active={index === 0} onClick={() => setIndex(0)}>
-								Geral
-							</ListGroup.Item>
-							<ListGroup.Item action active={index === 1} onClick={() => setIndex(1)}>
-								Dado
-							</ListGroup.Item>
-							<ListGroup.Item action active={index === 2} onClick={() => setIndex(2)}>
-								Retrato
-							</ListGroup.Item>
-						</ListGroup>
-					</Col>
 					<Col className='mt-5 mt-sm-0'>
-						<Row className='display-5 text-center mb-4'>
-							<Col>Configurações do Sistema</Col>
-						</Row>
-						{index === 0 && (
-							<GeneralEditor
-								containerConfig={props.containerConfig}
-								adminKey={props.adminKey}
-								logError={addToast}
-							/>
-						)}
-						{index === 1 && (
-							<DiceEditor
-								enableAutomaticMarking={props.automaticMarking}
-								successTypeEnabled={props.enableSuccessTypes}
-								diceConfig={props.dice}
-								logError={addToast}
-							/>
-						)}
-						{index === 2 && (
-							<PortraitEditor
-								portrait={props.portrait}
-								attributes={props.attributes}
-								portraitFont={props.portraitFont}
-								logError={addToast}
-							/>
-						)}
+						<Tabs defaultActiveKey='general' className='mb-3' transition={false}>
+							<Tab eventKey='general' title='Geral'>
+								<GeneralEditor
+									containerConfig={props.containerConfig}
+									adminKey={props.adminKey}
+									logError={addToast}
+								/>
+							</Tab>
+							<Tab eventKey='dice' title='Dado'>
+								<DiceEditor
+									enableAutomaticMarking={props.automaticMarking}
+									successTypeEnabled={props.enableSuccessTypes}
+									diceConfig={props.dice}
+									logError={addToast}
+								/>
+							</Tab>
+							<Tab eventKey='portrait' title='Retrato'>
+								<PortraitEditor
+									portrait={props.portrait}
+									attributes={props.attributes}
+									portraitFont={props.portraitFont}
+									logError={addToast}
+								/>
+							</Tab>
+						</Tabs>
 					</Col>
 				</Row>
 			</Container>
