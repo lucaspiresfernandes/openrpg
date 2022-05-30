@@ -392,7 +392,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			</Row>
 			{modifier !== null && (
 				<Row className='justify-content-center mb-2'>
-					<Col xs={3}>
+					<Col xs={4}>
 						<BottomTextInput
 							className='text-center w-100'
 							value={modifier}
