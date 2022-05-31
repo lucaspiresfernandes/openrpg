@@ -23,9 +23,9 @@ export type PlayerInfoChangeEvent = (
 export type PlayerAttributeChangeEvent = (
 	playerId: number,
 	attributeId: number,
-	value: number | null,
-	maxValue: number | null,
-	show: boolean | null
+	value: number,
+	maxValue: number,
+	show: boolean
 ) => void;
 
 export type PlayerSpecChangeEvent = (
@@ -56,8 +56,8 @@ export type PlayerItemRemoveEvent = (playerId: number, id: number) => void;
 export type PlayerItemChangeEvent = (
 	playerId: number,
 	itemID: number,
-	currentDescription: string | null,
-	quantity: number | null
+	currentDescription: string,
+	quantity: number
 ) => void;
 
 export type PlayerMaxLoadChangeEvent = (playerId: number, newLoad: number) => void;

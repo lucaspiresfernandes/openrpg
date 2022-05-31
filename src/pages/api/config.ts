@@ -2,19 +2,14 @@ import type { NextApiRequest } from 'next';
 import prisma from '../../utils/database';
 import type { NextApiResponseServerIO } from '../../utils/socket';
 
-const customBehaviours = new Map<
-	string,
-	(res: NextApiResponseServerIO, value: any) => void
->([
-	['environment', (res, value) => res.socket.server.io?.emit('environmentChange', value)],
-]);
-
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
-	const name = String(req.body.name);
-	let value: string;
+	const name: string = req.body.name;
+	let value: string | undefined = undefined;
 
-	if (typeof req.body.value === 'object') value = JSON.stringify(req.body.value);
-	else value = String(req.body.value);
+	if (req.body.value) {
+		if (typeof req.body.value === 'object') value = JSON.stringify(req.body.value);
+		else value = String(req.body.value);
+	}
 
 	if (!name || value === undefined) {
 		res.status(400).end();
@@ -32,3 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 	const behaviour = customBehaviours.get(name);
 	if (behaviour) behaviour(res, value);
 }
+
+const customBehaviours = new Map<
+	string,
+	(res: NextApiResponseServerIO, value: any) => void
+>([
+	['environment', (res, value) => res.socket.server.io?.emit('environmentChange', value)],
+]);

@@ -18,20 +18,20 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const charID = parseInt(req.body.id);
+	const id: number | undefined = parseInt(req.body.id);
 
-	if (!charID) {
+	if (!id) {
 		res.status(401).send({ message: 'Characteristic ID is undefined.' });
 		return;
 	}
 
-	const value = req.body.value;
-	const modifier: number = req.body.modifier;
+	const value: number | undefined = req.body.value;
+	const modifier: number | undefined = req.body.modifier;
 
 	await database.playerCharacteristic.update({
 		data: { value, modifier },
 		where: {
-			player_id_characteristic_id: { player_id: player.id, characteristic_id: charID },
+			player_id_characteristic_id: { player_id: player.id, characteristic_id: id },
 		},
 	});
 

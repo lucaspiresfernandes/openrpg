@@ -16,14 +16,13 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const statusID = parseInt(req.body.attrStatusID);
+	const statusID: number | undefined = parseInt(req.body.attrStatusID);
+	const value: boolean | undefined = req.body.value;
 
-	if (!statusID) {
-		res.status(400).end();
+	if (!statusID || value === undefined) {
+		res.status(401).send({ message: 'ID ou valor do status está em branco.' });
 		return;
 	}
-
-	const value = req.body.value;
 
 	await prisma.playerAttributeStatus.update({
 		where: {

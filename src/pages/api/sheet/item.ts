@@ -18,14 +18,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const description = req.body.description;
-	const weight = req.body.weight;
-	const visible = req.body.visible;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const description: string | undefined = req.body.description;
+	const weight: number | undefined = req.body.weight;
+	const visible: boolean | undefined = req.body.visible;
 
-	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+	if (!id || !name || !description || weight === undefined || visible === undefined) {
+		res
+			.status(401)
+			.send({ message: 'ID, nome, descrição, peso ou visível do item estão em branco.' });
 		return;
 	}
 
@@ -47,15 +49,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const name = req.body.name;
-	const description = req.body.description;
+	const name: string | undefined = req.body.name;
+	const description: string | undefined = req.body.description;
+	const weight: number | undefined = req.body.weight;
 
-	if (name === undefined || description === undefined) {
-		res.status(401).send({ message: 'Name or description is undefined.' });
+	if (!name || !description || weight === undefined) {
+		res.status(401).send({ message: 'Nome, descrição ou peso do item estão em branco.' });
 		return;
 	}
 
-	const item = await database.item.create({ data: { name, description, visible: true } });
+	const item = await database.item.create({
+		data: { name, description, weight, visible: true },
+	});
 
 	res.send({ id: item.id });
 
@@ -70,10 +75,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID do item está em branco.' });
 		return;
 	}
 

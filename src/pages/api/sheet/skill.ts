@@ -18,17 +18,27 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const startValue = req.body.startValue;
-	const mandatory = req.body.mandatory;
-	let specialization_id = req.body.specialization_id;
-	if (specialization_id === 0) specialization_id = null;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const startValue: number | undefined = req.body.startValue;
+	const mandatory: boolean | undefined = req.body.mandatory;
+	let specialization_id: number | null | undefined = req.body.specialization_id;
 
-	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+	if (
+		!id ||
+		!name ||
+		startValue === undefined ||
+		mandatory === undefined ||
+		specialization_id === undefined
+	) {
+		res.status(401).send({
+			message:
+				'ID, nome, valor inicial, obrigatório ou ID de especialização da perícia estão em branco.',
+		});
 		return;
 	}
+
+	if (specialization_id === 0) specialization_id = null;
 
 	const skill = await database.skill.update({
 		data: { name, startValue, mandatory, specialization_id },
@@ -54,16 +64,25 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const name = req.body.name;
-	const startValue = req.body.startValue;
-	const mandatory = req.body.mandatory;
-	let specialization_id = req.body.specialization_id;
-	if (specialization_id === 0) specialization_id = null;
+	const name: string | undefined = req.body.name;
+	const startValue: number | undefined = req.body.startValue;
+	const mandatory: boolean | undefined = req.body.mandatory;
+	let specialization_id: number | null | undefined = req.body.specialization_id;
 
-	if (name === undefined || mandatory === undefined || specialization_id === undefined) {
-		res.status(401).send({ message: 'Name or description is undefined.' });
+	if (
+		!name ||
+		startValue === undefined ||
+		mandatory === undefined ||
+		specialization_id === undefined
+	) {
+		res.status(401).send({
+			message:
+				'Nome, valor inicial, obrigatório ou ID de especialização da perícia estão em branco.',
+		});
 		return;
 	}
+
+	if (specialization_id === 0) specialization_id = null;
 
 	const skill = await database.skill.create({
 		data: { name, startValue, mandatory, specialization_id },
@@ -96,28 +115,18 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(400).send({ message: 'ID is undefined.' });
+		res.status(400).send({ message: 'ID da perícia está em branco.' });
 		return;
 	}
 
-	try {
-		await database.skill.delete({ where: { id } });
-		res.end();
-		res.socket.server.io?.emit('skillRemove', id);
-	} catch (err) {
-		if ((<any>err).code === 'P2003') {
-			res.status(400).send({
-				message:
-					'Não foi possível remover essa perícia pois ainda há alguma informação usando-a.',
-			});
-			return;
-		}
-		res.status(500).end();
-		return;
-	}
+	await database.skill.delete({ where: { id } });
+
+	res.end();
+
+	res.socket.server.io?.emit('skillRemove', id);
 }
 
 export default sessionAPI(handler);

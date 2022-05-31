@@ -18,8 +18,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const infoID = req.body.id;
-	const value = req.body.value;
+	const infoID: number | undefined = req.body.id;
+	const value: string | undefined = req.body.value;
 
 	if (!infoID || value === undefined) {
 		res.status(401).send({ message: 'Info ID or value is undefined.' });

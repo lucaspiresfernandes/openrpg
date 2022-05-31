@@ -17,11 +17,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
 
-	if (!id) {
-		res.status(400).send({ message: 'Info ID is undefined.' });
+	if (!id || !name) {
+		res.status(400).send({ message: 'ID ou nome da característica está em branco.' });
 		return;
 	}
 
@@ -38,10 +38,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
+	const name: string | undefined = req.body.name;
 
-	if (name === undefined) {
-		res.status(400).send({ message: 'Name is undefined.' });
+	if (!name) {
+		res.status(400).send({ message: 'Nome da característica está em branco.' });
 		return;
 	}
 
@@ -50,7 +50,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
-	if (players.length > 0)
+	if (players.length > 0) {
 		await database.playerCharacteristic.createMany({
 			data: players.map((player) => {
 				return {
@@ -61,6 +61,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 				};
 			}),
 		});
+	}
 
 	res.send({ id: char.id });
 }
@@ -73,10 +74,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID da característica está em branco.' });
 		return;
 	}
 

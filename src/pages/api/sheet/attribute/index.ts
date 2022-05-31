@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../../utils/database';
 import { sessionAPI } from '../../../../utils/session';
@@ -17,13 +18,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const color = req.body.color;
-	const rollable = req.body.rollable;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const color: string | undefined = req.body.color;
+	const rollable: boolean | undefined = req.body.rollable;
 
-	if (!id) {
-		res.status(400).send({ message: 'ID is undefined.' });
+	if (!id || !name || !color || rollable === undefined) {
+		res
+			.status(400)
+			.send({ message: 'ID, nome, cor ou rolável do atributo estão em branco.' });
 		return;
 	}
 
@@ -40,23 +43,23 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
-	const rollable = req.body.rollable;
+	const name: string | undefined = req.body.name;
+	const color: string | undefined = req.body.color;
+	const rollable: boolean | undefined = req.body.rollable;
 
-	if (name === undefined || rollable === undefined) {
-		res.status(400).send({ message: 'Name or rollable is undefined.' });
+	if (!name || !color || rollable === undefined) {
+		res
+			.status(400)
+			.send({ message: 'Nome, cor ou rolável do atributo estão em branco.' });
 		return;
 	}
 
 	const [attr, players] = await database.$transaction([
-		database.attribute.create({
-			data: { name, rollable },
-			select: { id: true, color: true },
-		}),
+		database.attribute.create({ data: { name, color, rollable } }),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
-	if (players.length > 0)
+	if (players.length > 0) {
 		await database.playerAttribute.createMany({
 			data: players.map((player) => {
 				return {
@@ -67,8 +70,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 				};
 			}),
 		});
+	}
 
-	res.send({ id: attr.id, color: attr.color });
+	res.send({ id: attr.id });
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
@@ -79,26 +83,25 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID do atributo está em branco.' });
 		return;
 	}
 
 	try {
 		await database.attribute.delete({ where: { id } });
-
 		res.end();
-	} catch (err: any) {
-		if (err.code === 'P2003') {
-			res
-				.status(400)
-				.send({
+	} catch (err) {
+		if (err instanceof Prisma.PrismaClientKnownRequestError) {
+			if (err.code === 'P2003') {
+				res.status(400).send({
 					message:
-						'Não é possível excluir esse atributo pois há algum outro elemento ligado a ele.',
+						'Não foi possível remover esse atributo pois ainda há algum status de atributo usando-a.',
 				});
-			return;
+				return;
+			}
 		}
 		res.status(500).end();
 	}

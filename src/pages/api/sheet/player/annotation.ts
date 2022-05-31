@@ -15,10 +15,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const value = req.body.value;
+	const value: string | undefined = req.body.value;
 
 	if (value === undefined) {
-		res.status(400).send({ message: 'value is undefined.' });
+		res.status(400).send({ message: 'Valor da anotação está em branco.' });
 		return;
 	}
 

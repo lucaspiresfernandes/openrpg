@@ -17,11 +17,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
 
 	if (!id || !name) {
-		res.status(401).send({ message: 'Info ID or name is undefined.' });
+		res.status(401).send({ message: 'ID ou nome da informação estão em branco.' });
 		return;
 	}
 
@@ -38,10 +38,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
+	const name: string | undefined = req.body.name;
 
 	if (!name) {
-		res.status(401).send({ message: 'Name is undefined.' });
+		res.status(401).send({ message: 'Nome da informação está em branco.' });
 		return;
 	}
 
@@ -50,7 +50,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
-	if (players.length > 0)
+	if (players.length > 0) {
 		await database.playerExtraInfo.createMany({
 			data: players.map((player) => {
 				return {
@@ -60,6 +60,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 				};
 			}),
 		});
+	}
 
 	res.send({ id: extraInfo.id });
 }
@@ -72,10 +73,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'Extra Info ID is undefined.' });
+		res.status(401).send({ message: 'ID da informação está em branco.' });
 		return;
 	}
 

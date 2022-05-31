@@ -17,15 +17,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const currencyID = req.body.id;
-	const name = req.body.name;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
 
-	if (!currencyID || !name) {
-		res.status(401).send({ message: 'Currency ID or name is undefined.' });
+	if (!id || !name) {
+		res.status(401).send({ message: 'ID ou nome da moeda está em branco.' });
 		return;
 	}
 
-	await database.currency.update({ data: { name }, where: { id: currencyID } });
+	await database.currency.update({ data: { name }, where: { id } });
 
 	res.end();
 }
@@ -38,10 +38,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
+	const name: string | undefined = req.body.name;
 
 	if (!name) {
-		res.status(401).send({ message: 'Name is undefined.' });
+		res.status(401).send({ message: 'Nome da moeda está em branco.' });
 		return;
 	}
 
@@ -50,7 +50,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
-	if (players.length > 0)
+	if (players.length > 0) {
 		await database.playerCurrency.createMany({
 			data: players.map((player) => {
 				return {
@@ -60,6 +60,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 				};
 			}),
 		});
+	}
 
 	res.send({ id: currency.id });
 }
@@ -75,7 +76,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 	const id = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'Currency ID  is undefined.' });
+		res.status(401).send({ message: 'ID da moeda está em branco.' });
 		return;
 	}
 

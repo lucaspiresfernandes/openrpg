@@ -14,7 +14,7 @@ const initialState: Equipment = {
 	attacks: '1',
 	damage: '1d3',
 	name: '',
-	range: '',
+	range: '-',
 	type: 'Comum',
 	visible: true,
 };

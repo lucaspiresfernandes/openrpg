@@ -17,9 +17,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const equipID = req.body.id;
+	const spellID: number | undefined = req.body.id;
 
-	if (!equipID) {
+	if (!spellID) {
 		res.status(400).send({ message: 'spell ID is undefined.' });
 		return;
 	}
@@ -27,7 +27,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const spell = await prisma.playerSpell.create({
 		data: {
 			player_id: player.id,
-			spell_id: equipID,
+			spell_id: spellID,
 		},
 		select: { Spell: true },
 	});
@@ -43,7 +43,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const spellID = req.body.id;
+	const spellID: number | undefined = req.body.id;
 
 	if (!spellID) {
 		res.status(400).send({ message: 'spell ID is undefined.' });

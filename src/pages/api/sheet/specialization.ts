@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import database from '../../../utils/database';
 import { sessionAPI } from '../../../utils/session';
@@ -17,11 +18,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
 
 	if (!id || !name) {
-		res.status(401).send({ message: 'ID or name is undefined.' });
+		res.status(401).send({ message: 'ID ou nome da especialização estão em branco.' });
 		return;
 	}
 
@@ -38,10 +39,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
+	const name: string | undefined = req.body.name;
 
 	if (!name) {
-		res.status(401).send({ message: 'Name is undefined.' });
+		res.status(401).send({ message: 'Nome da especialização está em branco.' });
 		return;
 	}
 
@@ -58,16 +59,28 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID da especialização está em branco.' });
 		return;
 	}
 
-	await database.specialization.delete({ where: { id } });
-
-	res.end();
+	try {
+		await database.specialization.delete({ where: { id } });
+		res.end();
+	} catch (err) {
+		if (err instanceof Prisma.PrismaClientKnownRequestError) {
+			if (err.code === 'P2003') {
+				res.status(400).send({
+					message:
+						'Não foi possível remover essa especialização pois ainda há alguma perícia usando-a.',
+				});
+				return;
+			}
+			res.status(500).end();
+		}
+	}
 }
 
 export default sessionAPI(handler);

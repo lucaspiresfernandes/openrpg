@@ -17,10 +17,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const name = req.body.name;
-	const showName = req.body.showName;
-	const maxLoad = req.body.maxLoad;
-	const maxSlots = req.body.maxSlots;
+	const name: string | undefined = req.body.name;
+	const showName: boolean | undefined = req.body.showName;
+	const maxLoad: number | undefined = req.body.maxLoad;
+	const maxSlots: number | undefined = req.body.maxSlots;
 
 	await database.player.update({
 		where: { id: player.id },
@@ -29,9 +29,11 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	if (maxLoad !== undefined) res.socket.server.io?.emit('playerMaxLoadChange', player.id, maxLoad);
+	if (maxLoad !== undefined)
+		res.socket.server.io?.emit('playerMaxLoadChange', player.id, maxLoad);
 	if (name !== undefined) res.socket.server.io?.emit('playerNameChange', player.id, name);
-	if (showName !== undefined) res.socket.server.io?.emit('playerNameShowChange', player.id, showName);
+	if (showName !== undefined)
+		res.socket.server.io?.emit('playerNameShowChange', player.id, showName);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {

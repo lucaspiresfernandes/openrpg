@@ -27,7 +27,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const quantity = req.body.quantity;
 	const currentDescription = req.body.currentDescription;
 
-	await prisma.playerItem.update({
+	const item = await prisma.playerItem.update({
 		where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
 		data: { quantity, currentDescription },
 	});
@@ -36,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.socket.server.io
 		?.to('admin')
-		.emit('playerItemChange', player.id, itemID, currentDescription, quantity);
+		.emit('playerItemChange', player.id, itemID, item.currentDescription, item.quantity);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {

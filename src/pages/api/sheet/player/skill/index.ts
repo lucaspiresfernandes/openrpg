@@ -16,10 +16,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const skillID = req.body.id;
-	const value: number = req.body.value;
-	const checked: boolean = req.body.checked;
-	const modifier: number = req.body.modifier;
+	const skillID: number | undefined = req.body.id;
+	const value: number | undefined = req.body.value;
+	const checked: boolean | undefined = req.body.checked;
+	const modifier: number | undefined = req.body.modifier;
 
 	if (!skillID) {
 		res.status(400).send({ message: 'Skill ID or value is undefined.' });

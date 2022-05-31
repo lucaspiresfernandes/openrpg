@@ -18,28 +18,42 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const type = req.body.type;
-	const damage = req.body.damage;
-	const range = req.body.range;
-	const attacks = req.body.attacks;
-	const ammo = req.body.ammo;
-	const visible = req.body.visible;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const type: string | undefined = req.body.type;
+	const damage: string | undefined = req.body.damage;
+	const range: string | undefined = req.body.range;
+	const attacks: string | undefined = req.body.attacks;
+	const ammo: number | null | undefined = req.body.ammo;
+	const visible: boolean | undefined = req.body.visible;
 
 	if (!id) {
-		res.status(400).send({ message: 'Info ID is undefined.' });
+	}
+
+	if (
+		!id ||
+		!name ||
+		!type ||
+		!damage ||
+		!range ||
+		!attacks ||
+		ammo === undefined ||
+		visible === undefined
+	) {
+		res.status(400).send({
+			message:
+				'ID, nome, tipo, dano, alcance, ataques, munição ou visível do equipamento estão em branco.',
+		});
 		return;
 	}
 
 	const eq = await database.equipment.update({
 		where: { id },
-		data: { name, ammo, attacks, damage, range, type, visible },
+		data: { name, type, damage, range, attacks, ammo, visible },
 	});
 
 	res.end();
 
-	
 	res.socket.server.io?.emit('equipmentChange', eq);
 }
 
@@ -51,22 +65,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const name = req.body.name;
-	const ammo = req.body.ammo;
-	const attacks = req.body.attacks;
-	const damage = req.body.damage;
-	const range = req.body.range;
-	const type = req.body.type;
+	const name: string | undefined = req.body.name;
+	const type: string | undefined = req.body.type;
+	const damage: string | undefined = req.body.damage;
+	const range: string | undefined = req.body.range;
+	const attacks: string | undefined = req.body.attacks;
+	const ammo: number | null | undefined = req.body.ammo;
 
-	if (
-		name === undefined ||
-		ammo === undefined ||
-		attacks === undefined ||
-		damage === undefined ||
-		range === undefined ||
-		type === undefined
-	) {
-		res.status(400).send({ message: 'Name or rollable is undefined.' });
+	if (!name || !type || !damage || !range || !attacks || ammo === undefined) {
+		res.status(400).send({
+			message:
+				'Nome, tipo, dano, alcance, ataques, munição ou visível do equipamento estão em branco.',
+		});
 		return;
 	}
 
@@ -87,10 +97,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID do equipamento está em branco.' });
 		return;
 	}
 

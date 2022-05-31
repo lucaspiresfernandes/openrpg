@@ -17,12 +17,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const attribute_id = req.body.attribute_id;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const attribute_id: number | undefined = req.body.attribute_id;
 
-	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+	if (!id || !name || attribute_id === undefined) {
+		res
+			.status(401)
+			.send({ message: 'ID, nome ou ID de atributo do status estão em branco.' });
 		return;
 	}
 
@@ -42,23 +44,22 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const name = req.body.name;
-	const attribute_id = req.body.attribute_id;
+	const name: string | undefined = req.body.name;
+	const attribute_id: number | undefined = req.body.attribute_id;
 
-	if (name === undefined || attribute_id === undefined) {
-		res.status(401).send({ message: 'attributeStatus ID or name is undefined.' });
+	if (!name || attribute_id === undefined) {
+		res
+			.status(401)
+			.send({ message: 'Nome ou ID de atributo do status estão em branco.' });
 		return;
 	}
 
 	const [attributeStatus, players] = await database.$transaction([
-		database.attributeStatus.create({
-			data: { name, attribute_id },
-			select: { id: true },
-		}),
+		database.attributeStatus.create({ data: { name, attribute_id } }),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
-	if (players.length > 0)
+	if (players.length > 0) {
 		await database.$transaction([
 			database.playerAttributeStatus.createMany({
 				data: players.map((player) => {
@@ -79,6 +80,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 				}),
 			}),
 		]);
+	}
 
 	res.send({ id: attributeStatus.id });
 }
@@ -91,10 +93,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID do status está em branco.' });
 		return;
 	}
 

@@ -3,7 +3,6 @@ import type {
 	AttributeStatus,
 	Currency,
 	Equipment,
-	Item,
 	Spec,
 } from '@prisma/client';
 import { Reducer, useContext, useEffect, useReducer } from 'react';
@@ -13,6 +12,19 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
+import type {
+	PlayerAttributeChangeEvent,
+	PlayerAttributeStatusChangeEvent,
+	PlayerCurrencyChangeEvent,
+	PlayerEquipmentAddEvent,
+	PlayerEquipmentRemoveEvent,
+	PlayerItemAddEvent,
+	PlayerItemChangeEvent,
+	PlayerItemRemoveEvent,
+	PlayerMaxLoadChangeEvent,
+	PlayerNameChangeEvent,
+	PlayerSpecChangeEvent,
+} from '../../utils/socket';
 import AvatarField from './AvatarField';
 import PlayerPortraitButton from './PlayerPortraitButton';
 
@@ -51,35 +63,25 @@ type Player = {
 };
 
 type PlayerManagerActions = {
-	delete: { playerId: number };
-	updateAttributeStatus: { playerId: number; id: number; value: boolean };
-	updateName: { playerId: number; value: string };
-	updateAttribute: {
-		playerId: number;
-		id: number;
-		value: number | null;
-		maxValue: number | null;
-	};
-	updateSpec: { playerId: number; id: number; value: string };
-	updateCurrency: { playerId: number; id: number; value: string };
-	addEquipment: { playerId: number; equipment: Equipment };
-	removeEquipment: { playerId: number; id: number };
-	addItem: { playerId: number; item: Item; description: string; quantity: number };
-	removeItem: { playerId: number; id: number };
-	updateItem: {
-		playerId: number;
-		id: number;
-		description: string | null;
-		quantity: number | null;
-	};
-	updateMaxLoad: { playerId: number; value: number };
+	delete: [playerId: number];
+	updateAttributeStatus: Parameters<PlayerAttributeStatusChangeEvent>;
+	updateName: Parameters<PlayerNameChangeEvent>;
+	updateAttribute: Parameters<PlayerAttributeChangeEvent>;
+	updateSpec: Parameters<PlayerSpecChangeEvent>;
+	updateCurrency: Parameters<PlayerCurrencyChangeEvent>;
+	addEquipment: Parameters<PlayerEquipmentAddEvent>;
+	removeEquipment: Parameters<PlayerEquipmentRemoveEvent>;
+	addItem: Parameters<PlayerItemAddEvent>;
+	removeItem: Parameters<PlayerItemRemoveEvent>;
+	updateItem: Parameters<PlayerItemChangeEvent>;
+	updateMaxLoad: Parameters<PlayerMaxLoadChangeEvent>;
 };
 
 const PlayerManagerReducer: Reducer<Player[], ReducerActions<PlayerManagerActions>> = (
 	players,
 	action
 ) => {
-	const playerIndex = players.findIndex((p) => p.id === action.data.playerId);
+	const playerIndex = players.findIndex((p) => p.id === action.data[0]);
 
 	if (playerIndex === -1) return players;
 
@@ -89,71 +91,71 @@ const PlayerManagerReducer: Reducer<Player[], ReducerActions<PlayerManagerAction
 			break;
 		case 'updateAttributeStatus': {
 			const stat = players[playerIndex].PlayerAttributeStatus.find(
-				(s) => s.AttributeStatus.id === action.data.id
+				(s) => s.AttributeStatus.id === action.data[1]
 			);
-			if (stat) stat.value = action.data.value;
+			if (stat) stat.value = action.data[2];
 			break;
 		}
 		case 'updateName':
-			players[playerIndex].name = action.data.value;
+			players[playerIndex].name = action.data[1];
 			break;
 		case 'updateAttribute': {
 			const attr = players[playerIndex].PlayerAttributes.find(
-				(a) => a.Attribute.id === action.data.id
+				(a) => a.Attribute.id === action.data[1]
 			);
 			if (attr) {
-				if (action.data.value) attr.value = action.data.value;
-				if (action.data.maxValue) attr.maxValue = action.data.maxValue;
+				attr.value = action.data[2];
+				attr.maxValue = action.data[3];
 			}
 			break;
 		}
 		case 'updateSpec': {
 			const spec = players[playerIndex].PlayerSpec.find(
-				(s) => s.Spec.id === action.data.id
+				(s) => s.Spec.id === action.data[1]
 			);
-			if (spec) spec.value = action.data.value;
+			if (spec) spec.value = action.data[2];
 			break;
 		}
 		case 'updateCurrency': {
 			const cur = players[playerIndex].PlayerCurrency.find(
-				(c) => c.Currency.id === action.data.id
+				(c) => c.Currency.id === action.data[1]
 			);
-			if (cur) cur.value = action.data.value;
+			if (cur) cur.value = action.data[2];
 			break;
 		}
 		case 'addEquipment':
-			players[playerIndex].PlayerEquipment.push({ Equipment: action.data.equipment });
+			players[playerIndex].PlayerEquipment.push({ Equipment: action.data[1] });
 			break;
 		case 'removeEquipment': {
 			const eq = players[playerIndex].PlayerEquipment;
 			eq.splice(
-				eq.findIndex((_eq) => _eq.Equipment.id === action.data.id),
+				eq.findIndex((_eq) => _eq.Equipment.id === action.data[1]),
 				1
 			);
 			break;
 		}
 		case 'addItem':
 			players[playerIndex].PlayerItem.push({
-				Item: action.data.item,
-				currentDescription: action.data.description,
-				quantity: action.data.quantity,
+				Item: action.data[1],
+				currentDescription: action.data[2],
+				quantity: action.data[3],
 			});
 			break;
 		case 'removeItem': {
 			const it = players[playerIndex].PlayerItem;
 			it.splice(
-				it.findIndex((_it) => _it.Item.id === action.data.id),
+				it.findIndex((_it) => _it.Item.id === action.data[1]),
 				1
 			);
 			break;
 		}
 		case 'updateItem': {
 			let it = players[playerIndex].PlayerItem.find(
-				(_it) => _it.Item.id === action.data.id
+				(_it) => _it.Item.id === action.data[1]
 			);
 			if (it) {
-				if (action.data.description) it.currentDescription = action.data.description;
-				if (action.data.quantity) it.quantity = action.data.quantity;
+				it.currentDescription = action.data[2];
+				it.quantity = action.data[3];
 			}
 			break;
 		}
@@ -174,43 +176,43 @@ export default function PlayerManager(props: PlayerManagerProps) {
 		if (!confirm('Tem certeza que deseja apagar esse jogador?')) return;
 		api
 			.delete('/sheet/player', { data: { id } })
-			.then(() => dispatch({ type: 'delete', data: { playerId: id } }))
+			.then(() => dispatch({ type: 'delete', data: [id] }))
 			.catch(logError);
 	}
 
 	useEffect(() => {
 		socket.on('playerAttributeStatusChange', (playerId, id, value) =>
-			dispatch({ type: 'updateAttributeStatus', data: { playerId, id, value } })
+			dispatch({ type: 'updateAttributeStatus', data: [playerId, id, value] })
 		);
 		socket.on('playerNameChange', (playerId, value) =>
-			dispatch({ type: 'updateName', data: { playerId, value } })
+			dispatch({ type: 'updateName', data: [playerId, value] })
 		);
 		socket.on('playerAttributeChange', (playerId, id, value, maxValue) =>
-			dispatch({ type: 'updateAttribute', data: { playerId, id, value, maxValue } })
+			dispatch({ type: 'updateAttribute', data: [playerId, id, value, maxValue, false] })
 		);
 		socket.on('playerSpecChange', (playerId, id, value) =>
-			dispatch({ type: 'updateSpec', data: { playerId, id, value } })
+			dispatch({ type: 'updateSpec', data: [playerId, id, value] })
 		);
 		socket.on('playerCurrencyChange', (playerId, id, value) =>
-			dispatch({ type: 'updateCurrency', data: { playerId, id, value } })
+			dispatch({ type: 'updateCurrency', data: [playerId, id, value] })
 		);
 		socket.on('playerEquipmentAdd', (playerId, equipment) =>
-			dispatch({ type: 'addEquipment', data: { playerId, equipment } })
+			dispatch({ type: 'addEquipment', data: [playerId, equipment] })
 		);
 		socket.on('playerEquipmentRemove', (playerId, id) =>
-			dispatch({ type: 'removeEquipment', data: { playerId, id } })
+			dispatch({ type: 'removeEquipment', data: [playerId, id] })
 		);
 		socket.on('playerItemAdd', (playerId, item, description, quantity) =>
-			dispatch({ type: 'addItem', data: { playerId, item, description, quantity } })
+			dispatch({ type: 'addItem', data: [playerId, item, description, quantity] })
 		);
 		socket.on('playerItemRemove', (playerId, id) =>
-			dispatch({ type: 'removeItem', data: { playerId, id } })
+			dispatch({ type: 'removeItem', data: [playerId, id] })
 		);
 		socket.on('playerItemChange', (playerId, id, description, quantity) =>
-			dispatch({ type: 'updateItem', data: { playerId, id, description, quantity } })
+			dispatch({ type: 'updateItem', data: [playerId, id, description, quantity] })
 		);
 		socket.on('playerMaxLoadChange', (playerId, value) =>
-			dispatch({ type: 'updateMaxLoad', data: { playerId, value } })
+			dispatch({ type: 'updateMaxLoad', data: [playerId, value] })
 		);
 
 		return () => {

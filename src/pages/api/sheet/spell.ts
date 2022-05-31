@@ -18,20 +18,34 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
-	const name = req.body.name;
-	const description = req.body.description;
-	const cost = req.body.cost;
-	const type = req.body.type;
-	const target = req.body.target;
-	const castingTime = req.body.castingTime;
-	const range = req.body.range;
-	const duration = req.body.duration;
-	const slots = req.body.slots;
-	const visible = req.body.visible;
+	const id: number | undefined = req.body.id;
+	const name: string | undefined = req.body.name;
+	const damage: string | undefined = req.body.damage;
+	const description: string | undefined = req.body.description;
+	const cost: string | undefined = req.body.cost;
+	const type: string | undefined = req.body.type;
+	const target: string | undefined = req.body.target;
+	const castingTime: string | undefined = req.body.castingTime;
+	const range: string | undefined = req.body.range;
+	const duration: string | undefined = req.body.duration;
+	const slots: number | undefined = req.body.slots;
+	const visible: boolean | undefined = req.body.visible;
 
-	if (!id) {
-		res.status(400).send({ message: 'Spell ID is undefined.' });
+	if (
+		!id ||
+		!name ||
+		!damage ||
+		!description ||
+		!cost ||
+		!type ||
+		!target ||
+		!castingTime ||
+		!range ||
+		!duration ||
+		slots === undefined ||
+		visible === undefined
+	) {
+		res.status(400).send({ message: 'Algum campo da magia está em branco.' });
 		return;
 	}
 
@@ -39,6 +53,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		where: { id },
 		data: {
 			name,
+			damage,
 			description,
 			cost,
 			type,
@@ -64,33 +79,31 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const name = req.body.name;
-	const description = req.body.description;
-	const cost = req.body.cost;
-	const type = req.body.type;
-	const target = req.body.target;
-	const damage = req.body.damage;
-	const castingTime = req.body.castingTime;
-	const range = req.body.range;
-	const duration = req.body.duration;
-	const slots = req.body.slots;
+	const name: string | undefined = req.body.name;
+	const description: string | undefined = req.body.description;
+	const cost: string | undefined = req.body.cost;
+	const type: string | undefined = req.body.type;
+	const damage: string | undefined = req.body.damage;
+	const castingTime: string | undefined = req.body.castingTime;
+	const range: string | undefined = req.body.range;
+	const duration: string | undefined = req.body.duration;
+	const target: string | undefined = req.body.target;
+	const slots: number | undefined = req.body.slots;
 
 	if (
-		name === undefined ||
-		description === undefined ||
-		cost === undefined ||
-		type === undefined ||
-		damage === undefined ||
-		castingTime === undefined ||
-		range === undefined ||
-		duration === undefined ||
-		slots === undefined ||
-		target === undefined
+		!name ||
+		!description ||
+		!cost ||
+		!type ||
+		!damage ||
+		!castingTime ||
+		!range ||
+		!duration ||
+		!target ||
+		slots === undefined
 	) {
 		res.status(400).send({
-			message:
-				'All fields are required: name, description, cost, ' +
-				'type, damage, casting time, range and duration.',
+			message: 'Algum campo da magia está em branco.',
 		});
 		return;
 	}
@@ -124,10 +137,10 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const id = req.body.id;
+	const id: number | undefined = req.body.id;
 
 	if (!id) {
-		res.status(401).send({ message: 'ID is undefined.' });
+		res.status(401).send({ message: 'ID da magia está em branco.' });
 		return;
 	}
 

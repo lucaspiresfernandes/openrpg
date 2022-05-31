@@ -18,17 +18,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const equipID = req.body.id;
+	const id: number | undefined = req.body.id;
 
-	if (!equipID) {
+	if (!id) {
 		res.status(400).send({ message: 'Equipment ID is undefined.' });
 		return;
 	}
 
-	const currentAmmo = req.body.currentAmmo;
+	const currentAmmo: number | undefined = req.body.currentAmmo;
 
 	await prisma.playerEquipment.update({
-		where: { player_id_equipment_id: { player_id: player.id, equipment_id: equipID } },
+		where: { player_id_equipment_id: { player_id: player.id, equipment_id: id } },
 		data: { currentAmmo },
 	});
 

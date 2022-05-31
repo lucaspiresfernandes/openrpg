@@ -15,10 +15,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const extraInfoID = req.body.id;
-	const value = req.body.value;
+	const id: number | undefined = req.body.id;
+	const value: string | undefined = req.body.value;
 
-	if (!extraInfoID || value === undefined) {
+	if (!id || value === undefined) {
 		res.status(400).send({ message: 'Extra Info ID or value is undefined.' });
 		return;
 	}
@@ -26,7 +26,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	await database.playerExtraInfo.update({
 		data: { value },
 		where: {
-			player_id_extra_info_id: { player_id: player.id, extra_info_id: extraInfoID },
+			player_id_extra_info_id: { player_id: player.id, extra_info_id: id },
 		},
 	});
 

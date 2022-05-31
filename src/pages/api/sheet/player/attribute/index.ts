@@ -16,18 +16,18 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const attributeID = parseInt(req.body.id);
+	const attributeID: number | undefined = parseInt(req.body.id);
 
 	if (!attributeID) {
-		res.status(400).end();
+		res.status(401).send({ message: 'ID do atributo está em branco.' });
 		return;
 	}
 
-	const value = req.body.value;
-	const maxValue = req.body.maxValue;
-	const show = req.body.show;
+	const value: number | undefined = req.body.value;
+	const maxValue: number | undefined = req.body.maxValue;
+	const show: boolean | undefined = req.body.show;
 
-	await prisma.playerAttribute.update({
+	const attr = await prisma.playerAttribute.update({
 		where: {
 			player_id_attribute_id: {
 				player_id: player.id,
@@ -39,7 +39,14 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerAttributeChange', player.id, attributeID, value, maxValue, show);
+	res.socket.server.io?.emit(
+		'playerAttributeChange',
+		player.id,
+		attributeID,
+		attr.value,
+		attr.maxValue,
+		attr.show
+	);
 }
 
 export default sessionAPI(handler);

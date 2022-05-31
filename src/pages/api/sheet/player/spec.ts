@@ -18,8 +18,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const specID = req.body.id;
-	const value = req.body.value;
+	const specID: number | undefined = req.body.id;
+	const value: string | undefined = req.body.value;
 
 	if (!specID || value === undefined) {
 		res.status(400).send({ message: 'Spec ID or value is undefined.' });

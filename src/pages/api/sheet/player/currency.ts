@@ -18,8 +18,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const currencyID = req.body.id;
-	const value = req.body.value;
+	const currencyID: number | undefined = req.body.id;
+	const value: string | undefined = req.body.value;
 
 	if (!currencyID || value === undefined) {
 		res.status(401).send({ message: 'Currency ID or value is undefined.' });

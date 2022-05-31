@@ -11,9 +11,9 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
-	const username = req.body.username;
-	const plainPassword = req.body.password;
-	const adminKey = req.body.adminKey;
+	const username: string | undefined = req.body.username;
+	const plainPassword: string | undefined = req.body.password;
+	const adminKey: string | undefined = req.body.adminKey;
 
 	if (!username || !plainPassword) {
 		res.status(400).send({ message: 'Usuário ou senha está em branco.' });
