@@ -67,6 +67,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 			},
 			value: true,
 			checked: true,
+			modifier: true,
 		},
 	});
 
