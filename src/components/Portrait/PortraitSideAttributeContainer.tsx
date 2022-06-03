@@ -12,6 +12,7 @@ import { getAttributeStyle } from '../../utils/style';
 
 export type PortraitSideAttribute = {
 	value: number;
+	show: boolean;
 	Attribute: {
 		id: number;
 		name: string;
@@ -42,12 +43,10 @@ export default function PortraitSideAttributeContainer(props: {
 	}, []);
 
 	useEffect(() => {
-		props.socket.on('playerAttributeChange', (playerId, attributeId, value) => {
-			if (value === null) return;
-
+		props.socket.on('playerAttributeChange', (playerId, attributeId, value, maxValue, show) => {
 			setSideAttribute((attr) => {
 				if (attr === null || attributeId !== attr.Attribute.id) return attr;
-				return { value: value, Attribute: { ...attr.Attribute } };
+				return { value, show, Attribute: { ...attr.Attribute } };
 			});
 		});
 
@@ -78,7 +77,7 @@ export default function PortraitSideAttributeContainer(props: {
 		<Draggable axis='both' onStop={onDragStop} position={position} bounds={bounds}>
 			<div className={styles.sideContainer} style={{ ...attributeStyle }}>
 				<div className={styles.sideBackground}></div>
-				<label className={styles.sideContent}>{sideAttribute.value}</label>
+				<label className={styles.sideContent}>{sideAttribute.show ? sideAttribute.value : '?'}</label>
 			</div>
 		</Draggable>
 	);

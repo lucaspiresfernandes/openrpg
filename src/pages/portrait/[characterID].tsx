@@ -156,6 +156,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
 	let sideAttribute: {
 		value: number;
+		show: boolean;
 		Attribute: { id: number; name: string; color: string };
 	} | null = null;
 	if (sideAttributeIndex > -1)

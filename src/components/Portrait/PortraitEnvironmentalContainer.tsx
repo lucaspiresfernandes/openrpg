@@ -107,9 +107,9 @@ function PortraitAttributesContainer(props: {
 
 					const newAttributes = [...attributes];
 
-					if (value !== null) newAttributes[index].value = value;
-					if (maxValue !== null) newAttributes[index].maxValue = maxValue;
-					if (show != null) newAttributes[index].show = show;
+					newAttributes[index].value = value;
+					newAttributes[index].maxValue = maxValue;
+					newAttributes[index].show = show;
 
 					return newAttributes;
 				});
