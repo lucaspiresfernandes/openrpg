@@ -1,18 +1,17 @@
 import type { Item } from '@prisma/client';
-import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import FormCheck from 'react-bootstrap/FormCheck';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
-import FormCheck from 'react-bootstrap/FormCheck';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
-const initialState: Item = {
+const initialState = {
 	id: 0,
 	name: '',
 	description: '',
-	weight: 0,
+	weight: '0',
 	visible: true,
 };
 
@@ -21,22 +20,12 @@ export default function ItemEditorModal(props: EditorModalProps<Item>) {
 
 	useEffect(() => {
 		if (!props.data) return;
-		setItem(props.data);
+		setItem({ ...props.data, weight: props.data.weight.toString() });
 	}, [props.data]);
 
 	function hide() {
 		setItem(initialState);
 		props.onHide();
-	}
-
-	function onWeightChange(ev: ChangeEvent<HTMLInputElement>) {
-		const aux = ev.currentTarget.value;
-		let newWeight = parseInt(aux);
-
-		if (aux.length === 0) newWeight = 0;
-		else if (isNaN(newWeight)) return;
-
-		setItem((eq) => ({ ...eq, weight: newWeight }));
 	}
 
 	return (
@@ -48,7 +37,7 @@ export default function ItemEditorModal(props: EditorModalProps<Item>) {
 			applyButton={{
 				name: props.operation === 'create' ? 'Criar' : 'Editar',
 				onApply: () => {
-					props.onSubmit(item);
+					props.onSubmit({ ...item, weight: Number(item.weight) });
 					hide();
 				},
 				disabled: props.disabled,
@@ -75,8 +64,9 @@ export default function ItemEditorModal(props: EditorModalProps<Item>) {
 					<FormLabel>Peso</FormLabel>
 					<FormControl
 						className='theme-element'
+						type='number'
 						value={item.weight}
-						onChange={onWeightChange}
+						onChange={(ev) => setItem((it) => ({ ...it, weight: ev.target.value }))}
 					/>
 				</FormGroup>
 				<FormCheck
