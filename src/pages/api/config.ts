@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 	const name: string = req.body.name;
 	let value: string | undefined = undefined;
 
-	if (req.body.value) {
+	if (req.body.value !== undefined) {
 		if (typeof req.body.value === 'object') value = JSON.stringify(req.body.value);
 		else value = String(req.body.value);
 	}

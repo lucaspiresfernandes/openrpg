@@ -19,7 +19,7 @@ async function nextInt(min: number, max: number, n: number): Promise<{ data: num
 		console.error('Random.org inactive or apiKey is not defined.');
 	}
 
-	let data = [];
+	const data = [];
 
 	min = Math.ceil(min);
 	max = Math.floor(max);
