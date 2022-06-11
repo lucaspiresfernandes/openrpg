@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit(
+	res.socket.server.io?.to(`portrait${player.id}`).to('admin').emit(
 		'playerAttributeChange',
 		player.id,
 		attributeID,
