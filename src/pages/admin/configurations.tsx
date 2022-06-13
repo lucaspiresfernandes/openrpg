@@ -4,8 +4,6 @@ import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
 import Container from 'react-bootstrap/Container';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
@@ -13,6 +11,8 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import FormControl from 'react-bootstrap/FormControl';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import ApplicationHead from '../../components/ApplicationHead';
 import BottomTextInput from '../../components/BottomTextInput';
 import DataContainer from '../../components/DataContainer';
@@ -20,16 +20,10 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type {
-	ContainerConfig,
-	DiceConfig,
-	PortraitConfig,
-	PortraitFontConfig,
-} from '../../utils/config';
+import type { DiceConfig, PortraitConfig, PortraitFontConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import type { DiceResolverKeyNum } from '../../utils/dice';
 import { sessionSSR } from '../../utils/session';
-import { containerConfigInsertData } from '../api/init';
 
 export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 	const [toasts, addToast] = useToast();
@@ -42,11 +36,7 @@ export default function Configurations(props: InferSSRProps<typeof getSSP>) {
 					<Col className='mt-5 mt-sm-0'>
 						<Tabs defaultActiveKey='general' className='mb-3' transition={false}>
 							<Tab eventKey='general' title='Geral'>
-								<GeneralEditor
-									containerConfig={props.containerConfig}
-									adminKey={props.adminKey}
-									logError={addToast}
-								/>
+								<GeneralEditor adminKey={props.adminKey} logError={addToast} />
 							</Tab>
 							<Tab eventKey='dice' title='Dado'>
 								<DiceEditor
@@ -311,28 +301,14 @@ function DiceEditor(props: {
 	);
 }
 
-function GeneralEditor(props: {
-	containerConfig: ContainerConfig;
-	adminKey: string;
-	logError: (err: any) => void;
-}) {
-	const [names, setNames] = useState(props.containerConfig);
+function GeneralEditor(props: { adminKey: string; logError: (err: any) => void }) {
 	const [loading, setLoading] = useState(false);
 	const [adminKey, setAdminKey] = useState(props.adminKey);
 
-	function onNameChange(ev: ChangeEvent<HTMLInputElement>, originalName: string) {
-		const newNames = [...names];
-		const index = newNames.findIndex((n) => n.originalName === originalName);
-		newNames[index].name = ev.currentTarget.value;
-		setNames(newNames);
-	}
-
 	function onApply() {
 		setLoading(true);
-		Promise.all([
-			api.post('/config', { name: 'container', value: names }),
-			api.post('/config', { name: 'admin_key', value: adminKey }),
-		])
+		api
+			.post('/config', { name: 'admin_key', value: adminKey })
 			.then(() => alert('Configurações gerais aplicadas com sucesso.'))
 			.catch(props.logError)
 			.finally(() => setLoading(false));
@@ -340,7 +316,7 @@ function GeneralEditor(props: {
 
 	return (
 		<>
-			<Row className='mb-3'>
+			<Row className='mb-3 text-center'>
 				<Col className='h5'>
 					<label htmlFor='adminKeyField' className='me-2'>
 						Chave do Mestre:
@@ -352,30 +328,11 @@ function GeneralEditor(props: {
 					/>
 				</Col>
 			</Row>
-			<Row>
+			<Row className='my-2 text-center'>
 				<Col>
-					{names.map((container) => (
-						<Row key={container.originalName}>
-							<Col className='h5'>
-								<label htmlFor={`containerField${container.originalName}`}>
-									Nome do contêiner de {container.originalName}:
-								</label>
-								<BottomTextInput
-									id={`containerField${container.originalName}`}
-									className='ms-2'
-									value={container.name}
-									onChange={(ev) => onNameChange(ev, container.originalName)}
-								/>
-							</Col>
-						</Row>
-					))}
-					<Row className='my-2 text-center'>
-						<Col>
-							<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
-								Aplicar
-							</Button>
-						</Col>
-					</Row>
+					<Button size='sm' variant='secondary' onClick={onApply} disabled={loading}>
+						Aplicar
+					</Button>
 				</Col>
 			</Row>
 		</>
@@ -589,7 +546,6 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		prisma.attribute.findMany({ where: { id: { in: portraitConfig.attributes } } }),
 		prisma.attribute.findUnique({ where: { id: portraitConfig.side_attribute } }),
 		prisma.attribute.findMany(),
-		prisma.config.findUnique({ where: { name: 'container' }, select: { value: true } }),
 		prisma.config.findUnique({
 			where: { name: 'enable_automatic_markers' },
 			select: { value: true },
@@ -599,9 +555,6 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			select: { value: true },
 		}),
 	]);
-
-	const containerConfigQuery =
-		results[6] || (await prisma.config.create({ data: containerConfigInsertData }));
 
 	return {
 		props: {
@@ -613,11 +566,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				side_attribute: results[4],
 			},
 			attributes: results[5],
-			containerConfig: JSON.parse(
-				containerConfigQuery.value || 'null'
-			) as ContainerConfig,
-			automaticMarking: results[7]?.value === 'true' ? true : false,
-			portraitFont: JSON.parse(results[8]?.value || 'null') as PortraitFontConfig,
+			automaticMarking: results[6]?.value === 'true' ? true : false,
+			portraitFont: JSON.parse(results[7]?.value || 'null') as PortraitFontConfig,
 		},
 	};
 }

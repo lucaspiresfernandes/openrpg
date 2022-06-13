@@ -20,7 +20,7 @@ import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type { ContainerConfig, DiceConfig } from '../../utils/config';
+import type { DiceConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -82,11 +82,7 @@ function PlayerSheet(props: PageProps) {
 						</Row>
 						<Row className='mb-3'>
 							<PlayerInfoContainer
-								title={
-									props.containerConfig.find(
-										(c) => c.originalName === 'Detalhes Pessoais'
-									)?.name || 'Detalhes Pessoais'
-								}
+								title='Detalhes Pessoais'
 								playerName={props.player.name}
 								playerNameShow={props.player.showName}
 								playerInfo={props.player.PlayerInfo}
@@ -102,12 +98,7 @@ function PlayerSheet(props: PageProps) {
 							</Col>
 						</Row>
 						<Row className='mb-3'>
-							<DataContainer
-								outline
-								title={
-									props.containerConfig.find((c) => c.originalName === 'Características')
-										?.name || 'Características'
-								}>
+							<DataContainer outline title='Características'>
 								<PlayerCharacteristicContainer
 									playerCharacteristics={chars}
 									characteristicDiceConfig={
@@ -118,47 +109,35 @@ function PlayerSheet(props: PageProps) {
 						</Row>
 						<Row className='mb-3'>
 							<PlayerEquipmentContainer
+								title='Combate'
 								availableEquipments={props.availableEquipments}
 								playerEquipments={props.player.PlayerEquipment}
-								title={
-									props.containerConfig.find((c) => c.originalName === 'Combate')?.name ||
-									'Combate'
-								}
 							/>
 						</Row>
 						<Row className='mb-3'>
 							<PlayerSkillContainer
+								title='Perícias'
 								playerSkills={skills}
 								availableSkills={props.availableSkills}
 								skillDiceConfig={props.diceConfig.skill || props.diceConfig.base}
-								title={
-									props.containerConfig.find((c) => c.originalName === 'Perícias')
-										?.name || 'Perícias'
-								}
 								automaticMarking={props.automaticMarking}
 							/>
 						</Row>
 						<Row className='mb-3'>
 							<PlayerItemContainer
+								title='Itens'
 								playerItems={props.player.PlayerItem}
 								availableItems={props.availableItems}
 								playerMaxLoad={props.player.maxLoad}
 								playerCurrency={props.player.PlayerCurrency}
-								title={
-									props.containerConfig.find((c) => c.originalName === 'Itens')?.name ||
-									'Itens'
-								}
 							/>
 						</Row>
 						<Row className='mb-3'>
 							<PlayerSpellContainer
+								title='Magias'
 								playerSpells={props.player.PlayerSpell.map((sp) => sp.Spell)}
 								availableSpells={props.availableSpells}
 								playerMaxSlots={props.player.spellSlots}
-								title={
-									props.containerConfig.find((c) => c.originalName === 'Magias')?.name ||
-									'Magias'
-								}
 							/>
 						</Row>
 					</Container>
@@ -242,7 +221,6 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { visible: true, PlayerSpell: { none: { player_id: player.id } } },
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' } }),
-		prisma.config.findUnique({ where: { name: 'container' } }),
 		prisma.config.findUnique({ where: { name: 'enable_automatic_markers' } }),
 	]);
 
@@ -264,8 +242,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			availableItems: results[3],
 			availableSpells: results[4],
 			diceConfig: JSON.parse(results[5]?.value || 'null') as DiceConfig,
-			containerConfig: JSON.parse(results[6]?.value || '[]') as ContainerConfig,
-			automaticMarking: results[7]?.value === 'true' ? true : false,
+			automaticMarking: results[6]?.value === 'true' ? true : false,
 		},
 	};
 }

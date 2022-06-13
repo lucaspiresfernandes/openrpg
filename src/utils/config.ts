@@ -29,5 +29,3 @@ export type PortraitFontConfig = {
 };
 
 export type Environment = 'idle' | 'combat';
-
-export type ContainerConfig = { originalName: string; name: string }[];

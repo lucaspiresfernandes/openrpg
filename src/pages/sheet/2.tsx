@@ -16,7 +16,6 @@ import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type { ContainerConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -66,12 +65,7 @@ function PlayerSheet(props: PageProps) {
 					</DataContainer>
 				</Row>
 				<Row>
-					<DataContainer
-						title={
-							props.containerConfig.find((c) => c.originalName === 'Detalhes Pessoais')
-								?.name || 'Detalhes Pessoais'
-						}
-						outline>
+					<DataContainer title='Detalhes Pessoais' outline>
 						{props.player.PlayerExtraInfo.map((extraInfo) => (
 							<Row className='mb-4' key={extraInfo.ExtraInfo.id}>
 								<Col>
@@ -103,9 +97,9 @@ function PlayerSheet(props: PageProps) {
 }
 
 async function getSSP(ctx: GetServerSidePropsContext) {
-	const player = ctx.req.session.player;
+	const playerSession = ctx.req.session.player;
 
-	if (!player) {
+	if (!playerSession) {
 		return {
 			redirect: {
 				destination: '/',
@@ -114,19 +108,16 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		};
 	}
 
-	const results = await prisma.$transaction([
-		prisma.player.findUnique({
-			where: { id: player.id },
-			select: {
-				id: true,
-				PlayerNote: { select: { value: true } },
-				PlayerExtraInfo: { select: { ExtraInfo: true, value: true } },
-			},
-		}),
-		prisma.config.findUnique({ where: { name: 'container' } }),
-	]);
+	const player = await prisma.player.findUnique({
+		where: { id: playerSession.id },
+		select: {
+			id: true,
+			PlayerNote: { select: { value: true } },
+			PlayerExtraInfo: { select: { ExtraInfo: true, value: true } },
+		},
+	});
 
-	if (!results[0]) {
+	if (!player) {
 		ctx.req.session.destroy();
 		return {
 			redirect: {
@@ -138,8 +129,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 
 	return {
 		props: {
-			player: results[0],
-			containerConfig: JSON.parse(results[1]?.value || '[]') as ContainerConfig,
+			player,
 		},
 	};
 }
