@@ -13,7 +13,7 @@ import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import useDiceRoll from '../../hooks/useDiceRoll';
 import { clamp } from '../../utils';
 import api from '../../utils/api';
-import type { DiceConfigCell } from '../../utils/config';
+import type { DiceConfigCell, PortraitConfig } from '../../utils/config';
 import DiceRollModal from '../Modals/DiceRollModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
@@ -39,6 +39,7 @@ type PlayerAttributeContainerProps = {
 		} | null;
 	}[];
 	attributeDiceConfig: DiceConfigCell;
+	portraitAttributes: PortraitConfig;
 };
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
@@ -76,6 +77,10 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 						playerStatus={status}
 						onStatusChanged={onStatusChanged}
 						showDiceRollResult={onDiceRoll}
+						visibilityEnabled={
+							attr.Attribute.id === props.portraitAttributes.side_attribute ||
+							props.portraitAttributes.attributes.includes(attr.Attribute.id)
+						}
 					/>
 				);
 			})}
@@ -102,6 +107,7 @@ type PlayerAttributeFieldProps = {
 	onStatusChanged?: (id: number, newValue: boolean) => void;
 	attributeDiceConfig: DiceConfigCell;
 	showDiceRollResult: DiceRollEvent;
+	visibilityEnabled: boolean;
 };
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
@@ -213,15 +219,17 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					</Col>
 				</Row>
 				<Row>
-					<Col xs='auto' className='align-self-center' style={{ paddingRight: 0 }}>
-						<Button
-							aria-label={show ? 'Esconder' : 'Mostrar'}
-							size='sm'
-							variant={show ? 'primary' : 'secondary'}
-							onClick={onShowChange}>
-							{show ? <AiFillEye /> : <AiFillEyeInvisible />}
-						</Button>
-					</Col>
+					{props.visibilityEnabled && (
+						<Col xs='auto' className='align-self-center pe-0'>
+							<Button
+								aria-label={show ? 'Esconder' : 'Mostrar'}
+								size='sm'
+								variant={show ? 'primary' : 'secondary'}
+								onClick={onShowChange}>
+								{show ? <AiFillEye /> : <AiFillEyeInvisible />}
+							</Button>
+						</Col>
+					)}
 					<Col>
 						<ProgressBar
 							label={`${value}/${maxValue}`}

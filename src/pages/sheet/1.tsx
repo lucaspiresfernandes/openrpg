@@ -20,7 +20,7 @@ import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type { DiceConfig } from '../../utils/config';
+import type { DiceConfig, PortraitConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -94,6 +94,7 @@ function PlayerSheet(props: PageProps) {
 									attributeDiceConfig={props.diceConfig.attribute}
 									playerAttributeStatus={props.player.PlayerAttributeStatus}
 									playerAvatars={props.player.PlayerAvatar}
+									portraitAttributes={props.portraitAttributes}
 								/>
 							</Col>
 						</Row>
@@ -222,6 +223,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' } }),
 		prisma.config.findUnique({ where: { name: 'enable_automatic_markers' } }),
+		prisma.config.findUnique({ where: { name: 'portrait' } }),
 	]);
 
 	if (!results[0]) {
@@ -243,6 +245,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			availableSpells: results[4],
 			diceConfig: JSON.parse(results[5]?.value || 'null') as DiceConfig,
 			automaticMarking: results[6]?.value === 'true' ? true : false,
+			portraitAttributes: JSON.parse(results[7]?.value || 'null') as PortraitConfig
 		},
 	};
 }
