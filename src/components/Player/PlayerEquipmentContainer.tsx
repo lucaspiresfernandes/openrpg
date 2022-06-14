@@ -293,6 +293,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 		<tr>
 			<td>
 				<Button
+					aria-label='Apagar'
 					onClick={deleteEquipment}
 					size='sm'
 					variant='secondary'
@@ -306,7 +307,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 			<td>
 				<Image
 					alt='Dado'
-					src='/dice20.png'
+					src='/dice20.webp'
 					className='clickable'
 					onClick={diceRoll}
 					style={{ maxHeight: '2rem' }}

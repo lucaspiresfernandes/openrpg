@@ -111,6 +111,7 @@ function PlayerNameField(props: PlayerNameFieldProps) {
 				<Row>
 					<Col xs='auto' style={{ paddingRight: 0 }}>
 						<Button
+							aria-label={show ? 'Esconder' : 'Mostrar'}
 							size='sm'
 							variant={show ? 'primary' : 'secondary'}
 							onClick={onShowChange}>

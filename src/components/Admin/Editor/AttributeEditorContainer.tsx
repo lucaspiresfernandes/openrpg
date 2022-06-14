@@ -6,8 +6,7 @@ import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import AttributeEditorModal from '../../Modals/AttributeEditorModal';
 import AttributeStatusEditorModal from '../../Modals/AttributeStatusEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type AttributeEditorContainerProps = {
 	attributes: Attribute[];
@@ -89,19 +88,18 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 					onAdd: () => setAttributeModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{attributes.map((attr) => (
-						<EditorRow
-							key={attr.id}
-							name={attr.name}
-							onEdit={() =>
-								setAttributeModal({ operation: 'edit', show: true, data: attr })
-							}
-							onDelete={() => deleteAttribute(attr.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={attributes}
+					onEdit={(id) =>
+						setAttributeModal({
+							operation: 'edit',
+							show: true,
+							data: attributes.find((attr) => attr.id === id),
+						})
+					}
+					onDelete={(id) => deleteAttribute(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<AttributeEditorModal
 				{...attributeModal}
@@ -195,19 +193,18 @@ function AttributeStatusEditorContainer(props: AttributeStatusEditorContainerPro
 					onAdd: () => setAttributeStatusModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{attributeStatus.map((stat) => (
-						<EditorRow
-							key={stat.id}
-							name={stat.name}
-							onEdit={() =>
-								setAttributeStatusModal({ operation: 'edit', show: true, data: stat })
-							}
-							onDelete={() => deleteAttributeStatus(stat.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={attributeStatus}
+					onEdit={(id) =>
+						setAttributeStatusModal({
+							operation: 'edit',
+							show: true,
+							data: attributeStatus.find((stat) => stat.id === id),
+						})
+					}
+					onDelete={(id) => deleteAttributeStatus(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<AttributeStatusEditorModal
 				{...attributeStatusModal}

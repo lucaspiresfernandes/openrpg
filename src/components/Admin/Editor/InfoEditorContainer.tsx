@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import InfoEditorModal from '../../Modals/InfoEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type InfoEditorContainerProps = {
 	info: Info[];
@@ -77,17 +76,18 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 					onAdd: () => setInfoModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{info.map((info) => (
-						<EditorRow
-							key={info.id}
-							name={info.name}
-							onEdit={() => setInfoModal({ operation: 'edit', show: true, data: info })}
-							onDelete={() => deleteInfo(info.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={info}
+					onEdit={(id) =>
+						setInfoModal({
+							operation: 'edit',
+							show: true,
+							data: info.find((i) => i.id === id),
+						})
+					}
+					onDelete={(id) => deleteInfo(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<InfoEditorModal
 				{...infoModal}

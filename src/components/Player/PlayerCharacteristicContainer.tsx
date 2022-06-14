@@ -95,9 +95,12 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 		if (modifier !== newModifier) setModifier(newModifier);
 
 		if (isModifierClean()) return;
-		
+
 		api
-			.post('/sheet/player/characteristic', { modifier: parseInt(newModifier), id: charID })
+			.post('/sheet/player/characteristic', {
+				modifier: parseInt(newModifier),
+				id: charID,
+			})
 			.catch(logError);
 	}
 
@@ -134,7 +137,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 						fluid
 						alt='Dado'
 						className='clickable'
-						src='/dice20.png'
+						src='/dice20.webp'
 						onClick={(ev) => rollDice(ev.ctrlKey)}
 						style={{ maxHeight: 50 }}
 					/>
@@ -151,6 +154,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 				<Row className='justify-content-center mb-2'>
 					<Col xs={3}>
 						<BottomTextInput
+							aria-label={`Modificador de ${props.characteristic.name}`}
 							className='text-center w-100'
 							value={modifier}
 							onChange={(ev) => setModifier(ev.currentTarget.value)}

@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import ItemEditorModal from '../../Modals/ItemEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type ItemEditorContainerProps = {
 	items: Item[];
@@ -81,17 +80,18 @@ export default function ItemEditorContainer(props: ItemEditorContainerProps) {
 					onAdd: () => setItemModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{item.map((item) => (
-						<EditorRow
-							key={item.id}
-							name={item.name}
-							onEdit={() => setItemModal({ operation: 'edit', show: true, data: item })}
-							onDelete={() => deleteItem(item.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={item}
+					onEdit={(id) =>
+						setItemModal({
+							operation: 'edit',
+							show: true,
+							data: item.find((it) => it.id === id),
+						})
+					}
+					onDelete={(id) => deleteItem(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<ItemEditorModal
 				{...itemModal}

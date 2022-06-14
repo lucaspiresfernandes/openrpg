@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import EquipmentEditorModal from '../../Modals/EquipmentEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type EquipmentEditorContainerProps = {
 	equipments: Equipment[];
@@ -81,19 +80,18 @@ export default function EquipmentEditorContainer(props: EquipmentEditorContainer
 					onAdd: () => setEquipmentModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{equipment.map((eq) => (
-						<EditorRow
-							key={eq.id}
-							name={eq.name}
-							onEdit={() =>
-								setEquipmentModal({ operation: 'edit', show: true, data: eq })
-							}
-							onDelete={() => deleteEquipment(eq.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={equipment}
+					onEdit={(id) =>
+						setEquipmentModal({
+							operation: 'edit',
+							show: true,
+							data: equipment.find((eq) => eq.id === id),
+						})
+					}
+					onDelete={(id) => deleteEquipment(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<EquipmentEditorModal
 				{...equipmentModal}

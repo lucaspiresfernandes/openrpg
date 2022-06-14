@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import SpellEditorModal from '../../Modals/SpellEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type SpellEditorContainerProps = {
 	spells: Spell[];
@@ -91,17 +90,18 @@ export default function SpellEditorContainer(props: SpellEditorContainerProps) {
 					onAdd: () => setSpellModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{spell.map((sp) => (
-						<EditorRow
-							key={sp.id}
-							name={sp.name}
-							onEdit={() => setSpellModal({ operation: 'edit', show: true, data: sp })}
-							onDelete={() => deleteSpell(sp.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={spell}
+					onEdit={(id) =>
+						setSpellModal({
+							operation: 'edit',
+							show: true,
+							data: spell.find((sp) => sp.id === id),
+						})
+					}
+					onDelete={(id) => deleteSpell(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<SpellEditorModal
 				{...spellModal}

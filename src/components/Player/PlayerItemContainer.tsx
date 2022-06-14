@@ -339,7 +339,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	return (
 		<tr>
 			<td>
-				<Button onClick={deleteItem} disabled={loading} size='sm' variant='secondary'>
+				<Button onClick={deleteItem} disabled={loading} size='sm' variant='secondary' aria-label='Apagar'>
 					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>

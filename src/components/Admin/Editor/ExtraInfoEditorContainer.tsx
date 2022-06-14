@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import ExtraInfoEditorModal from '../../Modals/ExtraInfoEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type ExtraInfoEditorContainerProps = {
 	extraInfo: ExtraInfo[];
@@ -77,17 +76,18 @@ export default function ExtraInfoEditorContainer(props: ExtraInfoEditorContainer
 					onAdd: () => setInfoModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{extraInfo.map((info) => (
-						<EditorRow
-							key={info.id}
-							name={info.name}
-							onEdit={() => setInfoModal({ operation: 'edit', show: true, data: info })}
-							onDelete={() => deleteExtraInfo(info.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={extraInfo}
+					onEdit={(id) =>
+						setInfoModal({
+							operation: 'edit',
+							show: true,
+							data: extraInfo.find((info) => info.id === id),
+						})
+					}
+					onDelete={(id) => deleteExtraInfo(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<ExtraInfoEditorModal
 				{...infoModal}

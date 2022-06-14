@@ -215,6 +215,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 				<Row>
 					<Col xs='auto' className='align-self-center' style={{ paddingRight: 0 }}>
 						<Button
+							aria-label={show ? 'Esconder' : 'Mostrar'}
 							size='sm'
 							variant={show ? 'primary' : 'secondary'}
 							onClick={onShowChange}>
@@ -223,6 +224,8 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					</Col>
 					<Col>
 						<ProgressBar
+							label={`${value}/${maxValue}`}
+							visuallyHidden
 							now={value}
 							min={0}
 							max={maxValue}
@@ -235,7 +238,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					{props.playerAttribute.Attribute.rollable && (
 						<Col xs='auto' className='align-self-center' style={{ paddingLeft: 0 }}>
 							<Image
-								src='/dice20.png'
+								src='/dice20.webp'
 								alt='Dado'
 								className='attribute-dice clickable'
 								onClick={(ev) => diceClick(ev.ctrlKey)}
@@ -396,7 +399,7 @@ function PlayerAvatarDice() {
 			<Col xs={4} md={3} xl={2} className='align-self-center'>
 				<Image
 					fluid
-					src='/dice20.png'
+					src='/dice20.webp'
 					alt='Dado Geral'
 					className='clickable'
 					onClick={() => setGeneralDiceRollShow(true)}

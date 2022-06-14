@@ -237,6 +237,7 @@ function PlayerSpellField({
 						<Col className='h2'>
 							{spell.name}
 							<Button
+								aria-label='Apagar'
 								className='ms-3'
 								variant='secondary'
 								size='sm'
@@ -261,7 +262,7 @@ function PlayerSpellField({
 							{spell.damage !== '-' && (
 								<Image
 									alt='Dado'
-									src='/dice20.png'
+									src='/dice20.webp'
 									className='clickable'
 									onClick={diceRoll}
 									style={{ maxHeight: '2rem' }}

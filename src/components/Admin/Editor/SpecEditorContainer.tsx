@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import SpecEditorModal from '../../Modals/SpecEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type SpecEditorContainerProps = {
 	specs: Spec[];
@@ -76,17 +75,18 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 					onAdd: () => setSpecModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{spec.map((spec) => (
-						<EditorRow
-							key={spec.id}
-							name={spec.name}
-							onEdit={() => setSpecModal({ operation: 'edit', show: true, data: spec })}
-							onDelete={() => deleteSpec(spec.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={spec}
+					onEdit={(id) =>
+						setSpecModal({
+							operation: 'edit',
+							show: true,
+							data: spec.find((sp) => sp.id === id),
+						})
+					}
+					onDelete={(id) => deleteSpec(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<SpecEditorModal
 				{...specModal}

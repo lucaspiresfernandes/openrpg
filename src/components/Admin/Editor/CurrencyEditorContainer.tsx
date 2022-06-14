@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import CurrencyEditorModal from '../../Modals/CurrencyEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type CurrencyEditorContainerProps = {
 	currencies: Currency[];
@@ -75,19 +74,18 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
 					onAdd: () => setCurrencyModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{currency.map((curr) => (
-						<EditorRow
-							key={curr.id}
-							name={curr.name}
-							onEdit={() =>
-								setCurrencyModal({ operation: 'edit', show: true, data: curr })
-							}
-							onDelete={() => deleteCurrency(curr.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={currency}
+					onEdit={(id) =>
+						setCurrencyModal({
+							operation: 'edit',
+							show: true,
+							data: currency.find((cur) => cur.id === id),
+						})
+					}
+					onDelete={(id) => deleteCurrency(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<CurrencyEditorModal
 				{...currencyModal}

@@ -6,8 +6,7 @@ import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import SkillEditorModal from '../../Modals/SkillEditorModal';
 import CreateSpecializationModal from '../../Modals/SpecializationEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type SpecializationEditorContainerProps = {
 	skills: Skill[];
@@ -81,19 +80,18 @@ export default function SpecializationEditorContainer(
 					onAdd: () => setSpecializationModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{specializations.map((spec) => (
-						<EditorRow
-							key={spec.id}
-							name={spec.name}
-							onEdit={() =>
-								setSpecializationModal({ operation: 'edit', show: true, data: spec })
-							}
-							onDelete={() => deleteSpecialization(spec.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={specializations}
+					onEdit={(id) =>
+						setSpecializationModal({
+							operation: 'edit',
+							show: true,
+							data: specializations.find((sp) => sp.id === id),
+						})
+					}
+					onDelete={(id) => deleteSpecialization(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<CreateSpecializationModal
 				{...specializationModal}
@@ -196,26 +194,18 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 					onAdd: () => setSkillModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{skills.map((skill) => {
-						let name = skill.name;
-						const spec = props.specializations.find(
-							(sp) => sp.id === skill.specialization_id
-						);
-						if (spec) name = `${spec.name} (${name})`;
-						return (
-							<EditorRow
-								key={skill.id}
-								name={name}
-								onEdit={() =>
-									setSkillModal({ operation: 'edit', show: true, data: skill })
-								}
-								onDelete={() => deleteSkill(skill.id)}
-								disabled={loading}
-							/>
-						);
-					})}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={skills}
+					onEdit={(id) =>
+						setSkillModal({
+							operation: 'edit',
+							show: true,
+							data: skills.find((sk) => sk.id === id),
+						})
+					}
+					onDelete={(id) => deleteSkill(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<SkillEditorModal
 				{...skillModal}

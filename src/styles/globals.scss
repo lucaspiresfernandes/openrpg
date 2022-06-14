@@ -194,9 +194,7 @@ $navbar-background-color: #303030;
 	background-color: $navbar-background-color;
 }
 
-.row-wrapper {
-	max-height: 294px;
-	overflow-y: auto;
+.editor-container {
 	@include custom_scrollbar();
 }
 

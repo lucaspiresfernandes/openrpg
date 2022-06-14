@@ -92,6 +92,7 @@ function ThemeManager() {
 		<FormCheck
 			type='switch'
 			title='Modo Escuro'
+			aria-label='Tema'
 			checked={darkMode}
 			onChange={(ev) => setDarkMode(ev.target.checked)}
 		/>

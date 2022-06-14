@@ -331,7 +331,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		if (modifier !== newModifier) setModifier(newModifier);
 
 		if (isModifierClean()) return;
-		
+
 		api
 			.post('/sheet/player/skill', { modifier: parseInt(newModifier), id: props.id })
 			.catch(logError);
@@ -387,13 +387,19 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			className='skill-container my-3 clickable d-flex flex-column'>
 			<Row className='mb-1'>
 				<Col>
-					<input type='checkbox' checked={checked} onChange={onCheckChange} />
+					<input
+						aria-label={checked ? 'Desmarcar' : 'Marcar'}
+						type='checkbox'
+						checked={checked}
+						onChange={onCheckChange}
+					/>
 				</Col>
 			</Row>
 			{modifier !== null && (
 				<Row className='justify-content-center mb-2'>
 					<Col xs={4}>
 						<BottomTextInput
+							aria-label={`Modificador de ${props.name}`}
 							className='text-center w-100'
 							value={modifier}
 							onChange={(ev) => setModifier(ev.currentTarget.value)}
@@ -405,6 +411,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			<Row>
 				<Col>
 					<BottomTextInput
+						aria-label={props.name}
 						className='text-center w-75'
 						value={value}
 						onChange={onValueChange}

@@ -5,8 +5,7 @@ import { ErrorLogger } from '../../../contexts';
 import api from '../../../utils/api';
 import DataContainer from '../../DataContainer';
 import CharacteristicEditorModal from '../../Modals/CharacteristicEditorModal';
-import EditorRow from './EditorRow';
-import EditorRowWrapper from './EditorRowWrapper';
+import EditorContainer from './EditorContainer';
 
 type CharacteristicEditorContainerProps = {
 	characteristics: Characteristic[];
@@ -81,19 +80,18 @@ export default function CharacteristicEditorContainer(
 					onAdd: () => setCharacteristicModal({ operation: 'create', show: true }),
 					disabled: loading,
 				}}>
-				<EditorRowWrapper>
-					{characteristics.map((char) => (
-						<EditorRow
-							key={char.id}
-							name={char.name}
-							onEdit={() =>
-								setCharacteristicModal({ operation: 'edit', show: true, data: char })
-							}
-							onDelete={() => deleteCharacteristic(char.id)}
-							disabled={loading}
-						/>
-					))}
-				</EditorRowWrapper>
+				<EditorContainer
+					data={characteristics}
+					onEdit={(id) =>
+						setCharacteristicModal({
+							operation: 'edit',
+							show: true,
+							data: characteristics.find((char) => char.id === id),
+						})
+					}
+					onDelete={(id) => deleteCharacteristic(id)}
+					disabled={loading}
+				/>
 			</DataContainer>
 			<CharacteristicEditorModal
 				{...characteristicModal}
