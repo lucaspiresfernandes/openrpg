@@ -10,13 +10,16 @@ import type {
 import { sessionAPI } from '../../utils/session';
 import type { NextApiResponseServerIO } from '../../utils/socket';
 
-const random = new RandomOrg({ apiKey: process.env.RANDOM_ORG_KEY || 'unkown' });
+const randomOrgKey = process.env.RANDOM_ORG_KEY;
+const random = new RandomOrg({ apiKey: randomOrgKey || 'unkown' });
 
 async function nextInt(min: number, max: number, n: number): Promise<{ data: number[] }> {
-	try {
-		return (await random.generateIntegers({ min, max, n })).random;
-	} catch (err) {
-		console.error('Random.org inactive or apiKey is not defined.');
+	if (randomOrgKey) {
+		try {
+			return (await random.generateIntegers({ min, max, n })).random;
+		} catch (err) {
+			console.error('Random.org inactive or apiKey is not defined.');
+		}
 	}
 
 	const data = [];
