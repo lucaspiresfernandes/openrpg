@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from 'react-bootstrap/Image';
 import { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -17,10 +17,9 @@ export default function AdminDiceRollContainer() {
 						</Row>
 						<Row>
 							<Image
+								fluid
 								src='/dice20.webp'
 								alt='Dado'
-								width={200}
-								height={200}
 								className='clickable'
 								onClick={() => setGeneralDiceRollShow(true)}
 							/>

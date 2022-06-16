@@ -1,8 +1,10 @@
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
+import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import api from '../../utils/api';
+
+const style = { maxHeight: 250 };
 
 type AvatarFieldProps = {
 	status: { id: number; value: boolean }[];
@@ -10,7 +12,7 @@ type AvatarFieldProps = {
 };
 
 export default function AvatarField({ status, playerId }: AvatarFieldProps) {
-	const [src, setSrc] = useState('/avatar404.png');
+	const [src, setSrc] = useState('#');
 	const previousStatusID = useRef(Number.MAX_SAFE_INTEGER);
 
 	useEffect(() => {
@@ -26,11 +28,7 @@ export default function AvatarField({ status, playerId }: AvatarFieldProps) {
 		api
 			.get(`/sheet/player/avatar/${statusID}?playerID=${playerId}`)
 			.then((res) => setSrc(res.data.link))
-			.catch((err) => {
-				console.log(`Could not load avatar n°${statusID}.`);
-				console.log(err);
-				setSrc('/avatar404.png');
-			});
+			.catch((err) => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [status]);
 
@@ -38,10 +36,10 @@ export default function AvatarField({ status, playerId }: AvatarFieldProps) {
 		<Row>
 			<Col>
 				<Image
+					fluid
 					src={src}
 					alt='Avatar'
-					width={210}
-					height={300}
+					style={style}
 					onError={() => setSrc('/avatar404.png')}
 				/>
 			</Col>
