@@ -24,9 +24,13 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	const spell = await prisma.playerSpell.create({
 		data: {
-			player_id: player.id,
+			player_id: playerId,
 			spell_id: spellID,
 		},
 		select: { Spell: true },
@@ -50,8 +54,12 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	await prisma.playerSpell.delete({
-		where: { player_id_spell_id: { player_id: player.id, spell_id: spellID } },
+		where: { player_id_spell_id: { player_id: playerId, spell_id: spellID } },
 	});
 
 	res.end();

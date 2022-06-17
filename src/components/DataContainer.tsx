@@ -41,6 +41,7 @@ export default function DataContainer({
 							<Col xs={2} className='align-self-center'>
 								{addButton.type === 'dropdown' ? (
 									<DropdownButton
+										size='sm'
 										title={addButton.name || '+'}
 										variant='secondary'
 										menuVariant='dark'

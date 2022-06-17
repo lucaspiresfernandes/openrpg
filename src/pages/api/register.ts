@@ -1,4 +1,3 @@
-import type { Player } from '@prisma/client';
 import type { NextApiRequest } from 'next';
 import prisma from '../../utils/database';
 import { hash } from '../../utils/encryption';
@@ -46,8 +45,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		},
 	});
 
-	if (isAdmin) await registerAdminData(player);
-	else await registerPlayerData(player);
+	if (isAdmin) await registerAdminData(player.id);
+	else await registerPlayerData(player.id);
 
 	req.session.player = {
 		id: player.id,
@@ -71,7 +70,8 @@ async function validateAdminKey(key: string) {
 	return false;
 }
 
-async function registerPlayerData(player: Player) {
+export async function registerPlayerData(playerId: number) {
+	console.log('register');
 	const results = await prisma.$transaction([
 		prisma.info.findMany({ select: { id: true } }),
 		prisma.attribute.findMany({ select: { id: true } }),
@@ -92,19 +92,19 @@ async function registerPlayerData(player: Player) {
 		link: null;
 	}[] = results[2].map((attrStatus) => {
 		return {
-			player_id: player.id,
+			player_id: playerId,
 			attribute_status_id: attrStatus.id,
 			link: null,
 		};
 	});
-	playerAvatarData.push({ player_id: player.id, attribute_status_id: null, link: null });
+	playerAvatarData.push({ player_id: playerId, attribute_status_id: null, link: null });
 
 	await prisma.$transaction([
 		prisma.playerInfo.createMany({
 			data: results[0].map((info) => {
 				return {
 					info_id: info.id,
-					player_id: player.id,
+					player_id: playerId,
 					value: '',
 				};
 			}),
@@ -112,7 +112,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerAttribute.createMany({
 			data: results[1].map((attr) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					attribute_id: attr.id,
 					value: 0,
 					maxValue: 0,
@@ -122,7 +122,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerAttributeStatus.createMany({
 			data: results[2].map((attrStatus) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					attribute_status_id: attrStatus.id,
 					value: false,
 				};
@@ -131,7 +131,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerSpec.createMany({
 			data: results[3].map((spec) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					spec_id: spec.id,
 					value: '0',
 				};
@@ -140,7 +140,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerCharacteristic.createMany({
 			data: results[4].map((char) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					characteristic_id: char.id,
 					value: 0,
 					modifier: 0,
@@ -150,7 +150,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerSkill.createMany({
 			data: results[5].map((skill) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					skill_id: skill.id,
 					value: skill.startValue,
 					checked: false,
@@ -161,7 +161,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerExtraInfo.createMany({
 			data: results[6].map((extraInfo) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					extra_info_id: extraInfo.id,
 					value: '',
 				};
@@ -170,7 +170,7 @@ async function registerPlayerData(player: Player) {
 		prisma.playerCurrency.createMany({
 			data: results[7].map((curr) => {
 				return {
-					player_id: player.id,
+					player_id: playerId,
 					currency_id: curr.id,
 					value: '',
 				};
@@ -178,7 +178,7 @@ async function registerPlayerData(player: Player) {
 		}),
 		prisma.playerNote.create({
 			data: {
-				player_id: player.id,
+				player_id: playerId,
 				value: '',
 			},
 		}),
@@ -188,10 +188,10 @@ async function registerPlayerData(player: Player) {
 	]);
 }
 
-function registerAdminData(admin: Player) {
+function registerAdminData(adminId: number) {
 	return prisma.playerNote.create({
 		data: {
-			player_id: admin.id,
+			player_id: adminId,
 			value: '',
 		},
 	});

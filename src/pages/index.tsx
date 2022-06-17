@@ -68,7 +68,7 @@ function HomePage() {
 				throw new Error('Você deve preencher tanto o usuário como a senha.');
 			const res = await api.post('/login', { username, password });
 			if (res.data.admin) return Router.push('/admin/main');
-			Router.push('/sheet/1');
+			Router.push('/sheet/player/1');
 		} catch (err) {
 			addToast(err);
 			setLoading(false);
@@ -172,7 +172,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		}
 		return {
 			redirect: {
-				destination: '/sheet/1',
+				destination: '/sheet/player/1',
 				permanent: false,
 			},
 		};

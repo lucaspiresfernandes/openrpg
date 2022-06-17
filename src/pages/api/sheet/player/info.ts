@@ -20,20 +20,23 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const infoID: number | undefined = req.body.id;
 	const value: string | undefined = req.body.value;
+	const npcId: number | undefined = req.body.npcId;
 
 	if (!infoID || value === undefined) {
 		res.status(401).send({ message: 'Info ID or value is undefined.' });
 		return;
 	}
 
+	const playerId = npcId ? npcId : player.id;
+
 	await database.playerInfo.update({
 		data: { value },
-		where: { player_id_info_id: { player_id: player.id, info_id: infoID } },
+		where: { player_id_info_id: { player_id: playerId, info_id: infoID } },
 	});
 
 	res.end();
 
-	res.socket.server.io?.emit('playerInfoChange', player.id, infoID, value);
+	res.socket.server.io?.emit('playerInfoChange', playerId, infoID, value);
 }
 
 export default sessionAPI(handler);

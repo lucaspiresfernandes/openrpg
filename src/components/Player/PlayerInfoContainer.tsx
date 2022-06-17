@@ -22,12 +22,17 @@ type PlayerInfoContainerProps = {
 		Spec: Spec;
 		value: string;
 	}[];
+	npcId?: number;
 };
 
 export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 	return (
 		<DataContainer outline title={props.title}>
-			<PlayerNameField value={props.playerName} show={props.playerNameShow} />
+			<PlayerNameField
+				value={props.playerName}
+				show={props.playerNameShow}
+				npcId={props.npcId}
+			/>
 			{props.playerInfo.map((info) => (
 				<Row className='mb-4' key={info.Info.id}>
 					<Col>
@@ -36,7 +41,11 @@ export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 								{info.Info.name}
 							</label>
 						</div>
-						<PlayerInfoField infoId={info.Info.id} value={info.value} />
+						<PlayerInfoField
+							infoId={info.Info.id}
+							value={info.value}
+							npcId={props.npcId}
+						/>
 					</Col>
 				</Row>
 			))}
@@ -48,6 +57,7 @@ export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 							value={spec.value}
 							specId={spec.Spec.id}
 							name={spec.Spec.name}
+							npcId={props.npcId}
 						/>
 						<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
 					</Col>
@@ -60,6 +70,7 @@ export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 type PlayerNameFieldProps = {
 	show: boolean;
 	value: string;
+	npcId?: number;
 };
 
 function PlayerNameField(props: PlayerNameFieldProps) {
@@ -86,6 +97,7 @@ function PlayerNameField(props: PlayerNameFieldProps) {
 			api
 				.post('/sheet/player', {
 					showName: newShow,
+					npcId: props.npcId,
 				})
 				.catch(logError);
 			return newShow;
@@ -95,7 +107,7 @@ function PlayerNameField(props: PlayerNameFieldProps) {
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
 		if (isClean()) return;
-		api.post('/sheet/player', { name: value }).catch(logError);
+		api.post('/sheet/player', { name: value, npcId: props.npcId }).catch(logError);
 	}
 
 	return (
@@ -142,6 +154,7 @@ function PlayerNameField(props: PlayerNameFieldProps) {
 type PlayerInfoFieldProps = {
 	infoId: number;
 	value: string;
+	npcId?: number;
 };
 
 function PlayerInfoField(props: PlayerInfoFieldProps) {
@@ -163,7 +176,7 @@ function PlayerInfoField(props: PlayerInfoFieldProps) {
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
 		if (isClean()) return;
-		api.post('/sheet/player/info', { id: props.infoId, value }).catch(logError);
+		api.post('/sheet/player/info', { id: props.infoId, value, npcId: props.npcId }).catch(logError);
 	}
 
 	if (isDefined) return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
@@ -185,24 +198,25 @@ type PlayerSpecFieldProps = {
 	value: string;
 	name: string;
 	specId: number;
+	npcId?: number;
 };
 
-function PlayerSpecField(playerSpec: PlayerSpecFieldProps) {
-	const [value, setValue, isClean] = useExtendedState(playerSpec.value);
+function PlayerSpecField(props: PlayerSpecFieldProps) {
+	const [value, setValue, isClean] = useExtendedState(props.value);
 
 	const logError = useContext(ErrorLogger);
-	const specID = playerSpec.specId;
+	const specID = props.specId;
 
 	function onValueBlur() {
 		if (isClean()) return;
-		api.post('/sheet/player/spec', { id: specID, value }).catch(logError);
+		api.post('/sheet/player/spec', { id: specID, value, npcId: props.npcId }).catch(logError);
 	}
 
 	return (
 		<BottomTextInput
 			className='w-100 text-center h5'
 			onBlur={onValueBlur}
-			name={`spec${playerSpec.name}`}
+			name={`spec${props.name}`}
 			id={`spec${specID}`}
 			autoComplete='off'
 			value={value}

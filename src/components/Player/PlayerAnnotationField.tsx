@@ -6,14 +6,14 @@ import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 
-export default function PlayerAnnotationsField(props: { value?: string }) {
+export default function PlayerAnnotationsField(props: { value?: string, npcId?: number }) {
 	const [value, setValue, isClean] = useExtendedState(props.value || '');
 
 	const logError = useContext(ErrorLogger);
 
 	function onValueBlur() {
 		if (isClean()) return;
-		api.post('/sheet/player/annotation', { value }).catch(logError);
+		api.post('/sheet/player/annotation', { value, npcId: props.npcId }).catch(logError);
 	}
 
 	return (

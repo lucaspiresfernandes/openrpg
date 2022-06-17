@@ -22,10 +22,11 @@ import DiceRollModal from '../Modals/DiceRollModal';
 import useDiceRoll from '../../hooks/useDiceRoll';
 
 type PlayerSpellContainerProps = {
+	title: string;
 	playerSpells: Spell[];
 	availableSpells: Spell[];
 	playerMaxSlots: number;
-	title: string;
+	npcId?: number;
 };
 
 export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
@@ -111,7 +112,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 	function onAddSpell(id: number) {
 		setLoading(true);
 		api
-			.put('/sheet/player/spell', { id })
+			.put('/sheet/player/spell', { id, npcId: props.npcId })
 			.then((res) => {
 				const spell = res.data.spell as Spell;
 				setPlayerSpells([...playerSpells, spell]);
@@ -148,7 +149,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 			maxSlotsFloat = 0;
 			setMaxSlots(maxSlotsFloat.toString());
 		} else setMaxSlots(maxSlots);
-		api.post('/sheet/player', { maxSlots: maxSlotsFloat }).catch(logError);
+		api.post('/sheet/player', { maxSlots: maxSlotsFloat, npcId: props.npcId }).catch(logError);
 	}
 
 	const slots = playerSpells.reduce((prev, cur) => prev + cur.slots, 0);
@@ -181,6 +182,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 							spell={spell}
 							onDelete={onDeleteSpell}
 							showDiceRollResult={rollDice}
+							npcId={props.npcId}
 						/>
 					))}
 				</Row>
@@ -202,12 +204,14 @@ type PlayerSpellFieldProps = {
 	spell: Spell;
 	onDelete: (id: number) => void;
 	showDiceRollResult: DiceRollEvent;
+	npcId?: number;
 };
 
 function PlayerSpellField({
 	spell,
 	onDelete,
 	showDiceRollResult,
+	npcId
 }: PlayerSpellFieldProps) {
 	const logError = useContext(ErrorLogger);
 	const [loading, setLoading] = useState(false);
@@ -216,7 +220,7 @@ function PlayerSpellField({
 		if (!confirm('Tem certeza que deseja apagar essa magia?')) return;
 		setLoading(true);
 		api
-			.delete('/sheet/player/spell', { data: { id: spell.id } })
+			.delete('/sheet/player/spell', { data: { id: spell.id, npcId } })
 			.then(() => {
 				onDelete(spell.id);
 			})

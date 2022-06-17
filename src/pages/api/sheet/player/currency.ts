@@ -25,15 +25,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.status(401).send({ message: 'Currency ID or value is undefined.' });
 		return;
 	}
+	
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	await database.playerCurrency.update({
 		data: { value },
-		where: { player_id_currency_id: { player_id: player.id, currency_id: currencyID } },
+		where: { player_id_currency_id: { player_id: playerId, currency_id: currencyID } },
 	});
 
 	res.end();
 
-	res.socket.server.io?.emit('playerCurrencyChange', player.id, currencyID, value);
+	res.socket.server.io?.emit('playerCurrencyChange', playerId, currencyID, value);
 }
 
 export default sessionAPI(handler);

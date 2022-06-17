@@ -16,7 +16,7 @@ type AvatarData = {
 	name: string;
 };
 
-type EditAvatarModalProps = {
+type PlayerAvatarModalProps = {
 	playerAvatars: {
 		link: string | null;
 		AttributeStatus: {
@@ -27,9 +27,10 @@ type EditAvatarModalProps = {
 	show?: boolean;
 	onHide?: () => void;
 	onUpdate?: () => void;
+	npcId?: number;
 };
 
-export default function PlayerAvatarModal(props: EditAvatarModalProps) {
+export default function PlayerAvatarModal(props: PlayerAvatarModalProps) {
 	const [avatars, setAvatars] = useState<AvatarData[]>(
 		props.playerAvatars.map((avatar) => {
 			if (avatar.AttributeStatus)
@@ -52,7 +53,7 @@ export default function PlayerAvatarModal(props: EditAvatarModalProps) {
 	function onUpdateAvatar() {
 		setLoading(true);
 		api
-			.post('/sheet/player/avatar', { avatarData: avatars })
+			.post('/sheet/player/avatar', { avatarData: avatars, npcId: props.npcId })
 			.then(props.onUpdate)
 			.catch(logError)
 			.finally(() => {

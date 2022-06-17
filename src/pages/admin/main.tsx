@@ -3,11 +3,8 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
-import AdminDiceRollContainer from '../../components/Admin/AdminDiceRollContainer';
 import AdminEnvironmentConfigurations from '../../components/Admin/AdminEnvironmentConfigurations';
-import CombatContainer from '../../components/Admin/CombatContainer';
-import DiceList from '../../components/Admin/DiceList';
-import NPCContainer from '../../components/Admin/NPCContainer';
+import AdminUtilityContainer from '../../components/Admin/AdminUtilityContainer';
 import PlayerManager from '../../components/Admin/PlayerManager';
 import ApplicationHead from '../../components/ApplicationHead';
 import DataContainer from '../../components/DataContainer';
@@ -32,16 +29,9 @@ export default function Page(props: PageProps) {
 	);
 }
 
-function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
+function AdminPanel({ players, adminAnnotations, environment, npcs }: PageProps) {
 	const [toasts, addToast] = useToast();
 	const socket = useSocket('admin');
-
-	const playerNames = players.map((player) => {
-		return {
-			id: player.id,
-			name: player.name,
-		};
-	});
 
 	if (!socket)
 		return (
@@ -54,8 +44,15 @@ function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 			</Container>
 		);
 
+	const playerNames = players.map((player) => {
+		return {
+			id: player.id,
+			name: player.name,
+		};
+	});
+
 	return (
-		<>
+			<>
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
 					<Container className='px-3'>
@@ -68,14 +65,7 @@ function AdminPanel({ players, adminAnnotations, environment }: PageProps) {
 						<Row className='justify-content-center gx-5'>
 							<PlayerManager players={players} />
 						</Row>
-						<Row className='my-5 text-center'>
-							<AdminDiceRollContainer />
-							<CombatContainer players={playerNames} />
-						</Row>
-						<Row className='mb-5'>
-							<DiceList players={playerNames} />
-							<NPCContainer />
-						</Row>
+						<AdminUtilityContainer npcs={npcs} players={playerNames} />
 						<Row className='mb-3'>
 							<DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
 								<PlayerAnnotationsField value={adminAnnotations.value} />
@@ -120,6 +110,10 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { player_id: player.id },
 			select: { value: true },
 		}),
+		prisma.player.findMany({
+			where: { role: 'NPC' },
+			select: { id: true, name: true },
+		}),
 	]);
 
 	return {
@@ -127,6 +121,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			environment: (results[0]?.value || 'idle') as Environment,
 			players: results[1],
 			adminAnnotations: results[2] || { value: '' },
+			npcs: results[3],
 		},
 	};
 }

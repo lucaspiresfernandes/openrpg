@@ -15,8 +15,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	await prisma.playerSkill.updateMany({
-		where: { player_id: player.id },
+		where: { player_id: playerId },
 		data: { checked: false },
 	});
 

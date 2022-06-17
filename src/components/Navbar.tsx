@@ -13,7 +13,8 @@ export default function Navbar() {
 	if (router.pathname.includes('/portrait')) return null;
 
 	const isActive = (path: string) => router.pathname === path;
-	const onPlayerSheet = router.pathname.includes('/sheet/');
+	const onPlayerSheet = router.pathname.includes('/sheet/player/');
+	const onNpcSheet = router.pathname.includes('/sheet/npc/');
 	const onAdminPanel = router.pathname.includes('/admin/');
 
 	return (
@@ -25,11 +26,21 @@ export default function Navbar() {
 					<Nav className='me-auto'>
 						{onPlayerSheet && (
 							<>
-								<Link href='/sheet/1' passHref>
-									<Nav.Link active={isActive('/sheet/1')}>Página 1</Nav.Link>
+								<Link href='/sheet/player/1' passHref>
+									<Nav.Link active={isActive('/sheet/player/1')}>Página 1</Nav.Link>
 								</Link>
-								<Link href='/sheet/2' passHref>
-									<Nav.Link active={isActive('/sheet/2')}>Página 2</Nav.Link>
+								<Link href='/sheet/player/2' passHref>
+									<Nav.Link active={isActive('/sheet/player/2')}>Página 2</Nav.Link>
+								</Link>
+							</>
+						)}
+						{onNpcSheet && (
+							<>
+								<Link href={`/sheet/npc/${router.query.id}/1`} passHref>
+									<Nav.Link active={isActive('/sheet/npc/[id]/1')}>Página 1</Nav.Link>
+								</Link>
+								<Link href={`/sheet/npc/${router.query.id}/2`} passHref>
+									<Nav.Link active={isActive('/sheet/npc/[id]/2')}>Página 2</Nav.Link>
 								</Link>
 							</>
 						)}

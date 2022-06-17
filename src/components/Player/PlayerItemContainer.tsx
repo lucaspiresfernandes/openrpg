@@ -33,6 +33,7 @@ type PlayerItemContainerProps = {
 		Currency: Currency;
 	}[];
 	title: string;
+	npcId?: number;
 };
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
@@ -120,7 +121,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	function onAddItem(id: number) {
 		setLoading(true);
 		api
-			.put('/sheet/player/item', { id })
+			.put('/sheet/player/item', { id, npcId: props.npcId })
 			.then((res) => {
 				const item = res.data.item;
 				setPlayerItems([...playerItems, item]);
@@ -157,7 +158,9 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 			maxLoadFloat = 0;
 			setMaxLoad(maxLoadFloat.toString());
 		} else setMaxLoad(maxLoad);
-		api.post('/sheet/player', { maxLoad: maxLoadFloat }).catch(logError);
+		api
+			.post('/sheet/player', { maxLoad: maxLoadFloat, npcId: props.npcId })
+			.catch(logError);
 	}
 
 	function onQuantityChange(id: number, value: number) {
@@ -183,7 +186,11 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				addButton={{ onAdd: () => setAddItemModalShow(true), disabled: loading }}>
 				<Row className='text-center justify-content-center'>
 					{props.playerCurrency.map((curr) => (
-						<PlayerCurrencyField key={curr.Currency.id} currency={curr} />
+						<PlayerCurrencyField
+							key={curr.Currency.id}
+							currency={curr}
+							npcId={props.npcId}
+						/>
 					))}
 				</Row>
 				<hr />
@@ -221,6 +228,7 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 										quantity={item.quantity}
 										onDelete={onDeleteItem}
 										onQuantityChange={onQuantityChange}
+										npcId={props.npcId}
 									/>
 								))}
 							</tbody>
@@ -245,16 +253,17 @@ type PlayerCurrencyFieldProps = {
 		value: string;
 		Currency: Currency;
 	};
+	npcId?: number;
 };
 
-function PlayerCurrencyField({ currency }: PlayerCurrencyFieldProps) {
+function PlayerCurrencyField({ currency, npcId }: PlayerCurrencyFieldProps) {
 	const logError = useContext(ErrorLogger);
 	const [value, setValue, isClean] = useExtendedState(currency.value);
 
 	function onBlur() {
 		if (isClean()) return;
 		api
-			.post('/sheet/player/currency', { id: currency.Currency.id, value })
+			.post('/sheet/player/currency', { id: currency.Currency.id, value, npcId })
 			.catch(logError);
 	}
 
@@ -286,6 +295,7 @@ type PlayerItemFieldProps = {
 	};
 	onDelete: (id: number) => void;
 	onQuantityChange: (id: number, value: number) => void;
+	npcId?: number;
 };
 
 function PlayerItemField(props: PlayerItemFieldProps) {
@@ -304,7 +314,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 		props.onDelete(itemID);
 		api
 			.delete('/sheet/player/item', {
-				data: { id: itemID },
+				data: { id: itemID, npcId: props.npcId },
 			})
 			.then(() => props.onDelete(itemID))
 			.catch(logError)
@@ -324,7 +334,7 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	function quantityBlur() {
 		if (isQuantityClean()) return;
 		api
-			.post('/sheet/player/item', { id: itemID, quantity: currentQuantity })
+			.post('/sheet/player/item', { id: itemID, quantity: currentQuantity, npcId: props.npcId })
 			.then(() => {
 				props.onQuantityChange(itemID, currentQuantity);
 			})
@@ -333,13 +343,18 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 
 	function descriptionBlur() {
 		if (isDescriptionClean()) return;
-		api.post('/sheet/player/item', { id: itemID, currentDescription }).catch(logError);
+		api.post('/sheet/player/item', { id: itemID, currentDescription, npcId: props.npcId }).catch(logError);
 	}
 
 	return (
 		<tr>
 			<td>
-				<Button onClick={deleteItem} disabled={loading} size='sm' variant='secondary' aria-label='Apagar'>
+				<Button
+					onClick={deleteItem}
+					disabled={loading}
+					size='sm'
+					variant='secondary'
+					aria-label='Apagar'>
 					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>

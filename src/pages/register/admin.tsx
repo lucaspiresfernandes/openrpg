@@ -27,7 +27,7 @@ export default function Register(
 			if (player.admin) {
 				return Router.push('/admin/main');
 			}
-			return Router.push('/sheet/1');
+			return Router.push('/sheet/player/1');
 		}
 		setLoading(false);
 	});

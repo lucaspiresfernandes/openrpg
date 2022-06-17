@@ -26,11 +26,14 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const value: number | undefined = req.body.value;
 	const maxValue: number | undefined = req.body.maxValue;
 	const show: boolean | undefined = req.body.show;
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	const attr = await prisma.playerAttribute.update({
 		where: {
 			player_id_attribute_id: {
-				player_id: player.id,
+				player_id: playerId,
 				attribute_id: attributeID,
 			},
 		},
@@ -39,9 +42,9 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.to(`portrait${player.id}`).to('admin').emit(
+	res.socket.server.io?.to(`portrait${playerId}`).to('admin').emit(
 		'playerAttributeChange',
-		player.id,
+		playerId,
 		attributeID,
 		attr.value,
 		attr.maxValue,

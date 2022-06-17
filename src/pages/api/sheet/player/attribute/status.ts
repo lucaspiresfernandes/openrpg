@@ -18,16 +18,21 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const statusID: number | undefined = parseInt(req.body.attrStatusID);
 	const value: boolean | undefined = req.body.value;
-
+	const npcId: number | undefined = req.body.npcId;
+	
 	if (!statusID || value === undefined) {
 		res.status(401).send({ message: 'ID ou valor do status está em branco.' });
 		return;
 	}
 
+	const playerId = npcId ? npcId : player.id;
+
+	console.log(npcId);
+
 	await prisma.playerAttributeStatus.update({
 		where: {
 			player_id_attribute_status_id: {
-				player_id: player.id,
+				player_id: playerId,
 				attribute_status_id: statusID,
 			},
 		},
@@ -36,7 +41,7 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerAttributeStatusChange', player.id, statusID, value);
+	res.socket.server.io?.emit('playerAttributeStatusChange', playerId, statusID, value);
 }
 
 export default sessionAPI(handler);

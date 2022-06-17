@@ -39,6 +39,7 @@ type PlayerEquipmentContainerProps = {
 	}[];
 	availableEquipments: Equipment[];
 	title: string;
+	npcId?: number;
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
@@ -127,7 +128,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 	function onAddEquipment(id: number) {
 		setLoading(true);
 		api
-			.put('/sheet/player/equipment', { id })
+			.put('/sheet/player/equipment', { id, npcId: props.npcId })
 			.then((res) => {
 				const equipment = res.data.equipment;
 				setPlayerEquipments([...playerEquipments, equipment]);
@@ -194,6 +195,7 @@ export default function PlayerEquipmentContainer(props: PlayerEquipmentContainer
 										currentAmmo={eq.currentAmmo}
 										onDelete={onDeleteEquipment}
 										showDiceRollResult={onDiceRoll}
+										npcId={props.npcId}
 									/>
 								))}
 							</tbody>
@@ -227,6 +229,7 @@ type PlayerEquipmentFieldProps = {
 	};
 	onDelete: (id: number) => void;
 	showDiceRollResult: DiceRollEvent;
+	npcId?: number;
 };
 
 function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
@@ -255,7 +258,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 
 		setCurrentAmmo(newAmmo);
 		api
-			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: newAmmo })
+			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: newAmmo ,npcId: props.npcId})
 			.catch(logError);
 	}
 
@@ -268,7 +271,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 		const ammo = currentAmmo - 1;
 		setCurrentAmmo(ammo);
 		api
-			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: ammo })
+			.post('/sheet/player/equipment', { id: equipmentID, currentAmmo: ammo, npcId: props.npcId })
 			.catch((err) => {
 				logError(err);
 				setCurrentAmmo(currentAmmo);
@@ -280,7 +283,7 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 		setLoading(true);
 		api
 			.delete('/sheet/player/equipment', {
-				data: { id: equipmentID },
+				data: { id: equipmentID, npcId: props.npcId },
 			})
 			.then(() => props.onDelete(equipmentID))
 			.catch((err) => {

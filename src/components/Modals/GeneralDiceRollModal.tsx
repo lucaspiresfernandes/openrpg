@@ -98,7 +98,7 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
 								<Row className='mb-1 justify-content-center'>
 									<Col>
 										<Image
-											src={`/dice${dice.roll}.png`}
+											src={`/dice${dice.roll}.webp`}
 											alt={`${dice.num || ''}D${dice.roll}`}
 											title={`${dice.num || ''}D${dice.roll}`}
 											style={{ maxHeight: 85 }}

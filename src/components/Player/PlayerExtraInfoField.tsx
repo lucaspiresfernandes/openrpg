@@ -3,6 +3,7 @@ import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
 
 export default function PlayerExtraInfoField(props: {
+	npcId?: number;
 	extraInfoId: number;
 	value: string;
 	logError: (err: any) => void;
@@ -12,7 +13,11 @@ export default function PlayerExtraInfoField(props: {
 	function onValueBlur() {
 		if (isClean()) return;
 		api
-			.post('/sheet/player/extrainfo', { id: props.extraInfoId, value })
+			.post('/sheet/player/extrainfo', {
+				id: props.extraInfoId,
+				value,
+				npcId: props.npcId,
+			})
 			.catch(props.logError);
 	}
 

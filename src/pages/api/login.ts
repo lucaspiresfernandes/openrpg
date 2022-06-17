@@ -17,9 +17,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
-	const user = await database.player.findFirst({ where: { username } });
+	const user = await database.player.findFirst({
+		where: { username },
+		select: {
+			id: true,
+			password: true,
+			role: true,
+		},
+	});
 
-	if (!user) {
+	if (!user || !user.password) {
 		res.status(401).send({ message: 'Usuário ou senha estão incorretos.' });
 		return;
 	}

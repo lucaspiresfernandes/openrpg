@@ -26,9 +26,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const quantity = req.body.quantity;
 	const currentDescription = req.body.currentDescription;
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	const item = await prisma.playerItem.update({
-		where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
+		where: { player_id_item_id: { player_id: playerId, item_id: itemID } },
 		data: { quantity, currentDescription },
 	});
 
@@ -36,7 +39,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.socket.server.io
 		?.to('admin')
-		.emit('playerItemChange', player.id, itemID, item.currentDescription, item.quantity);
+		.emit('playerItemChange', playerId, itemID, item.currentDescription, item.quantity);
 }
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -54,18 +57,22 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	const item = await prisma.playerItem.create({
 		data: {
 			currentDescription: '',
 			quantity: 1,
-			player_id: player.id,
+			player_id: playerId,
 			item_id: itemID,
 		},
 		include: { Item: true },
 	});
 
 	await prisma.playerItem.update({
-		where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
+		where: { player_id_item_id: { player_id: playerId, item_id: itemID } },
 		data: { currentDescription: item.Item.description },
 	});
 
@@ -75,7 +82,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.socket.server.io
 		?.to('admin')
-		.emit('playerItemAdd', player.id, item.Item, item.currentDescription, item.quantity);
+		.emit('playerItemAdd', playerId, item.Item, item.currentDescription, item.quantity);
 }
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -93,13 +100,17 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	await prisma.playerItem.delete({
-		where: { player_id_item_id: { player_id: player.id, item_id: itemID } },
+		where: { player_id_item_id: { player_id: playerId, item_id: itemID } },
 	});
 
 	res.end();
 
-	res.socket.server.io?.to('admin').emit('playerItemRemove', player.id, itemID);
+	res.socket.server.io?.to('admin').emit('playerItemRemove', playerId, itemID);
 }
 
 export default sessionAPI(handler);

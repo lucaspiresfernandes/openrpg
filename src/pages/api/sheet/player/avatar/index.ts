@@ -12,14 +12,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 	const player = req.session.player;
 	const avatarData: AvatarData[] = req.body.avatarData;
+	const npcId: number | undefined = req.body.npcId;
 
 	if (!player || !avatarData) {
 		res.status(401).end();
 		return;
 	}
 
+	const playerId = npcId ? npcId : player.id;
+
 	const avatars = await prisma.playerAvatar.findMany({
-		where: { player_id: player.id },
+		where: { player_id: playerId },
 		select: { id: true, attribute_status_id: true, link: true },
 	});
 

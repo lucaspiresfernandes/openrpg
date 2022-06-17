@@ -7,17 +7,17 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
-import ApplicationHead from '../../components/ApplicationHead';
-import DataContainer from '../../components/DataContainer';
-import ErrorToastContainer from '../../components/ErrorToastContainer';
-import PlayerAnnotationsField from '../../components/Player/PlayerAnnotationField';
-import PlayerExtraInfoField from '../../components/Player/PlayerExtraInfoField';
-import useSocket from '../../hooks/useSocket';
-import useToast from '../../hooks/useToast';
-import type { InferSSRProps } from '../../utils';
-import api from '../../utils/api';
-import prisma from '../../utils/database';
-import { sessionSSR } from '../../utils/session';
+import ApplicationHead from '../../../components/ApplicationHead';
+import DataContainer from '../../../components/DataContainer';
+import ErrorToastContainer from '../../../components/ErrorToastContainer';
+import PlayerAnnotationsField from '../../../components/Player/PlayerAnnotationField';
+import PlayerExtraInfoField from '../../../components/Player/PlayerExtraInfoField';
+import useSocket from '../../../hooks/useSocket';
+import useToast from '../../../hooks/useToast';
+import type { InferSSRProps } from '../../../utils';
+import api from '../../../utils/api';
+import prisma from '../../../utils/database';
+import { sessionSSR } from '../../../utils/session';
 
 type PageProps = InferSSRProps<typeof getSSP>;
 

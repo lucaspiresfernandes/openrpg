@@ -14,8 +14,8 @@ model Player {
   id                    Int                     @id @default(autoincrement())
   name                  String                  @default("")
   showName              Boolean                 @default(true)
-  username              String
-  password              String
+  username              String?
+  password              String?
   maxLoad               Float                   @default(1)
   spellSlots            Float                   @default(1)
   role                  Role
@@ -278,5 +278,6 @@ model Config {
 
 enum Role {
   PLAYER
+  NPC
   ADMIN
 }

@@ -20,6 +20,7 @@ type PlayerCharacteristicContainerProps = {
 		modifier: number | null;
 	}[];
 	characteristicDiceConfig: DiceConfigCell;
+	npcId?: number;
 };
 
 export default function PlayerCharacteristicContainer(
@@ -37,6 +38,7 @@ export default function PlayerCharacteristicContainer(
 						value={char.value}
 						characteristicDiceConfig={props.characteristicDiceConfig}
 						showDiceRollResult={onDiceRoll}
+						npcId={props.npcId}
 					/>
 				))}
 			</Row>
@@ -51,6 +53,7 @@ type PlayerCharacteristicFieldProps = {
 	modifier: number | null;
 	characteristic: Characteristic;
 	showDiceRollResult: DiceRollEvent;
+	npcId?: number;
 };
 
 function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
@@ -79,7 +82,9 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 
 	function onValueBlur() {
 		if (isValueClean()) return;
-		api.post('/sheet/player/characteristic', { value, id: charID }).catch(logError);
+		api
+			.post('/sheet/player/characteristic', { value, id: charID, npcId: props.npcId })
+			.catch(logError);
 	}
 
 	function onModifierBlur() {
@@ -100,6 +105,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 			.post('/sheet/player/characteristic', {
 				modifier: parseInt(newModifier),
 				id: charID,
+				npcId: props.npcId,
 			})
 			.catch(logError);
 	}

@@ -137,7 +137,7 @@ export default function CombatContainer(props: {
 	}
 
 	function addNPCEntity() {
-		const name = prompt('Digite o nome:');
+		const name = prompt('Digite o nome do combatente:');
 		if (!name) return;
 		setEntities([...entities, { id: Date.now(), name }]);
 	}

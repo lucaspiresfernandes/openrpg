@@ -27,11 +27,14 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const value: number | undefined = req.body.value;
 	const modifier: number | undefined = req.body.modifier;
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	await database.playerCharacteristic.update({
 		data: { value, modifier },
 		where: {
-			player_id_characteristic_id: { player_id: player.id, characteristic_id: id },
+			player_id_characteristic_id: { player_id: playerId, characteristic_id: id },
 		},
 	});
 

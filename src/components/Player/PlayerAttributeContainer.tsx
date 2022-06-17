@@ -40,6 +40,7 @@ type PlayerAttributeContainerProps = {
 	}[];
 	attributeDiceConfig: DiceConfigCell;
 	portraitAttributes: PortraitConfig;
+	npcId?: number;
 };
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
@@ -62,6 +63,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					rerender={notify}
 					playerAvatars={props.playerAvatars}
 					onAvatarUpdate={() => setNotify((n) => !n)}
+					npcId={props.npcId}
 				/>
 				<PlayerAvatarDice />
 			</Row>
@@ -81,6 +83,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 							attr.Attribute.id === props.portraitAttributes.side_attribute ||
 							props.portraitAttributes.attributes.includes(attr.Attribute.id)
 						}
+						npcId={props.npcId}
 					/>
 				);
 			})}
@@ -108,6 +111,7 @@ type PlayerAttributeFieldProps = {
 	attributeDiceConfig: DiceConfigCell;
 	showDiceRollResult: DiceRollEvent;
 	visibilityEnabled: boolean;
+	npcId?: number;
 };
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
@@ -153,7 +157,11 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 		timeout.current.timeout = setTimeout(
 			() =>
 				api
-					.post('/sheet/player/attribute', { id: attributeID, value: newVal })
+					.post('/sheet/player/attribute', {
+						id: attributeID,
+						value: newVal,
+						npcId: props.npcId,
+					})
 					.catch(logError)
 					.finally(() => (timeout.current.lastValue = newVal)),
 			750
@@ -181,6 +189,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 				id: attributeID,
 				maxValue: newMaxValue,
 				value: valueUpdated ? newMaxValue : undefined,
+				npcId: props.npcId,
 			})
 			.catch(logError);
 	}
@@ -193,6 +202,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 				.post('/sheet/player/attribute', {
 					id: attributeID,
 					show: newShow,
+					npcId: props.npcId,
 				})
 				.catch(logError);
 			return newShow;
@@ -282,6 +292,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 								key={stat.AttributeStatus.id}
 								playerAttributeStatus={stat}
 								onStatusChanged={props.onStatusChanged}
+								npcId={props.npcId}
 							/>
 						))}
 					</Col>
@@ -301,11 +312,13 @@ type PlayerAttributeStatusFieldProps = {
 		};
 	};
 	onStatusChanged?: (id: number, newValue: boolean) => void;
+	npcId?: number;
 };
 
 function PlayerAttributeStatusField({
 	playerAttributeStatus,
 	onStatusChanged,
+	npcId,
 }: PlayerAttributeStatusFieldProps) {
 	const id = playerAttributeStatus.AttributeStatus.id;
 	const attrID = playerAttributeStatus.AttributeStatus.attribute_id;
@@ -317,7 +330,7 @@ function PlayerAttributeStatusField({
 		const value = !checked;
 		setChecked(value);
 		api
-			.post('/sheet/player/attribute/status', { attrStatusID: id, value })
+			.post('/sheet/player/attribute/status', { attrStatusID: id, value, npcId })
 			.then(() => {
 				if (onStatusChanged) onStatusChanged(id, value);
 			})
@@ -349,6 +362,7 @@ type PlayerAvatarImageProps = {
 			name: string;
 		} | null;
 	}[];
+	npcId?: number;
 };
 
 function PlayerAvatarImage(props: PlayerAvatarImageProps) {
@@ -360,7 +374,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 
 	useEffect(() => {
 		api
-			.get(`/sheet/player/avatar/${statusID}`)
+			.get(`/sheet/player/avatar/${statusID}`, { params: { playerID: props.npcId } })
 			.then((res) => setSrc(res.data.link))
 			.catch(() => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -370,7 +384,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 		if (statusID === previousStatusID.current) return;
 		previousStatusID.current = statusID;
 		api
-			.get(`/sheet/player/avatar/${statusID}`)
+			.get(`/sheet/player/avatar/${statusID}`, { params: { playerID: props.npcId } })
 			.then((res) => setSrc(res.data.link))
 			.catch(() => setSrc('/avatar404.png'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -394,6 +408,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 				show={avatarModalShow}
 				onHide={() => setAvatarModalShow(false)}
 				onUpdate={props.onAvatarUpdate}
+				npcId={props.npcId}
 			/>
 		</>
 	);

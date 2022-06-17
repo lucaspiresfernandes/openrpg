@@ -16,6 +16,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const value: string | undefined = req.body.value;
+	const npcId: number | undefined = req.body.npcId;
 
 	if (value === undefined) {
 		res.status(400).send({ message: 'Valor da anotação está em branco.' });
@@ -24,7 +25,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	await database.playerNote.update({
 		data: { value },
-		where: { player_id: player.id },
+		where: { player_id: npcId ? npcId : player.id },
 	});
 
 	res.end();

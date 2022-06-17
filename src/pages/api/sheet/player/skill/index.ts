@@ -26,8 +26,12 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
+
 	await prisma.playerSkill.update({
-		where: { player_id_skill_id: { player_id: player.id, skill_id: skillID } },
+		where: { player_id_skill_id: { player_id: playerId, skill_id: skillID } },
 		data: { value, checked, modifier },
 	});
 
@@ -48,6 +52,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		res.status(400).send({ message: 'Skill ID is undefined.' });
 		return;
 	}
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	const skill = await prisma.skill.findUnique({
 		where: { id: skillID },
@@ -56,7 +63,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
 	const playerSkill = await prisma.playerSkill.create({
 		data: {
-			player_id: player.id,
+			player_id: playerId,
 			skill_id: skillID,
 			value: skill?.startValue || 0,
 			checked: false,

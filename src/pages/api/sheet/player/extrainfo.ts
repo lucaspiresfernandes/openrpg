@@ -9,24 +9,25 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const player = req.session.player;
-
+	
 	if (!player) {
 		res.status(401).end();
 		return;
 	}
-
+	
 	const id: number | undefined = req.body.id;
 	const value: string | undefined = req.body.value;
+	const npcId: number | undefined = req.body.npcId;
 
 	if (!id || value === undefined) {
-		res.status(400).send({ message: 'Extra Info ID or value is undefined.' });
+		res.status(400).send({ message: 'ID ou valor estão em branco.' });
 		return;
 	}
 
 	await database.playerExtraInfo.update({
 		data: { value },
 		where: {
-			player_id_extra_info_id: { player_id: player.id, extra_info_id: id },
+			player_id_extra_info_id: { player_id: npcId ? npcId : player.id, extra_info_id: id },
 		},
 	});
 

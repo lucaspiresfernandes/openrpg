@@ -42,6 +42,7 @@ type PlayerSkillContainerProps = {
 	skillDiceConfig: DiceConfigCell;
 	title: string;
 	automaticMarking: boolean;
+	npcId?: number;
 };
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
@@ -149,7 +150,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	function onAddSkill(id: number) {
 		setLoading(true);
 		api
-			.put('/sheet/player/skill', { id })
+			.put('/sheet/player/skill', { id, npcId: props.npcId })
 			.then((res) => {
 				const skill = res.data.skill;
 				setPlayerSkills([...playerSkills, skill]);
@@ -171,7 +172,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 	function clearChecks() {
 		setLoading(true);
 		api
-			.post('/sheet/player/skill/clearchecks')
+			.post('/sheet/player/skill/clearchecks', { npcId: props.npcId })
 			.then(() => setNotify((n) => !n))
 			.catch(logError)
 			.finally(() => setLoading(false));
@@ -241,6 +242,7 @@ export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
 							showDiceRollResult={onDiceRoll}
 							notifyClearChecked={notify}
 							hidden={!skill.name.toLowerCase().includes(search.toLowerCase())}
+							npcId={props.npcId}
 						/>
 					))}
 				</Row>
@@ -269,6 +271,7 @@ type PlayerSkillFieldProps = {
 	automaticMarking: boolean;
 	notifyClearChecked: boolean;
 	showDiceRollResult: DiceRollEvent;
+	npcId?: number;
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
@@ -297,10 +300,12 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 	function onCheckChange(ev: ChangeEvent<HTMLInputElement>) {
 		const chk = ev.target.checked;
 		setChecked(chk);
-		api.post('/sheet/player/skill', { id: props.id, checked: chk }).catch((err) => {
-			logError(err);
-			setChecked(checked);
-		});
+		api
+			.post('/sheet/player/skill', { id: props.id, checked: chk, npcId: props.npcId })
+			.catch((err) => {
+				logError(err);
+				setChecked(checked);
+			});
 	}
 
 	function onValueChange(ev: ChangeEvent<HTMLInputElement>) {
@@ -315,7 +320,9 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 
 	function onValueBlur() {
 		if (isValueClean()) return;
-		api.post('/sheet/player/skill', { id: props.id, value }).catch(logError);
+		api
+			.post('/sheet/player/skill', { id: props.id, value, npcId: props.npcId })
+			.catch(logError);
 	}
 
 	function onModifierBlur() {
@@ -333,7 +340,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		if (isModifierClean()) return;
 
 		api
-			.post('/sheet/player/skill', { modifier: parseInt(newModifier), id: props.id })
+			.post('/sheet/player/skill', { modifier: parseInt(newModifier), id: props.id, npcId: props.npcId })
 			.catch(logError);
 	}
 
@@ -361,7 +368,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 				) {
 					setChecked(true);
 					api
-						.post('/sheet/player/skill', { id: props.id, checked: true })
+						.post('/sheet/player/skill', { id: props.id, checked: true, npcId: props.npcId })
 						.catch((err) => {
 							logError(err);
 							setChecked(false);
