@@ -1,4 +1,4 @@
-import type { Attribute } from '@prisma/client';
+import type { Attribute, PortraitAttribute } from '@prisma/client';
 import type { GetServerSidePropsContext } from 'next';
 import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
@@ -20,7 +20,7 @@ import ErrorToastContainer from '../../components/ErrorToastContainer';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
 import api from '../../utils/api';
-import type { DiceConfig, PortraitConfig, PortraitFontConfig } from '../../utils/config';
+import type { DiceConfig, PortraitFontConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 import type { DiceResolverKeyNum } from '../../utils/dice';
 import { sessionSSR } from '../../utils/session';
@@ -339,6 +339,12 @@ function GeneralEditor(props: { adminKey: string; logError: (err: any) => void }
 	);
 }
 
+type PortraitEditorAttribute = {
+	id: number;
+	name: string;
+	portrait: PortraitAttribute | null;
+};
+
 type PortraitContainerProps = {
 	portrait: {
 		attributes: Attribute[];
@@ -351,27 +357,28 @@ type PortraitContainerProps = {
 
 function PortraitEditor(props: PortraitContainerProps) {
 	const [loading, setLoading] = useState(false);
-	const [attributes, setAttributes] = useState<Attribute[]>(props.portrait.attributes);
-	const [sideAttribute, setSideAttribute] = useState(props.portrait.side_attribute);
+	const [attributes, setAttributes] = useState<PortraitEditorAttribute[]>(
+		props.portrait.attributes
+	);
+	const [sideAttribute, setSideAttribute] = useState<PortraitEditorAttribute | null>(
+		props.portrait.side_attribute
+	);
 	const availableAttributes = props.attributes.filter(
 		(attr) => !attributes.find((at) => at.id === attr.id) && attr.id !== sideAttribute?.id
 	);
 	const [font, setFont] = useState<PortraitFontConfig | null>(props.portraitFont);
 	const fontRef = useRef<HTMLInputElement | null>(null);
-
+	
 	function onApply() {
 		setLoading(true);
 		Promise.all([
 			api.post('/config', {
-				name: 'portrait',
-				value: {
-					attributes: attributes.map((attr) => attr.id),
-					side_attribute: sideAttribute?.id || 0,
-				},
-			}),
-			api.post('/config', {
 				name: 'portrait_font',
 				value: font,
+			}),
+			api.post('/sheet/attribute/portrait', {
+				primary: attributes,
+				secondary: sideAttribute,
 			}),
 		])
 			.then(() => alert('Configurações de retrato aplicadas com sucesso.'))
@@ -527,15 +534,6 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		};
 	}
 
-	const portraitConfig = JSON.parse(
-		(
-			await prisma.config.findUnique({
-				where: { name: 'portrait' },
-				select: { value: true },
-			})
-		)?.value || 'null'
-	) as PortraitConfig;
-
 	const results = await prisma.$transaction([
 		prisma.config.findUnique({ where: { name: 'admin_key' }, select: { value: true } }),
 		prisma.config.findUnique({
@@ -543,8 +541,8 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			select: { value: true },
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' }, select: { value: true } }),
-		prisma.attribute.findMany({ where: { id: { in: portraitConfig.attributes } } }),
-		prisma.attribute.findUnique({ where: { id: portraitConfig.side_attribute } }),
+		prisma.attribute.findMany({ where: { portrait: 'PRIMARY' } }),
+		prisma.attribute.findFirst({ where: { portrait: 'SECONDARY' } }),
 		prisma.attribute.findMany(),
 		prisma.config.findUnique({
 			where: { name: 'enable_automatic_markers' },

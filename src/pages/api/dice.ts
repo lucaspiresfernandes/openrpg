@@ -16,7 +16,7 @@ const random = new RandomOrg({ apiKey: randomOrgKey || 'unkown' });
 async function nextInt(min: number, max: number, n: number): Promise<{ data: number[] }> {
 	if (randomOrgKey) {
 		try {
-			return (await random.generateIntegers({ min, max, n })).random;
+			return (await random.generateSignedIntegers({ min, max, n })).random;
 		} catch (err) {
 			console.error('Random.org inactive or apiKey is not defined.');
 		}
@@ -51,6 +51,9 @@ async function handler(
 
 	const dices: DiceRequest | DiceRequest[] = req.body.dices;
 	const resolverKey: DiceResolverKey | undefined = req.body.resolverKey || undefined;
+	const npcId: number | undefined = req.body.npcId;
+
+	const playerId = npcId ? npcId : player.id;
 
 	const successTypeEnabled = resolverKey
 		? (
@@ -67,7 +70,7 @@ async function handler(
 
 	const io = res.socket.server.io;
 
-	io?.to(`portrait${player.id}`).emit('diceRoll');
+	io?.to(`portrait${playerId}`).emit('diceRoll');
 
 	const isArray = Array.isArray(dices);
 	const results: Array<DiceResponse> = isArray
@@ -122,8 +125,8 @@ async function handler(
 
 	res.send({ results });
 
-	if (!player.admin) io?.to('admin').emit('diceResult', player.id, results, dices);
-	io?.to(`portrait${player.id}`).emit('diceResult', player.id, results, dices);
+	if (!player.admin) io?.to('admin').emit('diceResult', playerId, results, dices);
+	io?.to(`portrait${playerId}`).emit('diceResult', playerId, results, dices);
 }
 
 function resolveSuccessType(

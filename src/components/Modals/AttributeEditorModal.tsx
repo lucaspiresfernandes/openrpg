@@ -12,6 +12,7 @@ const initialState: Attribute = {
 	name: '',
 	rollable: false,
 	color: '#ff0000',
+	portrait: 'PRIMARY'
 };
 
 export default function AttributeEditorModal(props: EditorModalProps<Attribute>) {

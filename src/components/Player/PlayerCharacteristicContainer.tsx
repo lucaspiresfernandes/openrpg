@@ -26,7 +26,7 @@ type PlayerCharacteristicContainerProps = {
 export default function PlayerCharacteristicContainer(
 	props: PlayerCharacteristicContainerProps
 ) {
-	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+	const [diceRollModalProps, onDiceRoll] = useDiceRoll(props.npcId);
 	return (
 		<>
 			<Row className='text-center align-items-end justify-content-center'>
@@ -42,7 +42,7 @@ export default function PlayerCharacteristicContainer(
 					/>
 				))}
 			</Row>
-			<DiceRollModal {...diceRollResultModalProps} />
+			<DiceRollModal {...diceRollModalProps} />
 		</>
 	);
 }

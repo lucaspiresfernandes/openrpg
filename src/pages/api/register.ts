@@ -71,7 +71,6 @@ async function validateAdminKey(key: string) {
 }
 
 export async function registerPlayerData(playerId: number) {
-	console.log('register');
 	const results = await prisma.$transaction([
 		prisma.info.findMany({ select: { id: true } }),
 		prisma.attribute.findMany({ select: { id: true } }),

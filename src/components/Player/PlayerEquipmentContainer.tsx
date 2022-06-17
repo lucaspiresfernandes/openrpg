@@ -43,7 +43,7 @@ type PlayerEquipmentContainerProps = {
 };
 
 export default function PlayerEquipmentContainer(props: PlayerEquipmentContainerProps) {
-	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll(props.npcId);
 
 	const [addEquipmentShow, setAddEquipmentShow] = useState(false);
 	const [loading, setLoading] = useState(false);

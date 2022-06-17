@@ -8,11 +8,10 @@ import type { PortraitAttributeStatus } from '../../components/Portrait/Portrait
 import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
 import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEnvironmentalContainer';
-import type { PortraitSideAttribute } from '../../components/Portrait/PortraitSideAttributeContainer';
 import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
 import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
-import type { Environment, PortraitConfig, PortraitFontConfig } from '../../utils/config';
+import type { Environment, PortraitFontConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 
 export default function CharacterPortrait(
@@ -53,6 +52,7 @@ export default function CharacterPortrait(
 				attributeStatus={props.attributeStatus}
 				sideAttribute={props.sideAttribute}
 				diceColor={props.diceColor}
+				showDiceRoll={props.showDiceRoll}
 				socket={socket}
 			/>
 			<PortraitEnvironmentalContainer
@@ -69,8 +69,17 @@ export default function CharacterPortrait(
 function PortraitDiceRollContainer(props: {
 	playerId: number;
 	attributeStatus: PortraitAttributeStatus;
-	sideAttribute: PortraitSideAttribute;
+	sideAttribute: {
+		Attribute: {
+			name: string;
+			id: number;
+			color: string;
+		};
+		value: number;
+		show: boolean;
+	} | null;
 	diceColor: string;
+	showDiceRoll: boolean;
 	socket: SocketIO;
 }) {
 	const [showDice, setShowDice] = useState(false);
@@ -91,6 +100,7 @@ function PortraitDiceRollContainer(props: {
 			<PortraitDiceContainer
 				playerId={props.playerId}
 				color={props.diceColor}
+				showDiceRoll={props.showDiceRoll}
 				socket={props.socket}
 				showDice={showDice}
 				onShowDice={() => setShowDice(true)}
@@ -101,31 +111,24 @@ function PortraitDiceRollContainer(props: {
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-	const player_id = parseInt(ctx.query.characterID as string);
+	const playerId = parseInt(ctx.query.characterID as string);
 	const diceColor = (ctx.query.dicecolor as string) || 'ddaf0f';
-
-	const portraitConfig = JSON.parse(
-		(await prisma.config.findUnique({ where: { name: 'portrait' } }))?.value || 'null'
-	) as PortraitConfig;
+	const showDiceRoll = (ctx.query.showdiceroll as string) === 'true';
 
 	const results = await prisma.$transaction([
 		prisma.config.findUnique({ where: { name: 'environment' } }),
 		prisma.player.findUnique({
-			where: { id: player_id },
+			where: { id: playerId },
 			select: {
 				name: true,
 				showName: true,
 				PlayerAttributes: {
-					where: {
-						Attribute: {
-							id: { in: [...portraitConfig.attributes, portraitConfig.side_attribute] },
-						},
-					},
+					where: { Attribute: { portrait: { in: ['PRIMARY', 'SECONDARY'] } } },
 					select: {
 						value: true,
 						maxValue: true,
 						show: true,
-						Attribute: { select: { id: true, name: true, color: true } },
+						Attribute: { select: { id: true, name: true, color: true, portrait: true } },
 					},
 				},
 				PlayerAttributeStatus: {
@@ -139,7 +142,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 	if (!results[1])
 		return {
 			props: {
-				playerId: player_id,
+				playerId: playerId,
 				environment: 'idle' as Environment,
 				attributes: [],
 				attributeStatus: [],
@@ -147,31 +150,28 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				playerName: { name: 'Desconhecido', show: false },
 				notFound: true,
 				diceColor,
+				showDiceRoll
 			},
 		};
 
-	const sideAttributeIndex = results[1].PlayerAttributes.findIndex(
-		(attr) => attr.Attribute.id === portraitConfig.side_attribute
+	const attributes = results[1].PlayerAttributes.filter(
+		(attr) => attr.Attribute.portrait === 'PRIMARY'
 	);
 
-	let sideAttribute: {
-		value: number;
-		show: boolean;
-		Attribute: { id: number; name: string; color: string };
-	} | null = null;
-	if (sideAttributeIndex > -1)
-		sideAttribute = results[1].PlayerAttributes.splice(sideAttributeIndex, 1)[0];
-	const attributes = results[1].PlayerAttributes;
+	const sideAttribute =
+		results[1].PlayerAttributes.find((attr) => attr.Attribute.portrait === 'SECONDARY') ||
+		null;
 
 	return {
 		props: {
-			playerId: player_id,
+			playerId: playerId,
 			environment: (results[0]?.value || 'idle') as Environment,
 			attributes,
 			sideAttribute,
 			attributeStatus: results[1].PlayerAttributeStatus,
 			playerName: { name: results[1].name, show: results[1].showName },
 			diceColor,
+			showDiceRoll,
 			customFont: JSON.parse(results[2]?.value || 'null') as PortraitFontConfig,
 		},
 	};

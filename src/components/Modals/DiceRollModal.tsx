@@ -20,6 +20,7 @@ export type DiceRoll = {
 export type DiceRollModalProps = DiceRoll & {
 	onHide: () => void;
 	onRollAgain: () => void;
+	npcId?: number;
 };
 
 export default function DiceRollModal(props: DiceRollModalProps) {
@@ -122,6 +123,7 @@ export default function DiceRollModal(props: DiceRollModalProps) {
 			</SheetModal>
 			<DiceRollResultModal
 				{...diceRoll}
+				npcId={props.npcId}
 				onHide={() => setDiceRoll({ dices: null })}
 				onResult={props.onResult}
 				onRollAgain={() => setDiceRoll(lastRoll.current)}
@@ -206,11 +208,11 @@ function DiceRollResultModal(props: DiceRollResultModalProps) {
 	useEffect(() => {
 		if (props.dices === null) return;
 		api
-			.post(
-				'/dice',
-				{ dices: props.dices, resolverKey: props.resolverKey },
-				{ timeout: 5000 }
-			)
+			.post('/dice', {
+				dices: props.dices,
+				resolverKey: props.resolverKey,
+				npcId: props.npcId,
+			})
 			.then((res) => {
 				let results: DiceResponse[] = res.data.results;
 				if (props.onResult) {

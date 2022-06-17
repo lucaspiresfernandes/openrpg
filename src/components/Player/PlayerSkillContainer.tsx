@@ -46,7 +46,7 @@ type PlayerSkillContainerProps = {
 };
 
 export default function PlayerSkillContainer(props: PlayerSkillContainerProps) {
-	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll(props.npcId);
 
 	const [addSkillShow, setAddSkillShow] = useState(false);
 	const [availableSkills, setAvailableSkills] = useState(props.availableSkills);

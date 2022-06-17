@@ -10,7 +10,7 @@ import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
 import { getAttributeStyle } from '../../utils/style';
 
-export type PortraitSideAttribute = {
+type PortraitSideAttribute = {
 	value: number;
 	show: boolean;
 	Attribute: {

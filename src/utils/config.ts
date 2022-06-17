@@ -18,11 +18,6 @@ export type DiceConfigCell = {
 	branched: boolean;
 };
 
-export type PortraitConfig = {
-	attributes: number[];
-	side_attribute: number;
-};
-
 export type PortraitFontConfig = {
 	name: string;
 	data: string;

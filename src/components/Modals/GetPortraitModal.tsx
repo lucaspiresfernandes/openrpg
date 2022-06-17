@@ -1,6 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
+import FormCheck from 'react-bootstrap/FormCheck';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,11 +17,12 @@ type GetPortraitModalProps = {
 
 export default function GetPortraitModal(props: GetPortraitModalProps) {
 	const [diceColor, setDiceColor] = useState('#ddaf0f');
+	const [showDiceRoll, setShowDiceRoll] = useState(true);
 	const hostName = useRef('');
 
 	const fieldValue = `${hostName.current}/portrait/${
 		props.playerId
-	}?dicecolor=${diceColor.substring(1)}`;
+	}?dicecolor=${diceColor.substring(1)}&showdiceroll=${showDiceRoll}`;
 
 	useEffect(() => {
 		hostName.current = window.location.host;
@@ -47,6 +49,16 @@ export default function GetPortraitModal(props: GetPortraitModalProps) {
 							/>
 						</Col>
 					</Row>
+					<Row className='mb-3'>
+						<Col>
+							<FormCheck
+								inline
+								label='Rolagem dos dados visível?'
+								checked={showDiceRoll}
+								onChange={(ev) => setShowDiceRoll(ev.currentTarget.checked)}
+							/>
+						</Col>
+					</Row>
 					<Row>
 						<hr />
 						<Col>
@@ -62,7 +74,8 @@ export default function GetPortraitModal(props: GetPortraitModalProps) {
 										props.onHide();
 									} else
 										alert(
-											'O link não pôde ser copiado para sua área de transferência. Por favor, copie o link manualmente.'
+											'O link não pôde ser copiado para sua área de transferência.' +
+												' Por favor, copie o link manualmente.'
 										);
 								}}>
 								<RiFileCopyLine />

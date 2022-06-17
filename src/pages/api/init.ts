@@ -77,13 +77,6 @@ const getDatabaseData = () => ({
 				},
 			}),
 		},
-		{
-			name: 'portrait',
-			value: JSON.stringify({
-				attributes: [1, 2],
-				side_attribute: 3,
-			}),
-		},
 	],
 	attribute: [
 		{

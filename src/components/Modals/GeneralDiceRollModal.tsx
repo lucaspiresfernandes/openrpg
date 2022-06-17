@@ -18,10 +18,11 @@ type DiceOption = {
 type GeneralDiceRollModalProps = {
 	show: boolean;
 	onHide: () => void;
+	npcId?: number;
 };
 
 export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
-	const [diceRoll, rollDice] = useDiceRoll();
+	const [diceRoll, rollDice] = useDiceRoll(props.npcId);
 	const applyRef = useRef(false);
 	const [dices, setDices] = useState<DiceOption[]>([
 		{

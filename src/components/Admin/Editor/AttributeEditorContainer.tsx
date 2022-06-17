@@ -27,7 +27,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 	);
 	const logError = useContext(ErrorLogger);
 
-	function onAttributeModalSubmit({ id, name, rollable, color }: Attribute) {
+	function onAttributeModalSubmit({ id, name, rollable, color, portrait }: Attribute) {
 		setLoading(true);
 		const dbColor = color.substring(1, color.length);
 
@@ -45,7 +45,10 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 		api('/sheet/attribute', config)
 			.then((res) => {
 				if (attributeModal.operation === 'create') {
-					setAttributes([...attributes, { id: res.data.id, name, rollable, color }]);
+					setAttributes([
+						...attributes,
+						{ id: res.data.id, name, rollable, color, portrait },
+					]);
 					return;
 				}
 				attributes[attributes.findIndex((attr) => attr.id === id)] = {
@@ -53,6 +56,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 					name,
 					rollable,
 					color,
+					portrait,
 				};
 				setAttributes([...attributes]);
 			})

@@ -13,7 +13,7 @@ import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import useDiceRoll from '../../hooks/useDiceRoll';
 import { clamp } from '../../utils';
 import api from '../../utils/api';
-import type { DiceConfigCell, PortraitConfig } from '../../utils/config';
+import type { DiceConfigCell } from '../../utils/config';
 import DiceRollModal from '../Modals/DiceRollModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
@@ -39,12 +39,11 @@ type PlayerAttributeContainerProps = {
 		} | null;
 	}[];
 	attributeDiceConfig: DiceConfigCell;
-	portraitAttributes: PortraitConfig;
 	npcId?: number;
 };
 
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
-	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll();
+	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll(props.npcId);
 	const [playerAttributeStatus, setPlayerStatus] = useState(props.playerAttributeStatus);
 	const [notify, setNotify] = useState(false);
 
@@ -65,7 +64,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					onAvatarUpdate={() => setNotify((n) => !n)}
 					npcId={props.npcId}
 				/>
-				<PlayerAvatarDice />
+				<PlayerAvatarDice npcId={props.npcId}/>
 			</Row>
 			{props.playerAttributes.map((attr) => {
 				const status = playerAttributeStatus.filter(
@@ -79,10 +78,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 						playerStatus={status}
 						onStatusChanged={onStatusChanged}
 						showDiceRollResult={onDiceRoll}
-						visibilityEnabled={
-							attr.Attribute.id === props.portraitAttributes.side_attribute ||
-							props.portraitAttributes.attributes.includes(attr.Attribute.id)
-						}
+						visibilityEnabled={attr.Attribute.portrait != null}
 						npcId={props.npcId}
 					/>
 				);
@@ -414,7 +410,7 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 	);
 }
 
-function PlayerAvatarDice() {
+function PlayerAvatarDice(props: { npcId?: number }) {
 	const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
 
 	return (
@@ -431,6 +427,7 @@ function PlayerAvatarDice() {
 			<GeneralDiceRollModal
 				show={generalDiceRollShow}
 				onHide={() => setGeneralDiceRollShow(false)}
+				npcId={props.npcId}
 			/>
 		</>
 	);

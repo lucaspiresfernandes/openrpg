@@ -42,7 +42,7 @@ export default function PlayerSpellContainer(props: PlayerSpellContainerProps) {
 
 	const logError = useContext(ErrorLogger);
 	const socket = useContext(Socket);
-	const [diceRoll, rollDice] = useDiceRoll();
+	const [diceRoll, rollDice] = useDiceRoll(props.npcId);
 
 	const socket_spellAdd = useRef<SpellAddEvent>(() => {});
 	const socket_spellRemove = useRef<SpellRemoveEvent>(() => {});

@@ -27,8 +27,6 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const playerId = npcId ? npcId : player.id;
 
-	console.log(npcId);
-
 	await prisma.playerAttributeStatus.update({
 		where: {
 			player_id_attribute_status_id: {

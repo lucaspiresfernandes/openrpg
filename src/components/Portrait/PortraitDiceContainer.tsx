@@ -13,6 +13,7 @@ export default function PortraitDiceContainer(props: {
 	onShowDice: () => void;
 	onHideDice: () => void;
 	color: string;
+	showDiceRoll: boolean;
 }) {
 	const diceQueue = useRef<DiceResponse[]>([]);
 	const diceData = useRef<DiceResponse>();
@@ -29,6 +30,8 @@ export default function PortraitDiceContainer(props: {
 	const diceVideo = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
+		if (!props.showDiceRoll) return;
+		
 		const style = getAttributeStyle(props.color);
 
 		if (diceResultRef.current) {
