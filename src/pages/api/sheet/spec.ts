@@ -19,13 +19,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	const id: number | undefined = req.body.id;
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!id || !name) {
-		res.status(401).send({ message: 'ID ou nome da especificação estão em branco.' });
+	if (!id || !name || visibleToAdmin === undefined) {
+		res
+			.status(401)
+			.send({ message: 'ID, nome ou visível(mestre) da especificação estão em branco.' });
 		return;
 	}
 
-	await database.spec.update({ data: { name }, where: { id } });
+	await database.spec.update({ data: { name, visibleToAdmin }, where: { id } });
 
 	res.end();
 }
@@ -39,14 +42,17 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!name) {
-		res.status(401).send({ message: 'Nome da especificação está em branco.' });
+	if (!name || visibleToAdmin === undefined) {
+		res
+			.status(401)
+			.send({ message: 'Nome ou visível(mestre) da especificação está em branco.' });
 		return;
 	}
 
 	const [spec, players] = await database.$transaction([
-		database.spec.create({ data: { name }, select: { id: true } }),
+		database.spec.create({ data: { name, visibleToAdmin }, select: { id: true } }),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 

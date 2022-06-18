@@ -27,7 +27,14 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 	);
 	const logError = useContext(ErrorLogger);
 
-	function onAttributeModalSubmit({ id, name, rollable, color, portrait }: Attribute) {
+	function onAttributeModalSubmit({
+		id,
+		name,
+		rollable,
+		color,
+		portrait,
+		visibleToAdmin,
+	}: Attribute) {
 		setLoading(true);
 		const dbColor = color.substring(1, color.length);
 
@@ -35,11 +42,11 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 			attributeModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name, rollable, color: dbColor },
+						data: { name, rollable, color: dbColor, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name, rollable, color: dbColor },
+						data: { id, name, rollable, color: dbColor, visibleToAdmin },
 				  };
 
 		api('/sheet/attribute', config)
@@ -47,7 +54,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 				if (attributeModal.operation === 'create') {
 					setAttributes([
 						...attributes,
-						{ id: res.data.id, name, rollable, color, portrait },
+						{ id: res.data.id, name, rollable, color, portrait, visibleToAdmin },
 					]);
 					return;
 				}
@@ -57,6 +64,7 @@ export default function AttributeEditorContainer(props: AttributeEditorContainer
 					rollable,
 					color,
 					portrait,
+					visibleToAdmin,
 				};
 				setAttributes([...attributes]);
 			})

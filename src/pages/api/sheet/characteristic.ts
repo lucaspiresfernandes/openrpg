@@ -19,13 +19,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	const id: number | undefined = req.body.id;
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!id || !name) {
-		res.status(400).send({ message: 'ID ou nome da característica está em branco.' });
+	if (!id || !name || visibleToAdmin === undefined) {
+		res
+			.status(400)
+			.send({ message: 'ID, nome ou visível(mestre) da característica está em branco.' });
 		return;
 	}
 
-	await database.characteristic.update({ where: { id }, data: { name } });
+	await database.characteristic.update({ where: { id }, data: { name, visibleToAdmin } });
 
 	res.end();
 }
@@ -39,14 +42,20 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!name) {
-		res.status(400).send({ message: 'Nome da característica está em branco.' });
+	if (!name || visibleToAdmin === undefined) {
+		res
+			.status(400)
+			.send({ message: 'Nome ou visível(mestre) da característica está em branco.' });
 		return;
 	}
 
 	const [char, players] = await database.$transaction([
-		database.characteristic.create({ data: { name }, select: { id: true } }),
+		database.characteristic.create({
+			data: { name, visibleToAdmin },
+			select: { id: true },
+		}),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 

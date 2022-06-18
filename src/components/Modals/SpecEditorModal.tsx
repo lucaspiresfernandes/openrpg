@@ -1,6 +1,7 @@
 import type { Spec } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import FormCheck from 'react-bootstrap/FormCheck';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
@@ -9,6 +10,7 @@ import SheetModal from './SheetModal';
 const initialState: Spec = {
 	id: 0,
 	name: '',
+	visibleToAdmin: true,
 };
 
 export default function SpecEditorModal(props: EditorModalProps<Spec>) {
@@ -39,7 +41,7 @@ export default function SpecEditorModal(props: EditorModalProps<Spec>) {
 			show={props.show}
 			onHide={hide}>
 			<Container fluid>
-				<FormGroup controlId='createSpecName'>
+				<FormGroup className='mb-3' controlId='createSpecName'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
 						autoFocus
@@ -48,6 +50,15 @@ export default function SpecEditorModal(props: EditorModalProps<Spec>) {
 						onChange={(ev) => setSpec((i) => ({ ...i, name: ev.target.value }))}
 					/>
 				</FormGroup>
+				<FormCheck
+					inline
+					checked={spec.visibleToAdmin}
+					onChange={(ev) =>
+						setSpec((spec) => ({ ...spec, visibleToAdmin: ev.target.checked }))
+					}
+					id='createSpecVisibleToAdmin'
+					label='Visível no Painel do Mestre?'
+				/>
 			</Container>
 		</SheetModal>
 	);

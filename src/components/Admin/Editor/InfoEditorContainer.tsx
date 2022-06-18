@@ -21,27 +21,31 @@ export default function InfoEditorContainer(props: InfoEditorContainerProps) {
 	const [info, setInfo] = useState(props.info);
 	const logError = useContext(ErrorLogger);
 
-	function onModalSubmit({ id, name }: Info) {
+	function onModalSubmit({ id, name, visibleToAdmin }: Info) {
 		setLoading(true);
 
 		const config: AxiosRequestConfig =
 			infoModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name },
+						data: { name, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name },
+						data: { id, name, visibleToAdmin },
 				  };
 
 		api('/sheet/info', config)
 			.then((res) => {
 				if (infoModal.operation === 'create') {
-					setInfo([...info, { id: res.data.id, name }]);
+					setInfo([...info, { id: res.data.id, name, visibleToAdmin }]);
 					return;
 				}
-				info[info.findIndex((info) => info.id === id)].name = name;
+				info[info.findIndex((info) => info.id === id)] = {
+					id,
+					name,
+					visibleToAdmin,
+				};
 				setInfo([...info]);
 			})
 			.catch(logError)

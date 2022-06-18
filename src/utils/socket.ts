@@ -40,6 +40,20 @@ export type PlayerCurrencyChangeEvent = (
 	value: string
 ) => void;
 
+export type PlayerCharacteristicChangeEvent = (
+	playerId: number,
+	characteristicId: number,
+	value: number,
+	modifier: number
+) => void;
+
+export type PlayerSkillChangeEvent = (
+	playerId: number,
+	skillId: number,
+	value: number,
+	modifier: number
+) => void;
+
 export type PlayerEquipmentAddEvent = (playerId: number, equipment: Equipment) => void;
 
 export type PlayerEquipmentRemoveEvent = (playerId: number, id: number) => void;
@@ -60,7 +74,13 @@ export type PlayerItemChangeEvent = (
 	quantity: number
 ) => void;
 
+export type PlayerSpellAddEvent = (playerId: number, spell: Spell) => void;
+
+export type PlayerSpellRemoveEvent = (playerId: number, spellId: number) => void;
+
 export type PlayerMaxLoadChangeEvent = (playerId: number, newLoad: number) => void;
+
+export type PlayerSpellSlotsChangeEvent = (playerId: number, newSpellSlots: number) => void;
 
 export type EnvironmentChangeEvent = (newValue: string) => void;
 
@@ -115,12 +135,17 @@ export interface ServerToClientEvents {
 	playerAttributeChange: PlayerAttributeChangeEvent;
 	playerSpecChange: PlayerSpecChangeEvent;
 	playerCurrencyChange: PlayerCurrencyChangeEvent;
+	playerCharacteristicChange: PlayerCharacteristicChangeEvent;
+	playerSkillChange: PlayerSkillChangeEvent;
 	playerEquipmentAdd: PlayerEquipmentAddEvent;
 	playerEquipmentRemove: PlayerEquipmentRemoveEvent;
 	playerItemAdd: PlayerItemAddEvent;
 	playerItemRemove: PlayerItemRemoveEvent;
 	playerItemChange: PlayerItemChangeEvent;
+	playerSpellAdd: PlayerSpellAddEvent;
+	playerSpellRemove: PlayerSpellRemoveEvent;
 	playerMaxLoadChange: PlayerMaxLoadChangeEvent;
+	playerSpellSlotsChange: PlayerSpellSlotsChangeEvent;
 
 	//---------- Admin-triggered Events ----------
 	environmentChange: EnvironmentChangeEvent;

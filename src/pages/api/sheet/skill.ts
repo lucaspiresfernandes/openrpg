@@ -23,17 +23,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const startValue: number | undefined = req.body.startValue;
 	const mandatory: boolean | undefined = req.body.mandatory;
 	let specialization_id: number | null | undefined = req.body.specialization_id;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
 	if (
 		!id ||
 		!name ||
 		startValue === undefined ||
 		mandatory === undefined ||
-		specialization_id === undefined
+		specialization_id === undefined ||
+		visibleToAdmin === undefined
 	) {
 		res.status(401).send({
 			message:
-				'ID, nome, valor inicial, obrigatório ou ID de especialização da perícia estão em branco.',
+				'ID, nome, valor inicial, obrigatório, ID de especialização ou visível(mestre) da perícia estão em branco.',
 		});
 		return;
 	}
@@ -41,7 +43,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	if (specialization_id === 0) specialization_id = null;
 
 	const skill = await database.skill.update({
-		data: { name, startValue, mandatory, specialization_id },
+		data: { name, startValue, mandatory, specialization_id, visibleToAdmin },
 		where: { id },
 		select: { name: true, Specialization: { select: { name: true } } },
 	});
@@ -68,16 +70,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const startValue: number | undefined = req.body.startValue;
 	const mandatory: boolean | undefined = req.body.mandatory;
 	let specialization_id: number | null | undefined = req.body.specialization_id;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
 	if (
 		!name ||
 		startValue === undefined ||
 		mandatory === undefined ||
-		specialization_id === undefined
+		specialization_id === undefined ||
+		visibleToAdmin === undefined
 	) {
 		res.status(401).send({
 			message:
-				'Nome, valor inicial, obrigatório ou ID de especialização da perícia estão em branco.',
+				'Nome, valor inicial, obrigatório, ID de especialização ou visível(mestre) da perícia estão em branco.',
 		});
 		return;
 	}
@@ -85,7 +89,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	if (specialization_id === 0) specialization_id = null;
 
 	const skill = await database.skill.create({
-		data: { name, startValue, mandatory, specialization_id },
+		data: { name, startValue, mandatory, specialization_id, visibleToAdmin },
 		select: {
 			id: true,
 			name: true,

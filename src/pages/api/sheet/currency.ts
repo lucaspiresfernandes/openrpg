@@ -19,13 +19,16 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	const id: number | undefined = req.body.id;
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!id || !name) {
-		res.status(401).send({ message: 'ID ou nome da moeda está em branco.' });
+	if (!id || !name || visibleToAdmin === undefined) {
+		res
+			.status(401)
+			.send({ message: 'ID, nome ou visível(mestre) da moeda está em branco.' });
 		return;
 	}
 
-	await database.currency.update({ data: { name }, where: { id } });
+	await database.currency.update({ data: { name, visibleToAdmin }, where: { id } });
 
 	res.end();
 }
@@ -39,14 +42,15 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const name: string | undefined = req.body.name;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!name) {
-		res.status(401).send({ message: 'Nome da moeda está em branco.' });
+	if (!name || visibleToAdmin === undefined) {
+		res.status(401).send({ message: 'Nome ou visível(mestre) da moeda está em branco.' });
 		return;
 	}
 
 	const [currency, players] = await database.$transaction([
-		database.currency.create({ data: { name }, select: { id: true } }),
+		database.currency.create({ data: { name, visibleToAdmin }, select: { id: true } }),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 

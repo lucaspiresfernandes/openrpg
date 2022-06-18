@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
+import FormCheck from 'react-bootstrap/FormCheck';
 import FormLabel from 'react-bootstrap/FormLabel';
 import SheetModal from './SheetModal';
 
 const initialState: Characteristic = {
 	id: 0,
 	name: '',
+	visibleToAdmin: false,
 };
 
 export default function CharacteristicEditorModal(
@@ -41,7 +43,7 @@ export default function CharacteristicEditorModal(
 			show={props.show}
 			onHide={hide}>
 			<Container fluid>
-				<FormGroup controlId='createCharacteristicName'>
+				<FormGroup className='mb-2' controlId='createCharacteristicName'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
 						autoFocus
@@ -50,6 +52,15 @@ export default function CharacteristicEditorModal(
 						onChange={(ev) => setCharacteristic((i) => ({ ...i, name: ev.target.value }))}
 					/>
 				</FormGroup>
+				<FormCheck
+					inline
+					checked={characteristic.visibleToAdmin}
+					onChange={(ev) =>
+						setCharacteristic((char) => ({ ...char, visibleToAdmin: ev.target.checked }))
+					}
+					id='createCharacteristicVisibleToAdmin'
+					label='Visível no Painel do Mestre?'
+				/>
 			</Container>
 		</SheetModal>
 	);

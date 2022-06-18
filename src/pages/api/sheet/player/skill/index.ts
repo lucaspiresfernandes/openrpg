@@ -1,14 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
+import type { NextApiResponseServerIO } from '../../../../../utils/socket';
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	if (req.method === 'POST') return handlePost(req, res);
 	if (req.method === 'PUT') return handlePut(req, res);
 	res.status(404).send({ message: 'Supported methods: POST | PUT' });
 }
 
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
+async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
 
 	if (!player) {
@@ -30,10 +31,18 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 	const playerId = npcId ? npcId : player.id;
 
-	await prisma.playerSkill.update({
+	const skill = await prisma.playerSkill.update({
 		where: { player_id_skill_id: { player_id: playerId, skill_id: skillID } },
 		data: { value, checked, modifier },
 	});
+
+	res.socket.server.io?.emit(
+		'playerSkillChange',
+		playerId,
+		skillID,
+		skill.value,
+		skill.modifier
+	);
 
 	res.end();
 }

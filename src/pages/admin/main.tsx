@@ -14,7 +14,7 @@ import { ErrorLogger, Socket } from '../../contexts';
 import useSocket from '../../hooks/useSocket';
 import useToast from '../../hooks/useToast';
 import type { InferSSRProps } from '../../utils';
-import type { Environment } from '../../utils/config';
+import type { DiceConfig, Environment } from '../../utils/config';
 import prisma from '../../utils/database';
 import { sessionSSR } from '../../utils/session';
 
@@ -29,7 +29,13 @@ export default function Page(props: PageProps) {
 	);
 }
 
-function AdminPanel({ players, adminAnnotations, environment, npcs }: PageProps) {
+function AdminPanel({
+	players,
+	adminAnnotations,
+	environment,
+	npcs,
+	diceConfig,
+}: PageProps) {
 	const [toasts, addToast] = useToast();
 	const socket = useSocket('admin');
 
@@ -52,7 +58,7 @@ function AdminPanel({ players, adminAnnotations, environment, npcs }: PageProps)
 	});
 
 	return (
-			<>
+		<>
 			<ErrorLogger.Provider value={addToast}>
 				<Socket.Provider value={socket}>
 					<Container className='px-3'>
@@ -63,7 +69,11 @@ function AdminPanel({ players, adminAnnotations, environment, npcs }: PageProps)
 							<AdminEnvironmentConfigurations environment={environment} />
 						</Row>
 						<Row className='justify-content-center gx-5'>
-							<PlayerManager players={players} />
+							<PlayerManager
+								players={players}
+								characteristicModifierEnabled={diceConfig.characteristic.enable_modifiers}
+								skillModifierEnabled={diceConfig.skill.enable_modifiers}
+							/>
 						</Row>
 						<AdminUtilityContainer npcs={npcs} players={playerNames} />
 						<Row className='mb-3'>
@@ -98,12 +108,35 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 				id: true,
 				name: true,
 				maxLoad: true,
+				spellSlots: true,
+				PlayerInfo: {
+					select: { Info: true, value: true },
+					where: { Info: { visibleToAdmin: true } },
+				},
 				PlayerAttributeStatus: { select: { AttributeStatus: true, value: true } },
-				PlayerAttributes: { select: { Attribute: true, value: true, maxValue: true } },
-				PlayerSpec: { select: { Spec: true, value: true } },
+				PlayerAttributes: {
+					select: { Attribute: true, value: true, maxValue: true },
+					where: { Attribute: { visibleToAdmin: true } },
+				},
+				PlayerSpec: {
+					select: { Spec: true, value: true },
+					where: { Spec: { visibleToAdmin: true } },
+				},
+				PlayerCharacteristic: {
+					select: { Characteristic: true, value: true, modifier: true },
+					where: { Characteristic: { visibleToAdmin: true } },
+				},
+				PlayerSkill: {
+					select: { Skill: true, value: true, modifier: true },
+					where: { Skill: { visibleToAdmin: true } },
+				},
 				PlayerEquipment: { include: { Equipment: true } },
 				PlayerItem: { select: { Item: true, currentDescription: true, quantity: true } },
-				PlayerCurrency: { select: { Currency: true, value: true } },
+				PlayerSpell: { select: { Spell: true } },
+				PlayerCurrency: {
+					select: { Currency: true, value: true },
+					where: { Currency: { visibleToAdmin: true } },
+				},
 			},
 		}),
 		prisma.playerNote.findUnique({
@@ -114,6 +147,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			where: { role: 'NPC' },
 			select: { id: true, name: true },
 		}),
+		prisma.config.findUnique({ where: { name: 'dice' } }),
 	]);
 
 	return {
@@ -122,6 +156,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			players: results[1],
 			adminAnnotations: results[2] || { value: '' },
 			npcs: results[3],
+			diceConfig: JSON.parse(results[4]?.value || 'null') as DiceConfig,
 		},
 	};
 }

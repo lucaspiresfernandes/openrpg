@@ -1,6 +1,7 @@
 import type { Currency } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import FormCheck from 'react-bootstrap/FormCheck';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormLabel from 'react-bootstrap/FormLabel';
@@ -9,6 +10,7 @@ import SheetModal from './SheetModal';
 const initialState: Currency = {
 	id: 0,
 	name: '',
+	visibleToAdmin: true,
 };
 
 export default function CurrencyEditorModal(props: EditorModalProps<Currency>) {
@@ -39,7 +41,7 @@ export default function CurrencyEditorModal(props: EditorModalProps<Currency>) {
 			show={props.show}
 			onHide={hide}>
 			<Container fluid>
-			<FormGroup controlId='createCurrencyName'>
+				<FormGroup className='mb-3' controlId='createCurrencyName'>
 					<FormLabel>Nome</FormLabel>
 					<FormControl
 						autoFocus
@@ -48,6 +50,15 @@ export default function CurrencyEditorModal(props: EditorModalProps<Currency>) {
 						onChange={(ev) => setCurrency((i) => ({ ...i, name: ev.target.value }))}
 					/>
 				</FormGroup>
+				<FormCheck
+					inline
+					checked={currency.visibleToAdmin}
+					onChange={(ev) =>
+						setCurrency((curr) => ({ ...curr, visibleToAdmin: ev.target.checked }))
+					}
+					id='createCurrencyVisibleToAdmin'
+					label='Visível no Painel do Mestre?'
+				/>
 			</Container>
 		</SheetModal>
 	);

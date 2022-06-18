@@ -31,12 +31,20 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const playerId = npcId ? npcId : player.id;
 
-	await database.playerCharacteristic.update({
+	const char = await database.playerCharacteristic.update({
 		data: { value, modifier },
 		where: {
 			player_id_characteristic_id: { player_id: playerId, characteristic_id: id },
 		},
 	});
+
+	res.socket.server.io?.emit(
+		'playerCharacteristicChange',
+		playerId,
+		id,
+		char.value,
+		char.modifier
+	);
 
 	res.end();
 }

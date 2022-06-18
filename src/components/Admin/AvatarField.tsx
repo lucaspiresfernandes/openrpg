@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
-import Row from 'react-bootstrap/Row';
 import api from '../../utils/api';
 
 const style = { maxHeight: 250 };
@@ -33,16 +32,14 @@ export default function AvatarField({ status, playerId }: AvatarFieldProps) {
 	}, [status]);
 
 	return (
-		<Row>
-			<Col>
-				<Image
-					fluid
-					src={src}
-					alt='Avatar'
-					style={style}
-					onError={() => setSrc('/avatar404.png')}
-				/>
-			</Col>
-		</Row>
+		<Col>
+			<Image
+				fluid
+				src={src}
+				alt='Avatar'
+				style={style}
+				onError={() => setSrc('/avatar404.png')}
+			/>
+		</Col>
 	);
 }

@@ -20,27 +20,31 @@ export default function CurrencyEditorContainer(props: CurrencyEditorContainerPr
 	const [currency, setCurrency] = useState(props.currencies);
 	const logError = useContext(ErrorLogger);
 
-	function onModalSubmit({ id, name }: Currency) {
+	function onModalSubmit({ id, name, visibleToAdmin }: Currency) {
 		setLoading(true);
 
 		const config: AxiosRequestConfig =
 			currencyModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name },
+						data: { name, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name },
+						data: { id, name, visibleToAdmin },
 				  };
 
 		api('/sheet/currency', config)
 			.then((res) => {
 				if (currencyModal.operation === 'create') {
-					setCurrency([...currency, { id: res.data.id, name }]);
+					setCurrency([...currency, { id: res.data.id, name, visibleToAdmin }]);
 					return;
 				}
-				currency[currency.findIndex((cur) => cur.id === id)].name = name;
+				currency[currency.findIndex((cur) => cur.id === id)] = {
+					id,
+					name,
+					visibleToAdmin,
+				};
 				setCurrency([...currency]);
 			})
 			.catch(logError)

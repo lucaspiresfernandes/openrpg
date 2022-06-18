@@ -12,7 +12,8 @@ const initialState: Attribute = {
 	name: '',
 	rollable: false,
 	color: '#ff0000',
-	portrait: 'PRIMARY'
+	portrait: 'PRIMARY',
+	visibleToAdmin: true,
 };
 
 export default function AttributeEditorModal(props: EditorModalProps<Attribute>) {
@@ -73,6 +74,15 @@ export default function AttributeEditorModal(props: EditorModalProps<Attribute>)
 					}
 					id='createAttributeRollable'
 					label='Testável?'
+				/>
+				<FormCheck
+					inline
+					checked={attribute.visibleToAdmin}
+					onChange={(ev) =>
+						setAttribute((attr) => ({ ...attr, visibleToAdmin: ev.target.checked }))
+					}
+					id='createAttributeVisibleToAdmin'
+					label='Visível no Painel do Mestre?'
 				/>
 			</Container>
 		</SheetModal>

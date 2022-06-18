@@ -122,18 +122,25 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 	const [skills, setSkills] = useState(props.skills);
 	const logError = useContext(ErrorLogger);
 
-	function onModalSubmit({ id, name, mandatory, specialization_id, startValue }: Skill) {
+	function onModalSubmit({
+		id,
+		name,
+		mandatory,
+		specialization_id,
+		startValue,
+		visibleToAdmin,
+	}: Skill) {
 		setLoading(true);
 
 		const config: AxiosRequestConfig =
 			skillModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name, mandatory, specialization_id, startValue },
+						data: { name, mandatory, specialization_id, startValue, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name, mandatory, specialization_id, startValue },
+						data: { id, name, mandatory, specialization_id, startValue, visibleToAdmin },
 				  };
 
 		api('/sheet/skill', config)
@@ -147,6 +154,7 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 							mandatory,
 							specialization_id,
 							startValue,
+							visibleToAdmin,
 						},
 					]);
 					return;
@@ -159,6 +167,7 @@ function SkillEditorContainer(props: SkillEditorContainerProps) {
 					mandatory,
 					specialization_id,
 					startValue,
+					visibleToAdmin,
 				};
 				setSkills([...skills]);
 			})

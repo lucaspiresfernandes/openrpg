@@ -19,6 +19,7 @@ const initialState: Skill = {
 	specialization_id: 0,
 	mandatory: false,
 	startValue: 0,
+	visibleToAdmin: false,
 };
 
 export default function SkillEditorModal(props: ModalProps) {
@@ -98,6 +99,15 @@ export default function SkillEditorModal(props: ModalProps) {
 					onChange={(ev) => setSkill((sk) => ({ ...sk, mandatory: ev.target.checked }))}
 					id='createSkillMandatory'
 					label='Obrigatório?'
+				/>
+				<FormCheck
+					inline
+					checked={skill.visibleToAdmin}
+					onChange={(ev) =>
+						setSkill((sk) => ({ ...sk, visibleToAdmin: ev.target.checked }))
+					}
+					id='createSkillVisibleToAdmin'
+					label='Visível no Painel do Mestre?'
 				/>
 			</Container>
 		</SheetModal>

@@ -35,9 +35,10 @@ model Player {
 }
 
 model Info {
-  id         Int          @id @default(autoincrement())
-  name       String
-  PlayerInfo PlayerInfo[]
+  id             Int          @id @default(autoincrement())
+  name           String
+  visibleToAdmin Boolean      @default(false)
+  PlayerInfo     PlayerInfo[]
 }
 
 model Attribute {
@@ -46,6 +47,7 @@ model Attribute {
   color           String             @default("0d6efd") @db.Char(6)
   rollable        Boolean
   portrait        PortraitAttribute?
+  visibleToAdmin  Boolean            @default(true)
   PlayerAttribute PlayerAttribute[]
   AttributeStatus AttributeStatus[]
 }
@@ -60,14 +62,16 @@ model AttributeStatus {
 }
 
 model Spec {
-  id         Int          @id @default(autoincrement())
-  name       String
-  PlayerSpec PlayerSpec[]
+  id             Int          @id @default(autoincrement())
+  name           String
+  visibleToAdmin Boolean      @default(true)
+  PlayerSpec     PlayerSpec[]
 }
 
 model Characteristic {
   id                   Int                    @id @default(autoincrement())
   name                 String
+  visibleToAdmin       Boolean                @default(false)
   PlayerCharacteristic PlayerCharacteristic[]
 }
 
@@ -85,6 +89,7 @@ model Skill {
   specialization_id Int?
   startValue        Int             @default(0)
   mandatory         Boolean         @default(false)
+  visibleToAdmin    Boolean         @default(false)
   PlayerSkill       PlayerSkill[]
 }
 
@@ -112,6 +117,7 @@ model Item {
 model Currency {
   id             Int              @id @default(autoincrement())
   name           String
+  visibleToAdmin Boolean          @default(true)
   PlayerCurrency PlayerCurrency[]
 }
 

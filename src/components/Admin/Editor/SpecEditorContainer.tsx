@@ -20,27 +20,31 @@ export default function SpecEditorContainer(props: SpecEditorContainerProps) {
 	const [spec, setSpec] = useState(props.specs);
 	const logError = useContext(ErrorLogger);
 
-	function onModalSubmit({ id, name }: Spec) {
+	function onModalSubmit({ id, name, visibleToAdmin }: Spec) {
 		setLoading(true);
 
 		const config: AxiosRequestConfig =
 			specModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name },
+						data: { name, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name },
+						data: { id, name, visibleToAdmin },
 				  };
 
 		api('/sheet/spec', config)
 			.then((res) => {
 				if (specModal.operation === 'create') {
-					setSpec([...spec, { id: res.data.id, name }]);
+					setSpec([...spec, { id: res.data.id, name, visibleToAdmin }]);
 					return;
 				}
-				spec[spec.findIndex((spec) => spec.id === id)].name = name;
+				spec[spec.findIndex((spec) => spec.id === id)] = {
+					id,
+					name,
+					visibleToAdmin,
+				};
 				setSpec([...spec]);
 			})
 			.catch(logError)

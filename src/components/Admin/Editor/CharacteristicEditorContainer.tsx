@@ -25,27 +25,34 @@ export default function CharacteristicEditorContainer(
 	const [characteristics, setCharacteristics] = useState(props.characteristics);
 	const logError = useContext(ErrorLogger);
 
-	function onModalSubmit({ id, name }: Characteristic) {
+	function onModalSubmit({ id, name, visibleToAdmin }: Characteristic) {
 		setLoading(true);
 
 		const config: AxiosRequestConfig =
 			characteristicModal.operation === 'create'
 				? {
 						method: 'PUT',
-						data: { name },
+						data: { name, visibleToAdmin },
 				  }
 				: {
 						method: 'POST',
-						data: { id, name },
+						data: { id, name, visibleToAdmin },
 				  };
 
 		api('/sheet/characteristic', config)
 			.then((res) => {
 				if (characteristicModal.operation === 'create') {
-					setCharacteristics([...characteristics, { id: res.data.id, name }]);
+					setCharacteristics([
+						...characteristics,
+						{ id: res.data.id, name, visibleToAdmin },
+					]);
 					return;
 				}
-				characteristics[characteristics.findIndex((char) => char.id === id)].name = name;
+				characteristics[characteristics.findIndex((char) => char.id === id)] = {
+					id,
+					name,
+					visibleToAdmin,
+				};
 				setCharacteristics([...characteristics]);
 			})
 			.catch(logError)

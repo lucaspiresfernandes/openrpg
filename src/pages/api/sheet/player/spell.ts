@@ -36,6 +36,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		select: { Spell: true },
 	});
 
+	res.socket.server.io?.emit('playerSpellAdd', playerId, spell.Spell);
+
 	res.send({ spell: spell.Spell });
 }
 
@@ -61,6 +63,8 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 	await prisma.playerSpell.delete({
 		where: { player_id_spell_id: { player_id: playerId, spell_id: spellID } },
 	});
+
+	res.socket.server.io?.emit('playerSpellRemove', playerId, spellID);
 
 	res.end();
 }

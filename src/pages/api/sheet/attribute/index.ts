@@ -22,15 +22,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const name: string | undefined = req.body.name;
 	const color: string | undefined = req.body.color;
 	const rollable: boolean | undefined = req.body.rollable;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!id || !name || !color || rollable === undefined) {
-		res
-			.status(400)
-			.send({ message: 'ID, nome, cor ou rolável do atributo estão em branco.' });
+	if (!id || !name || !color || rollable === undefined || visibleToAdmin === undefined) {
+		res.status(400).send({
+			message: 'ID, nome, cor, rolável ou visível(mestre) do atributo estão em branco.',
+		});
 		return;
 	}
 
-	await database.attribute.update({ where: { id }, data: { name, color, rollable } });
+	await database.attribute.update({
+		where: { id },
+		data: { name, color, rollable, visibleToAdmin },
+	});
 
 	res.end();
 }
@@ -46,16 +50,17 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	const name: string | undefined = req.body.name;
 	const color: string | undefined = req.body.color;
 	const rollable: boolean | undefined = req.body.rollable;
+	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
-	if (!name || !color || rollable === undefined) {
-		res
-			.status(400)
-			.send({ message: 'Nome, cor ou rolável do atributo estão em branco.' });
+	if (!name || !color || rollable === undefined || visibleToAdmin === undefined) {
+		res.status(400).send({
+			message: 'Nome, cor, rolável ou visível(mestre) do atributo estão em branco.',
+		});
 		return;
 	}
 
 	const [attr, players] = await database.$transaction([
-		database.attribute.create({ data: { name, color, rollable } }),
+		database.attribute.create({ data: { name, color, rollable, visibleToAdmin } }),
 		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
 	]);
 
