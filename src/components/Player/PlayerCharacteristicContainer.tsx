@@ -1,5 +1,4 @@
 import type { Characteristic } from '@prisma/client';
-import type { ChangeEvent } from 'react';
 import { useContext } from 'react';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
@@ -57,7 +56,7 @@ type PlayerCharacteristicFieldProps = {
 };
 
 function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
-	const [value, setValue, isValueClean] = useExtendedState(props.value);
+	const [value, setValue, isValueClean] = useExtendedState(props.value.toString());
 	const [modifier, setModifier, isModifierClean] = useExtendedState(() => {
 		const modifier = props.modifier;
 		if (modifier === null) return null;
@@ -70,20 +69,22 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 
 	const charID = props.characteristic.id;
 
-	function onChange(ev: ChangeEvent<HTMLInputElement>) {
-		const aux = ev.currentTarget.value;
-		let newValue = parseInt(aux);
-
-		if (aux.length === 0) newValue = 0;
-		else if (isNaN(newValue)) return;
-
-		setValue(newValue);
-	}
-
 	function onValueBlur() {
+		const aux = value;
+		let newValue = parseInt(aux);
+		if (aux.length === 0 || isNaN(newValue)) {
+			newValue = 0;
+			setValue(newValue.toString());
+		}
+
 		if (isValueClean()) return;
+
 		api
-			.post('/sheet/player/characteristic', { value, id: charID, npcId: props.npcId })
+			.post('/sheet/player/characteristic', {
+				value: newValue,
+				id: charID,
+				npcId: props.npcId,
+			})
 			.catch(logError);
 	}
 
@@ -117,11 +118,13 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 		let mod: number | null = null;
 		if (modifier) mod = parseInt(modifier);
 
+		const val = parseInt(value);
+
 		props.showDiceRollResult({
 			dices: {
 				num: standalone ? 1 : undefined,
 				roll,
-				ref: mod === null ? value : Math.max(1, value + mod),
+				ref: mod === null ? val : Math.max(1, val + mod),
 			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 			onResult: (results) => {
@@ -177,7 +180,7 @@ function PlayerCharacteristicField(props: PlayerCharacteristicFieldProps) {
 						id={`char${props.characteristic.id}`}
 						name={`char${props.characteristic.name.substring(0, 3).toUpperCase()}`}
 						value={value}
-						onChange={onChange}
+						onChange={(ev) => setValue(ev.currentTarget.value)}
 						onBlur={onValueBlur}
 						maxLength={3}
 					/>

@@ -12,12 +12,14 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
-	const itemID = req.body.id;
-
-	if (!player) {
+	const npcId: number | undefined = req.body.npcId;
+	
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
+
+	const itemID = req.body.id;
 
 	if (!itemID) {
 		res.status(400).send({ message: 'Item ID is undefined.' });
@@ -26,7 +28,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const quantity = req.body.quantity;
 	const currentDescription = req.body.currentDescription;
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 
@@ -44,8 +45,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -57,7 +59,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 
@@ -87,8 +88,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -100,7 +102,6 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 		return;
 	}
 
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 

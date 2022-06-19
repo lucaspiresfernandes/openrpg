@@ -229,9 +229,22 @@ $navbar-background-color: #303030;
 
 $proggress-bar-height: 40px;
 
-.progress {
-	height: $proggress-bar-height;
+.progress-container {
+	position: relative;
+
+	.progress {
+		height: $proggress-bar-height;
+	}
+
+	.label {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		top: 50%;
+		left: 50%;
+		pointer-events: none;
+	}
 }
+
 .attribute-dice {
 	max-height: $proggress-bar-height;
 }

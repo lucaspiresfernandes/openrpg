@@ -10,8 +10,9 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	}
 
 	const player = req.session.player;
-
-	if (!player) {
+	const npcId: number | undefined = req.body.npcId;
+	
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -26,7 +27,6 @@ async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const value: number | undefined = req.body.value;
 	const maxValue: number | undefined = req.body.maxValue;
 	const show: boolean | undefined = req.body.show;
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 

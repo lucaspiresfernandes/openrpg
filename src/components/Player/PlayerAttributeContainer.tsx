@@ -19,6 +19,8 @@ import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
 
 const MAX_AVATAR_HEIGHT = 450;
+const buttonStyle = { borderRadius: 0 };
+const labelStyle = { color: 'white' };
 
 type PlayerAttributeContainerProps = {
 	playerAttributes: {
@@ -64,7 +66,7 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					onAvatarUpdate={() => setNotify((n) => !n)}
 					npcId={props.npcId}
 				/>
-				<PlayerAvatarDice npcId={props.npcId}/>
+				<PlayerAvatarDice npcId={props.npcId} />
 			</Row>
 			{props.playerAttributes.map((attr) => {
 				const status = playerAttributeStatus.filter(
@@ -136,10 +138,15 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 		if (timeout.current.timeout) clearTimeout(timeout.current.timeout);
 	}, [maxValue]);
 
-	function updateValue(ev: React.MouseEvent, coeff: number) {
-		if (ev.ctrlKey) coeff *= 10;
+	function updateValue(coeff: number, ignoreMax?: boolean) {
+		let newVal: number;
 
-		const newVal = clamp(value + coeff, 0, maxValue);
+		if (ignoreMax) {
+			newVal = Math.max(0, value + coeff);
+		} else {
+			if (value < maxValue) newVal = clamp(value + coeff, 0, maxValue);
+			else newVal = value;
+		}
 
 		if (value === newVal) return;
 
@@ -224,9 +231,9 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 						</label>
 					</Col>
 				</Row>
-				<Row>
+				<Row className='align-items-start'>
 					{props.visibilityEnabled && (
-						<Col xs='auto' className='align-self-center pe-0'>
+						<Col xs='auto' className='pt-1 pe-0'>
 							<Button
 								aria-label={show ? 'Esconder' : 'Mostrar'}
 								size='sm'
@@ -236,21 +243,24 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 							</Button>
 						</Col>
 					)}
-					<Col>
+					<Col className='progress-container'>
 						<ProgressBar
 							label={`${value}/${maxValue}`}
 							visuallyHidden
 							now={value}
 							min={0}
 							max={maxValue}
-							style={{ backgroundColor: `#${props.playerAttribute.Attribute.color}40` }}
+							style={{
+								backgroundColor: `#${props.playerAttribute.Attribute.color}40`,
+							}}
 							ref={barRef}
 							className='clickable'
 							onClick={onNewMaxValue}
 						/>
+						<div className='label h5' style={labelStyle}>{`${value}/${maxValue}`}</div>
 					</Col>
 					{props.playerAttribute.Attribute.rollable && (
-						<Col xs='auto' className='align-self-center' style={{ paddingLeft: 0 }}>
+						<Col xs='auto' style={{ paddingLeft: 0 }}>
 							<Image
 								src='/dice20.webp'
 								alt='Dado'
@@ -260,25 +270,54 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 						</Col>
 					)}
 				</Row>
-				<Row className='justify-content-center mt-2'>
-					<Col xs lg={3}>
-						<Button
-							variant='secondary'
-							className='w-100'
-							onClick={(ev) => updateValue(ev, -1)}>
-							-
-						</Button>
+				<Row className='justify-content-between mt-1 px-2'>
+					<Col xs={6} lg={5} xl={4}>
+						<Row>
+							<Col xs={6} className='pe-0'>
+								<Button
+									variant='secondary'
+									size='sm'
+									style={buttonStyle}
+									className='w-100 rounded-start'
+									onClick={(ev) => updateValue(-5, true)}>
+									-5
+								</Button>
+							</Col>
+							<Col xs={6} className='ps-0'>
+								<Button
+									variant='secondary'
+									size='sm'
+									style={buttonStyle}
+									className='w-100 rounded-end'
+									onClick={(ev) => updateValue(-1, true)}>
+									-1
+								</Button>
+							</Col>
+						</Row>
 					</Col>
-					<Col xs lg={2} className='text-center align-self-center h5 m-0'>
-						{`${value}/${maxValue}`}
-					</Col>
-					<Col xs lg={3}>
-						<Button
-							variant='secondary'
-							className='w-100'
-							onClick={(ev) => updateValue(ev, 1)}>
-							+
-						</Button>
+					<Col xs={6} lg={5} xl={4}>
+						<Row>
+							<Col xs={6} className='pe-0'>
+								<Button
+									variant='secondary'
+									size='sm'
+									style={buttonStyle}
+									className='w-100 rounded-start'
+									onClick={(ev) => updateValue(1, true)}>
+									+1
+								</Button>
+							</Col>
+							<Col xs={6} className='ps-0'>
+								<Button
+									variant='secondary'
+									size='sm'
+									style={buttonStyle}
+									className='w-100 rounded-end'
+									onClick={(ev) => updateValue(5)}>
+									+5
+								</Button>
+							</Col>
+						</Row>
 					</Col>
 				</Row>
 				<Row className='mt-2'>

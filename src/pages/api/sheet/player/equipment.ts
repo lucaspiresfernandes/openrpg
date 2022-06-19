@@ -12,8 +12,9 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -26,7 +27,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	}
 
 	const currentAmmo: number | undefined = req.body.currentAmmo;
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 
@@ -40,8 +40,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -52,8 +53,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.status(400).send({ message: 'Equipment ID is undefined.' });
 		return;
 	}
-
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 
@@ -75,19 +74,19 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handleDelete(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
-	const equipID = req.body.id;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
+
+	const equipID: number | undefined = req.body.id;
 
 	if (!equipID) {
 		res.status(400).send({ message: 'Equipment ID is undefined.' });
 		return;
 	}
-
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 

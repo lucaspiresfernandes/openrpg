@@ -1,4 +1,5 @@
 import type { Attribute } from '@prisma/client';
+import { ChangeEventHandler } from 'react';
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import FormCheck from 'react-bootstrap/FormCheck';
@@ -28,6 +29,18 @@ export default function AttributeEditorModal(props: EditorModalProps<Attribute>)
 		setAttribute(initialState);
 		props.onHide();
 	}
+
+	const onAttributeColorChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
+		const color = ev.target.value.slice(1);
+
+		const red = parseInt(`0x${color.slice(0, 2)}`);
+		const green = parseInt(`0x${color.slice(2, 4)}`);
+		const blue = parseInt(`0x${color.slice(4, 6)}`);
+
+		const gray = (red + green + blue) / 3;
+		if (gray >= 205) return;
+		setAttribute((attr) => ({ ...attr, color: ev.target.value }));
+	};
 
 	return (
 		<SheetModal
@@ -60,9 +73,7 @@ export default function AttributeEditorModal(props: EditorModalProps<Attribute>)
 					<FormControl
 						type='color'
 						value={attribute.color}
-						onChange={(ev) =>
-							setAttribute((attr) => ({ ...attr, color: ev.target.value }))
-						}
+						onChange={onAttributeColorChange}
 						className='theme-element'
 					/>
 				</FormGroup>

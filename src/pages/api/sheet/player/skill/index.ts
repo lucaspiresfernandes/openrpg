@@ -11,8 +11,9 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -26,8 +27,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.status(400).send({ message: 'Skill ID or value is undefined.' });
 		return;
 	}
-
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 
@@ -49,8 +48,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
@@ -61,7 +61,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 		res.status(400).send({ message: 'Skill ID is undefined.' });
 		return;
 	}
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 

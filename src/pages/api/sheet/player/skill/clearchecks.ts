@@ -9,13 +9,13 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
 
-	const npcId: number | undefined = req.body.npcId;
 
 	const playerId = npcId ? npcId : player.id;
 

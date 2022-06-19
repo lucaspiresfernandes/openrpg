@@ -14,7 +14,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const avatarData: AvatarData[] = req.body.avatarData;
 	const npcId: number | undefined = req.body.npcId;
 
-	if (!player || !avatarData) {
+	if (!player || !avatarData || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}

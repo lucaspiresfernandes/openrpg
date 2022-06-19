@@ -275,7 +275,7 @@ type PlayerSkillFieldProps = {
 };
 
 function PlayerSkillField(props: PlayerSkillFieldProps) {
-	const [value, setValue, isValueClean] = useExtendedState(props.value);
+	const [value, setValue, isValueClean] = useExtendedState(props.value.toString());
 	const [checked, setChecked] = useState(props.checked);
 	const [modifier, setModifier, isModifierClean] = useExtendedState(() => {
 		const modifier = props.modifier;
@@ -308,20 +308,18 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 			});
 	}
 
-	function onValueChange(ev: ChangeEvent<HTMLInputElement>) {
-		const aux = ev.currentTarget.value;
-		let newValue = parseInt(aux);
-
-		if (aux.length === 0) newValue = 0;
-		else if (isNaN(newValue)) return;
-
-		setValue(newValue);
-	}
-
 	function onValueBlur() {
+		const aux = value;
+		let newValue = parseInt(aux);
+		if (aux.length === 0 || isNaN(newValue)) {
+			newValue = 0;
+			setValue(newValue.toString());
+		}
+
 		if (isValueClean()) return;
+
 		api
-			.post('/sheet/player/skill', { id: props.id, value, npcId: props.npcId })
+			.post('/sheet/player/skill', { id: props.id, value: newValue, npcId: props.npcId })
 			.catch(logError);
 	}
 
@@ -340,7 +338,11 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		if (isModifierClean()) return;
 
 		api
-			.post('/sheet/player/skill', { modifier: parseInt(newModifier), id: props.id, npcId: props.npcId })
+			.post('/sheet/player/skill', {
+				modifier: parseInt(newModifier),
+				id: props.id,
+				npcId: props.npcId,
+			})
 			.catch(logError);
 	}
 
@@ -351,11 +353,13 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 		let mod: number | null = null;
 		if (modifier) mod = parseInt(modifier);
 
+		const val = parseInt(value);
+
 		props.showDiceRollResult({
 			dices: {
 				num: standalone ? 1 : undefined,
 				roll,
-				ref: mod === null ? value : Math.max(1, value + mod),
+				ref: mod === null ? val : Math.max(1, val + mod),
 			},
 			resolverKey: `${roll}${branched ? 'b' : ''}`,
 			onResult: (results) => {
@@ -368,7 +372,11 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 				) {
 					setChecked(true);
 					api
-						.post('/sheet/player/skill', { id: props.id, checked: true, npcId: props.npcId })
+						.post('/sheet/player/skill', {
+							id: props.id,
+							checked: true,
+							npcId: props.npcId,
+						})
 						.catch((err) => {
 							logError(err);
 							setChecked(false);
@@ -421,7 +429,7 @@ function PlayerSkillField(props: PlayerSkillFieldProps) {
 						aria-label={props.name}
 						className='text-center w-75'
 						value={value}
-						onChange={onValueChange}
+						onChange={(ev) => setValue(ev.currentTarget.value)}
 						onBlur={onValueBlur}
 					/>
 				</Col>

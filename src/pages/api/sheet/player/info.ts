@@ -12,15 +12,15 @@ function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 	const player = req.session.player;
+	const npcId: number | undefined = req.body.npcId;
 
-	if (!player) {
+	if (!player || (player.admin && !npcId)) {
 		res.status(401).end();
 		return;
 	}
 
 	const infoID: number | undefined = req.body.id;
 	const value: string | undefined = req.body.value;
-	const npcId: number | undefined = req.body.npcId;
 
 	if (!infoID || value === undefined) {
 		res.status(401).send({ message: 'Info ID or value is undefined.' });
@@ -36,7 +36,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	res.end();
 
-	res.socket.server.io?.emit('playerInfoChange', playerId, infoID, value);
+	if (!npcId) res.socket.server.io?.emit('playerInfoChange', playerId, infoID, value);
 }
 
 export default sessionAPI(handler);
