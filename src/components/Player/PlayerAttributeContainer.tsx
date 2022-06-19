@@ -20,7 +20,6 @@ import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
 
 const MAX_AVATAR_HEIGHT = 450;
 const buttonStyle = { borderRadius: 0 };
-const labelStyle = { color: 'white' };
 
 type PlayerAttributeContainerProps = {
 	playerAttributes: {
@@ -245,8 +244,6 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					)}
 					<Col className='progress-container'>
 						<ProgressBar
-							label={`${value}/${maxValue}`}
-							visuallyHidden
 							now={value}
 							min={0}
 							max={maxValue}
@@ -254,10 +251,14 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 								backgroundColor: `#${props.playerAttribute.Attribute.color}40`,
 							}}
 							ref={barRef}
+							id={`attributeBar${attributeID}`}
 							className='clickable'
 							onClick={onNewMaxValue}
 						/>
-						<div className='label h5' style={labelStyle}>{`${value}/${maxValue}`}</div>
+						<div className='poggress-label h5'>
+							<label
+								htmlFor={`attributeBar${attributeID}`}>{`${value}/${maxValue}`}</label>
+						</div>
 					</Col>
 					{props.playerAttribute.Attribute.rollable && (
 						<Col xs='auto' style={{ paddingLeft: 0 }}>
