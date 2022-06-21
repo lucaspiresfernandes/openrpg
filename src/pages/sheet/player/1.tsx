@@ -112,6 +112,7 @@ function PlayerSheet(props: PageProps) {
 								title='Combate'
 								availableEquipments={props.availableEquipments}
 								playerEquipments={props.player.PlayerEquipment}
+								partners={props.partners}
 							/>
 						</Row>
 						<Row className='mb-3'>
@@ -130,6 +131,7 @@ function PlayerSheet(props: PageProps) {
 								availableItems={props.availableItems}
 								playerMaxLoad={props.player.maxLoad}
 								playerCurrency={props.player.PlayerCurrency}
+								partners={props.partners}
 							/>
 						</Row>
 						<Row className='mb-3'>
@@ -222,6 +224,16 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 		}),
 		prisma.config.findUnique({ where: { name: 'dice' } }),
 		prisma.config.findUnique({ where: { name: 'enable_automatic_markers' } }),
+		prisma.player.findMany({
+			where: {
+				role: { in: ['PLAYER'] },
+				id: { not: player.id },
+			},
+			select: {
+				id: true,
+				name: true,
+			},
+		}),
 	]);
 
 	if (!results[0]) {
@@ -243,6 +255,7 @@ async function getSSP(ctx: GetServerSidePropsContext) {
 			availableSpells: results[4],
 			diceConfig: JSON.parse(results[5]?.value || 'null') as DiceConfig,
 			automaticMarking: results[6]?.value === 'true' ? true : false,
+			partners: results[7],
 		},
 	};
 }

@@ -1,4 +1,4 @@
-import type { Currency, Item } from '@prisma/client';
+import type { Currency, Item, PlayerItem } from '@prisma/client';
 import type { FormEvent } from 'react';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -7,24 +7,29 @@ import FormLabel from 'react-bootstrap/FormLabel';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { BsTrash } from 'react-icons/bs';
+import { FaHandHolding, FaHandsHelping } from 'react-icons/fa';
 import { ErrorLogger, Socket } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import type { ItemAddEvent, ItemChangeEvent, ItemRemoveEvent } from '../../utils/socket';
+import type {
+	ItemAddEvent,
+	ItemChangeEvent,
+	ItemRemoveEvent,
+	PlayerTradeRequestEvent,
+	PlayerTradeResponseEvent,
+} from '../../utils/socket';
 import BottomTextInput from '../BottomTextInput';
 import CustomSpinner from '../CustomSpinner';
 import DataContainer from '../DataContainer';
 import AddDataModal from '../Modals/AddDataModal';
+import type { Trade } from '../Modals/PlayerTradeModal';
+import PlayerTradeModal from '../Modals/PlayerTradeModal';
 
 type PlayerItemContainerProps = {
 	playerItems: {
-		Item: {
-			id: number;
-			name: string;
-			weight: number;
-		};
 		currentDescription: string;
 		quantity: number;
+		Item: Item;
 	}[];
 	availableItems: Item[];
 	playerMaxLoad: number;
@@ -34,7 +39,20 @@ type PlayerItemContainerProps = {
 	}[];
 	title: string;
 	npcId?: number;
+	partners?: {
+		id: number;
+		name: string;
+	}[];
 };
+
+const tradeInitialValue: Trade<Item> = {
+	type: 'item',
+	show: false,
+	offer: { id: 0, name: '' } as Item,
+	donation: true,
+};
+
+const tradeTimeLimit = 10000;
 
 export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	const [addItemModalShow, setAddItemModalShow] = useState(false);
@@ -47,6 +65,9 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	);
 	const [loading, setLoading] = useState(false);
 	const [maxLoad, setMaxLoad, isClean] = useExtendedState(props.playerMaxLoad.toString());
+	const [trade, setTrade] = useState<Trade<Item>>(tradeInitialValue);
+	const currentTradeId = useRef<number | null>(null);
+	const tradeTimeout = useRef<NodeJS.Timeout | null>(null);
 
 	const logError = useContext(ErrorLogger);
 	const socket = useContext(Socket);
@@ -54,6 +75,8 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 	const socket_itemAdd = useRef<ItemAddEvent>(() => {});
 	const socket_itemRemove = useRef<ItemRemoveEvent>(() => {});
 	const socket_itemChange = useRef<ItemChangeEvent>(() => {});
+	const socket_requestReceived = useRef<PlayerTradeRequestEvent>(() => {});
+	const socket_responseReceived = useRef<PlayerTradeResponseEvent>(() => {});
 
 	useEffect(() => {
 		socket_itemAdd.current = (id, name) => {
@@ -104,16 +127,121 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				return newItems;
 			});
 		};
+
+		socket_requestReceived.current = (
+			type,
+			tradeId,
+			receiverObjectId,
+			senderName,
+			itemName
+		) => {
+			if (type !== 'item') return;
+
+			currentTradeId.current = tradeId;
+
+			const item = playerItems.find((it) => it.Item.id === receiverObjectId);
+
+			const accept = confirm(
+				`${senderName} te ofereceu ${itemName}${
+					receiverObjectId ? ` em troca de ${item?.Item.name}.` : '.'
+				}` + ' Você deseja aceitar essa proposta?'
+			);
+
+			api
+				.post('/sheet/player/trade/item', {
+					tradeId,
+					accept,
+				})
+				.then((res) => {
+					if (!accept) return;
+
+					const newItem: PlayerItem & { Item: Item } = res.data.item;
+
+					if (receiverObjectId) {
+						const index = playerItems.findIndex((it) => it.Item.id === receiverObjectId);
+						if (index === -1) return;
+						const oldItem = playerItems[index];
+
+						availableItems.push(oldItem.Item);
+						playerItems[index] = newItem;
+					} else {
+						playerItems.push(newItem);
+					}
+					availableItems.splice(
+						availableItems.findIndex((e) => e.id === newItem.Item.id),
+						1
+					);
+
+					setPlayerItems([...playerItems]);
+					setAvailableItems([...availableItems]);
+				})
+				.catch(logError)
+				.finally(() => (currentTradeId.current = null));
+		};
+
+		socket_responseReceived.current = (accept, tradeRes) => {
+			if (!currentTradeId.current) return;
+
+			currentTradeId.current = null;
+			if (tradeTimeout.current) {
+				clearTimeout(tradeTimeout.current);
+				tradeTimeout.current = null;
+			}
+
+			if (accept) {
+				const index = playerItems.findIndex((e) => e.Item.id === trade.offer.id);
+				if (index === -1) return;
+
+				if (tradeRes) {
+					if (tradeRes.type !== 'item') return logError(new Error('Expected Item'));
+					const oldItem = playerItems[index];
+
+					availableItems.push(oldItem.Item);
+					availableItems.splice(
+						availableItems.findIndex((e) => e.id === tradeRes.obj.Item.id),
+						1
+					);
+					setAvailableItems([...availableItems]);
+
+					playerItems[index] = tradeRes.obj;
+				} else {
+					const item = playerItems.splice(index, 1)[0];
+					setAvailableItems((e) => [...e, item.Item]);
+				}
+
+				setPlayerItems([...playerItems]);
+			} else {
+				alert('O jogador rejeitou sua proposta.');
+			}
+			setLoading(false);
+			setTrade(tradeInitialValue);
+		};
 	});
 
 	useEffect(() => {
 		socket.on('itemAdd', (id, name) => socket_itemAdd.current(id, name));
 		socket.on('itemRemove', (id) => socket_itemRemove.current(id));
 		socket.on('itemChange', (item) => socket_itemChange.current(item));
+		socket.on(
+			'playerTradeRequest',
+			(type, tradeId, receiverObjectId, senderName, senderObjectName) =>
+				socket_requestReceived.current(
+					type,
+					tradeId,
+					receiverObjectId,
+					senderName,
+					senderObjectName
+				)
+		);
+		socket.on('playerTradeResponse', (accept, item) =>
+			socket_responseReceived.current(accept, item)
+		);
 		return () => {
 			socket.off('itemAdd');
 			socket.off('itemRemove');
 			socket.off('itemChange');
+			socket.off('playerTradeRequest');
+			socket.off('playerTradeResponse');
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -149,6 +277,68 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 
 		const modalItem = { id, name: playerItems[index].Item.name };
 		setAvailableItems([...availableItems, modalItem]);
+	}
+
+	function onTradeShow(id: number, donation: boolean) {
+		if (currentTradeId.current) {
+			return alert(
+				'Você ainda está em uma troca. ' +
+					'Por favor, espere esta troca concluir antes de começar uma nova.'
+			);
+		}
+
+		const item = playerItems.find((item) => item.Item.id === id);
+		if (!item) return;
+
+		return setTrade({
+			type: 'item',
+			show: true,
+			offer: item.Item,
+			donation,
+		});
+	}
+
+	function onTradeSubmit(playerId: number, tradeId?: number) {
+		setLoading(true);
+		api
+			.put('/sheet/player/trade/item', {
+				offerId: trade.offer.id,
+				playerId,
+				tradeId,
+			})
+			.then((res) => {
+				currentTradeId.current = res.data.id;
+				tradeTimeout.current = setTimeout(() => {
+					onTradeHide();
+					alert(`A troca excedeu o tempo limite (${tradeTimeLimit}ms) e foi cancelada.`);
+				}, tradeTimeLimit);
+			})
+			.catch((err) => {
+				logError(err);
+				setLoading(false);
+				setTrade(tradeInitialValue);
+			});
+	}
+
+	function onTradeHide() {
+		if (currentTradeId.current) {
+			api
+				.delete('/sheet/player/trade/item', {
+					data: {
+						tradeId: currentTradeId.current,
+					},
+				})
+				.catch(logError)
+				.finally(() => (currentTradeId.current = null));
+		}
+
+		setTrade(tradeInitialValue);
+		setLoading(false);
+
+		if (tradeTimeout.current) {
+			clearTimeout(tradeTimeout.current);
+			tradeTimeout.current = null;
+		}
 	}
 
 	function onMaxLoadBlur() {
@@ -213,6 +403,12 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 							<thead>
 								<tr>
 									<th></th>
+									{props.partners && props.partners.length > 0 && (
+										<>
+											<th></th>
+											<th></th>
+										</>
+									)}
 									<th>Nome</th>
 									<th>Descrição</th>
 									<th>Peso</th>
@@ -226,8 +422,10 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 										description={item.currentDescription}
 										item={item.Item}
 										quantity={item.quantity}
-										onDelete={onDeleteItem}
+										onDelete={() => onDeleteItem(item.Item.id)}
 										onQuantityChange={onQuantityChange}
+										disableTrades={props.partners?.length === 0}
+										onTrade={(donation) => onTradeShow(item.Item.id, donation)}
 										npcId={props.npcId}
 									/>
 								))}
@@ -244,6 +442,15 @@ export default function PlayerItemContainer(props: PlayerItemContainerProps) {
 				onAddData={onAddItem}
 				disabled={loading}
 			/>
+			{props.partners && props.partners.length > 0 && (
+				<PlayerTradeModal
+					{...trade}
+					partners={props.partners}
+					onHide={onTradeHide}
+					onSubmit={onTradeSubmit}
+					disabled={loading}
+				/>
+			)}
 		</>
 	);
 }
@@ -293,7 +500,9 @@ type PlayerItemFieldProps = {
 		name: string;
 		weight: number;
 	};
-	onDelete: (id: number) => void;
+	disableTrades?: boolean;
+	onDelete: () => void;
+	onTrade: (donation: boolean) => void;
 	onQuantityChange: (id: number, value: number) => void;
 	npcId?: number;
 };
@@ -311,12 +520,11 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	function deleteItem() {
 		if (!confirm('Você realmente deseja excluir esse item?')) return;
 		setLoading(true);
-		props.onDelete(itemID);
 		api
 			.delete('/sheet/player/item', {
 				data: { id: itemID, npcId: props.npcId },
 			})
-			.then(() => props.onDelete(itemID))
+			.then(props.onDelete)
 			.catch(logError)
 			.finally(() => setLoading(false));
 	}
@@ -334,7 +542,11 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 	function quantityBlur() {
 		if (isQuantityClean()) return;
 		api
-			.post('/sheet/player/item', { id: itemID, quantity: currentQuantity, npcId: props.npcId })
+			.post('/sheet/player/item', {
+				id: itemID,
+				quantity: currentQuantity,
+				npcId: props.npcId,
+			})
 			.then(() => {
 				props.onQuantityChange(itemID, currentQuantity);
 			})
@@ -343,7 +555,9 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 
 	function descriptionBlur() {
 		if (isDescriptionClean()) return;
-		api.post('/sheet/player/item', { id: itemID, currentDescription, npcId: props.npcId }).catch(logError);
+		api
+			.post('/sheet/player/item', { id: itemID, currentDescription, npcId: props.npcId })
+			.catch(logError);
 	}
 
 	return (
@@ -358,7 +572,27 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
-			<td style={{ maxWidth: '7.5rem' }}>{props.item.name}</td>
+			<td>
+				<Button
+					aria-label='Transferir'
+					onClick={() => props.onTrade(true)}
+					size='sm'
+					variant='secondary'
+					disabled={loading}>
+					{loading ? <CustomSpinner /> : <FaHandHolding color='white' size='1.5rem' />}
+				</Button>
+			</td>
+			<td>
+				<Button
+					aria-label='Trocar'
+					onClick={() => props.onTrade(false)}
+					size='sm'
+					variant='secondary'
+					disabled={loading}>
+					{loading ? <CustomSpinner /> : <FaHandsHelping color='white' size='1.5rem' />}
+				</Button>
+			</td>
+			<td>{props.item.name}</td>
 			<td>
 				<BottomTextInput
 					disabled={loading}

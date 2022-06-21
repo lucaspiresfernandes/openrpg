@@ -4,10 +4,36 @@ import { sessionAPI } from '../../../../utils/session';
 import type { NextApiResponseServerIO } from '../../../../utils/socket';
 
 function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
+	if (req.method === 'GET') return handleGet(req, res);
 	if (req.method === 'POST') return handlePost(req, res);
 	if (req.method === 'PUT') return handlePut(req, res);
 	if (req.method === 'DELETE') return handleDelete(req, res);
 	res.status(404).send({ message: 'Supported methods: POST | PUT | DELETE' });
+}
+
+async function handleGet(req: NextApiRequest, res: NextApiResponse) {
+	const player = req.session.player;
+
+	if (!player) {
+		res.status(401).end();
+		return;
+	}
+
+	const playerId = parseInt(req.query.playerId as string);
+	
+	if (!playerId) {
+		res.status(400).end();
+		return;
+	}
+
+	const pe = await prisma.playerEquipment.findMany({
+		where: { player_id: playerId },
+		select: { Equipment: true },
+	});
+
+	const equipments = pe.map((eq) => eq.Equipment);
+
+	res.send({ equipments });
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {

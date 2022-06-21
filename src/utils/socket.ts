@@ -1,8 +1,9 @@
-import type { Equipment, Item, Spell } from '@prisma/client';
+import type { Equipment, Item, PlayerEquipment, PlayerItem, Spell } from '@prisma/client';
 import type { Server as HTTPServer } from 'http';
 import type { Socket as NetSocket } from 'net';
 import type { NextApiResponse } from 'next';
 import type { Server as SocketIOServer } from 'socket.io';
+import type { TradeType } from '../components/Modals/PlayerTradeModal';
 import type { DiceRequest, DiceResponse } from './dice';
 
 export type PlayerNameChangeEvent = (playerId: number, value: string) => void;
@@ -80,7 +81,10 @@ export type PlayerSpellRemoveEvent = (playerId: number, spellId: number) => void
 
 export type PlayerMaxLoadChangeEvent = (playerId: number, newLoad: number) => void;
 
-export type PlayerSpellSlotsChangeEvent = (playerId: number, newSpellSlots: number) => void;
+export type PlayerSpellSlotsChangeEvent = (
+	playerId: number,
+	newSpellSlots: number
+) => void;
 
 export type EnvironmentChangeEvent = (newValue: string) => void;
 
@@ -126,6 +130,28 @@ export type DiceResultEvent = (
 	dices: DiceRequest | DiceRequest[]
 ) => void;
 
+export type PlayerTradeRequestEvent = (
+	type: TradeType,
+	tradeId: number,
+	receiverObjectId: number | null,
+	senderName: string,
+	senderObjectName: string
+) => void;
+
+type EquipmentTradeObject = {
+	type: 'equipment';
+	obj: PlayerEquipment & { Equipment: Equipment };
+};
+
+type ItemTradeObject = {
+	type: 'item';
+	obj: PlayerItem & { Item: Item };
+};
+
+type TradeObject = EquipmentTradeObject | ItemTradeObject;
+
+export type PlayerTradeResponseEvent = (accept: boolean, object?: TradeObject) => void;
+
 export interface ServerToClientEvents {
 	//---------- Player-triggered Events ----------
 	playerNameChange: PlayerNameChangeEvent;
@@ -146,6 +172,8 @@ export interface ServerToClientEvents {
 	playerSpellRemove: PlayerSpellRemoveEvent;
 	playerMaxLoadChange: PlayerMaxLoadChangeEvent;
 	playerSpellSlotsChange: PlayerSpellSlotsChangeEvent;
+	playerTradeRequest: PlayerTradeRequestEvent;
+	playerTradeResponse: PlayerTradeResponseEvent;
 
 	//---------- Admin-triggered Events ----------
 	environmentChange: EnvironmentChangeEvent;

@@ -32,6 +32,8 @@ model Player {
   PlayerSpell           PlayerSpell[]
   PlayerCurrency        PlayerCurrency[]
   PlayerAvatar          PlayerAvatar[]
+  SenderTrades          Trade[]                 @relation(name: "Sender")
+  ReceiverTrades        Trade[]                 @relation(name: "Receiver")
 }
 
 model Info {
@@ -281,6 +283,16 @@ model Config {
   id    Int    @id @default(autoincrement())
   name  String @unique
   value String @db.LongText
+}
+
+model Trade {
+  id                 Int    @id @default(autoincrement())
+  Sender             Player @relation(name: "Sender", fields: [sender_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sender_id          Int
+  sender_object_id   Int
+  Receiver           Player @relation(name: "Receiver", fields: [receiver_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  receiver_id        Int
+  receiver_object_id Int?
 }
 
 enum Role {
