@@ -1,4 +1,4 @@
-import { Info, Spec } from '@prisma/client';
+import { Info } from '@prisma/client';
 import { MouseEvent, useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -7,7 +7,6 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { ErrorLogger } from '../../contexts';
 import useExtendedState from '../../hooks/useExtendedState';
 import api from '../../utils/api';
-import BottomTextInput from '../BottomTextInput';
 import DataContainer from '../DataContainer';
 
 type PlayerInfoContainerProps = {
@@ -16,10 +15,6 @@ type PlayerInfoContainerProps = {
 	playerNameShow: boolean;
 	playerInfo: {
 		Info: Info;
-		value: string;
-	}[];
-	playerSpec: {
-		Spec: Spec;
 		value: string;
 	}[];
 	npcId?: number;
@@ -49,20 +44,6 @@ export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 					</Col>
 				</Row>
 			))}
-			<hr />
-			<Row className='justify-content-center'>
-				{props.playerSpec.map((spec) => (
-					<Col key={spec.Spec.id} xs={12} sm={6} lg={4} className='text-center mb-2'>
-						<PlayerSpecField
-							value={spec.value}
-							specId={spec.Spec.id}
-							name={spec.Spec.name}
-							npcId={props.npcId}
-						/>
-						<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
-					</Col>
-				))}
-			</Row>
 		</DataContainer>
 	);
 }
@@ -176,7 +157,9 @@ function PlayerInfoField(props: PlayerInfoFieldProps) {
 	function onValueBlur() {
 		if (value.length > 0) setDefined(true);
 		if (isClean()) return;
-		api.post('/sheet/player/info', { id: props.infoId, value, npcId: props.npcId }).catch(logError);
+		api
+			.post('/sheet/player/info', { id: props.infoId, value, npcId: props.npcId })
+			.catch(logError);
 	}
 
 	if (isDefined) return <label onDoubleClick={() => setDefined(false)}>{value}</label>;
@@ -190,37 +173,6 @@ function PlayerInfoField(props: PlayerInfoFieldProps) {
 			onChange={(ev) => setValue(ev.currentTarget.value)}
 			onBlur={onValueBlur}
 			ref={inputRef}
-		/>
-	);
-}
-
-type PlayerSpecFieldProps = {
-	value: string;
-	name: string;
-	specId: number;
-	npcId?: number;
-};
-
-function PlayerSpecField(props: PlayerSpecFieldProps) {
-	const [value, setValue, isClean] = useExtendedState(props.value);
-
-	const logError = useContext(ErrorLogger);
-	const specID = props.specId;
-
-	function onValueBlur() {
-		if (isClean()) return;
-		api.post('/sheet/player/spec', { id: specID, value, npcId: props.npcId }).catch(logError);
-	}
-
-	return (
-		<BottomTextInput
-			className='w-100 text-center h5'
-			onBlur={onValueBlur}
-			name={`spec${props.name}`}
-			id={`spec${specID}`}
-			autoComplete='off'
-			value={value}
-			onChange={(ev) => setValue(ev.currentTarget.value)}
 		/>
 	);
 }

@@ -8,18 +8,18 @@ import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { ErrorLogger } from '../../contexts';
 import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import useDiceRoll from '../../hooks/useDiceRoll';
-import { clamp } from '../../utils';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
 import DiceRollModal from '../Modals/DiceRollModal';
 import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
+import PlayerAttributeEditorModal from '../Modals/PlayerAttributeEditorModal';
 import PlayerAvatarModal from '../Modals/PlayerAvatarModal';
 
 const MAX_AVATAR_HEIGHT = 450;
-const buttonStyle = { borderRadius: 0 };
 
 type PlayerAttributeContainerProps = {
 	playerAttributes: {
@@ -43,16 +43,28 @@ type PlayerAttributeContainerProps = {
 	npcId?: number;
 };
 
+type AttributeEditor = { id: number; value: number; maxValue: number; show: boolean };
+
+const editorInitialValue: AttributeEditor = {
+	id: 0,
+	value: 0,
+	maxValue: 0,
+	show: false,
+};
+
 export default function PlayerAttributeContainer(props: PlayerAttributeContainerProps) {
 	const [diceRollResultModalProps, onDiceRoll] = useDiceRoll(props.npcId);
-	const [playerAttributeStatus, setPlayerStatus] = useState(props.playerAttributeStatus);
+	const [attrEditor, setAttrEditor] = useState<AttributeEditor>(editorInitialValue);
+	const [playerAttributeStatus, setPlayerAttributeStatus] = useState(
+		props.playerAttributeStatus
+	);
 	const [notify, setNotify] = useState(false);
 
 	function onStatusChanged(id: number, newValue: boolean) {
 		const newPlayerStatus = [...playerAttributeStatus];
 		const index = newPlayerStatus.findIndex((stat) => stat.AttributeStatus.id === id);
 		newPlayerStatus[index].value = newValue;
-		setPlayerStatus(newPlayerStatus);
+		setPlayerAttributeStatus(newPlayerStatus);
 	}
 
 	return (
@@ -77,6 +89,10 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 						attributeDiceConfig={props.attributeDiceConfig}
 						playerAttribute={attr}
 						playerStatus={status}
+						onEdit={(id, value, maxValue) =>
+							setAttrEditor({ id, value, maxValue, show: true })
+						}
+						editor={attrEditor}
 						onStatusChanged={onStatusChanged}
 						showDiceRollResult={onDiceRoll}
 						visibilityEnabled={attr.Attribute.portrait != null}
@@ -84,6 +100,13 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					/>
 				);
 			})}
+			<PlayerAttributeEditorModal
+				value={attrEditor}
+				onHide={() => setAttrEditor(editorInitialValue)}
+				onSubmit={(value, maxValue) =>
+					setAttrEditor((e) => ({ id: e.id, value, maxValue, show: false }))
+				}
+			/>
 			<DiceRollModal {...diceRollResultModalProps} />
 		</>
 	);
@@ -105,10 +128,12 @@ type PlayerAttributeFieldProps = {
 		};
 	}[];
 	onStatusChanged?: (id: number, newValue: boolean) => void;
+	onEdit: (id: number, value: number, maxValue: number) => void;
 	attributeDiceConfig: DiceConfigCell;
 	showDiceRollResult: DiceRollEvent;
 	visibilityEnabled: boolean;
 	npcId?: number;
+	editor: { id: number; value: number; maxValue: number };
 };
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
@@ -137,15 +162,27 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 		if (timeout.current.timeout) clearTimeout(timeout.current.timeout);
 	}, [maxValue]);
 
-	function updateValue(coeff: number, ignoreMax?: boolean) {
-		let newVal: number;
+	useEffect(() => {
+		if (props.editor.id !== attributeID) return;
+		const newValue = props.editor.value;
+		const newMaxValue = props.editor.maxValue;
 
-		if (ignoreMax) {
-			newVal = Math.max(0, value + coeff);
-		} else {
-			if (value < maxValue) newVal = clamp(value + coeff, 0, maxValue);
-			else newVal = value;
-		}
+		setValue(newValue);
+		setMaxValue(newMaxValue);
+
+		api
+			.post('/sheet/player/attribute', {
+				id: attributeID,
+				value: newValue,
+				maxValue: newMaxValue,
+				npcId: props.npcId,
+			})
+			.catch(logError);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.editor]);
+
+	function updateValue(coeff: number, multiply: boolean) {
+		const newVal: number = Math.max(0, value + (multiply ? coeff * 5 : coeff));
 
 		if (value === newVal) return;
 
@@ -168,32 +205,6 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 					.finally(() => (timeout.current.lastValue = newVal)),
 			750
 		);
-	}
-
-	function onNewMaxValue() {
-		let input = prompt('Digite o novo valor do atributo:', maxValue.toString());
-
-		if (input === null) return;
-
-		const newMaxValue = parseInt(input);
-
-		if (isNaN(newMaxValue) || maxValue === newMaxValue) return;
-
-		setMaxValue(newMaxValue);
-		let valueUpdated = false;
-		if (value > newMaxValue) {
-			setValue(newMaxValue);
-			valueUpdated = true;
-		}
-
-		api
-			.post('/sheet/player/attribute', {
-				id: attributeID,
-				maxValue: newMaxValue,
-				value: valueUpdated ? newMaxValue : undefined,
-				npcId: props.npcId,
-			})
-			.catch(logError);
 	}
 
 	function onShowChange(ev: MouseEvent<HTMLButtonElement>) {
@@ -230,7 +241,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 						</label>
 					</Col>
 				</Row>
-				<Row className='align-items-start'>
+				<Row>
 					{props.visibilityEnabled && (
 						<Col xs='auto' className='pt-1 pe-0'>
 							<Button
@@ -242,22 +253,39 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 							</Button>
 						</Col>
 					)}
-					<Col className='progress-container'>
-						<ProgressBar
-							now={value}
-							min={0}
-							max={maxValue}
-							style={{
-								backgroundColor: `#${props.playerAttribute.Attribute.color}40`,
-							}}
-							ref={barRef}
-							id={`attributeBar${attributeID}`}
-							className='clickable'
-							onClick={onNewMaxValue}
-						/>
-						<div className='poggress-label h5'>
-							<label
-								htmlFor={`attributeBar${attributeID}`}>{`${value}/${maxValue}`}</label>
+					<Col>
+						<div className='progress-container'>
+							<ProgressBar
+								now={value}
+								min={0}
+								max={maxValue}
+								style={{
+									backgroundColor: `#${props.playerAttribute.Attribute.color}40`,
+								}}
+								ref={barRef}
+								id={`attributeBar${attributeID}`}
+							/>
+							<div
+								className='pogress-label h5 clickable'
+								onClick={() => props.onEdit(attributeID, value, maxValue)}>
+								<label
+									className='clickable'
+									htmlFor={`attributeBar${attributeID}`}>{`${value}/${maxValue}`}</label>
+							</div>
+							<div
+								className='progress-button-left'
+								onClick={(ev) => updateValue(-1, ev.ctrlKey)}>
+								<button>
+									<BiLeftArrow size={25} />
+								</button>
+							</div>
+							<div
+								className='progress-button-right'
+								onClick={(ev) => updateValue(1, ev.ctrlKey)}>
+								<button>
+									<BiRightArrow size={25} />
+								</button>
+							</div>
 						</div>
 					</Col>
 					{props.playerAttribute.Attribute.rollable && (
@@ -270,56 +298,6 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 							/>
 						</Col>
 					)}
-				</Row>
-				<Row className='justify-content-between mt-1 px-2'>
-					<Col xs={6} lg={5} xl={4}>
-						<Row>
-							<Col xs={6} className='pe-0'>
-								<Button
-									variant='secondary'
-									size='sm'
-									style={buttonStyle}
-									className='w-100 rounded-start'
-									onClick={(ev) => updateValue(-5, true)}>
-									-5
-								</Button>
-							</Col>
-							<Col xs={6} className='ps-0'>
-								<Button
-									variant='secondary'
-									size='sm'
-									style={buttonStyle}
-									className='w-100 rounded-end'
-									onClick={(ev) => updateValue(-1, true)}>
-									-1
-								</Button>
-							</Col>
-						</Row>
-					</Col>
-					<Col xs={6} lg={5} xl={4}>
-						<Row>
-							<Col xs={6} className='pe-0'>
-								<Button
-									variant='secondary'
-									size='sm'
-									style={buttonStyle}
-									className='w-100 rounded-start'
-									onClick={(ev) => updateValue(1, true)}>
-									+1
-								</Button>
-							</Col>
-							<Col xs={6} className='ps-0'>
-								<Button
-									variant='secondary'
-									size='sm'
-									style={buttonStyle}
-									className='w-100 rounded-end'
-									onClick={(ev) => updateValue(5)}>
-									+5
-								</Button>
-							</Col>
-						</Row>
-					</Col>
 				</Row>
 				<Row className='mt-2'>
 					<Col>

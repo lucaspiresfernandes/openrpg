@@ -14,6 +14,7 @@ import PlayerEquipmentContainer from '../../../../components/Player/PlayerEquipm
 import PlayerInfoContainer from '../../../../components/Player/PlayerInfoContainer';
 import PlayerItemContainer from '../../../../components/Player/PlayerItemContainer';
 import PlayerSkillContainer from '../../../../components/Player/PlayerSkillContainer';
+import PlayerSpecField from '../../../../components/Player/PlayerSpecField';
 import PlayerSpellContainer from '../../../../components/Player/PlayerSpellContainer';
 import { ErrorLogger, Socket } from '../../../../contexts';
 import useSocket from '../../../../hooks/useSocket';
@@ -86,7 +87,6 @@ function PlayerSheet(props: PageProps) {
 								playerName={props.player.name}
 								playerNameShow={props.player.showName}
 								playerInfo={props.player.PlayerInfo}
-								playerSpec={props.player.PlayerSpec}
 								npcId={props.player.id}
 							/>
 							<Col>
@@ -97,6 +97,25 @@ function PlayerSheet(props: PageProps) {
 									playerAvatars={props.player.PlayerAvatar}
 									npcId={props.player.id}
 								/>
+								<hr />
+								<Row className='justify-content-center'>
+									{props.player.PlayerSpec.map((spec) => (
+										<Col
+											key={spec.Spec.id}
+											xs={12}
+											sm={6}
+											lg={4}
+											className='text-center mb-2'>
+											<PlayerSpecField
+												value={spec.value}
+												specId={spec.Spec.id}
+												name={spec.Spec.name}
+												npcId={props.player.id}
+											/>
+											<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
+										</Col>
+									))}
+								</Row>
 							</Col>
 						</Row>
 						<Row className='mb-3'>
