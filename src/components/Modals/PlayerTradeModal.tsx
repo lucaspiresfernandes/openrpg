@@ -72,8 +72,6 @@ export default function PlayerTradeModal<T extends { id: number; name: string }>
 				break;
 		}
 
-		console.log(props.type, link, objNames);
-
 		setLoading(true);
 
 		api
