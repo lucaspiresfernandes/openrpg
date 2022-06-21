@@ -31,10 +31,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const existingTrade = await database.trade.findFirst({
 		where: {
-			OR: [
-				{ sender_id: { in: [senderId, receiverId] } },
-				{ receiver_id: { in: [senderId, receiverId] } },
-			],
+			OR: [{ sender_id: receiverId }, { receiver_id: receiverId }],
 		},
 	});
 
@@ -167,7 +164,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.status(400).send({ message: 'Essa troca não existe.' });
 		return;
 	}
-
+	
 	if (trade.receiver_id !== player.id) {
 		res.status(401).end();
 		return;

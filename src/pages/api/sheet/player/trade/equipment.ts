@@ -31,7 +31,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 	const existingTrade = await database.trade.findFirst({
 		where: {
-			OR: [{ sender_id: senderId }, { receiver_id: receiverId }],
+			OR: [{ sender_id: receiverId }, { receiver_id: receiverId }],
 		},
 	});
 
