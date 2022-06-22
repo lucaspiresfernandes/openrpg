@@ -109,11 +109,7 @@ type SkillEditorContainerProps = {
 	specializations: Specialization[];
 };
 
-// const skillEditorReducer: Reducer
-
 function SkillEditorContainer(props: SkillEditorContainerProps) {
-	// const [state, dispatch] = useReducer(, props.skills);
-
 	const [loading, setLoading] = useState(false);
 	const [skillModal, setSkillModal] = useState<EditorModalData<Skill>>({
 		show: false,

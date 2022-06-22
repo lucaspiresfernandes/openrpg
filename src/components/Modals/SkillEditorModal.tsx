@@ -57,7 +57,7 @@ export default function SkillEditorModal(props: ModalProps) {
 					props.onSubmit(skill);
 					hide();
 				},
-				disabled: props.specializations.length === 0 || props.disabled,
+				disabled: props.disabled,
 			}}>
 			<Container fluid>
 				<FormGroup controlId='createSkillName' className='mb-3'>
