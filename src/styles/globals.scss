@@ -114,8 +114,9 @@ $secondary: #6c757d;
 		.list-group-item {
 			padding: 0.5rem 1rem;
 		}
+
 		input.bottom-text {
-			background-color: $player-container-background-color;
+			background-color: inherit;
 		}
 	}
 }

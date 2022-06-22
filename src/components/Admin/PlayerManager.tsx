@@ -380,7 +380,7 @@ export default function PlayerManager(props: PlayerManagerProps) {
 							<Row className='mt-2'>
 								<Col>
 									<Row>
-										<Col className='h5'>{player.name}</Col>
+										<Col className='h5'>{player.name || 'Desconhecido'}</Col>
 									</Row>
 									<Row>
 										<Col>Nome</Col>

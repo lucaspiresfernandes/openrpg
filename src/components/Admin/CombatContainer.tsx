@@ -51,11 +51,11 @@ type SortableElementProps = {
 const SortableItem = SortableElement((props: SortableElementProps) => {
 	return (
 		<ListGroup.Item className={props.selected ? 'selected' : ''}>
-			<div className='d-inline-block w-75'>{props.entity.name}</div>
+			<div className='d-inline-block'>{props.entity.name || 'Desconhecido'}</div>
+			<BottomTextInput className='mx-2 text-center' defaultValue='0' style={style} />
 			<Button
 				size='sm'
 				variant='secondary'
-				className='ms-1'
 				onClick={() => props.removeEntity(props.entity.id)}>
 				-
 			</Button>
@@ -164,7 +164,7 @@ export default function CombatContainer(props: {
 					<Dropdown.Item
 						key={pl.id}
 						onClick={() => setEntities([...entities, { ...pl }])}>
-						{pl.name}
+						{pl.name || 'Desconhecido'}
 					</Dropdown.Item>
 				);
 			})}
