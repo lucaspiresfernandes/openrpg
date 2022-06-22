@@ -554,13 +554,15 @@ function PlayerEquipmentField(props: PlayerEquipmentFieldProps) {
 			<td>{props.equipment.type}</td>
 			<td>{props.equipment.damage}</td>
 			<td>
-				<Image
-					alt='Dado'
-					src='/dice20.webp'
-					className='clickable'
-					onClick={diceRoll}
-					style={{ maxHeight: '2rem' }}
-				/>
+				{props.equipment.damage !== '-' && (
+					<Image
+						alt='Dado'
+						src='/dice20.webp'
+						className='clickable'
+						onClick={diceRoll}
+						style={{ maxHeight: '2rem' }}
+					/>
+				)}
 			</td>
 			<td>{props.equipment.range}</td>
 			<td>{props.equipment.attacks}</td>

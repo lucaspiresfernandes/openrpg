@@ -40,13 +40,12 @@ export function resolveDices(dices: string) {
 	}
 
 	const diceArray = formattedDiceString.split('+');
-	const resolvedDices: DiceRequest[] = [];
+	const resolvedDices: DiceRequest[] = new Array(diceArray.length);
 
 	for (let i = 0; i < diceArray.length; i++) {
-		const dice = resolveDice(diceArray[i]);
-		if (dice.roll > 0) resolvedDices.push(dice);
+		resolvedDices[i] = resolveDice(diceArray[i]);
 	}
-
+	
 	return resolvedDices;
 }
 

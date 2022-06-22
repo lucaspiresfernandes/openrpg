@@ -276,7 +276,7 @@ function DiceRollResultModal(props: DiceRollResultModalProps) {
 				<Row>
 					{result && (
 						<Fade in appear>
-							<Col className={result.roll ? 'h1 m-0' : ''}>{result.roll}</Col>
+							<Col className='h1 m-0'>{result.roll}</Col>
 						</Fade>
 					)}
 				</Row>
