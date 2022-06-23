@@ -4,6 +4,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FormLabel from 'react-bootstrap/FormLabel';
+import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { BsTrash } from 'react-icons/bs';
@@ -572,29 +573,44 @@ function PlayerItemField(props: PlayerItemFieldProps) {
 					{loading ? <CustomSpinner /> : <BsTrash color='white' size='1.5rem' />}
 				</Button>
 			</td>
-			<td>
-				<Button
-					aria-label='Transferir'
-					onClick={() => props.onTrade(true)}
-					size='sm'
-					variant='secondary'
-					disabled={loading}>
-					{loading ? <CustomSpinner /> : <FaHandHolding color='white' size='1.5rem' />}
-				</Button>
-			</td>
-			<td>
-				<Button
-					aria-label='Trocar'
-					onClick={() => props.onTrade(false)}
-					size='sm'
-					variant='secondary'
-					disabled={loading}>
-					{loading ? <CustomSpinner /> : <FaHandsHelping color='white' size='1.5rem' />}
-				</Button>
-			</td>
+			{!props.disableTrades && (
+				<>
+					<td>
+						<Button
+							aria-label='Transferir'
+							onClick={() => props.onTrade(true)}
+							size='sm'
+							variant='secondary'
+							disabled={loading}>
+							{loading ? (
+								<CustomSpinner />
+							) : (
+								<FaHandHolding color='white' size='1.5rem' />
+							)}
+						</Button>
+					</td>
+					<td>
+						<Button
+							aria-label='Trocar'
+							onClick={() => props.onTrade(false)}
+							size='sm'
+							variant='secondary'
+							disabled={loading}>
+							{loading ? (
+								<CustomSpinner />
+							) : (
+								<FaHandsHelping color='white' size='1.5rem' />
+							)}
+						</Button>
+					</td>
+				</>
+			)}
 			<td>{props.item.name}</td>
 			<td>
-				<BottomTextInput
+				<FormControl
+					as='textarea'
+					rows={2}
+					className='theme-element'
 					disabled={loading}
 					value={currentDescription}
 					style={{ minWidth: '20rem' }}
