@@ -88,32 +88,27 @@ function PlayerSheet(props: PageProps) {
 								playerNameShow={props.player.showName}
 								playerInfo={props.player.PlayerInfo}
 							/>
-							<Col>
+							<Col xs={12} sm={6}>
 								<PlayerAttributeContainer
 									playerAttributes={props.player.PlayerAttributes}
 									attributeDiceConfig={props.diceConfig.attribute}
 									playerAttributeStatus={props.player.PlayerAttributeStatus}
 									playerAvatars={props.player.PlayerAvatar}
 								/>
-								<hr />
-								<Row className='justify-content-center'>
-									{props.player.PlayerSpec.map((spec) => (
-										<Col
-											key={spec.Spec.id}
-											xs={12}
-											sm={6}
-											lg={4}
-											className='text-center mb-2'>
-											<PlayerSpecField
-												value={spec.value}
-												specId={spec.Spec.id}
-												name={spec.Spec.name}
-											/>
-											<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
-										</Col>
-									))}
-								</Row>
 							</Col>
+						</Row>
+						<hr />
+						<Row className='justify-content-center'>
+							{props.player.PlayerSpec.map((spec) => (
+								<Col key={spec.Spec.id} xs={6} md={4} lg={3} className='text-center mb-2'>
+									<PlayerSpecField
+										value={spec.value}
+										specId={spec.Spec.id}
+										name={spec.Spec.name}
+									/>
+									<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
+								</Col>
+							))}
 						</Row>
 						<Row className='mb-3'>
 							<DataContainer outline title='Características'>

@@ -89,7 +89,7 @@ function PlayerSheet(props: PageProps) {
 								playerInfo={props.player.PlayerInfo}
 								npcId={props.player.id}
 							/>
-							<Col>
+							<Col xs={12} sm={6}>
 								<PlayerAttributeContainer
 									playerAttributes={props.player.PlayerAttributes}
 									attributeDiceConfig={props.diceConfig.attribute}
@@ -97,26 +97,21 @@ function PlayerSheet(props: PageProps) {
 									playerAvatars={props.player.PlayerAvatar}
 									npcId={props.player.id}
 								/>
-								<hr />
-								<Row className='justify-content-center'>
-									{props.player.PlayerSpec.map((spec) => (
-										<Col
-											key={spec.Spec.id}
-											xs={12}
-											sm={6}
-											lg={4}
-											className='text-center mb-2'>
-											<PlayerSpecField
-												value={spec.value}
-												specId={spec.Spec.id}
-												name={spec.Spec.name}
-												npcId={props.player.id}
-											/>
-											<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
-										</Col>
-									))}
-								</Row>
 							</Col>
+						</Row>
+						<hr />
+						<Row className='justify-content-center'>
+							{props.player.PlayerSpec.map((spec) => (
+								<Col key={spec.Spec.id} xs={6} md={4} lg={3} className='text-center mb-2'>
+									<PlayerSpecField
+										value={spec.value}
+										specId={spec.Spec.id}
+										name={spec.Spec.name}
+										npcId={props.player.id}
+									/>
+									<label htmlFor={`spec${spec.Spec.id}`}>{spec.Spec.name}</label>
+								</Col>
+							))}
 						</Row>
 						<Row className='mb-3'>
 							<DataContainer outline title='Características'>

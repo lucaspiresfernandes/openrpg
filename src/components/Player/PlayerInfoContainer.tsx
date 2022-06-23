@@ -22,7 +22,7 @@ type PlayerInfoContainerProps = {
 
 export default function PlayerInfoContainer(props: PlayerInfoContainerProps) {
 	return (
-		<DataContainer outline title={props.title}>
+		<DataContainer xs={12} sm={6} outline title={props.title}>
 			<PlayerNameField
 				value={props.playerName}
 				show={props.playerNameShow}
