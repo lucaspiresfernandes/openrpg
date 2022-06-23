@@ -12,6 +12,7 @@ import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { ErrorLogger } from '../../contexts';
 import type { DiceRollEvent } from '../../hooks/useDiceRoll';
 import useDiceRoll from '../../hooks/useDiceRoll';
+import { clamp } from '../../utils';
 import api from '../../utils/api';
 import type { DiceConfigCell } from '../../utils/config';
 import DiceRollModal from '../Modals/DiceRollModal';
@@ -182,7 +183,13 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	}, [props.editor]);
 
 	function updateValue(coeff: number, multiply: boolean) {
-		const newVal: number = Math.max(0, value + (multiply ? coeff * 5 : coeff));
+		let newVal: number = value;
+		if (multiply) {
+			coeff *= 5;
+			if (value <= maxValue) newVal = clamp(value + coeff, 0, maxValue);
+		} else {
+			newVal = Math.max(0, value + coeff);
+		}
 
 		if (value === newVal) return;
 
