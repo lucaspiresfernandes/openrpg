@@ -164,7 +164,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.status(400).send({ message: 'Essa troca não existe.' });
 		return;
 	}
-	
+
 	if (trade.receiver_id !== player.id) {
 		res.status(401).end();
 		return;
@@ -204,7 +204,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 			}),
 		]);
 
-		res.send({ item: results[0] });
+		const newSenderItem = results[0];
+		const newReceiverItem = results[1];
+
+		res.send({ item: newSenderItem });
 
 		res.socket.server.io
 			?.to(`player${trade.sender_id}`)
@@ -212,6 +215,31 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 				type: 'item',
 				obj: results[1],
 			});
+
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerItemRemove', trade.sender_id, trade.sender_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerItemRemove', trade.receiver_id, trade.receiver_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit(
+				'playerItemAdd',
+				trade.sender_id,
+				newSenderItem.Item,
+				newSenderItem.currentDescription,
+				newSenderItem.quantity
+			);
+		res.socket.server.io
+			?.to('admin')
+			.emit(
+				'playerItemAdd',
+				trade.receiver_id,
+				newReceiverItem.Item,
+				newReceiverItem.currentDescription,
+				newReceiverItem.quantity
+			);
 	} else {
 		const item = await database.playerItem.update({
 			where: {
@@ -229,6 +257,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.socket.server.io
 			?.to(`player${trade.sender_id}`)
 			.emit('playerTradeResponse', accept);
+
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerItemRemove', trade.sender_id, trade.sender_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit(
+				'playerItemAdd',
+				trade.receiver_id,
+				item.Item,
+				item.currentDescription,
+				item.quantity
+			);
 	}
 
 	res.end();

@@ -76,7 +76,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponseServerIO) {
 
 		if (receiverEquip === null) {
 			res.status(400).send({
-				message: 'Essa troca não pode ser criada porque o ofertado não possui esse equipamento.',
+				message:
+					'Essa troca não pode ser criada porque o ofertado não possui esse equipamento.',
 			});
 			return;
 		}
@@ -205,7 +206,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 			}),
 		]);
 
-		res.send({ equipment: results[0] });
+		const newSenderEquipment = results[0];
+		const newReceiverEquipment = results[1];
+
+		res.send({ equipment: newSenderEquipment });
 
 		res.socket.server.io
 			?.to(`player${trade.sender_id}`)
@@ -213,6 +217,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 				type: 'equipment',
 				obj: results[1],
 			});
+
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentRemove', trade.sender_id, trade.sender_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentRemove', trade.receiver_id, trade.receiver_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentAdd', trade.sender_id, newSenderEquipment.Equipment);
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentAdd', trade.receiver_id, newReceiverEquipment.Equipment);
 	} else {
 		const equipment = await database.playerEquipment.update({
 			where: {
@@ -230,6 +247,13 @@ async function handlePost(req: NextApiRequest, res: NextApiResponseServerIO) {
 		res.socket.server.io
 			?.to(`player${trade.sender_id}`)
 			.emit('playerTradeResponse', accept);
+
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentRemove', trade.sender_id, trade.sender_object_id);
+		res.socket.server.io
+			?.to('admin')
+			.emit('playerEquipmentAdd', trade.receiver_id, equipment.Equipment);
 	}
 
 	res.end();
