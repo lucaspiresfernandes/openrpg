@@ -53,7 +53,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
 	const [spec, players] = await database.$transaction([
 		database.spec.create({ data: { name, visibleToAdmin }, select: { id: true } }),
-		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
+		database.player.findMany({
+			where: { role: { in: ['PLAYER', 'NPC'] } },
+			select: { id: true },
+		}),
 	]);
 
 	if (players.length > 0) {

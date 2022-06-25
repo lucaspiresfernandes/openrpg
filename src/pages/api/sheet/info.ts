@@ -22,7 +22,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
 	if (!id || !name || visibleToAdmin === undefined) {
-		res.status(401).send({ message: 'ID, nome ou visível(mestre) da informação estão em branco.' });
+		res
+			.status(401)
+			.send({ message: 'ID, nome ou visível(mestre) da informação estão em branco.' });
 		return;
 	}
 
@@ -43,13 +45,18 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 	const visibleToAdmin: boolean | undefined = req.body.visibleToAdmin;
 
 	if (!name || visibleToAdmin === undefined) {
-		res.status(401).send({ message: 'Nome ou visível(mestre) da informação está em branco.' });
+		res
+			.status(401)
+			.send({ message: 'Nome ou visível(mestre) da informação está em branco.' });
 		return;
 	}
 
 	const [info, players] = await database.$transaction([
 		database.info.create({ data: { name, visibleToAdmin }, select: { id: true } }),
-		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
+		database.player.findMany({
+			where: { role: { in: ['PLAYER', 'NPC'] } },
+			select: { id: true },
+		}),
 	]);
 
 	if (players.length > 0) {

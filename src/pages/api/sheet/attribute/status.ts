@@ -56,7 +56,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
 	const [attributeStatus, players] = await database.$transaction([
 		database.attributeStatus.create({ data: { name, attribute_id } }),
-		database.player.findMany({ where: { role: 'PLAYER' }, select: { id: true } }),
+		database.player.findMany({
+			where: { role: { in: ['PLAYER', 'NPC'] } },
+			select: { id: true },
+		}),
 	]);
 
 	if (players.length > 0) {
