@@ -70,7 +70,7 @@ type Storage = {
 };
 
 export default function CombatContainer(props: {
-	players: { id: number; name: string }[];
+	players: { id: number; name: string; npc: boolean }[];
 }) {
 	const [round, setRound] = useState(1);
 	const [entities, setEntities] = useState<Entity[]>([]);
@@ -99,6 +99,28 @@ export default function CombatContainer(props: {
 		}
 		componentDidMount.current = true;
 	}, [round, entities, pointer]);
+
+	useEffect(() => {
+		let change = false;
+
+		const newEntities = [...entities];
+		for (let entityIndex = 0; entityIndex < entities.length; entityIndex++) {
+			const entity = entities[entityIndex];
+			const npcIndex = props.players.findIndex((p) => p.id === entity.id);
+			if (npcIndex > -1) {
+				const npc = props.players[npcIndex];
+				if (npc.name === entity.name) continue;
+				entity.name = npc.name;
+				change = true;
+			} else {
+				newEntities.splice(entityIndex, 1);
+				change = true;
+			}
+		}
+
+		if (change) setEntities(newEntities);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.players]);
 
 	function roundUpdate(ev: FormEvent<HTMLInputElement>) {
 		const aux = ev.currentTarget.value;
@@ -136,12 +158,6 @@ export default function CombatContainer(props: {
 		setPointer(currentIndex);
 	}
 
-	function addNPCEntity() {
-		const name = prompt('Digite o nome do combatente:');
-		if (!name) return;
-		setEntities([...entities, { id: Date.now(), name }]);
-	}
-
 	function removeEntity(id: number) {
 		const index = entities.findIndex((e) => e.id === id);
 		if (index < pointer) setPointer(pointer - 1);
@@ -156,29 +172,24 @@ export default function CombatContainer(props: {
 		setRound(1);
 	}
 
-	const dropdown = (
-		<>
-			{props.players.map((pl) => {
-				if (entities.find((e) => e.name === pl.name)) return null;
-				return (
-					<Dropdown.Item
-						key={pl.id}
-						onClick={() => setEntities([...entities, { ...pl }])}>
-						{pl.name || 'Desconhecido'}
-					</Dropdown.Item>
-				);
-			})}
-			<Dropdown.Divider />
-			<Dropdown.Item onClick={addNPCEntity}>Novo...</Dropdown.Item>
-		</>
-	);
-
 	return (
 		<DataContainer
 			xs={12}
 			lg
 			title='Combate'
-			addButton={{ type: 'dropdown', children: dropdown }}>
+			addButton={{
+				type: 'dropdown',
+				children: props.players.map((pl) => {
+					if (entities.find((e) => e.id === pl.id)) return null;
+					return (
+						<Dropdown.Item
+							key={pl.id}
+							onClick={() => setEntities([...entities, { ...pl }])}>
+							{pl.name || 'Desconhecido'}
+						</Dropdown.Item>
+					);
+				}),
+			}}>
 			<Row className='my-2'>
 				<Col>
 					<FormGroup controlId='combatRound'>

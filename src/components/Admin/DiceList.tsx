@@ -75,7 +75,7 @@ export default function DiceList(props: { players: { id: number; name: string }[
 	}, [values]);
 
 	return (
-		<DataContainer xs={12} lg title='Histórico' className='mb-5 mb-lg-0' addButton={{
+		<DataContainer xs={12} lg title='Histórico' addButton={{
 			name: 'Limpar',
 			onAdd: () => {
 				setValues([]);

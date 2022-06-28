@@ -6,16 +6,19 @@ import AdminDiceRollContainer from './AdminDiceRollContainer';
 import CombatContainer from './CombatContainer';
 import DiceList from './DiceList';
 import NPCContainer from './NPCContainer';
-import type { NPC } from './NPCContainer';
+
+type NPC = { name: string; id: number; npc: boolean };
 
 type AdminUtilityContainerProps = {
-	players: { id: number; name: string }[];
+	players: { id: number; name: string; npc: boolean }[];
 	npcs: { id: number; name: string }[];
 };
 
 export default function AdminUtilityContainer(props: AdminUtilityContainerProps) {
 	const [basicNpcs, setBasicNpcs] = useState<NPC[]>([]);
-	const [complexNpcs, setComplexNpcs] = useState(props.npcs);
+	const [complexNpcs, setComplexNpcs] = useState(
+		props.npcs.map((n) => ({ ...n, npc: true }))
+	);
 	const componentDidMount = useRef(false);
 	const socket = useContext(Socket);
 	const logError = useContext(ErrorLogger);
@@ -45,7 +48,10 @@ export default function AdminUtilityContainer(props: AdminUtilityContainerProps)
 	}, [basicNpcs]);
 
 	function addBasicNPC() {
-		setBasicNpcs([...basicNpcs, { id: Date.now(), name: `NPC ${basicNpcs.length}` }]);
+		setBasicNpcs([
+			...basicNpcs,
+			{ id: Date.now(), name: `NPC ${basicNpcs.length}`, npc: true },
+		]);
 	}
 
 	function removeBasicNPC(id: number) {
@@ -64,7 +70,7 @@ export default function AdminUtilityContainer(props: AdminUtilityContainerProps)
 			.put('/sheet/npc', { name })
 			.then((res) => {
 				const id = res.data.id;
-				setComplexNpcs([...complexNpcs, { id, name }]);
+				setComplexNpcs([...complexNpcs, { id, name, npc: true }]);
 			})
 			.catch(logError);
 	}
@@ -88,10 +94,9 @@ export default function AdminUtilityContainer(props: AdminUtilityContainerProps)
 		<>
 			<Row className='my-5 text-center'>
 				<AdminDiceRollContainer />
-				<CombatContainer players={[...props.players, ...basicNpcs, ...complexNpcs]} />
-			</Row>
-			<Row className='mb-5'>
 				<DiceList players={props.players} />
+			</Row>
+			<Row className='mb-5 text-center'>
 				<NPCContainer
 					basicNpcs={basicNpcs}
 					complexNpcs={complexNpcs}
@@ -106,6 +111,7 @@ export default function AdminUtilityContainer(props: AdminUtilityContainerProps)
 					onAddComplexNpc={addComplexNPC}
 					onRemoveComplexNpc={removeComplexNPC}
 				/>
+				<CombatContainer players={[...props.players, ...basicNpcs, ...complexNpcs]} />
 			</Row>
 		</>
 	);

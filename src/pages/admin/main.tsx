@@ -50,13 +50,6 @@ function AdminPanel({
 			</Container>
 		);
 
-	const playerNames = players.map((player) => {
-		return {
-			id: player.id,
-			name: player.name,
-		};
-	});
-
 	return (
 		<>
 			<ErrorLogger.Provider value={addToast}>
@@ -75,7 +68,14 @@ function AdminPanel({
 								skillModifierEnabled={diceConfig.skill.enable_modifiers}
 							/>
 						</Row>
-						<AdminUtilityContainer npcs={npcs} players={playerNames} />
+						<AdminUtilityContainer
+							npcs={npcs}
+							players={players.map((player) => ({
+								id: player.id,
+								name: player.name,
+								npc: false,
+							}))}
+						/>
 						<Row className='mb-3'>
 							<DataContainer outline title='Anotações' htmlFor='playerAnnotations'>
 								<PlayerAnnotationsField value={adminAnnotations.value} />

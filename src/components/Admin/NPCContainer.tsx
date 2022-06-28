@@ -10,8 +10,6 @@ import PlayerPortraitButton from './PlayerPortraitButton';
 
 const style = { maxWidth: '5rem' };
 
-export type NPC = { name: string; id: number };
-
 type NPCContainerProps = {
 	basicNpcs: { id: number; name: string }[];
 	complexNpcs: { id: number; name: string }[];
@@ -23,19 +21,21 @@ type NPCContainerProps = {
 };
 
 export default function NPCContainer(props: NPCContainerProps) {
-	const dropdown = (
-		<>
-			<DropdownItem onClick={props.onAddBasicNpc}>Básico</DropdownItem>
-			<DropdownItem onClick={props.onAddComplexNpc}>Complexo</DropdownItem>
-		</>
-	);
-
 	return (
 		<DataContainer
 			xs={12}
 			lg
 			title='NPCs'
-			addButton={{ type: 'dropdown', children: dropdown }}>
+			className='mb-3 mb-lg-0'
+			addButton={{
+				type: 'dropdown',
+				children: (
+					<>
+						<DropdownItem onClick={props.onAddBasicNpc}>Básico</DropdownItem>
+						<DropdownItem onClick={props.onAddComplexNpc}>Complexo</DropdownItem>
+					</>
+				),
+			}}>
 			<Row>
 				<Col>
 					<div className='w-100 wrapper'>
