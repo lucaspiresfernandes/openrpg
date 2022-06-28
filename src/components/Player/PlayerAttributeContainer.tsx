@@ -78,7 +78,9 @@ export default function PlayerAttributeContainer(props: PlayerAttributeContainer
 					onAvatarUpdate={() => setNotify((n) => !n)}
 					npcId={props.npcId}
 				/>
-				<PlayerAvatarDice npcId={props.npcId} />
+				<Col xs={4} md={3} xl={2} className='align-self-center'>
+					<GeneralDiceRollModal npcId={props.npcId} />
+				</Col>
 			</Row>
 			{props.playerAttributes.map((attr) => {
 				const status = playerAttributeStatus.filter(
@@ -429,29 +431,6 @@ function PlayerAvatarImage(props: PlayerAvatarImageProps) {
 				show={avatarModalShow}
 				onHide={() => setAvatarModalShow(false)}
 				onUpdate={props.onAvatarUpdate}
-				npcId={props.npcId}
-			/>
-		</>
-	);
-}
-
-function PlayerAvatarDice(props: { npcId?: number }) {
-	const [generalDiceRollShow, setGeneralDiceRollShow] = useState(false);
-
-	return (
-		<>
-			<Col xs={4} md={3} xl={2} className='align-self-center'>
-				<Image
-					fluid
-					src='/dice20.webp'
-					alt='Dado Geral'
-					className='clickable'
-					onClick={() => setGeneralDiceRollShow(true)}
-				/>
-			</Col>
-			<GeneralDiceRollModal
-				show={generalDiceRollShow}
-				onHide={() => setGeneralDiceRollShow(false)}
 				npcId={props.npcId}
 			/>
 		</>

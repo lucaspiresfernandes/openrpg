@@ -124,7 +124,10 @@ export default function DiceRollModal(props: DiceRollModalProps) {
 			<DiceRollResultModal
 				{...diceRoll}
 				npcId={props.npcId}
-				onHide={() => setDiceRoll({ dices: null })}
+				onHide={() => {
+					setDiceRoll({ dices: null });
+					props.onHide();
+				}}
 				onResult={props.onResult}
 				onRollAgain={() => setDiceRoll(lastRoll.current)}
 			/>

@@ -16,12 +16,14 @@ type DiceOption = {
 };
 
 type GeneralDiceRollModalProps = {
-	show: boolean;
-	onHide: () => void;
 	npcId?: number;
 };
 
+const DEFAULT_ROLL = [{ num: 1, roll: 20 }];
+
 export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
+	const [show, setShow] = useState(false);
+
 	const [diceRoll, rollDice] = useDiceRoll(props.npcId);
 	const applyRef = useRef(false);
 	const [dices, setDices] = useState<DiceOption[]>([
@@ -79,18 +81,28 @@ export default function GeneralDiceRollModal(props: GeneralDiceRollModalProps) {
 
 	return (
 		<>
+			<Image
+				fluid
+				src='/dice20.webp'
+				alt='Dado Geral'
+				className='clickable'
+				onClick={(ev) => {
+					if (ev.ctrlKey) return rollDice({ dices: DEFAULT_ROLL });
+					setShow(true);
+				}}
+			/>
 			<SheetModal
-				show={props.show}
+				show={show}
 				onExited={reset}
 				title='Rolagem Geral de Dados'
 				applyButton={{
 					name: 'Rolar',
 					onApply: () => {
 						applyRef.current = true;
-						props.onHide();
+						setShow(false);
 					},
 				}}
-				onHide={props.onHide}
+				onHide={() => setShow(false)}
 				centered>
 				<Container fluid>
 					<Row className='text-center'>

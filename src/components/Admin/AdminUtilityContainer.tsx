@@ -1,8 +1,10 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { ErrorLogger, Socket } from '../../contexts';
 import api from '../../utils/api';
-import AdminDiceRollContainer from './AdminDiceRollContainer';
+import DataContainer from '../DataContainer';
+import GeneralDiceRollModal from '../Modals/GeneralDiceRollModal';
 import CombatContainer from './CombatContainer';
 import DiceList from './DiceList';
 import NPCContainer from './NPCContainer';
@@ -93,7 +95,18 @@ export default function AdminUtilityContainer(props: AdminUtilityContainerProps)
 	return (
 		<>
 			<Row className='my-5 text-center'>
-				<AdminDiceRollContainer />
+				<DataContainer xs={12} lg className='mb-5 mb-lg-0' title='Rolagem'>
+					<Row className='mb-3 justify-content-center'>
+						<Col xs={3}>
+							<Row>
+								<Col className='h5'>Geral</Col>
+							</Row>
+							<Row>
+								<GeneralDiceRollModal />
+							</Row>
+						</Col>
+					</Row>
+				</DataContainer>
 				<DiceList players={props.players} />
 			</Row>
 			<Row className='mb-5 text-center'>
