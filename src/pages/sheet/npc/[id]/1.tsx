@@ -113,6 +113,7 @@ function PlayerSheet(props: PageProps) {
 								</Col>
 							))}
 						</Row>
+						<hr />
 						<Row className='mb-3'>
 							<DataContainer outline title='Características'>
 								<PlayerCharacteristicContainer
