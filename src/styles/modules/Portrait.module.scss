@@ -3,6 +3,12 @@ $avatar-height: 600px;
 
 $dice-container-left: 30px;
 
+.editor {
+	position: absolute;
+	top: 610px;
+	left: 10px;
+}
+
 .avatar {
 	position: absolute;
 	width: $avatar-width;
@@ -43,6 +49,7 @@ $dice-container-left: 30px;
 	font-size: 96px;
 	font-style: italic;
 	text-transform: uppercase;
+	line-height: 100%;
 
 	transform: translateY(-50%);
 }
