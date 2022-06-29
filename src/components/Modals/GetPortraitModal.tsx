@@ -1,13 +1,16 @@
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import FormControl from 'react-bootstrap/FormControl';
-import FormCheck from 'react-bootstrap/FormCheck';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { useEffect, useRef, useState } from 'react';
-import { RiFileCopyLine } from 'react-icons/ri';
 import copyToClipboard from 'copy-to-clipboard';
+import { useEffect, useRef, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import FormCheck from 'react-bootstrap/FormCheck';
+import FormControl from 'react-bootstrap/FormControl';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormLabel from 'react-bootstrap/FormLabel';
+import FormSelect from 'react-bootstrap/FormSelect';
+import Modal from 'react-bootstrap/Modal';
+import Row from 'react-bootstrap/Row';
+import { RiFileCopyLine } from 'react-icons/ri';
 
 type GetPortraitModalProps = {
 	show: boolean;
@@ -15,14 +18,22 @@ type GetPortraitModalProps = {
 	playerId: number;
 };
 
+const SETTINGS_ORIENTATIONS = ['Esquerda', 'Direita'];
+
+export type PortraitEnvironmentOrientation = 'Esquerda' | 'Direita';
+
 export default function GetPortraitModal(props: GetPortraitModalProps) {
 	const [diceColor, setDiceColor] = useState('#ddaf0f');
+	const [nameOrientation, setNameOrientation] =
+		useState<PortraitEnvironmentOrientation>('Direita');
 	const [showDiceRoll, setShowDiceRoll] = useState(true);
 	const hostName = useRef('');
 
-	const fieldValue = `${hostName.current}/portrait/${
-		props.playerId
-	}?dicecolor=${diceColor.substring(1)}&showdiceroll=${showDiceRoll}`;
+	const fieldValue =
+		`${hostName.current}/portrait/${props.playerId}` +
+		`?dicecolor=${diceColor.substring(1)}` +
+		`&showdiceroll=${showDiceRoll}` +
+		`&orientation=${nameOrientation}`;
 
 	useEffect(() => {
 		hostName.current = window.location.host;
@@ -57,6 +68,25 @@ export default function GetPortraitModal(props: GetPortraitModalProps) {
 								checked={showDiceRoll}
 								onChange={(ev) => setShowDiceRoll(ev.currentTarget.checked)}
 							/>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<FormGroup className='mb-3' controlId='portraitSettingsOrientation'>
+								<FormLabel>Orientação do Retrato</FormLabel>
+								<FormSelect
+									value={nameOrientation}
+									className='theme-element'
+									onChange={(ev) =>
+										setNameOrientation(ev.target.value as PortraitEnvironmentOrientation)
+									}>
+									{SETTINGS_ORIENTATIONS.map((or) => (
+										<option key={or} value={or}>
+											{or}
+										</option>
+									))}
+								</FormSelect>
+							</FormGroup>
 						</Col>
 					</Row>
 					<Row>

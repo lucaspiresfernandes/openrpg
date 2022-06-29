@@ -1,16 +1,13 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import Fade from 'react-bootstrap/Fade';
-import type {
-	DraggableBounds,
-	DraggableData,
-	DraggableEvent,
-	DraggableEventHandler,
-} from 'react-draggable';
 import Draggable from 'react-draggable';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
+import { clamp } from '../../utils';
 import type { Environment } from '../../utils/config';
 import { getAttributeStyle } from '../../utils/style';
+import type { PortraitEnvironmentOrientation } from '../Modals/GetPortraitModal';
 
 type PortraitPlayerName = { name: string; show: boolean };
 
@@ -25,7 +22,7 @@ type PortraitAttributes = {
 	show: boolean;
 }[];
 
-const bounds: DraggableBounds = {
+const bounds = {
 	top: 0,
 	bottom: 450,
 	left: 0,
@@ -38,14 +35,10 @@ export default function PortraitEnvironmentalContainer(props: {
 	attributes: PortraitAttributes;
 	playerName: PortraitPlayerName;
 	playerId: number;
+	debug: boolean;
+	nameOrientation: PortraitEnvironmentOrientation;
 }) {
 	const [environment, setEnvironment] = useState(props.environment);
-	const [positionY, setPositionY] = useState(0);
-
-	useEffect(() => {
-		setPositionY(Number(localStorage.getItem('environmental-pos-y') || 300));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	useEffect(() => {
 		props.socket.on('environmentChange', (newValue) =>
@@ -57,43 +50,46 @@ export default function PortraitEnvironmentalContainer(props: {
 		};
 	}, [props.socket]);
 
-	function onDragStop(ev: DraggableEvent, data: DraggableData) {
-		const posY = data.y;
-		setPositionY(posY);
-		localStorage.setItem('environmental-pos-y', posY.toString());
-	}
+	let divStyle: CSSProperties = { width: 800 };
+
+	props.nameOrientation === 'Direita'
+		? (divStyle = { ...divStyle, left: 430, textAlign: 'start' })
+		: (divStyle = { ...divStyle, left: 0, textAlign: 'end' });
 
 	return (
-		<>
+		<div className={styles.container} style={divStyle}>
 			<PortraitAttributesContainer
-				positionY={positionY}
-				onDragStop={onDragStop}
 				environment={environment}
 				attributes={props.attributes}
 				playerId={props.playerId}
 				socket={props.socket}
+				debug={props.debug}
 			/>
 			<PortraitNameContainer
-				positionY={positionY}
-				onDragStop={onDragStop}
 				environment={environment}
 				playerName={props.playerName}
 				playerId={props.playerId}
 				socket={props.socket}
+				debug={props.debug}
 			/>
-		</>
+		</div>
 	);
 }
 
 function PortraitAttributesContainer(props: {
-	positionY: number;
-	onDragStop: DraggableEventHandler;
 	socket: SocketIO;
 	environment: Environment;
 	attributes: PortraitAttributes;
 	playerId: number;
+	debug: boolean;
 }) {
 	const [attributes, setAttributes] = useState(props.attributes);
+	const [positionY, setPositionY] = useState(0);
+
+	useEffect(() => {
+		setPositionY(Number(localStorage.getItem('attribute-pos-y') || 300));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		props.socket.on(
@@ -125,18 +121,24 @@ function PortraitAttributesContainer(props: {
 	return (
 		<Draggable
 			axis='y'
-			onStop={props.onDragStop}
-			position={{ x: 0, y: props.positionY }}
-			bounds={bounds}>
-			<Fade in={props.environment === 'combat'}>
+			position={{ x: 0, y: positionY }}
+			bounds={bounds}
+			onStop={(_ev, data) => {
+				const posY = clamp(data.y, bounds.top, bounds.bottom);
+				setPositionY(posY);
+				localStorage.setItem('attribute-pos-y', posY.toString());
+			}}>
+			<Fade in={props.debug || props.environment === 'combat'}>
 				<div className={styles.combat}>
 					{attributes.map((attr) => (
-						<div
-							className={styles.attribute}
-							style={getAttributeStyle(attr.Attribute.color)}
-							key={attr.Attribute.id}>
-							<label>{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}</label>
-						</div>
+						<Fragment key={attr.Attribute.id}>
+							<span
+								className={`${styles.attribute} attribute`}
+								style={getAttributeStyle(attr.Attribute.color)}>
+								<label>{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}</label>
+							</span>
+							<br />
+						</Fragment>
 					))}
 				</div>
 			</Fade>
@@ -145,14 +147,19 @@ function PortraitAttributesContainer(props: {
 }
 
 function PortraitNameContainer(props: {
-	positionY: number;
-	onDragStop: DraggableEventHandler;
 	socket: SocketIO;
 	environment: Environment;
 	playerName: PortraitPlayerName;
 	playerId: number;
+	debug: boolean;
 }) {
 	const [playerName, setPlayerName] = useState(props.playerName);
+	const [positionY, setPositionY] = useState(0);
+
+	useEffect(() => {
+		setPositionY(Number(localStorage.getItem('name-pos-y') || 300));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		props.socket.on('playerNameChange', (playerId, name) => {
@@ -174,13 +181,19 @@ function PortraitNameContainer(props: {
 	return (
 		<Draggable
 			axis='y'
-			onStop={props.onDragStop}
-			position={{ x: 0, y: props.positionY }}
-			bounds={bounds}>
-			<Fade in={props.environment === 'idle'}>
-				<label className={styles.nameContainer}>
-					{playerName.show ? playerName.name || 'Desconhecido' : '???'}
-				</label>
+			position={{ x: 0, y: positionY }}
+			bounds={bounds}
+			onStop={(_ev, data) => {
+				const posY = clamp(data.y, bounds.top, bounds.bottom);
+				setPositionY(posY);
+				localStorage.setItem('name-pos-y', posY.toString());
+			}}>
+			<Fade in={props.debug || props.environment === 'idle'}>
+				<div className={styles.nameContainer}>
+					<label className={`${styles.name} name`}>
+						{playerName.show ? playerName.name || 'Desconhecido' : '???'}
+					</label>
+				</div>
 			</Fade>
 		</Draggable>
 	);

@@ -3,9 +3,14 @@ $avatar-height: 600px;
 
 $dice-container-left: 30px;
 
+.container {
+	position: relative;
+	width: 0px;
+}
+
 .editor {
 	position: absolute;
-	top: 610px;
+	top: 650px;
 	left: 10px;
 }
 
@@ -39,36 +44,30 @@ $dice-container-left: 30px;
 
 .nameContainer {
 	position: absolute;
-	left: $avatar-width + 10px;
+	width: 100%;
 
-	max-width: 5em;
+	.name {
+		color: white;
+		text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
 
-	color: white;
-	text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
-
-	font-size: 96px;
-	font-style: italic;
-	text-transform: uppercase;
-	line-height: 100%;
-
-	transform: translateY(-50%);
+		font-size: 96px;
+		font-style: italic;
+		text-transform: uppercase;
+		line-height: 100%;
+	}
 }
 
 .combat {
 	position: absolute;
-	left: $avatar-width + 10px;
-	transform: translateY(-50%);
-	width: auto;
-}
+	width: 100%;
 
-.attribute {
-	$size: 108px;
-
-	font-size: $size;
-	font-style: italic;
-	max-width: 250px;
-	color: white;
-	line-height: 100%;
+	.attribute {
+		font-size: 108px;
+		font-style: italic;
+		max-width: 250px;
+		color: white;
+		line-height: 100%;
+	}
 }
 
 .diceContainer {

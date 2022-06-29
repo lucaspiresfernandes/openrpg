@@ -1,9 +1,12 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
+import type { PortraitEnvironmentOrientation } from '../../components/Modals/GetPortraitModal';
 import type { PortraitAttributeStatus } from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitAvatarContainer from '../../components/Portrait/PortraitAvatarContainer';
 import PortraitDiceContainer from '../../components/Portrait/PortraitDiceContainer';
@@ -11,12 +14,13 @@ import PortraitEnvironmentalContainer from '../../components/Portrait/PortraitEn
 import PortraitSideAttributeContainer from '../../components/Portrait/PortraitSideAttributeContainer';
 import type { SocketIO } from '../../hooks/useSocket';
 import useSocket from '../../hooks/useSocket';
+import styles from '../../styles/modules/Portrait.module.scss';
 import type { Environment, PortraitFontConfig } from '../../utils/config';
 import prisma from '../../utils/database';
 
-export default function CharacterPortrait(
-	props: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
+type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+
+export default function Page(props: PageProps) {
 	const socket = useSocket(`portrait${props.playerId}`);
 
 	useEffect(() => {
@@ -45,6 +49,15 @@ export default function CharacterPortrait(
 			</Container>
 		);
 
+	return <CharacterPortrait {...props} socket={socket} />;
+}
+
+function CharacterPortrait(props: PageProps & { socket: SocketIO }) {
+	const [debug, setDebug] = useState(false);
+
+	const divStyle: CSSProperties =
+		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 820 };
+
 	return (
 		<>
 			<PortraitDiceRollContainer
@@ -53,15 +66,26 @@ export default function CharacterPortrait(
 				sideAttribute={props.sideAttribute}
 				diceColor={props.diceColor}
 				showDiceRoll={props.showDiceRoll}
-				socket={socket}
+				socket={props.socket}
+				nameOrientation={props.nameOrientation}
 			/>
 			<PortraitEnvironmentalContainer
 				attributes={props.attributes}
 				environment={props.environment}
 				playerId={props.playerId}
 				playerName={props.playerName}
-				socket={socket}
+				socket={props.socket}
+				debug={debug}
+				nameOrientation={props.nameOrientation}
 			/>
+			<div className={styles.editor} style={divStyle}>
+				<Button
+					variant='secondary'
+					title='Desativa o controle do ambiente pelo mestre.'
+					onClick={() => setDebug((e) => !e)}>
+					{debug ? 'Ativar' : 'Desativar'} Ambiente
+				</Button>
+			</div>
 		</>
 	);
 }
@@ -81,11 +105,15 @@ function PortraitDiceRollContainer(props: {
 	diceColor: string;
 	showDiceRoll: boolean;
 	socket: SocketIO;
+	nameOrientation: PortraitEnvironmentOrientation;
 }) {
 	const [showDice, setShowDice] = useState(false);
 
+	const divStyle: CSSProperties =
+		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 820 };
+
 	return (
-		<>
+		<div className={styles.container} style={divStyle}>
 			<div className={`${showDice ? 'show ' : ''}shadow`}>
 				<PortraitAvatarContainer
 					playerId={props.playerId}
@@ -106,11 +134,13 @@ function PortraitDiceRollContainer(props: {
 				onShowDice={() => setShowDice(true)}
 				onHideDice={() => setShowDice(false)}
 			/>
-		</>
+		</div>
 	);
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+	const nameOrientation =
+		(ctx.query.orientation as PortraitEnvironmentOrientation) || 'Direita';
 	const playerId = parseInt(ctx.query.characterID as string);
 	const diceColor = (ctx.query.dicecolor as string) || 'ddaf0f';
 	const showDiceRoll = (ctx.query.showdiceroll as string) === 'true';
@@ -150,7 +180,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				playerName: { name: 'Desconhecido', show: false },
 				notFound: true,
 				diceColor,
-				showDiceRoll
+				nameOrientation,
+				showDiceRoll,
 			},
 		};
 
@@ -170,9 +201,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 			sideAttribute,
 			attributeStatus: results[1].PlayerAttributeStatus,
 			playerName: { name: results[1].name, show: results[1].showName },
-			diceColor,
-			showDiceRoll,
 			customFont: JSON.parse(results[2]?.value || 'null') as PortraitFontConfig,
+			diceColor,
+			nameOrientation,
+			showDiceRoll,
 		},
 	};
 }

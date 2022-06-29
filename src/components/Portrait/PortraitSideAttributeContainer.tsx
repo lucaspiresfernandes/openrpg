@@ -1,13 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import type {
-	ControlPosition,
-	DraggableData,
-	DraggableEvent,
-	DraggableBounds,
-} from 'react-draggable';
+import type { ControlPosition, DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import type { SocketIO } from '../../hooks/useSocket';
 import styles from '../../styles/modules/Portrait.module.scss';
+import { clamp } from '../../utils';
 import { getAttributeStyle } from '../../utils/style';
 
 type PortraitSideAttribute = {
@@ -20,7 +16,7 @@ type PortraitSideAttribute = {
 	};
 } | null;
 
-const bounds: DraggableBounds = {
+const bounds = {
 	bottom: 475,
 	left: 5,
 	top: 5,
@@ -43,12 +39,15 @@ export default function PortraitSideAttributeContainer(props: {
 	}, []);
 
 	useEffect(() => {
-		props.socket.on('playerAttributeChange', (playerId, attributeId, value, maxValue, show) => {
-			setSideAttribute((attr) => {
-				if (attr === null || attributeId !== attr.Attribute.id) return attr;
-				return { value, show, Attribute: { ...attr.Attribute } };
-			});
-		});
+		props.socket.on(
+			'playerAttributeChange',
+			(playerId, attributeId, value, maxValue, show) => {
+				setSideAttribute((attr) => {
+					if (attr === null || attributeId !== attr.Attribute.id) return attr;
+					return { value, show, Attribute: { ...attr.Attribute } };
+				});
+			}
+		);
 
 		return () => {
 			props.socket.off('playerAttributeChange');
@@ -64,10 +63,10 @@ export default function PortraitSideAttributeContainer(props: {
 
 	if (!sideAttribute) return null;
 
-	function onDragStop(ev: DraggableEvent, data: DraggableData) {
+	function onDragStop(_ev: DraggableEvent, data: DraggableData) {
 		const pos = {
-			x: data.x,
-			y: data.y,
+			x: clamp(data.x, bounds.left, bounds.right),
+			y: clamp(data.y, bounds.top, bounds.bottom),
 		};
 		setPosition(pos);
 		localStorage.setItem('side-attribute-pos', JSON.stringify(pos));
@@ -77,7 +76,9 @@ export default function PortraitSideAttributeContainer(props: {
 		<Draggable axis='both' onStop={onDragStop} position={position} bounds={bounds}>
 			<div className={styles.sideContainer} style={{ ...attributeStyle }}>
 				<div className={styles.sideBackground}></div>
-				<label className={styles.sideContent}>{sideAttribute.show ? sideAttribute.value : '?'}</label>
+				<label className={styles.sideContent}>
+					{sideAttribute.show ? sideAttribute.value : '?'}
+				</label>
 			</div>
 		</Draggable>
 	);
