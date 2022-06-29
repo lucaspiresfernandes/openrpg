@@ -47,6 +47,7 @@ $dice-container-left: 30px;
 	width: 100%;
 
 	.name {
+		width: 6em;
 		color: white;
 		text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.75);
 
@@ -54,6 +55,8 @@ $dice-container-left: 30px;
 		font-style: italic;
 		text-transform: uppercase;
 		line-height: 100%;
+		overflow-wrap: break-word;
+		padding-right: 1.5rem;
 	}
 }
 
@@ -67,6 +70,7 @@ $dice-container-left: 30px;
 		max-width: 250px;
 		color: white;
 		line-height: 100%;
+		padding-right: 1.5rem;
 	}
 }
 

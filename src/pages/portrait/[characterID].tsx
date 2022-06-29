@@ -56,7 +56,7 @@ function CharacterPortrait(props: PageProps & { socket: SocketIO }) {
 	const [debug, setDebug] = useState(false);
 
 	const divStyle: CSSProperties =
-		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 820 };
+		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 800 };
 
 	return (
 		<>
@@ -83,7 +83,7 @@ function CharacterPortrait(props: PageProps & { socket: SocketIO }) {
 					variant='secondary'
 					title='Desativa o controle do ambiente pelo mestre.'
 					onClick={() => setDebug((e) => !e)}>
-					{debug ? 'Ativar' : 'Desativar'} Ambiente
+					{debug ? 'Desativar' : 'Ativar'} Editor
 				</Button>
 			</div>
 		</>
@@ -110,7 +110,7 @@ function PortraitDiceRollContainer(props: {
 	const [showDice, setShowDice] = useState(false);
 
 	const divStyle: CSSProperties =
-		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 820 };
+		props.nameOrientation === 'Direita' ? { left: 0 } : { left: 800 };
 
 	return (
 		<div className={styles.container} style={divStyle}>

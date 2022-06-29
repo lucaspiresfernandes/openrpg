@@ -133,7 +133,7 @@ function PortraitAttributesContainer(props: {
 					{attributes.map((attr) => (
 						<Fragment key={attr.Attribute.id}>
 							<span
-								className={`${styles.attribute} attribute`}
+								className={`${styles.attribute} atributo-primario`}
 								style={getAttributeStyle(attr.Attribute.color)}>
 								<label>{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}</label>
 							</span>
@@ -190,7 +190,7 @@ function PortraitNameContainer(props: {
 			}}>
 			<Fade in={props.debug || props.environment === 'idle'}>
 				<div className={styles.nameContainer}>
-					<label className={`${styles.name} name`}>
+					<label className={`${styles.name} nome`}>
 						{playerName.show ? playerName.name || 'Desconhecido' : '???'}
 					</label>
 				</div>
