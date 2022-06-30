@@ -133,7 +133,7 @@ function PortraitAttributesContainer(props: {
 					{attributes.map((attr) => (
 						<Fragment key={attr.Attribute.id}>
 							<span
-								className={`${styles.attribute} atributo-primario`}
+								className={`${styles.attribute} atributo-primario ${attr.Attribute.name}`}
 								style={getAttributeStyle(attr.Attribute.color)}>
 								<label>{attr.show ? `${attr.value}/${attr.maxValue}` : '?/?'}</label>
 							</span>
