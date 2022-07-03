@@ -8,21 +8,7 @@ Antes de começarmos, você deverá cumprir alguns passos preliminares.
 
 1. Você deverá criar uma conta aqui, no [GitHub](https://github.com/signup). Caso já possua uma conta, pode pular essa preliminar.
 2. Você deverá criar uma conta na [Heroku](https://id.heroku.com/signup), o servidor no qual hospedaremos o nosso aplicativo.
-3. (Opcional) Você deverá criar uma conta na [Random.org](https://accounts.random.org/create). Caso não esteja interessado em criar uma conta no Random.org e usar o serviço de geração de números aleatórios, não tem problema! O sistema se adapta a isso e passa a usar a geração padrão de números pseudoaleatórios.
-4. Você deverá fazer o [fork](https://github.com/alyssapiresfernandescefet/openrpg/fork) desse repositório para a sua conta.
-
-## Sobre o Random.org (Opcional)
-
-Caso tenha optado por não usar os serviços do Random.org, pode pular essa seção.
-
-Após criar uma conta no Random.org, você deverá criar um serviço de API. Siga os passos:
-
-1. Acesse a [sua conta](https://accounts.random.org/) no Random.org.
-2. Procure por "API Services" e clique em "Use this service".
-3. Crie um novo serviço, clicando em "Create a new API key".
-4. Digite o nome do serviço (para fins de identificação, é recomendável que o nome do serviço seja "nomeDoSeuApp_random") e clique em "Create".
-5. Após criar, clique no novo item que foi criado na lista.
-6. Copie o primeiro item, "API Key", e salve em algum lugar do seu computador (em um bloco de notas). Você vai precisar dessa chave mais para frente.
+3. Você deverá fazer o [fork](https://github.com/alyssapiresfernandescefet/openrpg/fork) desse repositório para a sua conta.
 
 ## Iniciando
 
@@ -32,10 +18,9 @@ Após criar uma conta no Random.org, você deverá criar um serviço de API. Sig
 
 3. Depois de conectar o seu repositório GitHub ao Heroku, você precisará configurar o aplicativo para uso. Acesse a aba Settings, e na segunda seção, em "Config Vars", clique em "Reveal Config Vars". Após isso, dois campos de textos irão aparecer com o nome KEY e VALUE, respectivamente. Você deverá preencher alguns campos agora. Abaixo, haverá uma tabela dos campos que devem ser preenchidos. Ao preencher cada valor, clique em "Add" para adicioná-los ao aplicativo.
 
-|            KEY            |                                                                VALUE                                                             |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| SESSION_SECRET            | Um valor aleatório de no mínimo 32 dígitos, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
-| RANDOM_ORG_KEY (Opcional) | A chave de API da Random.org. Se lembra da chave que pedi para salvar? Cole ela nesse campo.                                     |
+| KEY            | VALUE                                                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| SESSION_SECRET | Um valor aleatório de no mínimo 32 dígitos, que pode ser gerado [aqui](https://onlinehashtools.com/generate-random-sha256-hash). |
 
 Caso tenha feito tudo corretamente, a seção "Config Vars" deverá estar semelhante a essa aqui:
 

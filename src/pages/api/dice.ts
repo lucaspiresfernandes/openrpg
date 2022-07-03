@@ -1,5 +1,5 @@
 import type { NextApiRequest } from 'next';
-import RandomOrg from 'random-org';
+import { sleep } from '../../utils';
 import prisma from '../../utils/database';
 import type {
 	DiceRequest,
@@ -10,18 +10,7 @@ import type {
 import { sessionAPI } from '../../utils/session';
 import type { NextApiResponseServerIO } from '../../utils/socket';
 
-const randomOrgKey = process.env.RANDOM_ORG_KEY;
-const random = new RandomOrg({ apiKey: randomOrgKey || 'unkown' });
-
-async function nextInt(min: number, max: number, n: number): Promise<{ data: number[] }> {
-	if (randomOrgKey) {
-		try {
-			return (await random.generateSignedIntegers({ min, max, n })).random;
-		} catch (err) {
-			console.error('Random.org inactive or apiKey is not defined.');
-		}
-	}
-
+function nextInt(min: number, max: number, n: number) {
 	const data = [];
 
 	min = Math.ceil(min);
@@ -30,7 +19,12 @@ async function nextInt(min: number, max: number, n: number): Promise<{ data: num
 	for (let i = 0; i < n; i++)
 		data.push(Math.floor(Math.random() * (max - min + 1) + min));
 
-	return { data };
+	return data;
+}
+
+async function getRandom(min: number, max: number, n: number) {
+	await sleep(nextInt(600, 1000, 1)[0]);
+	return nextInt(min, max, n);
 }
 
 async function handler(
@@ -93,8 +87,8 @@ async function handler(
 					return;
 				}
 
-				return nextInt(numDices, numDices * roll, 1).then(
-					({ data }) => (results[index] = { roll: data[0] })
+				return getRandom(numDices, numDices * roll, 1).then(
+					(data) => (results[index] = { roll: data[0] })
 				);
 			})
 		);
@@ -113,7 +107,7 @@ async function handler(
 			return;
 		}
 
-		const { data } = await nextInt(1, roll, numDices);
+		const data = await getRandom(1, roll, numDices);
 
 		for (let index = 0; index < data.length; index++) {
 			const result = data[index];

@@ -56,10 +56,6 @@ Além das funcionalidades base, Open RPG possui integração com o OBS através 
 - Atributos
 - Rolagem de dados
 
-## Integração com o Random.org
-
-O Open RPG usa os serviços do [Random.org](https://www.random.org/) para gerar números aleatórios. Se, por qualquer razão, o aplicativo não conseguir se conectar com a API do Random.org, ele passa a gerar números pseudoaleatórios com a API embutida do Node.js.
-
 ## Status do projeto
 
 Atualmente, o Open RPG se encontra em sua versão 1.0.0 Beta e já é considerado completo. No entanto, ainda há a possibilidade de adicionar novas funcionalidades de acordo a demanda dos usuários.
