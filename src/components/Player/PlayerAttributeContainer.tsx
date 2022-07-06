@@ -1,5 +1,5 @@
 import type { Attribute, AttributeStatus } from '@prisma/client';
-import type { MouseEvent } from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -139,6 +139,10 @@ type PlayerAttributeFieldProps = {
 	editor: { id: number; value: number; maxValue: number };
 };
 
+const exceededValueStyle: CSSProperties = {
+	fontWeight: 'bold',
+};
+
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 	const attributeID = props.playerAttribute.Attribute.id;
 	const [show, setShow] = useState(props.playerAttribute.show);
@@ -188,7 +192,9 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 		let newVal: number = value;
 		if (multiply) {
 			coeff *= 5;
-			if (value <= maxValue) newVal = clamp(value + coeff, 0, maxValue);
+			if (coeff > 0) {
+				if (value <= maxValue) newVal = clamp(value + coeff, 0, maxValue);
+			} else newVal = Math.max(0, value + coeff);
 		} else {
 			newVal = Math.max(0, value + coeff);
 		}
@@ -277,9 +283,14 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 							<div
 								className='pogress-label h5 clickable'
 								onClick={() => props.onEdit(attributeID, value, maxValue)}>
-								<label
-									className='clickable'
-									htmlFor={`attributeBar${attributeID}`}>{`${value}/${maxValue}`}</label>
+								<label className='clickable' htmlFor={`attributeBar${attributeID}`}>
+									{value > maxValue ? (
+										<span style={exceededValueStyle}>{value}</span>
+									) : (
+										value
+									)}
+									/{maxValue}
+								</label>
 							</div>
 							<div
 								className='progress-button-left'
