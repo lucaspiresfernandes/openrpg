@@ -1,5 +1,5 @@
 import type { Attribute, AttributeStatus } from '@prisma/client';
-import type { CSSProperties, MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -137,10 +137,6 @@ type PlayerAttributeFieldProps = {
 	visibilityEnabled: boolean;
 	npcId?: number;
 	editor: { id: number; value: number; maxValue: number };
-};
-
-const exceededValueStyle: CSSProperties = {
-	fontWeight: 'bold',
 };
 
 function PlayerAttributeField(props: PlayerAttributeFieldProps) {
@@ -284,12 +280,7 @@ function PlayerAttributeField(props: PlayerAttributeFieldProps) {
 								className='pogress-label h5 clickable'
 								onClick={() => props.onEdit(attributeID, value, maxValue)}>
 								<label className='clickable' htmlFor={`attributeBar${attributeID}`}>
-									{value > maxValue ? (
-										<span style={exceededValueStyle}>{value}</span>
-									) : (
-										value
-									)}
-									/{maxValue}
+									{value > maxValue ? <b>{value}</b> : value}/{maxValue}
 								</label>
 							</div>
 							<div
