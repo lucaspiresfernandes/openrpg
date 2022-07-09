@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../../utils/database';
 import { sessionAPI } from '../../../../../utils/session';
 import type { NextApiResponseServerIO } from '../../../../../utils/socket';
+import type { DiceConfig } from '../../../../../utils/config';
 
 function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
 	if (req.method === 'POST') return handlePost(req, res);
@@ -64,10 +65,16 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
 	const playerId = npcId ? npcId : player.id;
 
-	const skill = await prisma.skill.findUnique({
-		where: { id: skillID },
-		select: { startValue: true },
-	});
+	const [skill, dices] = await prisma.$transaction([
+		prisma.skill.findUnique({
+			where: { id: skillID },
+			select: { startValue: true },
+		}),
+		prisma.config.findUnique({
+			where: { name: 'dice' },
+			select: { value: true },
+		}),
+	]);
 
 	const playerSkill = await prisma.playerSkill.create({
 		data: {
@@ -85,6 +92,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 			modifier: true,
 		},
 	});
+
+	const enableModifiers = ((dices?.value || {}) as DiceConfig)?.skill?.enable_modifiers;
+	if (!enableModifiers) playerSkill.modifier = null as any;
 
 	res.send({ skill: playerSkill });
 }
