@@ -15,7 +15,7 @@ export default function AttributeStatusEditorModal(props: ModalProps) {
 	const initialState: AttributeStatus = {
 		id: 0,
 		name: '',
-		attribute_id: props.attributes[0].id,
+		attribute_id: props.attributes[0]?.id || 0,
 	};
 
 	const [attributeStatus, setAttributeStatus] = useState(initialState);
