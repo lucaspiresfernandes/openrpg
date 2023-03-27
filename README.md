@@ -1,12 +1,18 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z3BVAJ2)
+# ATENÇÃO: Projeto Descontinuado
+
+O Open RPG foi um sucesso, mas a comunidade necessita de algo a mais. Por isso, trago a vocês o [Rollify Beyond](https://rollifybeyond.com).
+
+![Rollify Beyond Logo](https://rollifybeyond.com/rollify_white.png)
+
+Sucessor do Open RPG e Rollify, o Rollify Beyond combina o melhor dos meus projetos até agora.
+
+O Open RPG e Rollify permanecerão disponíveis, porém não serão mais atualizados e, com o tempo, se tornarão obsoletos.
+
+Espero vê-lo a bordo do Rollify Beyond!
 
 # Open RPG: Ficha eletrônica de RPG
 
 Open RPG é um aplicativo web gratuito que permite o uso de fichas eletrônicas automatizadas e customizáveis para qualquer campanha, bem como utilitários que ajudam o mestre a agilizar tarefas.
-
-## Ko-fi
-
-Gostou do meu trabalho? Considere fazer uma doação para mim no meu [Ko-fi](https://ko-fi.com/alyssafernandes). Doações me ajudam financeiramente e me incentivam a criar mais conteúdo gratuito para a comunidade.
 
 ## Documentação
 
